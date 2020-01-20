@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/receivingFragment"
+        android:name="dynamia.com.barcodescanner.ui.ReceivingFragment"
+        android:label="receiving_fragment"
+        tools:layout="@layout/receiving_fragment" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="dynamia.com.barcodescanner.ui.LoginFragment"
+        android:label="login_fragment"
+        tools:layout="@layout/login_fragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_POSOList"
+            app:destination="@id/POSOList" />
+    </fragment>
+    <fragment
+        android:id="@+id/POSOList"
+        android:name="dynamia.com.barcodescanner.ui.POSOList"
+        android:label="posolist_fragment"
+        tools:layout="@layout/posolist_fragment" >
+        <action
+            android:id="@+id/action_POSOList_to_receivingFragment"
+            app:destination="@id/receivingFragment" />
+    </fragment>
+</navigation>
