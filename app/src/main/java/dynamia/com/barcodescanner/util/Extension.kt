@@ -1,7 +1,9 @@
 package dynamia.com.barcodescanner.util
 
 import android.animation.AnimatorListenerAdapter
+import android.content.Context
 import android.view.View
+import android.widget.Toast
 
 
 fun View.rotateFab(rotate: Boolean): Boolean {
@@ -10,4 +12,8 @@ fun View.rotateFab(rotate: Boolean): Boolean {
         })
         .rotation(if (rotate) 135f else 0f)
     return rotate
+}
+
+fun Context.showToast(message:String){
+    Toast.makeText(this,message,Toast.LENGTH_LONG).show()
 }

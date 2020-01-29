@@ -15,8 +15,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#F50057"
+        android:src="@drawable/ic_barcode_scanner"
+        app:backgroundTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -61,4 +61,17 @@
         app:layout_constraintBottom_toTopOf="@+id/fabMic"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="#00313131" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tb_posolist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="PO / SO List"
+        app:titleTextColor="#FFFFFF" />
 </androidx.constraintlayout.widget.ConstraintLayout>
