@@ -1,4 +1,6 @@
 package dynamia.com.barcodescanner.data
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 
@@ -6,10 +8,13 @@ data class PickingListHeader(
     @SerializedName("odata.metadata")
     val odataMetadata: String?,
     @SerializedName("value")
-    val value: List<Value?>?
+    val value: List<PickingListHeaderValue?>?
 )
 
-data class Value(
+@Entity(tableName = "PickingListHeader")
+data class PickingListHeaderValue(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int,
     @SerializedName("Assigned_Employee")
     val assignedEmployee: String?,
     @SerializedName("Customer_Purchase_Order_No")
