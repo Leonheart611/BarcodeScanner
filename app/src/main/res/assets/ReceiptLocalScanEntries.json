@@ -1,0 +1,19 @@
+{
+  "odata.metadata": "http://desktop-6cvbbk8:9068/mastersystem/OData/$metadata#ReceiptLocalScanEntries",
+  "value": [
+    {
+      "Entry_No": "1",
+      "Purchase_Order_No": "PO123",
+      "Line_No": 1,
+      "Packing_ID_No": "12371",
+      "Part_No": "PART NO",
+      "Item_No": "item no",
+      "Description": "NAMA",
+      "Serial_Number": "NOMOR SN",
+      "Tracking_ID": "1231",
+      "Shipset": "123",
+      "Mac_Address": "123197310",
+      "ETag": "20;GcQAAAJ7ATEAAAAAAA==9;2904472080;"
+    }
+  ]
+}

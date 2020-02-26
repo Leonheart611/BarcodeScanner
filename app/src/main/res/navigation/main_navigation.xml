@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/receivingFragment"
-        android:name="dynamia.com.barcodescanner.ui.ReceivingFragment"
+        android:name="dynamia.com.barcodescanner.ui.receiving.ReceivingFragment"
         android:label="receiving_fragment"
         tools:layout="@layout/receiving_fragment" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="dynamia.com.barcodescanner.ui.LoginFragment"
+        android:name="dynamia.com.barcodescanner.ui.login.LoginFragment"
         android:label="login_fragment"
         tools:layout="@layout/login_fragment" >
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/POSOList"
-        android:name="dynamia.com.barcodescanner.ui.POSOList"
+        android:name="dynamia.com.barcodescanner.ui.POSOList.POSOList"
         android:label="posolist_fragment"
         tools:layout="@layout/posolist_fragment" >
         <action

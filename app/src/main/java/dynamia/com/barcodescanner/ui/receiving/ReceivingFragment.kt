@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui
+package dynamia.com.barcodescanner.ui.receiving
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.viewmodel.ReceivingViewModel
 
 class ReceivingFragment : Fragment() {
 
     companion object {
-        fun newInstance() = ReceivingFragment()
+        fun newInstance() =
+            ReceivingFragment()
     }
 
     private lateinit var viewModel: ReceivingViewModel

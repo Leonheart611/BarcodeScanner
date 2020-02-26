@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui
+package dynamia.com.barcodescanner.ui.POSOList
 
 import android.app.Dialog
 import android.graphics.Color
@@ -10,19 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.viewmodel.PosolistViewModel
 import kotlinx.android.synthetic.main.dialog_select_input_type.*
 import kotlinx.android.synthetic.main.posolist_fragment.*
 
 class POSOList : Fragment() {
 
     private lateinit var viewModel: PosolistViewModel
-
-    var isRotated = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

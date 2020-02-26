@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.viewmodel
+package dynamia.com.barcodescanner.ui.POSOList
 
 import androidx.lifecycle.ViewModel
 

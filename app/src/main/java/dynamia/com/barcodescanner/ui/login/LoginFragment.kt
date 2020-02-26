@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui
+package dynamia.com.barcodescanner.ui.login
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.util.showToast
-import dynamia.com.barcodescanner.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.login_fragment.*
 
 
