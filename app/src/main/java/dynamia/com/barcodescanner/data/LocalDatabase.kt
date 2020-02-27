@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Entity
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import dynamia.com.barcodescanner.data.dao.*
 import dynamia.com.barcodescanner.data.model.*
 
 @Database(
@@ -20,15 +21,25 @@ import dynamia.com.barcodescanner.data.model.*
     ], version = 1, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
+    abstract fun pickingListHeaderDao(): PickingListHeaderDao
+    abstract fun pickingListLineDao(): PickingListLineDao
+    abstract fun pickingListScanEntriesDao(): PickingListScanEntriesDao
+    abstract fun receiptImportHeaderDao(): ReceiptImportHeaderDao
+    abstract fun receiptImportLineDao(): ReceiptImportLineDao
+    abstract fun receiptImportScanEntriesDao(): ReceiptImportScanEntriesDao
+    abstract fun receiptLocalHeaderDao(): ReceiptLocalHeaderDao
+    abstract fun receiptLocalLineDao(): ReceiptLocalLineDao
+    abstract fun receiptLocalScanEntriesDao(): ReceiptLocalScanEntriesDao
 
-    companion object{
+
+    companion object {
         @Volatile
         private var INSTANCE: LocalDatabase? = null
 
         fun getDatabase(
             context: Context
-        ): LocalDatabase{
-            return INSTANCE?: synchronized(this){
+        ): LocalDatabase {
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     LocalDatabase::class.java,
@@ -39,6 +50,7 @@ abstract class LocalDatabase : RoomDatabase() {
                 instance
             }
         }
+
         fun clearAllTable() {
             INSTANCE?.clearAllTables()
         }

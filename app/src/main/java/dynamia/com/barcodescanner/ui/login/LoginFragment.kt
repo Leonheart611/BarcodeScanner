@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.util.readJsonAsset
 import dynamia.com.barcodescanner.util.showToast
 import kotlinx.android.synthetic.main.login_fragment.*
+import java.io.InputStream
 
 
 class LoginFragment : Fragment() {
@@ -39,6 +41,10 @@ class LoginFragment : Fragment() {
     }
 
     fun setDataFromJsonLocal(){
+        val pickingListHeader = context?.readJsonAsset("PickingListHeader.json")
+        val pickingListLine = context?.readJsonAsset("PickingListLine.json")
+        val pickingListScanEntries = context?.readJsonAsset("PickingListScanEntries.json")
+
 
     }
 

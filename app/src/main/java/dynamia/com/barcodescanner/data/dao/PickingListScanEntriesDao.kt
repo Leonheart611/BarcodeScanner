@@ -8,7 +8,7 @@ import androidx.room.Query
 import dynamia.com.barcodescanner.data.model.PickingListScanEntriesValue
 
 @Dao
-interface PickingListScanEntries {
+interface PickingListScanEntriesDao {
     @Query("SELECT * FROM PickingListScanEntries")
     fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>>
 
