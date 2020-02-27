@@ -1,18 +1,18 @@
-package dynamia.com.barcodescanner.data
+package dynamia.com.barcodescanner.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 
-data class ReceiptLocalScanEntries(
+data class ReceiptImportScanEntries(
     @SerializedName("odata.metadata")
     val odataMetadata: String,
     @SerializedName("value")
-    val value: List<ReceiptLocalScanEntriesValue>
+    val value: List<ReceiptImportScanEntriesValue>
 )
 
-@Entity(tableName = "ReceiptLocalLine")
-data class ReceiptLocalScanEntriesValue(
+@Entity(tableName = "ReceiptImportScanEntries")
+data class ReceiptImportScanEntriesValue(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
     @SerializedName("Description")
@@ -31,12 +31,12 @@ data class ReceiptLocalScanEntriesValue(
     val packingIDNo: String,
     @SerializedName("Part_No")
     val partNo: String,
-    @SerializedName("Purchase_Order_No")
-    val purchaseOrderNo: String,
     @SerializedName("Serial_Number")
     val serialNumber: String,
     @SerializedName("Shipset")
     val shipset: String,
     @SerializedName("Tracking_ID")
-    val trackingID: String
+    val trackingID: String,
+    @SerializedName("Transfer_Order_No")
+    val transferOrderNo: String
 )

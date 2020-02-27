@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.R
@@ -25,16 +26,20 @@ class LoginFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         setupListener()
 
     }
 
-    fun setupListener(){
+    private fun setupListener(){
         btn_login.setOnClickListener {
             context?.showToast("Login Success")
             findNavController().navigate(R.id.action_loginFragment_to_POSOList)
         }
+    }
+
+    fun setDataFromJsonLocal(){
+
     }
 
 }

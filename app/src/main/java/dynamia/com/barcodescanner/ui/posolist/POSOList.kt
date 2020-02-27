@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui.POSOList
+package dynamia.com.barcodescanner.ui.posolist
 
 import android.app.Dialog
 import android.graphics.Color

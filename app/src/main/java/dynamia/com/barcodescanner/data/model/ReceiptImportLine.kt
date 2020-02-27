@@ -1,48 +1,44 @@
-package dynamia.com.barcodescanner.data
+package dynamia.com.barcodescanner.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 
-data class ReceiptLocalLine(
+data class ReceiptImportLine(
     @SerializedName("odata.metadata")
     val odataMetadata: String,
     @SerializedName("value")
-    val value: List<ReceiptLocalLineValue>
+    val value: List<ReceiptImportLineValue>
 )
 
-@Entity(tableName = "ReceiptLocalLine")
-data class ReceiptLocalLineValue(
+@Entity(tableName = "ReceiptImportLine")
+data class ReceiptImportLineValue(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
-    @SerializedName("Buy_from_Vendor_No")
-    val buyFromVendorNo: String,
     @SerializedName("Description")
     val description: String,
+    @SerializedName("Description_2")
+    val description2: String,
     @SerializedName("Document_No")
     val documentNo: String,
-    @SerializedName("Document_Type")
-    val documentType: String,
     @SerializedName("ETag")
     val eTag: String,
+    @SerializedName("Item_No")
+    val itemNo: String,
     @SerializedName("Line_No")
     val lineNo: Int,
-    @SerializedName("Location_Code")
-    val locationCode: String,
-    @SerializedName("No")
-    val no: String,
-    @SerializedName("Outstanding_Quantity")
-    val outstandingQuantity: String,
-    @SerializedName("Project_Code")
-    val projectCode: String,
+    @SerializedName("Purchase_Order_No")
+    val purchaseOrderNo: String,
     @SerializedName("Qty_to_Receive")
     val qtyToReceive: String,
+    @SerializedName("Qty_to_Ship")
+    val qtyToShip: String,
     @SerializedName("Quantity")
     val quantity: String,
     @SerializedName("Quantity_Received")
     val quantityReceived: String,
-    @SerializedName("Type")
-    val type: String,
+    @SerializedName("Quantity_Shipped")
+    val quantityShipped: String,
     @SerializedName("Unit_of_Measure")
     val unitOfMeasure: String
 )

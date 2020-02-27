@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/POSOList"
-        android:name="dynamia.com.barcodescanner.ui.POSOList.POSOList"
+        android:name="dynamia.com.barcodescanner.ui.posolist.POSOList"
         android:label="posolist_fragment"
         tools:layout="@layout/posolist_fragment" >
         <action
