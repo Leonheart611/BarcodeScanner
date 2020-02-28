@@ -2,14 +2,14 @@
   "odata.metadata": "http://desktop-6cvbbk8:9068/mastersystem/OData/$metadata#PickingListHeader",
   "value": [
     {
-      "Picking_List_No": "PL/2017/001316",
-      "SO_No": "2017/SO/0617",
-      "Sell_to_Customer_Name": "HANJAYA MANDALA SAMPOERNA, TBK",
-      "Customer_Purchase_Order_No": "4501297484",
+      "Picking_List_No": "PL/2017/001316", //header , PK*
+      "SO_No": "2017/SO/0617", //header
+      "Sell_to_Customer_Name": "HANJAYA MANDALA SAMPOERNA, TBK", //header
+      "Customer_Purchase_Order_No": "4501297484", //header2
       "Posting_Date": "2017-04-18T00:00:00",
-      "Order_Date": "2017-03-13T00:00:00",
+      "Order_Date": "2017-03-13T00:00:00", //header
       "Requested_Delivery_Date": "2017-05-18T00:00:00",
-      "Project_Code": "TH000317I0024",
+      "Project_Code": "TH000317I0024", //header2
       "Status": "Released",
       "Assigned_Employee": "STEVEN",
       "Update_from_PDT": false,

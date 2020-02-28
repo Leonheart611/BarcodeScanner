@@ -6,13 +6,13 @@
       "Picking_List_No": "PL0001",
       "Document_No": "SO0001",
       "Line_No": 1,
-      "Item_No": "KODE ITEM",
-      "Part_No": "KODE PART",
-      "Description": "nama barang",
-      "Serial_Number": "SN01231",
-      "Mac_Address": "1293710932",
-      "Note": "keterangan",
-      "Quantity": "5",
+      "Item_No": "KODE ITEM", //otomatis
+      "Part_No": "KODE PART", //input/scan
+      "Description": "nama barang", //otomatis
+      "Serial_Number": "SN01231", //input/scan
+      "Mac_Address": "1293710932", //input/scan
+      "Note": "keterangan", //input/scan
+      "Quantity": "5", //by default 1
       "ETag": "20;GMQAAAJ7ATEAAAAAAA==9;2904467250;"
     }
   ]
