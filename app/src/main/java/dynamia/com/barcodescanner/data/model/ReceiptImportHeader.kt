@@ -17,8 +17,6 @@ data class ReceiptImportHeaderValue(
     var id: Int,
     @SerializedName("Assigned_Employee_ID")
     val assignedEmployeeID: String,
-    @SerializedName("ETag")
-    val eTag: String,
     @SerializedName("No")
     val no: String,
     @SerializedName("Posting_Date")

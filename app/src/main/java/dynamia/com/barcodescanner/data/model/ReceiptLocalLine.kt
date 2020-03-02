@@ -23,8 +23,6 @@ data class ReceiptLocalLineValue(
     val documentNo: String,
     @SerializedName("Document_Type")
     val documentType: String,
-    @SerializedName("ETag")
-    val eTag: String,
     @SerializedName("Line_No")
     val lineNo: Int,
     @SerializedName("Location_Code")

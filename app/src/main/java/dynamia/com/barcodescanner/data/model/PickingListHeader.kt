@@ -19,8 +19,6 @@ data class PickingListHeaderValue(
     val assignedEmployee: String?,
     @SerializedName("Customer_Purchase_Order_No")
     val customerPurchaseOrderNo: String?,
-    @SerializedName("ETag")
-    val eTag: String?,
     @SerializedName("Order_Date")
     val orderDate: String?,
     @SerializedName("Picking_List_No")

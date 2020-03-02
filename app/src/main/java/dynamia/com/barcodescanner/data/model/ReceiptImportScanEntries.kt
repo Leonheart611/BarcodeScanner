@@ -17,8 +17,6 @@ data class ReceiptImportScanEntriesValue(
     var id: Int,
     @SerializedName("Description")
     val description: String,
-    @SerializedName("ETag")
-    val eTag: String,
     @SerializedName("Entry_No")
     val entryNo: String,
     @SerializedName("Item_No")

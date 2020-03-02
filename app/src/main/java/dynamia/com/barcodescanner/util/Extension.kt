@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import java.text.SimpleDateFormat
 
 
 fun View.rotateFab(rotate: Boolean): Boolean {
@@ -32,4 +33,10 @@ fun Context.readJsonAsset(fileName: String): String {
     inputStream.read(buffer)
     inputStream.close()
     return String(buffer, Charsets.UTF_8)
+}
+
+fun String.toNormalDate():String{
+    val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    val formatter = SimpleDateFormat("dd/MM/yyyy")
+    return formatter.format(parser.parse(this))
 }

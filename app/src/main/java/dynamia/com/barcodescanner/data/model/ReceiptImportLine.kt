@@ -21,8 +21,6 @@ data class ReceiptImportLineValue(
     val description2: String,
     @SerializedName("Document_No")
     val documentNo: String,
-    @SerializedName("ETag")
-    val eTag: String,
     @SerializedName("Item_No")
     val itemNo: String,
     @SerializedName("Line_No")

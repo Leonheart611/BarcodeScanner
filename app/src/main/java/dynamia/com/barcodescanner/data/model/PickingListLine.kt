@@ -21,8 +21,6 @@ data class PickingListLineValue(
     val description2: String,
     @SerializedName("Document_No")
     val documentNo: String,
-    @SerializedName("ETag")
-    val eTag: String,
     @SerializedName("Line_No")
     val lineNo: Int,
     @SerializedName("No")

@@ -21,8 +21,6 @@ data class ReceiptLocalHeaderValue(
     val buyFromVendorName: String,
     @SerializedName("Document_Type")
     val documentType: String,
-    @SerializedName("ETag")
-    val eTag: String,
     @SerializedName("Expected_Receipt_Date")
     val expectedReceiptDate: String,
     @SerializedName("Location_Code")

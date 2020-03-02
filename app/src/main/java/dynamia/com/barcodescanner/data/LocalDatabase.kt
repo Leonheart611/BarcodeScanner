@@ -2,7 +2,6 @@ package dynamia.com.barcodescanner.data
 
 import android.content.Context
 import androidx.room.Database
-import androidx.room.Entity
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import dynamia.com.barcodescanner.data.dao.*
@@ -18,20 +17,12 @@ import dynamia.com.barcodescanner.data.model.*
         ReceiptLocalHeaderValue::class,
         ReceiptLocalLineValue::class,
         ReceiptLocalScanEntriesValue::class
-    ], version = 1, exportSchema = false
+    ], version = 2, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
-    abstract fun pickingListHeaderDao(): PickingListHeaderDao
-    abstract fun pickingListLineDao(): PickingListLineDao
-    abstract fun pickingListScanEntriesDao(): PickingListScanEntriesDao
-    abstract fun receiptImportHeaderDao(): ReceiptImportHeaderDao
-    abstract fun receiptImportLineDao(): ReceiptImportLineDao
-    abstract fun receiptImportScanEntriesDao(): ReceiptImportScanEntriesDao
-    abstract fun receiptLocalHeaderDao(): ReceiptLocalHeaderDao
-    abstract fun receiptLocalLineDao(): ReceiptLocalLineDao
-    abstract fun receiptLocalScanEntriesDao(): ReceiptLocalScanEntriesDao
-
-
+    abstract fun pickingListDao(): PickingListDao
+    abstract fun receiptImportDao(): ReceiptImportDao
+    abstract fun receiptLocalHeaderDao(): ReceiptLocalDao
     companion object {
         @Volatile
         private var INSTANCE: LocalDatabase? = null

@@ -19,8 +19,6 @@ data class PickingListScanEntriesValue(
     val description: String,
     @SerializedName("Document_No")
     val documentNo: String,
-    @SerializedName("ETag")
-    val eTag: String,
     @SerializedName("Entry_No")
     val entryNo: String,
     @SerializedName("Item_No")

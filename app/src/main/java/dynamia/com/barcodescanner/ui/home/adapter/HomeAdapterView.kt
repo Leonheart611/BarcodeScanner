@@ -8,7 +8,7 @@ import dynamia.com.barcodescanner.data.model.HomeData
 import dynamia.com.barcodescanner.util.inflate
 import kotlinx.android.synthetic.main.home_item_list.view.*
 
-class HomeAdapterView(var homeDataList:MutableList<HomeData>, listener:OnHomeClicklistener):RecyclerView.Adapter<HomeAdapterView.HomeViewHolder>() {
+class HomeAdapterView(var homeDataList:MutableList<HomeData>,val listener:OnHomeClicklistener):RecyclerView.Adapter<HomeAdapterView.HomeViewHolder>() {
     interface OnHomeClicklistener{
         fun onHomeClicklistener(value:String)
     }
@@ -28,7 +28,9 @@ class HomeAdapterView(var homeDataList:MutableList<HomeData>, listener:OnHomeCli
     }
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
-
+        homeDataList[position].let {
+            holder.bind(it,listener)
+        }
     }
 
     class HomeViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
