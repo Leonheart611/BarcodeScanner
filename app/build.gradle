@@ -63,11 +63,11 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:1.1.1"
 
     implementation 'com.github.netcosports:Android_Ntlm:1.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
-    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.6.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.4.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.7.1'
     implementation 'com.android.support:multidex:1.0.3'
 
     // Recommended: Add the Firebase SDK for Google Analytics.
