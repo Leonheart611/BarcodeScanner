@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
@@ -43,6 +44,7 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
     }
 
     override fun onPickingListClickListener(pickingListNo: String) {
-
+      val action = PickingListFragmentDirections.actionPickingListFragmentToPickingDetailFragment(pickingListNo)
+        view?.findNavController()?.navigate(action)
     }
 }

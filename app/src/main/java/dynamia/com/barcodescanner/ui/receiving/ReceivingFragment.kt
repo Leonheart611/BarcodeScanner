@@ -10,12 +10,6 @@ import android.view.ViewGroup
 import dynamia.com.barcodescanner.R
 
 class ReceivingFragment : Fragment() {
-
-    companion object {
-        fun newInstance() =
-            ReceivingFragment()
-    }
-
     private lateinit var viewModel: ReceivingViewModel
 
     override fun onCreateView(
@@ -28,7 +22,7 @@ class ReceivingFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(ReceivingViewModel::class.java)
-        // TODO: Use the ViewModel
+
     }
 
 }

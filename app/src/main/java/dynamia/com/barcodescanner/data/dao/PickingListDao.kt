@@ -18,6 +18,9 @@ interface PickingListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue)
 
+    @Query("SELECT * FROM PickingListHeader WHERE pickingListNo = :picking_List_No")
+    fun getPickingListHeader(picking_List_No:String): PickingListHeaderValue
+
     @Query("SELECT count(*) from PickingListHeader")
     fun getCountPickingListHeader(): Int
 
@@ -25,8 +28,8 @@ interface PickingListDao {
     fun clearPickingListHeader()
 
     //PickingListLine---------------------------------------------------------
-    @Query("SELECT * FROM PickingListLine")
-    fun getAllPickingListLine(): LiveData<List<PickingListLineValue>>
+    @Query("SELECT * FROM PickingListLine WHERE pickingListNo = :picking_List_No")
+    fun getAllPickingListLine(picking_List_No:String): LiveData<List<PickingListLineValue>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPickingListLine(pickingListLineValue: PickingListLineValue)

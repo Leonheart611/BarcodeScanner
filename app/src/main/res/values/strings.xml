@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">BarcodeScanner</string>
-    <string name="so_no_title">SO No</string>
+    <string name="so_no_title">SO No.</string>
+    <string name="customer_name_title">Customer Name</string>
+    <string name="customer_po_no_title">Customer PO No.</string>
+    <string name="order_date_title">Order Date</string>
+    <string name="project_code">Project Code</string>
+    <string name="refresh_warning">Semua data akan dihapus anda yakin ingin mengupdate data?</string>
+    <string name="part_no_hint">Part No.</string>
+    <string name="nks_no_hint">NKS No.</string>
+    <string name="description_hint">Description</string>
+    <string name="sn_hint">SN</string>
+    <string name="so_hint">SO</string>
+    <string name="mac_address">Mac Address</string>
+    <string name="pl_dor_hint">PL / PL DOR</string>
+    <string name="note_hint">NOTE</string>
 </resources>

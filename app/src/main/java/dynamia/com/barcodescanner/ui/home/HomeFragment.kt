@@ -1,5 +1,8 @@
 package dynamia.com.barcodescanner.ui.home
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,14 +11,17 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.data.model.HomeData
+import dynamia.com.barcodescanner.data.model.*
 import dynamia.com.barcodescanner.ui.home.adapter.HomeAdapterView
 import dynamia.com.barcodescanner.util.Constant.PICKING_LIST
 import dynamia.com.barcodescanner.util.Constant.RECEIPT_IMPORT
 import dynamia.com.barcodescanner.util.Constant.RECEIPT_LOCAL
+import dynamia.com.barcodescanner.util.readJsonAsset
 import dynamia.com.barcodescanner.util.showToast
 import kotlinx.android.synthetic.main.home_fragment.*
+import kotlinx.android.synthetic.main.refresh_warning_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
@@ -32,6 +38,7 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initView()
+        setListener()
     }
 
     private fun initView() {
@@ -41,6 +48,12 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
         )
         rv_home_list.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         rv_home_list.adapter = adapter
+    }
+
+    private fun setListener(){
+        fab_refresh_data.setOnClickListener {
+            showDialog()
+        }
     }
 
     private fun getHomeDataList(): MutableList<HomeData> {
@@ -75,6 +88,81 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
                 context?.showToast("Under Maintenance please contact the Developer")
             }
         }
+    }
+
+    private fun showDialog() {
+        context?.let {context->
+            val dialog = Dialog(context)
+            with(dialog){
+                setContentView(R.layout.refresh_warning_dialog)
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                window
+                    ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                btn_refresh_yes.setOnClickListener {
+                    resetDataFromJsonLocal()
+                    initView()
+                    dismiss()
+                }
+                btn_refresh_no.setOnClickListener {
+                    dismiss()
+                }
+
+                show()
+            }
+        }
+    }
+
+    private fun resetDataFromJsonLocal(){
+        viewModel.clearAllDB()
+        val pickingListHeader = context?.readJsonAsset("PickingListHeader.json")
+        val pickingListLine = context?.readJsonAsset("PickingListLine.json")
+        val pickingListScanEntries = context?.readJsonAsset("PickingListScanEntries.json")
+
+        val pickingListHeaders = Gson().fromJson(pickingListHeader, PickingListHeader::class.java)
+
+        pickingListHeaders.value?.forEach {pickingListValue->
+            pickingListValue?.let {
+                viewModel.pickingListRepository.insertPickingListHeader(it)
+            }
+        }
+        val pickingListLines = Gson().fromJson(pickingListLine, PickingListLine::class.java)
+        pickingListLines.value.forEach {
+            viewModel.pickingListRepository.insertPickingListLine(it)
+        }
+        val pickingListScanEntriesList = Gson().fromJson(pickingListScanEntries,
+            PickingListScanEntries::class.java)
+        pickingListScanEntriesList.value.forEach {
+            viewModel.pickingListRepository.insertPickingListScanEntries(it)
+        }
+
+        val receiptImportHeader = context?.readJsonAsset("ReceiptImportHeader.json")
+        val receiptImportLine = context?.readJsonAsset("ReceiptImportLine.json")
+        val receiptImportScanEntries = context?.readJsonAsset("ReceiptImportScanEntries.json")
+
+        Gson().fromJson(receiptImportHeader, ReceiptImportHeader::class.java).value.forEach {
+            viewModel.receiptImportRepository.insertReceiptImportHeader(it)
+        }
+        Gson().fromJson(receiptImportLine, ReceiptImportLine::class.java).value.forEach {
+            viewModel.receiptImportRepository.insertReceiptImportLine(it)
+        }
+        Gson().fromJson(receiptImportScanEntries, ReceiptImportScanEntries::class.java).value.forEach {
+            viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
+        }
+
+        val receiptLocalHeader = context?.readJsonAsset("ReceiptLocalHeader.json")
+        val receiptLocalLine = context?.readJsonAsset("ReceiptLocalLine.json")
+        val receiptLocalScanEntries = context?.readJsonAsset("ReceiptLocalScanEntries.json")
+
+        Gson().fromJson(receiptLocalHeader, ReceiptLocalHeader::class.java).value.forEach {
+            viewModel.receiptLocalRepository.insertReceiptLocalHeader(it)
+        }
+        Gson().fromJson(receiptLocalLine, ReceiptLocalLine::class.java).value.forEach {
+            viewModel.receiptLocalRepository.insertReceiptLocalLine(it)
+        }
+        Gson().fromJson(receiptLocalScanEntries, ReceiptLocalScanEntries::class.java).value.forEach {
+            viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
+        }
+
     }
 
 

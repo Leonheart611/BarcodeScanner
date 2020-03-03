@@ -7,25 +7,124 @@
     android:layout_height="match_parent"
     tools:context=".ui.pickinglist.pickingdetail.PickingDetailFragment">
 
-    <dynamia.com.ui.NormalInputLayout
-        android:id="@+id/normalInputLayout"
-        android:layout_width="match_parent"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_picking_detail"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
+        android:background="@color/generalBlue"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/so_no_title">
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </dynamia.com.ui.NormalInputLayout>
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_picking_detail">
 
-    <dynamia.com.ui.NormalInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/normalInputLayout"
-        tools:layout_editor_absoluteX="403dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </dynamia.com.ui.NormalInputLayout>
+            <dynamia.com.ui.NormalInputLayout
+                android:id="@+id/et_customer_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="@string/customer_name_title"
+                app:inputType="string">
+
+            </dynamia.com.ui.NormalInputLayout>
+
+            <dynamia.com.ui.NormalInputLayout
+                android:id="@+id/et_so_no"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_customer_name"
+                app:title="@string/so_no_title"
+                app:inputType="string">
+
+            </dynamia.com.ui.NormalInputLayout>
+
+            <dynamia.com.ui.NormalInputLayout
+                android:id="@+id/et_customer_po_no"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_so_no"
+                app:title="@string/customer_po_no_title"
+                app:inputType="string">
+
+            </dynamia.com.ui.NormalInputLayout>
+
+            <dynamia.com.ui.NormalInputLayout
+                android:id="@+id/et_order_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_customer_po_no"
+                app:title="@string/order_date_title"
+                app:inputType="string">
+
+            </dynamia.com.ui.NormalInputLayout>
+
+            <dynamia.com.ui.NormalInputLayout
+                android:id="@+id/et_project_code"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_order_date"
+                app:title="@string/project_code"
+                app:inputType="string">
+            </dynamia.com.ui.NormalInputLayout>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Lines"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_project_code" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_picking_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

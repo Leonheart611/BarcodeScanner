@@ -15,9 +15,10 @@ interface PickingListRepository {
     fun getAllPickingListHeader(): LiveData<List<PickingListHeaderValue>>
     fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue): Job
     fun getCountPickingListHeader(): Int
+    fun getPickingListHeader(picking_List_No:String): PickingListHeaderValue
     fun clearPickingListHeader()
 
-    fun getAllPickingListLine(): LiveData<List<PickingListLineValue>>
+    fun getAllPickingListLine(picking_List_No:String): LiveData<List<PickingListLineValue>>
     fun insertPickingListLine(pickingListLineValue: PickingListLineValue): Job
     fun clearPickingListLine()
 
@@ -45,12 +46,16 @@ class PickingListRepositoryImpl(private val pickingListDao: PickingListDao) :
         return pickingListDao.getCountPickingListHeader()
     }
 
+    override fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue {
+        return pickingListDao.getPickingListHeader(picking_List_No)
+    }
+
     override fun clearPickingListHeader() {
         pickingListDao.clearPickingListHeader()
     }
 
-    override fun getAllPickingListLine(): LiveData<List<PickingListLineValue>> {
-        return pickingListDao.getAllPickingListLine()
+    override fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>> {
+        return pickingListDao.getAllPickingListLine(picking_List_No)
     }
 
     override fun insertPickingListLine(pickingListLineValue: PickingListLineValue): Job =
