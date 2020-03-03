@@ -8,15 +8,24 @@
     tools:context=".ui.pickinglist.pickingdetail.PickingDetailFragment">
 
     <dynamia.com.ui.NormalInputLayout
+        android:id="@+id/normalInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/so_no_title"
-        >
+        app:title="@string/so_no_title">
+
+    </dynamia.com.ui.NormalInputLayout>
+
+    <dynamia.com.ui.NormalInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/normalInputLayout"
+        tools:layout_editor_absoluteX="403dp">
 
     </dynamia.com.ui.NormalInputLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
