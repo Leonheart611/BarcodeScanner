@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BarcodeScanner</string>
+    <string name="so_no_title">SO No</string>
 </resources>
