@@ -14,4 +14,7 @@
     <string name="mac_address">Mac Address</string>
     <string name="pl_dor_hint">PL / PL DOR</string>
     <string name="note_hint">NOTE</string>
+    <string name="save_and_exit">Save &amp; Exit</string>
+    <string name="save_and_new">Save &amp; New</string>
+    <string name="multiple_item_warning">Harap Pilih Barang yang Ingin diInput</string>
 </resources>

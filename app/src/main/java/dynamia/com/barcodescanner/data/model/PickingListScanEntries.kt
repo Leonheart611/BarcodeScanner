@@ -14,13 +14,13 @@ data class PickingListScanEntries(
 @Entity(tableName = "PickingListScanEntries")
 data class PickingListScanEntriesValue(
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    var id: Int? = null,
     @SerializedName("Description")
     val description: String,
     @SerializedName("Document_No")
     val documentNo: String,
     @SerializedName("Entry_No")
-    val entryNo: String,
+    val entryNo: String = "1",
     @SerializedName("Item_No")
     val itemNo: String,
     @SerializedName("Line_No")
@@ -34,7 +34,7 @@ data class PickingListScanEntriesValue(
     @SerializedName("Picking_List_No")
     val pickingListNo: String,
     @SerializedName("Quantity")
-    val quantity: String,
+    val quantity: String = "1",
     @SerializedName("Serial_Number")
     val serialNumber: String
 )

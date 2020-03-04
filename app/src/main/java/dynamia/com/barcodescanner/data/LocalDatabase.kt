@@ -17,7 +17,7 @@ import dynamia.com.barcodescanner.data.model.*
         ReceiptLocalHeaderValue::class,
         ReceiptLocalLineValue::class,
         ReceiptLocalScanEntriesValue::class
-    ], version = 2, exportSchema = false
+    ], version = 3, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun pickingListDao(): PickingListDao

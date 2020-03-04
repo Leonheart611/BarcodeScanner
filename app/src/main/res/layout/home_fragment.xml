@@ -31,12 +31,12 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_home"
         tools:itemCount="4"
         tools:listitem="@layout/home_item_list" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar2"
+        android:id="@+id/toolbar_home"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/generalBlue"
@@ -46,6 +46,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/home_menu"
+        app:navigationIcon="?attr/homeAsUpIndicator"
         app:title="Activity"
         app:titleTextColor="@color/design_default_color_background" />
 

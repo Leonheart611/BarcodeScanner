@@ -8,7 +8,7 @@
       "Type": "Item",
       "No": "CIS.F02.0-0286", //header2
       "Description": "802.11ac CAP w/CleanAir; 3x4:3SS; Ext Ant; F Reg D", //header2
-      "Description_2": "AIR-CAP2702E-F-K9", //header2
+      "Description_2": "AIR-CAP2702E-F-K9", //header2,Part_no
       "Unit_of_Measure": "Unit",
       "Quantity": "3",
       "Qty_to_Ship": "3",

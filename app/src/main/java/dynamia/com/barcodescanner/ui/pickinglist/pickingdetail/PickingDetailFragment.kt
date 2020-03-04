@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingDetailAdapter
+import dynamia.com.barcodescanner.util.toNormalDate
 import kotlinx.android.synthetic.main.picking_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -37,12 +38,17 @@ class PickingDetailFragment : Fragment() {
         setupListener()
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupView()
+    }
+
     private fun setupView() {
         toolbar_picking_detail.title = args.pickingListNo
         with(pickingListHeaderValue) {
             et_customer_name.setText(sellToCustomerName)
             et_customer_po_no.setText(customerPurchaseOrderNo)
-            et_order_date.setText(orderDate)
+            et_order_date.setText(orderDate?.toNormalDate())
             et_so_no.setText(sONo)
             et_project_code.setText(projectCode)
         }
@@ -63,6 +69,9 @@ class PickingDetailFragment : Fragment() {
             val action =
                 PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(args.pickingListNo)
             view?.findNavController()?.navigate(action)
+        }
+        toolbar_picking_detail.setNavigationOnClickListener {
+            view?.findNavController()?.popBackStack()
         }
     }
 
