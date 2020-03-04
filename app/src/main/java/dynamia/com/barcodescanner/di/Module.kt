@@ -6,6 +6,7 @@ import dynamia.com.barcodescanner.ui.home.HomeViewModel
 import dynamia.com.barcodescanner.ui.login.LoginViewModel
 import dynamia.com.barcodescanner.ui.pickinglist.PickingListViewModel
 import dynamia.com.barcodescanner.ui.pickinglist.pickingdetail.PickingDetailViewModel
+import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.PickingListInputViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -25,4 +26,5 @@ val injectionModule = module {
     viewModel { HomeViewModel(get(),get(),get()) }
     viewModel { PickingListViewModel(get()) }
     viewModel { PickingDetailViewModel(get()) }
+    viewModel { PickingListInputViewModel(get()) }
 }

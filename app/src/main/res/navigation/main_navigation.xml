@@ -7,9 +7,13 @@
 
     <fragment
         android:id="@+id/receivingFragment"
-        android:name="dynamia.com.barcodescanner.ui.receiving.ReceivingFragment"
+        android:name="dynamia.com.barcodescanner.ui.pickinglist.pickinginput.PickingListInputFragment"
         android:label="receiving_fragment"
-        tools:layout="@layout/receiving_fragment" />
+        tools:layout="@layout/receiving_fragment" >
+        <argument
+            android:name="pickingListNo"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="dynamia.com.barcodescanner.ui.login.LoginFragment"

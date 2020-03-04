@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui.receiving
+package dynamia.com.barcodescanner.ui.pickinglist.pickinginput
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -9,8 +9,8 @@ import android.view.ViewGroup
 
 import dynamia.com.barcodescanner.R
 
-class ReceivingFragment : Fragment() {
-    private lateinit var viewModel: ReceivingViewModel
+class PickingListInputFragment : Fragment() {
+    private lateinit var viewModel: PickingListInputViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,7 +21,7 @@ class ReceivingFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(ReceivingViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(PickingListInputViewModel::class.java)
 
     }
 
