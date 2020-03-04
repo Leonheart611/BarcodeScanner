@@ -29,7 +29,7 @@ class PickingDetailAdapter(private val pickingListLineValues:MutableList<Picking
                 tv_line_no.text = pickingListLineValue.lineNo.toString()
                 tv_description.text = pickingListLineValue.description
                 tv_description_2.text = pickingListLineValue.description2
-                tv_outstanding.text = pickingListLineValue.outstandingQuantity
+                tv_outstanding.text = " ${pickingListLineValue.quantity}/${pickingListLineValue.outstandingQuantity}"
             }
         }
     }
