@@ -12,7 +12,7 @@ data class PickingListLine(
 )
 
 @Entity(tableName = "PickingListLine")
-data class PickingListLineValue(
+data class PickingListLineValue( //TODO: Add Local Count
     @PrimaryKey(autoGenerate = true)
     var id: Int,
     @SerializedName("Description")

@@ -31,6 +31,10 @@ interface PickingListDao {
     @Query("SELECT * FROM PickingListLine WHERE pickingListNo = :picking_List_No")
     fun getAllPickingListLine(picking_List_No:String): LiveData<List<PickingListLineValue>>
 
+    //TODO:Make count for local pickingLine when insert into ScanEntries
+
+
+
     @Query("SELECT * FROM PickingListLine WHERE description2 = :partNo AND pickingListNo = :picking_List_No")
     fun getAllPickingListLineFromInsert(partNo:String, picking_List_No: String):List<PickingListLineValue>
 

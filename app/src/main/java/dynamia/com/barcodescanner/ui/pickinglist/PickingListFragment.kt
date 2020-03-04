@@ -29,22 +29,31 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
         super.onActivityCreated(savedInstanceState)
         initView()
     }
-    private fun initView(){
+
+    private fun initView() {
         viewModel.pickingListRepository.getAllPickingListHeader().observe(viewLifecycleOwner,
             Observer {
                 val adapter = PickingListAdapter(
                     it.toMutableList(),
                     this
                 )
-                rv_pickinglist.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                rv_pickinglist.layoutManager =
+                    LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 rv_pickinglist.adapter = adapter
             })
-
-
     }
 
+    private fun setupListener() {
+        tb_posolist.setNavigationOnClickListener {
+            view?.findNavController()?.popBackStack()
+        }
+    }
+
+
     override fun onPickingListClickListener(pickingListNo: String) {
-      val action = PickingListFragmentDirections.actionPickingListFragmentToPickingDetailFragment(pickingListNo)
+        val action = PickingListFragmentDirections.actionPickingListFragmentToPickingDetailFragment(
+            pickingListNo
+        )
         view?.findNavController()?.navigate(action)
     }
 }

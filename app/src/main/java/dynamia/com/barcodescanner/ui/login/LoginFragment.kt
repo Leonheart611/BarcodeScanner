@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
@@ -15,7 +13,6 @@ import dynamia.com.barcodescanner.util.readJsonAsset
 import dynamia.com.barcodescanner.util.showToast
 import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.InputStream
 
 
 class LoginFragment : Fragment() {
