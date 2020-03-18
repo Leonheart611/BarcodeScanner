@@ -1,10 +1,9 @@
 package dynamia.com.barcodescanner.ui.home
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dynamia.com.barcodescanner.data.repository.PickingListRepository
-import dynamia.com.barcodescanner.data.repository.ReceiptImportRepository
-import dynamia.com.barcodescanner.data.repository.ReceiptLocalRepository
+import dynamia.com.core.data.repository.PickingListRepository
+import dynamia.com.core.data.repository.ReceiptImportRepository
+import dynamia.com.core.data.repository.ReceiptLocalRepository
 
 class HomeViewModel(
     val pickingListRepository: PickingListRepository,

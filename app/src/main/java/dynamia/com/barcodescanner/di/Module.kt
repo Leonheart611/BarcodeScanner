@@ -1,17 +1,24 @@
 package dynamia.com.barcodescanner.di
 
-import dynamia.com.barcodescanner.data.LocalDatabase
-import dynamia.com.barcodescanner.data.repository.*
+import dynamia.com.core.data.LocalDatabase
 import dynamia.com.barcodescanner.ui.home.HomeViewModel
 import dynamia.com.barcodescanner.ui.login.LoginViewModel
 import dynamia.com.barcodescanner.ui.pickinglist.PickingListViewModel
 import dynamia.com.barcodescanner.ui.pickinglist.pickingdetail.PickingDetailViewModel
 import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.PickingListInputViewModel
+import dynamia.com.barcodescanner.ui.receipt.ReceiptViewModel
+import dynamia.com.core.data.repository.PickingListRepository
+import dynamia.com.core.data.repository.PickingListRepositoryImpl
+import dynamia.com.core.data.repository.ReceiptImportRepository
+import dynamia.com.core.data.repository.ReceiptImportRepositoryImpl
+import dynamia.com.core.data.repository.ReceiptLocalRepository
+import dynamia.com.core.data.repository.ReceiptLocalRepositoryImpl
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val injectionModule = module {
+    single { App().provideSettingsPreferences(androidApplication()) }
     single { LocalDatabase.getDatabase(androidApplication()) }
 
     single { get<LocalDatabase>().pickingListDao() }
@@ -27,4 +34,5 @@ val injectionModule = module {
     viewModel { PickingListViewModel(get()) }
     viewModel { PickingDetailViewModel(get()) }
     viewModel { PickingListInputViewModel(get()) }
+    viewModel { ReceiptViewModel(get(),get()) }
 }

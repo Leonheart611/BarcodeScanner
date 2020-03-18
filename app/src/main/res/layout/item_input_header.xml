@@ -72,8 +72,7 @@
             android:id="@+id/et_part_no"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/part_no_hint"
-            android:text="AIR-CAP2702E-F-K" />
+            android:hint="@string/part_no_hint" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout

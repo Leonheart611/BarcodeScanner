@@ -17,4 +17,5 @@
     <string name="save_and_exit">Save &amp; Exit</string>
     <string name="save_and_new">Save &amp; New</string>
     <string name="multiple_item_warning">Harap Pilih Barang yang Ingin diInput</string>
+    <string name="title_core">API Module</string>
 </resources>

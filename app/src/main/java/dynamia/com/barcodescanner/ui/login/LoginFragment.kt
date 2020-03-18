@@ -8,9 +8,17 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.data.model.*
-import dynamia.com.barcodescanner.util.readJsonAsset
-import dynamia.com.barcodescanner.util.showToast
+import dynamia.com.core.util.readJsonAsset
+import dynamia.com.core.util.showToast
+import dynamia.com.core.data.model.PickingListHeader
+import dynamia.com.core.data.model.PickingListLine
+import dynamia.com.core.data.model.PickingListScanEntries
+import dynamia.com.core.data.model.ReceiptImportHeader
+import dynamia.com.core.data.model.ReceiptImportLine
+import dynamia.com.core.data.model.ReceiptImportScanEntries
+import dynamia.com.core.data.model.ReceiptLocalHeader
+import dynamia.com.core.data.model.ReceiptLocalLine
+import dynamia.com.core.data.model.ReceiptLocalScanEntries
 import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -44,17 +52,18 @@ class LoginFragment : Fragment() {
         val pickingListLine = context?.readJsonAsset("PickingListLine.json")
         val pickingListScanEntries = context?.readJsonAsset("PickingListScanEntries.json")
 
-        val pickingListHeaders = Gson().fromJson(pickingListHeader,PickingListHeader::class.java)
+        val pickingListHeaders = Gson().fromJson(pickingListHeader, PickingListHeader::class.java)
         pickingListHeaders.value?.forEach {pickingListValue->
             pickingListValue?.let {
                 viewModel.pickingListRepository.insertPickingListHeader(it)
             }
         }
-        val pickingListLines = Gson().fromJson(pickingListLine,PickingListLine::class.java)
+        val pickingListLines = Gson().fromJson(pickingListLine, PickingListLine::class.java)
         pickingListLines.value.forEach {
             viewModel.pickingListRepository.insertPickingListLine(it)
         }
-        val pickingListScanEntriesList = Gson().fromJson(pickingListScanEntries,PickingListScanEntries::class.java)
+        val pickingListScanEntriesList = Gson().fromJson(pickingListScanEntries,
+            PickingListScanEntries::class.java)
         pickingListScanEntriesList.value.forEach {
             viewModel.pickingListRepository.insertPickingListScanEntries(it)
         }
@@ -63,13 +72,13 @@ class LoginFragment : Fragment() {
         val receiptImportLine = context?.readJsonAsset("ReceiptImportLine.json")
         val receiptImportScanEntries = context?.readJsonAsset("ReceiptImportScanEntries.json")
 
-        Gson().fromJson(receiptImportHeader,ReceiptImportHeader::class.java).value.forEach {
+        Gson().fromJson(receiptImportHeader, ReceiptImportHeader::class.java).value.forEach {
             viewModel.receiptImportRepository.insertReceiptImportHeader(it)
         }
-        Gson().fromJson(receiptImportLine,ReceiptImportLine::class.java).value.forEach {
+        Gson().fromJson(receiptImportLine, ReceiptImportLine::class.java).value.forEach {
             viewModel.receiptImportRepository.insertReceiptImportLine(it)
         }
-        Gson().fromJson(receiptImportScanEntries,ReceiptImportScanEntries::class.java).value.forEach {
+        Gson().fromJson(receiptImportScanEntries, ReceiptImportScanEntries::class.java).value.forEach {
             viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
         }
 
@@ -77,13 +86,13 @@ class LoginFragment : Fragment() {
         val receiptLocalLine = context?.readJsonAsset("ReceiptLocalLine.json")
         val receiptLocalScanEntries = context?.readJsonAsset("ReceiptLocalScanEntries.json")
 
-        Gson().fromJson(receiptLocalHeader,ReceiptLocalHeader::class.java).value.forEach {
+        Gson().fromJson(receiptLocalHeader, ReceiptLocalHeader::class.java).value.forEach {
             viewModel.receiptLocalRepository.insertReceiptLocalHeader(it)
         }
-        Gson().fromJson(receiptLocalLine,ReceiptLocalLine::class.java).value.forEach {
+        Gson().fromJson(receiptLocalLine, ReceiptLocalLine::class.java).value.forEach {
             viewModel.receiptLocalRepository.insertReceiptLocalLine(it)
         }
-        Gson().fromJson(receiptLocalScanEntries,ReceiptLocalScanEntries::class.java).value.forEach {
+        Gson().fromJson(receiptLocalScanEntries, ReceiptLocalScanEntries::class.java).value.forEach {
             viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
         }
 

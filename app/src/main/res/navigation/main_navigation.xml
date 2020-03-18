@@ -35,6 +35,9 @@
             app:destination="@id/pickingListFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_homeFragment_to_receiptFragment"
+            app:destination="@id/receiptFragment" />
     </fragment>
     <fragment
         android:id="@+id/pickingListFragment"
@@ -58,5 +61,14 @@
         <action
             android:id="@+id/action_pickingDetailFragment_to_receivingFragment"
             app:destination="@id/receivingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/receiptFragment"
+        android:name="dynamia.com.barcodescanner.ui.receipt.ReceiptFragment"
+        android:label="receipt_fragment"
+        tools:layout="@layout/receipt_fragment" >
+        <argument
+            android:name="source"
+            app:argType="string" />
     </fragment>
 </navigation>

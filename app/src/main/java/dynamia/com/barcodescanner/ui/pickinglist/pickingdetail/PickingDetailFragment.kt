@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingDetailAdapter
-import dynamia.com.barcodescanner.util.toNormalDate
+import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.picking_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

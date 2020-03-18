@@ -1,6 +1,8 @@
 package dynamia.com.barcodescanner.di
 
+import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -11,6 +13,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 
 class App : MultiDexApplication() {
+    private val PREFERENCES_FILE_KEY = "STRYGWR"
     companion object {
         private lateinit var instance: App
 
@@ -32,8 +35,11 @@ class App : MultiDexApplication() {
             androidFileProperties()
             modules(injectionModule)
         }
-
     }
+    fun provideSettingsPreferences(app: Application): SharedPreferences =
+        app.getSharedPreferences(PREFERENCES_FILE_KEY, Context.MODE_PRIVATE)
+
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)

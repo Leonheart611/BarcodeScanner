@@ -4,10 +4,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.data.model.PickingListHeader
-import dynamia.com.barcodescanner.data.model.PickingListHeaderValue
-import dynamia.com.barcodescanner.util.inflate
-import dynamia.com.barcodescanner.util.toNormalDate
+import dynamia.com.core.data.model.PickingListHeaderValue
+import dynamia.com.core.util.inflate
+import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.list_item_recieving.view.*
 
 class PickingListAdapter(

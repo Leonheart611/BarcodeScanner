@@ -13,10 +13,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.data.model.PickingListLineValue
-import dynamia.com.barcodescanner.data.model.PickingListScanEntriesValue
+import dynamia.com.core.data.model.PickingListLineValue
+import dynamia.com.core.data.model.PickingListScanEntriesValue
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingMultipleLineAdapter
-import dynamia.com.barcodescanner.util.showToast
+import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.item_input_header.*
 import kotlinx.android.synthetic.main.receiving_fragment.*

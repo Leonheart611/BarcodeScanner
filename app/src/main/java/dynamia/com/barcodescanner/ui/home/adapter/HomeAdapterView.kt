@@ -4,11 +4,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.data.model.HomeData
-import dynamia.com.barcodescanner.util.inflate
+import dynamia.com.core.data.model.HomeData
+import dynamia.com.core.util.inflate
 import kotlinx.android.synthetic.main.home_item_list.view.*
 
-class HomeAdapterView(var homeDataList:MutableList<HomeData>,val listener:OnHomeClicklistener):RecyclerView.Adapter<HomeAdapterView.HomeViewHolder>() {
+class HomeAdapterView(var homeDataList:MutableList<HomeData>, val listener:OnHomeClicklistener):RecyclerView.Adapter<HomeAdapterView.HomeViewHolder>() {
     interface OnHomeClicklistener{
         fun onHomeClicklistener(value:String)
     }

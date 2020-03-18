@@ -1,3 +1,2 @@
-include ':app',':ui'
+include ':app', ':core'
 rootProject.name='BarcodeScanner'
-

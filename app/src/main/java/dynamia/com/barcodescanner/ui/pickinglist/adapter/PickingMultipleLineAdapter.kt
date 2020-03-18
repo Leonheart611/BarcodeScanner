@@ -4,8 +4,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.data.model.PickingListLineValue
-import dynamia.com.barcodescanner.util.inflate
+import dynamia.com.core.data.model.PickingListLineValue
+import dynamia.com.core.util.inflate
 import kotlinx.android.synthetic.main.picking_detail_line_item.view.*
 
 class PickingMultipleLineAdapter(
