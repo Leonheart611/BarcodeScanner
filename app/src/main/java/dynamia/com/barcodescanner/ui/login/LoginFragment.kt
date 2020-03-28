@@ -41,10 +41,16 @@ class LoginFragment : Fragment() {
 
     private fun setupListener(){
         btn_login.setOnClickListener {
-            setDataFromJsonLocal()
+            if (checkNotEmpty()){
+
+            }
             context?.showToast("Login Success")
             findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
         }
+    }
+
+    fun checkNotEmpty():Boolean{
+
     }
 
     private fun setDataFromJsonLocal(){
