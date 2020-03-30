@@ -32,7 +32,7 @@ class App : MultiDexApplication() {
         startKoin {
             androidLogger(Level.DEBUG)
             androidContext(this@App)
-            androidFileProperties()
+             androidFileProperties()
             modules(injectionModule)
         }
     }

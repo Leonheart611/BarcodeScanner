@@ -1,13 +1,15 @@
-package dynamia.com.barcodescanner.ui.pickinglist
+package dynamia.com.barcodescanner.ui.history
 
 import android.content.SharedPreferences
-import androidx.lifecycle.ViewModel
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.repository.PickingListRepository
 
-class PickingListViewModel(
+class HistoryInputViewModel(
     val pickingListRepository: PickingListRepository,
-    val sharedPreferences: SharedPreferences
+    sharedPreferences: SharedPreferences
 ) : ViewModelBase(sharedPreferences) {
 
+    fun deleteScanEntries(id:Int){
+        
+    }
 }

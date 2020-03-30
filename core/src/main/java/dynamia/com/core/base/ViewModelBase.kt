@@ -16,6 +16,9 @@ abstract class ViewModelBase(private val sharedPreferences: SharedPreferences):V
             commit()
         }
     }
+    fun getEmployeeName():String?{
+        return sharedPreferences.getString(Constant.EMPLOYEE_SHARED_PREFERENCES,"")
+    }
 
     fun checkLoginVariables(){
 

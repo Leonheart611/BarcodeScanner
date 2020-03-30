@@ -28,9 +28,11 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initView()
+        setupListener()
     }
 
     private fun initView() {
+        tv_employee_name2.text = viewModel.getEmployeeName()
         viewModel.pickingListRepository.getAllPickingListHeader().observe(viewLifecycleOwner,
             Observer {
                 val adapter = PickingListAdapter(
@@ -45,6 +47,9 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
 
     private fun setupListener() {
         tb_posolist.setNavigationOnClickListener {
+            view?.findNavController()?.popBackStack()
+        }
+        cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
     }

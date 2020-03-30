@@ -8,30 +8,34 @@
     tools:context=".ui.home.HomeFragment">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         app:cardElevation="5dp"
         app:cardPreventCornerOverlap="true"
-        app:layout_constraintBottom_toTopOf="@+id/fab_upload_data"
-        app:layout_constraintEnd_toEndOf="@+id/fab_upload_data"
-        app:layout_constraintStart_toStartOf="@+id/fab_upload_data">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cv_log_out"
+        app:layout_constraintStart_toEndOf="@+id/cv_refresh">
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="18dp"
             android:text="Upload" />
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_home_list"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/cv_upload"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_home"
+        app:layout_constraintTop_toBottomOf="@+id/textView11"
         tools:itemCount="4"
         tools:listitem="@layout/home_item_list" />
 
@@ -39,60 +43,81 @@
         android:id="@+id/toolbar_home"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/generalBlue"
+        android:background="@color/ic_launcher_background"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/home_menu"
-        app:navigationIcon="?attr/homeAsUpIndicator"
-        app:title="Activity"
-        app:titleTextColor="@color/design_default_color_background" />
+        app:title="@string/company_name"
+        app:titleTextColor="@android:color/black" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_refresh_data"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_refresh" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_upload_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@android:drawable/ic_menu_upload"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         app:cardElevation="5dp"
         app:cardPreventCornerOverlap="true"
-        app:layout_constraintBottom_toTopOf="@+id/fab_refresh_data"
-        app:layout_constraintEnd_toEndOf="@+id/fab_refresh_data"
-        app:layout_constraintStart_toStartOf="@+id/fab_refresh_data">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="18dp"
             android:text="Refresh" />
     </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_log_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="18dp"
+            android:text="Log Out" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tv_employee_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_home"
+        tools:text="Hyoh The Delta Star" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/today_activity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_employee_name" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        app:layout_constraintEnd_toEndOf="@+id/tv_employee_name"
+        app:layout_constraintStart_toStartOf="@+id/tv_employee_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_employee_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

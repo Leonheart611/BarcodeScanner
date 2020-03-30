@@ -1,10 +1,7 @@
 package dynamia.com.core.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import dynamia.com.core.data.model.PickingListHeaderValue
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.model.PickingListScanEntriesValue
@@ -50,6 +47,9 @@ interface PickingListDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
+
+    @Delete
+    fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
 
     @Query("DELETE FROM PickingListScanEntries")
     fun clearPickingListScanEntries()

@@ -44,7 +44,7 @@ class PickingDetailFragment : Fragment() {
     }
 
     private fun setupView() {
-        toolbar_picking_detail.title = args.pickingListNo
+        tv_picking_detail_so.text = getString(R.string.picklistno_title,args.pickingListNo)
         with(pickingListHeaderValue) {
             et_customer_name.setText(sellToCustomerName)
             et_customer_po_no.setText(customerPurchaseOrderNo)
@@ -65,7 +65,7 @@ class PickingDetailFragment : Fragment() {
     }
 
     private fun setupListener() {
-        fab_input_picking.setOnClickListener {
+        cv_pick.setOnClickListener {
             val action =
                 PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(args.pickingListNo)
             view?.findNavController()?.navigate(action)

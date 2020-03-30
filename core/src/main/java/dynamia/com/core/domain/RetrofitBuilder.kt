@@ -11,22 +11,29 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
-    private var retrofit:Retrofit? = null
+    private var retrofit: Retrofit? = null
+    private var baseURL =
+        "http://mikaoctofrentzen:7048/DynamicsNAV90/Odata/Company('PT.%20Mastersystem%20Infotama')/"
 
-    fun getClient(serverAddress:String,username:String,password:String): API {
+    fun getClient(
+        serverAddress: String,
+        username: String = "nav",
+        password: String = "12345"
+    ): API {
         if (retrofit == null) {
             val logger = HttpLoggingInterceptor()
             logger.level = HttpLoggingInterceptor.Level.BODY
 
             val client = OkHttpClient.Builder()
                 .authenticator(NTLMAuthenticator(username, password, username))
+                .addInterceptor(CustomInterceptor())
+                .addNetworkInterceptor(logger)
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(90, TimeUnit.SECONDS)
-                .addInterceptor(CustomInterceptor())
                 .build()
             retrofit = Retrofit.Builder()
-                .baseUrl(serverAddress)
+                .baseUrl(baseURL)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
@@ -34,12 +41,15 @@ object RetrofitBuilder {
         }
         return retrofit!!.create(API::class.java)
     }
+
     class CustomInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val url = chain.request().url.newBuilder()
                 .addQueryParameter("format", "json")
                 .build()
             val request = chain.request().newBuilder()
+                .addHeader("accept", "application/json;odata=verbose")
+                .addHeader("content-Type", "application/json;odata=verbose")
                 .url(url)
                 .build()
             return chain.proceed(request)

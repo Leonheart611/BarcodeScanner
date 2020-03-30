@@ -18,4 +18,21 @@
     <string name="save_and_new">Save &amp; New</string>
     <string name="multiple_item_warning">Harap Pilih Barang yang Ingin diInput</string>
     <string name="title_core">API Module</string>
+    <string name="employee_title"><u>%1$s</u></string>
+      <string name="company_name">PT. MASTERSYSTEM INFOTAMA</string>
+    <string name="today_activity">Today Activity</string>
+    <string name="back">Back</string>
+    <string name="picklistno_title">Picking List: %1$s</string>
+
+    <string name="entry_no_title">Entry No</string>
+    <string name="scan_by_title">Scan By</string>
+    <string name="part_no_title">Part No</string>
+    <string name="qty_title">QTY</string>
+    <string name="sn_title">SN</string>
+    
+    <string name="server_host_name">http://mikaoctofrentzen:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"</string>
+    <string name="user_name">nav</string>
+    <string name="password">12345</string>
+    <string name="domain">MIKAOCTOFRENTZE</string>
+    <string name="employee_name">STEVEN</string>
 </resources>

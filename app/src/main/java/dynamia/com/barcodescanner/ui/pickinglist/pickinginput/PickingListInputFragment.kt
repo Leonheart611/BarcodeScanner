@@ -41,11 +41,11 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     }
 
     private fun setupView() {
-        toolbar_picking_list_input.title = args.pickingListNo
+        tv_picking_detail_so.text = getString(R.string.picklistno_title, args.pickingListNo)
     }
 
     private fun setupListener() {
-        toolbar_picking_list_input.setNavigationOnClickListener {
+        cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
         et_part_no.addTextChangedListener(object : TextWatcher {
@@ -68,27 +68,23 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
             }
 
         })
-        fab_save_new.setOnClickListener {
-            if (checkMandatoryDataEmpty().not()){
+        cv_save_new.setOnClickListener {
+            if (checkMandatoryDataEmpty().not()) {
                 viewModel.pickingListRepository.insertPickingListScanEntries(
                     getPickingScanEntriesModel()
                 )
                 clearAllView()
                 context?.showToast("Data Saved")
-            }else{
+            } else {
                 context?.showToast("harap lengkapi data yang mandatory")
             }
         }
-        fab_save_exit.setOnClickListener {
-            if (checkMandatoryDataEmpty().not()){
-                viewModel.pickingListRepository.insertPickingListScanEntries(
-                    getPickingScanEntriesModel()
+        cv_view.setOnClickListener {
+            val action =
+                PickingListInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
+                    args.pickingListNo
                 )
-                context?.showToast("Data Saved")
-                view?.findNavController()?.popBackStack()
-            }else{
-                context?.showToast("harap lengkapi data yang mandatory")
-            }
+            view?.findNavController()?.navigate(action)
         }
     }
 
@@ -106,7 +102,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         )
     }
 
-    private fun clearAllView(){
+    private fun clearAllView() {
         et_part_no.text?.clear()
         et_sn.text?.clear()
         et_mac_address.text?.clear()
@@ -139,18 +135,18 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         pickListValue = data
     }
 
-    private fun checkMandatoryDataEmpty():Boolean{
+    private fun checkMandatoryDataEmpty(): Boolean {
         var anyEmpty = false
-        if (et_part_no.text.toString().isEmpty()){
+        if (et_part_no.text.toString().isEmpty()) {
             anyEmpty = true
         }
-        if (et_mac_address.text.toString().isEmpty()){
+        if (et_mac_address.text.toString().isEmpty()) {
             anyEmpty = true
         }
-        if (et_nks_no.text.toString().isEmpty()){
+        if (et_nks_no.text.toString().isEmpty()) {
             anyEmpty = true
         }
-        if (et_sn.text.toString().isEmpty()){
+        if (et_sn.text.toString().isEmpty()) {
             anyEmpty = true
         }
         return anyEmpty

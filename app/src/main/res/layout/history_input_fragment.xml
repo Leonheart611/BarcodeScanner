@@ -1,56 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cv_save_new"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:paddingStart="5dp"
-        android:paddingRight="5dp"
-        app:cardElevation="5dp"
-        app:cardPreventCornerOverlap="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/cv_view"
-        app:layout_constraintStart_toEndOf="@+id/cv_back">
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/save_and_new"
-            android:textSize="18sp" />
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cv_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:paddingStart="5dp"
-        android:paddingRight="5dp"
-        app:cardElevation="5dp"
-        app:cardPreventCornerOverlap="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="View"
-            android:textSize="18sp" />
-    </androidx.cardview.widget.CardView>
+    tools:context=".ui.history.HistoryInputFragment">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_back"
@@ -91,8 +45,8 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_picking_list_input"
-        android:layout_width="match_parent"
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/ic_launcher_background"
         android:minHeight="?attr/actionBarSize"
@@ -100,35 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/company_name"
-        app:titleTextColor="@android:color/black" />
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_picking_detail_so">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <include
-                android:id="@+id/include"
-                layout="@layout/item_input_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+        app:title="@string/company_name" />
 
     <TextView
         android:id="@+id/tv_picking_detail_so"
@@ -141,15 +67,25 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_picking_list_input" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <View
-        android:id="@+id/view4"
+        android:id="@+id/view9"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginEnd="8dp"
         android:background="@android:color/black"
         app:layout_constraintEnd_toEndOf="@+id/tv_picking_detail_so"
         app:layout_constraintStart_toStartOf="@+id/tv_picking_detail_so"
         app:layout_constraintTop_toBottomOf="@+id/tv_picking_detail_so" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_input_history"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/cv_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view9" />
 </androidx.constraintlayout.widget.ConstraintLayout>

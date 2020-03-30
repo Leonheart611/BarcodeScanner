@@ -15,21 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.home.adapter.HomeAdapterView
+import dynamia.com.core.data.model.*
 import dynamia.com.core.util.Constant.PICKING_LIST
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
 import dynamia.com.core.util.readJsonAsset
 import dynamia.com.core.util.showToast
-import dynamia.com.core.data.model.HomeData
-import dynamia.com.core.data.model.PickingListHeader
-import dynamia.com.core.data.model.PickingListLine
-import dynamia.com.core.data.model.PickingListScanEntries
-import dynamia.com.core.data.model.ReceiptImportHeader
-import dynamia.com.core.data.model.ReceiptImportLine
-import dynamia.com.core.data.model.ReceiptImportScanEntries
-import dynamia.com.core.data.model.ReceiptLocalHeader
-import dynamia.com.core.data.model.ReceiptLocalLine
-import dynamia.com.core.data.model.ReceiptLocalScanEntries
 import kotlinx.android.synthetic.main.home_fragment.*
 import kotlinx.android.synthetic.main.refresh_warning_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -52,6 +43,7 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
     }
 
     private fun initView() {
+        tv_employee_name.text = getString(R.string.employee_title, viewModel.getEmployeeName())
         val adapter = HomeAdapterView(
             getHomeDataList(),
             this
@@ -61,7 +53,9 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
     }
 
     private fun setListener(){
-        toolbar_home.setNavigationOnClickListener {
+        cv_log_out.setOnClickListener {
+            viewModel.clearAllDB()
+            context?.showToast("Log Out")
             view?.findNavController()?.popBackStack()
         }
         toolbar_home.setOnMenuItemClickListener {
@@ -73,7 +67,7 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
                 else -> false
             }
         }
-        fab_refresh_data.setOnClickListener {
+        cv_refresh.setOnClickListener {
             showDialog()
         }
     }

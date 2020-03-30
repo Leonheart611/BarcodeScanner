@@ -25,6 +25,7 @@ interface PickingListRepository {
 
     fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>>
     fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue): Job
+    fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
     fun clearPickingListScanEntries()
 }
 
@@ -80,6 +81,10 @@ class PickingListRepositoryImpl(private val pickingListDao: PickingListDao) :
         scope.launch(Dispatchers.IO) {
             pickingListDao.insertPickingListScanEntries(pickingListScanEntriesValue)
         }
+
+    override fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue) {
+        pickingListDao.deletePickingListScanEntries(pickingListScanEntriesValue)
+    }
 
     override fun clearPickingListScanEntries() {
         pickingListDao.clearPickingListScanEntries()

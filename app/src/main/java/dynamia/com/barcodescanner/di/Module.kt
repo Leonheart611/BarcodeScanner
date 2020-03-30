@@ -1,5 +1,6 @@
 package dynamia.com.barcodescanner.di
 
+import dynamia.com.barcodescanner.ui.history.HistoryInputViewModel
 import dynamia.com.core.data.LocalDatabase
 import dynamia.com.barcodescanner.ui.home.HomeViewModel
 import dynamia.com.barcodescanner.ui.login.LoginViewModel
@@ -29,10 +30,11 @@ val injectionModule = module {
     single<ReceiptImportRepository> { ReceiptImportRepositoryImpl(get()) }
     single<ReceiptLocalRepository> { ReceiptLocalRepositoryImpl(get()) }
 
-    viewModel { LoginViewModel(get(),get(),get()) }
-    viewModel { HomeViewModel(get(),get(),get()) }
-    viewModel { PickingListViewModel(get()) }
+    viewModel { LoginViewModel(get(),get(),get(),get()) }
+    viewModel { HomeViewModel(get(),get(),get(),get()) }
+    viewModel { PickingListViewModel(get(),get()) }
     viewModel { PickingDetailViewModel(get()) }
     viewModel { PickingListInputViewModel(get()) }
     viewModel { ReceiptViewModel(get(),get()) }
+    viewModel { HistoryInputViewModel(get(),get()) }
 }
