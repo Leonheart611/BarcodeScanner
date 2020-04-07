@@ -36,7 +36,7 @@ class PickingListAdapter(
         fun bind(pickingListHeaderValue: PickingListHeaderValue, listener: OnPickinglistListener) {
             with(itemView) {
                 tv_so_no.text = pickingListHeaderValue.sONo
-                tv_order_date.text = pickingListHeaderValue.orderDate?.toNormalDate()
+                tv_order_date.text = pickingListHeaderValue.requestedDeliveryDate.toNormalDate()
                 tv_picklist_no.text = pickingListHeaderValue.pickingListNo
                 tv_sell_to_customer_name.text = pickingListHeaderValue.sellToCustomerName
                 setOnClickListener {

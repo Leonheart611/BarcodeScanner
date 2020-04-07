@@ -5,8 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 
 data class ReceiptLocalScanEntries(
-    @SerializedName("odata.metadata")
-    val odataMetadata: String,
     @SerializedName("value")
     val value: List<ReceiptLocalScanEntriesValue>
 )

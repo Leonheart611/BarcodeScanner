@@ -48,8 +48,6 @@ class LoginFragment : Fragment() {
                     password = tied_password.text.toString(),
                     employee = et_employee.text.toString()
                 )
-                setDataFromJsonLocal()
-                context?.showToast("Login Success")
                 findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
             }else{
                 context?.showToast("Please fill all form")

@@ -13,10 +13,10 @@ import java.util.concurrent.TimeUnit
 object RetrofitBuilder {
     private var retrofit: Retrofit? = null
     private var baseURL =
-        "http://mikaoctofrentzen:7048/DynamicsNAV90/Odata/Company('PT.%20Mastersystem%20Infotama')/"
+        "http://mikaoctofrentzen:7048/DynamicsNAV90/OData/Company('PT.%20Mastersystem%20Infotama')/"
 
     fun getClient(
-        serverAddress: String,
+        serverAddress: String = "",
         username: String = "nav",
         password: String = "12345"
     ): API {
@@ -25,7 +25,7 @@ object RetrofitBuilder {
             logger.level = HttpLoggingInterceptor.Level.BODY
 
             val client = OkHttpClient.Builder()
-                .authenticator(NTLMAuthenticator(username, password, username))
+                .authenticator(NTLMAuthenticator(username, password, ""))
                 .addInterceptor(CustomInterceptor())
                 .addNetworkInterceptor(logger)
                 .connectTimeout(120, TimeUnit.SECONDS)
@@ -33,7 +33,7 @@ object RetrofitBuilder {
                 .writeTimeout(90, TimeUnit.SECONDS)
                 .build()
             retrofit = Retrofit.Builder()
-                .baseUrl(baseURL)
+                .baseUrl(serverAddress)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
@@ -45,11 +45,9 @@ object RetrofitBuilder {
     class CustomInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val url = chain.request().url.newBuilder()
-                .addQueryParameter("format", "json")
+                .addQueryParameter("\$format", "json")
                 .build()
             val request = chain.request().newBuilder()
-                .addHeader("accept", "application/json;odata=verbose")
-                .addHeader("content-Type", "application/json;odata=verbose")
                 .url(url)
                 .build()
             return chain.proceed(request)

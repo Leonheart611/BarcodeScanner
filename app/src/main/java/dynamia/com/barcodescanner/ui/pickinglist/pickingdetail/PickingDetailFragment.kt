@@ -47,8 +47,8 @@ class PickingDetailFragment : Fragment() {
         tv_picking_detail_so.text = getString(R.string.picklistno_title,args.pickingListNo)
         with(pickingListHeaderValue) {
             et_customer_name.setText(sellToCustomerName)
-            et_customer_po_no.setText(customerPurchaseOrderNo)
-            et_order_date.setText(orderDate?.toNormalDate())
+            et_customer_po_no.setText(sellToCustomerNo)
+            et_order_date.setText(requestedDeliveryDate.toNormalDate())
             et_so_no.setText(sONo)
             et_project_code.setText(projectCode)
         }
@@ -70,7 +70,7 @@ class PickingDetailFragment : Fragment() {
                 PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(args.pickingListNo)
             view?.findNavController()?.navigate(action)
         }
-        toolbar_picking_detail.setNavigationOnClickListener {
+        cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
     }

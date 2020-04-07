@@ -5,13 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 
 data class ReceiptLocalLine(
-    @SerializedName("odata.metadata")
-    val odataMetadata: String,
     @SerializedName("value")
     val value: List<ReceiptLocalLineValue>
 )
 
-@Entity(tableName = "ReceiptLocalLine")
+/*@Entity(tableName = "ReceiptLocalLine")
 data class ReceiptLocalLineValue(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
@@ -43,4 +41,26 @@ data class ReceiptLocalLineValue(
     val type: String,
     @SerializedName("Unit_of_Measure")
     val unitOfMeasure: String
+)*/
+
+@Entity(tableName = "ReceiptLocalLine")
+data class ReceiptLocalLineValue(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int,
+    @SerializedName("Document_Type")
+    val documentType: String,
+    @SerializedName("Document_No")
+    val documentNo: String,
+    @SerializedName("Line_No")
+    val lineNo: Int,
+    @SerializedName("Type")
+    val type: String,
+    @SerializedName("No")
+    val no: String,
+    @SerializedName("Description")
+    val description: String,
+    @SerializedName("Quantity")
+    val quantity: String,
+    @SerializedName("Outstanding_Quantity")
+    val outstandingQuantity: String
 )

@@ -35,7 +35,7 @@ class PickingMultipleLineAdapter(
             with(itemView) {
                 tv_line_no.text = pickingListLineValue.lineNo.toString()
                 tv_description.text = pickingListLineValue.description
-                tv_description_2.text = pickingListLineValue.description2
+                tv_description_2.text = pickingListLineValue.partNoOriginal
                 tv_outstanding.visibility = View.GONE
                 setOnClickListener {
                     listener.onMultiplelineSelected(pickingListLineValue)

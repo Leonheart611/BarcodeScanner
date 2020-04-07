@@ -5,8 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 
 data class PickingListScanEntries(
-    @SerializedName("odata.metadata")
-    val odataMetadata: String,
     @SerializedName("value")
     val value: List<PickingListScanEntriesValue>
 )

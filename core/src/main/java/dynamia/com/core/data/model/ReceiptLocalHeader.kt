@@ -5,13 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 
 data class ReceiptLocalHeader(
-    @SerializedName("odata.metadata")
-    val odataMetadata: String,
     @SerializedName("value")
     val value: List<ReceiptLocalHeaderValue>
 )
 
-@Entity(tableName = "ReceiptLocalHeader")
+/*@Entity(tableName = "ReceiptLocalHeader")
 data class ReceiptLocalHeaderValue(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
@@ -35,4 +33,20 @@ data class ReceiptLocalHeaderValue(
     val status: String,
     @SerializedName("UpdateFromPDT")
     val updateFromPDT: Boolean
+)*/
+
+@Entity(tableName = "ReceiptLocalHeader")
+data class ReceiptLocalHeaderValue(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int,
+    @SerializedName("Document_Type")
+    val documentType: String,
+    @SerializedName("No")
+    val no: String,
+    @SerializedName("Buy_from_Vendor_No")
+    val buyFromVendorNo: String,
+    @SerializedName("Buy_from_Vendor_Name")
+    val buyFromVendorName: String,
+    @SerializedName("Employee_Code")
+    val employeeCode: String
 )

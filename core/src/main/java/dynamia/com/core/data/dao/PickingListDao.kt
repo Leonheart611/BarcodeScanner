@@ -32,7 +32,7 @@ interface PickingListDao {
 
 
 
-    @Query("SELECT * FROM PickingListLine WHERE description2 = :partNo AND pickingListNo = :picking_List_No")
+    @Query("SELECT * FROM PickingListLine WHERE partNoOriginal = :partNo AND pickingListNo = :picking_List_No")
     fun getAllPickingListLineFromInsert(partNo:String, picking_List_No: String):List<PickingListLineValue>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

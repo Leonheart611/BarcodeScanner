@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +30,11 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
 
     private val viewModel: HomeViewModel by viewModel()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.getAllDataFromAPI()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,8 +44,17 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setobserverable()
         initView()
         setListener()
+    }
+
+    private fun setobserverable(){
+        viewModel.message.observe(viewLifecycleOwner, Observer {
+            it.let {
+                context?.showToast(it)
+            }
+        })
     }
 
     private fun initView() {
@@ -115,7 +130,7 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
                 window
                     ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 btn_refresh_yes.setOnClickListener {
-                    resetDataFromJsonLocal()
+                    //resetDataFromJsonLocal()
                     initView()
                     dismiss()
                 }
