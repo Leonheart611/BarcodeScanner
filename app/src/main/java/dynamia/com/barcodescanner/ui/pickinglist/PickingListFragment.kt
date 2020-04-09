@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingListAdapter
+import kotlinx.android.synthetic.main.header_layout.*
 import kotlinx.android.synthetic.main.pickinglist_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,7 +33,8 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
     }
 
     private fun initView() {
-        tv_employee_name2.text = viewModel.getEmployeeName()
+        tv_employee_name.text = viewModel.getEmployeeName()
+        tv_title_header.text = getString(R.string.pickingList_header_title)
         viewModel.pickingListRepository.getAllPickingListHeader().observe(viewLifecycleOwner,
             Observer {
                 val adapter = PickingListAdapter(
@@ -46,9 +48,6 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
     }
 
     private fun setupListener() {
-        tb_posolist.setNavigationOnClickListener {
-            view?.findNavController()?.popBackStack()
-        }
         cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }

@@ -8,28 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.pickinglist.PickingListFragment">
 
-    <TextView
-        android:id="@+id/tv_employee_name2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tb_posolist"
-        tools:text="Hyoh The Delta Star" />
-
-    <View
-        android:id="@+id/view2"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@android:color/black"
-        app:layout_constraintEnd_toEndOf="@+id/tv_employee_name2"
-        app:layout_constraintStart_toStartOf="@+id/tv_employee_name2"
-        app:layout_constraintTop_toBottomOf="@+id/tv_employee_name2" />
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_back"
         android:layout_width="wrap_content"
@@ -68,27 +46,22 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tb_posolist"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/company_name"
-        app:titleTextColor="@android:color/black" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_pickinglist"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/cv_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_employee_name2" />
+        app:layout_constraintTop_toBottomOf="@+id/include2" />
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/header_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,12 @@ class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModel()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewModel.checkLoginVariables())
+            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,9 +45,9 @@ class LoginFragment : Fragment() {
         setupListener()
     }
 
-    private fun setupListener(){
+    private fun setupListener() {
         btn_login.setOnClickListener {
-            if (checkNotEmpty()){
+            if (checkNotEmpty()) {
                 viewModel.saveLoginVariable(
                     hostname = et_server_host.text.toString(),
                     username = tied_username.text.toString(),
@@ -49,36 +55,36 @@ class LoginFragment : Fragment() {
                     employee = et_employee.text.toString()
                 )
                 findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-            }else{
+            } else {
                 context?.showToast("Please fill all form")
             }
         }
     }
 
-    private fun checkNotEmpty():Boolean{
+    private fun checkNotEmpty(): Boolean {
         var result = true
-        if (tied_password.text.toString().isEmpty()){
+        if (tied_password.text.toString().isEmpty()) {
             result = false
         }
-        if (tied_username.text.toString().isEmpty()){
+        if (tied_username.text.toString().isEmpty()) {
             result = false
         }
-        if (et_server_host.text.toString().isEmpty()){
+        if (et_server_host.text.toString().isEmpty()) {
             result = false
         }
-        if (et_employee.text.toString().isEmpty()){
+        if (et_employee.text.toString().isEmpty()) {
             result = false
         }
         return result
     }
 
-    private fun setDataFromJsonLocal(){
+    private fun setDataFromJsonLocal() {
         val pickingListHeader = context?.readJsonAsset("PickingListHeader.json")
         val pickingListLine = context?.readJsonAsset("PickingListLine.json")
         val pickingListScanEntries = context?.readJsonAsset("PickingListScanEntries.json")
 
         val pickingListHeaders = Gson().fromJson(pickingListHeader, PickingListHeader::class.java)
-        pickingListHeaders.value?.forEach {pickingListValue->
+        pickingListHeaders.value?.forEach { pickingListValue ->
             pickingListValue?.let {
                 viewModel.pickingListRepository.insertPickingListHeader(it)
             }
@@ -87,8 +93,10 @@ class LoginFragment : Fragment() {
         pickingListLines.value.forEach {
             viewModel.pickingListRepository.insertPickingListLine(it)
         }
-        val pickingListScanEntriesList = Gson().fromJson(pickingListScanEntries,
-            PickingListScanEntries::class.java)
+        val pickingListScanEntriesList = Gson().fromJson(
+            pickingListScanEntries,
+            PickingListScanEntries::class.java
+        )
         pickingListScanEntriesList.value.forEach {
             viewModel.pickingListRepository.insertPickingListScanEntries(it)
         }
@@ -103,7 +111,10 @@ class LoginFragment : Fragment() {
         Gson().fromJson(receiptImportLine, ReceiptImportLine::class.java).value.forEach {
             viewModel.receiptImportRepository.insertReceiptImportLine(it)
         }
-        Gson().fromJson(receiptImportScanEntries, ReceiptImportScanEntries::class.java).value.forEach {
+        Gson().fromJson(
+            receiptImportScanEntries,
+            ReceiptImportScanEntries::class.java
+        ).value.forEach {
             viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
         }
 
@@ -117,7 +128,10 @@ class LoginFragment : Fragment() {
         Gson().fromJson(receiptLocalLine, ReceiptLocalLine::class.java).value.forEach {
             viewModel.receiptLocalRepository.insertReceiptLocalLine(it)
         }
-        Gson().fromJson(receiptLocalScanEntries, ReceiptLocalScanEntries::class.java).value.forEach {
+        Gson().fromJson(
+            receiptLocalScanEntries,
+            ReceiptLocalScanEntries::class.java
+        ).value.forEach {
             viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
         }
 

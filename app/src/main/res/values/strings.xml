@@ -23,7 +23,9 @@
     <string name="today_activity">Today Activity</string>
     <string name="back">Back</string>
     <string name="picklistno_title">Picking List: %1$s</string>
-
+    <string name="pickingList_header_title">Picking List</string>
+    <string name="receipt_local_header">Receipt Local</string>
+    <string name="receipt_import_header">Receipt Header</string>
     <string name="entry_no_title">Entry No</string>
     <string name="scan_by_title">Scan By</string>
     <string name="part_no_title">Part No</string>

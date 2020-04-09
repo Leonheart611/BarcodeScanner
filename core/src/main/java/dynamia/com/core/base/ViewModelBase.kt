@@ -6,7 +6,6 @@ import dynamia.com.core.util.Constant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 
 
 abstract class ViewModelBase(private val sharedPreferences: SharedPreferences) : ViewModel() {
@@ -33,8 +32,10 @@ abstract class ViewModelBase(private val sharedPreferences: SharedPreferences) :
         return sharedPreferences.getString(Constant.EMPLOYEE_SHARED_PREFERENCES, "")
     }
 
-    fun checkLoginVariables() {
-
+    fun checkLoginVariables():Boolean {
+       with(sharedPreferences){
+          return this.getString(Constant.HOST_DOMAIN_SHARED_PREFERENCES,"").equals("").not()
+       }
     }
 
     override fun onCleared() {

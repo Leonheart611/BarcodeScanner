@@ -32,7 +32,8 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getAllDataFromAPI()
+        if (viewModel.checkDBNotNull())
+            viewModel.getAllDataFromAPI()
     }
 
     override fun onCreateView(
@@ -44,12 +45,12 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setobserverable()
+        setObservable()
         initView()
         setListener()
     }
 
-    private fun setobserverable(){
+    private fun setObservable() {
         viewModel.message.observe(viewLifecycleOwner, Observer {
             it.let {
                 context?.showToast(it)
@@ -67,7 +68,7 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
         rv_home_list.adapter = adapter
     }
 
-    private fun setListener(){
+    private fun setListener() {
         cv_log_out.setOnClickListener {
             viewModel.clearAllDB()
             context?.showToast("Log Out")
@@ -115,35 +116,47 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
             PICKING_LIST -> {
                 findNavController().navigate(R.id.action_homeFragment_to_pickingListFragment)
             }
-            else->{
+            RECEIPT_LOCAL->{
+                val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
+                    RECEIPT_LOCAL)
+                findNavController().navigate(action)
+            }
+            RECEIPT_IMPORT->{
+                val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
+                    RECEIPT_IMPORT)
+                findNavController().navigate(action)
+            }
+            else -> {
                 context?.showToast("Under Maintenance please contact the Developer")
             }
         }
     }
 
     private fun showDialog() {
-        context?.let {context->
+        context?.let { context ->
             val dialog = Dialog(context)
-            with(dialog){
+            with(dialog) {
                 setContentView(R.layout.refresh_warning_dialog)
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 window
-                    ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    ?.setLayout(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
                 btn_refresh_yes.setOnClickListener {
-                    //resetDataFromJsonLocal()
+                    viewModel.getAllDataFromAPI()
                     initView()
                     dismiss()
                 }
                 btn_refresh_no.setOnClickListener {
                     dismiss()
                 }
-
                 show()
             }
         }
     }
 
-    private fun resetDataFromJsonLocal(){
+    private fun resetDataFromJsonLocal() {
         viewModel.clearAllDB()
         val pickingListHeader = context?.readJsonAsset("PickingListHeader.json")
         val pickingListLine = context?.readJsonAsset("PickingListLine.json")
@@ -151,7 +164,7 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
 
         val pickingListHeaders = Gson().fromJson(pickingListHeader, PickingListHeader::class.java)
 
-        pickingListHeaders.value?.forEach {pickingListValue->
+        pickingListHeaders.value?.forEach { pickingListValue ->
             pickingListValue?.let {
                 viewModel.pickingListRepository.insertPickingListHeader(it)
             }
@@ -160,8 +173,10 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
         pickingListLines.value.forEach {
             viewModel.pickingListRepository.insertPickingListLine(it)
         }
-        val pickingListScanEntriesList = Gson().fromJson(pickingListScanEntries,
-            PickingListScanEntries::class.java)
+        val pickingListScanEntriesList = Gson().fromJson(
+            pickingListScanEntries,
+            PickingListScanEntries::class.java
+        )
         pickingListScanEntriesList.value.forEach {
             viewModel.pickingListRepository.insertPickingListScanEntries(it)
         }
@@ -176,7 +191,10 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
         Gson().fromJson(receiptImportLine, ReceiptImportLine::class.java).value.forEach {
             viewModel.receiptImportRepository.insertReceiptImportLine(it)
         }
-        Gson().fromJson(receiptImportScanEntries, ReceiptImportScanEntries::class.java).value.forEach {
+        Gson().fromJson(
+            receiptImportScanEntries,
+            ReceiptImportScanEntries::class.java
+        ).value.forEach {
             viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
         }
 
@@ -190,7 +208,10 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
         Gson().fromJson(receiptLocalLine, ReceiptLocalLine::class.java).value.forEach {
             viewModel.receiptLocalRepository.insertReceiptLocalLine(it)
         }
-        Gson().fromJson(receiptLocalScanEntries, ReceiptLocalScanEntries::class.java).value.forEach {
+        Gson().fromJson(
+            receiptLocalScanEntries,
+            ReceiptLocalScanEntries::class.java
+        ).value.forEach {
             viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
         }
 
