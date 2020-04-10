@@ -14,14 +14,13 @@ import kotlin.coroutines.CoroutineContext
 interface ReceiptLocalRepository {
     //ReceiptLocalHeader--------------------------------------------------
     fun getAllReceiptLocalHeader(): LiveData<List<ReceiptLocalHeaderValue>>
-
+    fun getReceiptLocalHeader(documentNo: String):LiveData<ReceiptLocalHeaderValue>
     fun insertReceiptLocalHeader(receiptLocalHeaderValue: ReceiptLocalHeaderValue): Job
     fun getCountReceiptLocalHeader(): Int
     fun clearReceiptLocalHeader()
 
     //ReceiptLocalLineValue--------------------------------------------------
-    fun getAllReceiptLocalLine(): LiveData<List<ReceiptLocalLineValue>>
-
+    fun getAllReceiptLocalLine(documentNo:String): LiveData<List<ReceiptLocalLineValue>>
     fun insertReceiptLocalLine(receiptLocalLineValue: ReceiptLocalLineValue): Job
     fun clearReceiptLocalLine()
 
@@ -41,6 +40,10 @@ class ReceiptLocalRepositoryImpl(private val dao: ReceiptLocalDao) : ReceiptLoca
         return dao.getAllReceiptLocalHeader()
     }
 
+    override fun getReceiptLocalHeader(documentNo: String): LiveData<ReceiptLocalHeaderValue> {
+        return dao.getReceiptLocalHeader(documentNo)
+    }
+
     override fun insertReceiptLocalHeader(receiptLocalHeaderValue: ReceiptLocalHeaderValue): Job =
         scope.launch(Dispatchers.IO) {
             dao.insertReceiptLocalHeader(receiptLocalHeaderValue)
@@ -54,8 +57,8 @@ class ReceiptLocalRepositoryImpl(private val dao: ReceiptLocalDao) : ReceiptLoca
         dao.clearReceiptLocalHeader()
     }
 
-    override fun getAllReceiptLocalLine(): LiveData<List<ReceiptLocalLineValue>> {
-        return dao.getAllReceiptLocalLine()
+    override fun getAllReceiptLocalLine(documentNo:String): LiveData<List<ReceiptLocalLineValue>> {
+        return dao.getAllReceiptLocalLine(documentNo)
     }
 
     override fun insertReceiptLocalLine(receiptLocalLineValue: ReceiptLocalLineValue): Job =

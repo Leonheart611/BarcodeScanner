@@ -31,6 +31,10 @@
     <string name="part_no_title">Part No</string>
     <string name="qty_title">QTY</string>
     <string name="sn_title">SN</string>
+    <string name="vendor_name_title">Vendor Name</string>
+    <string name="expect_receipt_date_title">Expected Receipt Date</string>
+    <string name="project_code_title">Project Code</string>
+    <string name="po_title_header">PO: %1$s</string>
     
     <string name="server_host_name">http://mikaoctofrentzen:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"</string>
     <string name="user_name">nav</string>

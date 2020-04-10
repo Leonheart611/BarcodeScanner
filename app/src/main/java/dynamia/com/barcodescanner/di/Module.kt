@@ -8,6 +8,7 @@ import dynamia.com.barcodescanner.ui.pickinglist.PickingListViewModel
 import dynamia.com.barcodescanner.ui.pickinglist.pickingdetail.PickingDetailViewModel
 import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.PickingListInputViewModel
 import dynamia.com.barcodescanner.ui.receipt.ReceiptViewModel
+import dynamia.com.barcodescanner.ui.receipt.detail.ReceiptDetailViewModel
 import dynamia.com.core.data.repository.PickingListRepository
 import dynamia.com.core.data.repository.PickingListRepositoryImpl
 import dynamia.com.core.data.repository.ReceiptImportRepository
@@ -37,4 +38,5 @@ val injectionModule = module {
     viewModel { PickingListInputViewModel(get()) }
     viewModel { ReceiptViewModel(get(),get(),get()) }
     viewModel { HistoryInputViewModel(get(),get()) }
+    viewModel { ReceiptDetailViewModel(get(),get(),get()) }
 }

@@ -16,7 +16,7 @@ class ReceiptLocalItemAdapter(val values:MutableList<ReceiptLocalHeaderValue>,va
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceiptLocalHolder {
-        return ReceiptLocalHolder(parent.inflate(R.layout.receipt_item_import_layout))
+        return ReceiptLocalHolder(parent.inflate(R.layout.item_receipt_list))
     }
 
     override fun getItemCount(): Int {

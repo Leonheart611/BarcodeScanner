@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -70,18 +69,10 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
 
     private fun setListener() {
         cv_log_out.setOnClickListener {
+            viewModel.clearSharedpreference()
             viewModel.clearAllDB()
             context?.showToast("Log Out")
-            view?.findNavController()?.popBackStack()
-        }
-        toolbar_home.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.home_logout -> {
-                    view?.findNavController()?.popBackStack()
-                    true
-                }
-                else -> false
-            }
+            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
         }
         cv_refresh.setOnClickListener {
             showDialog()

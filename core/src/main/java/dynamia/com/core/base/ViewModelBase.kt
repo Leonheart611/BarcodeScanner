@@ -1,6 +1,7 @@
 package dynamia.com.core.base
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dynamia.com.core.util.Constant
 import kotlinx.coroutines.CoroutineScope
@@ -32,10 +33,12 @@ abstract class ViewModelBase(private val sharedPreferences: SharedPreferences) :
         return sharedPreferences.getString(Constant.EMPLOYEE_SHARED_PREFERENCES, "")
     }
 
-    fun checkLoginVariables():Boolean {
-       with(sharedPreferences){
-          return this.getString(Constant.HOST_DOMAIN_SHARED_PREFERENCES,"").equals("").not()
-       }
+    fun checkLoginVariables(): Boolean {
+        with(sharedPreferences) {
+            val hostDomain = this.getString(Constant.HOST_DOMAIN_SHARED_PREFERENCES, "")
+            Log.e("HostDomain",hostDomain)
+            return !hostDomain.isNullOrEmpty()
+        }
     }
 
     override fun onCleared() {

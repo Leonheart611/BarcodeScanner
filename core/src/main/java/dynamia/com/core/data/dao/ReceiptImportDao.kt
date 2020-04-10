@@ -15,6 +15,9 @@ interface ReceiptImportDao {
     @Query("SELECT * FROM ReceiptImportHeader")
     fun getAllReceiptImportHeader(): LiveData<List<ReceiptImportHeaderValue>>
 
+    @Query("SELECT * FROM ReceiptImportHeader WHERE `no`= :documentNo")
+    fun getReceiptImportHeader(documentNo:String):LiveData<ReceiptImportHeaderValue>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptImportHeader(receiptImportHeaderValue: ReceiptImportHeaderValue)
 
@@ -25,8 +28,8 @@ interface ReceiptImportDao {
     fun clearReceiptImportHeader()
 
     //ReceiptImportLine------------------------------------------------------
-    @Query("SELECT * FROM ReceiptImportLine")
-    fun getAllReceiptImportLine(): LiveData<List<ReceiptImportLineValue>>
+    @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :documentNo")
+    fun getAllReceiptImportLine(documentNo: String): LiveData<List<ReceiptImportLineValue>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptImportLine(receiptImportLineValue: ReceiptImportLineValue)

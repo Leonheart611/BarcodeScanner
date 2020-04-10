@@ -15,12 +15,12 @@ interface ReceiptImportRepository {
     //ReceiptImportHeader------------------------------------------------------
     fun getAllReceiptImportHeader(): LiveData<List<ReceiptImportHeaderValue>>
     fun insertReceiptImportHeader(receiptImportHeaderValue: ReceiptImportHeaderValue): Job
+    fun getReceiptImportHeader(documentNo:String):LiveData<ReceiptImportHeaderValue>
     fun getCountReceiptImportHeader(): Int
     fun clearReceiptImportHeader()
 
     //ReceiptImportLine------------------------------------------------------
-    fun getAllReceiptImportLine(): LiveData<List<ReceiptImportLineValue>>
-
+    fun getAllReceiptImportLine(documentNo: String): LiveData<List<ReceiptImportLineValue>>
     fun insertReceiptImportLine(receiptImportLineValue: ReceiptImportLineValue): Job
     fun clearReceiptImportLine()
 
@@ -40,6 +40,10 @@ class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptIm
         return dao.getAllReceiptImportHeader()
     }
 
+    override fun getReceiptImportHeader(documentNo: String): LiveData<ReceiptImportHeaderValue> {
+        return dao.getReceiptImportHeader(documentNo)
+    }
+
     override fun insertReceiptImportHeader(receiptImportHeaderValue: ReceiptImportHeaderValue): Job =
         scope.launch(Dispatchers.IO) {
             dao.insertReceiptImportHeader(receiptImportHeaderValue)
@@ -53,8 +57,8 @@ class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptIm
         dao.clearReceiptImportHeader()
     }
 
-    override fun getAllReceiptImportLine(): LiveData<List<ReceiptImportLineValue>> {
-        return dao.getAllReceiptImportLine()
+    override fun getAllReceiptImportLine(documentNo: String): LiveData<List<ReceiptImportLineValue>> {
+        return dao.getAllReceiptImportLine(documentNo)
     }
 
     override fun insertReceiptImportLine(receiptImportLineValue: ReceiptImportLineValue): Job =

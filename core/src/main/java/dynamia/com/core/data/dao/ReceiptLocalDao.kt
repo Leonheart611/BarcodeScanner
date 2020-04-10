@@ -15,6 +15,9 @@ interface ReceiptLocalDao {
     @Query("SELECT * FROM ReceiptLocalHeader")
     fun getAllReceiptLocalHeader(): LiveData<List<ReceiptLocalHeaderValue>>
 
+    @Query("SELECT * FROM ReceiptLocalHeader WHERE `no`= :documentNo")
+    fun getReceiptLocalHeader(documentNo: String):LiveData<ReceiptLocalHeaderValue>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptLocalHeader(receiptLocalHeaderValue: ReceiptLocalHeaderValue)
 
@@ -25,8 +28,8 @@ interface ReceiptLocalDao {
     fun clearReceiptLocalHeader()
 
     //ReceiptLocalLineValue--------------------------------------------------
-    @Query("SELECT * FROM ReceiptLocalLine")
-    fun getAllReceiptLocalLine(): LiveData<List<ReceiptLocalLineValue>>
+    @Query("SELECT * FROM ReceiptLocalLine WHERE documentNo =:documentNo")
+    fun getAllReceiptLocalLine(documentNo:String): LiveData<List<ReceiptLocalLineValue>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptLocalLine(receiptLocalLineValue: ReceiptLocalLineValue)

@@ -1,8 +1,7 @@
 package dynamia.com.barcodescanner.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.navigation.NavController
+import androidx.appcompat.app.AppCompatActivity
 import dynamia.com.barcodescanner.R
 
 class MainActivity : AppCompatActivity() {

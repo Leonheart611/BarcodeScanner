@@ -93,5 +93,9 @@ class HomeViewModel(
         receiptLocalRepository.clearReceiptLocalLine()
         receiptLocalRepository.clearReceiptLocalScanEntries()
     }
+
+    fun clearSharedpreference(){
+        sharedPreferences.edit().clear().apply()
+    }
 }
 

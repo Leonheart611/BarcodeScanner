@@ -60,8 +60,8 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
             Constant.RECEIPT_LOCAL -> {
                 viewModel.receiptLocalRepository.getAllReceiptLocalHeader()
                     .observe(viewLifecycleOwner,
-                        Observer {receiptLocalHeaders->
-                            with(rv_receipt_list){
+                        Observer { receiptLocalHeaders ->
+                            with(rv_receipt_list) {
                                 adapter = ReceiptLocalItemAdapter(
                                     receiptLocalHeaders.toMutableList(),
                                     this@ReceiptFragment
@@ -89,11 +89,19 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
     }
 
     override fun onReceiptImportClickListener(documentNo: String) {
-
+        val action = ReceiptFragmentDirections.actionReceiptFragmentToReceiptDetailFragment(
+            Constant.RECEIPT_IMPORT,
+            documentNo
+        )
+        findNavController().navigate(action)
     }
 
     override fun onReceiptLocalClicklistener(documentNo: String) {
-
+        val action = ReceiptFragmentDirections.actionReceiptFragmentToReceiptDetailFragment(
+            Constant.RECEIPT_LOCAL,
+            documentNo
+        )
+        findNavController().navigate(action)
     }
 
 }
