@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_packingid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/packing_id_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_po_no"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_packingid"
+        app:title="@string/po_no_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_part_no"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_po_no"
+        app:title="@string/part_no_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_sn_no"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_part_no"
+        app:title="@string/sn_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_shipset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_sn_no"
+        app:title="@string/shipset_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_trackingid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_shipset"
+        app:title="@string/tracking_id_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_mac_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_trackingid"
+        app:title="@string/mac_address">
+
+    </dynamia.com.core.view.NormalInputLayout>
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_item_no"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_mac_address"
+        app:title="@string/item_no_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_item_no"
+        app:title="@string/description_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

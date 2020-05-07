@@ -123,6 +123,8 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                app:etenabled="false"
+                app:etfocusable="false"
                 app:inputType="string"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -137,13 +139,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                app:etenabled="false"
+                app:etfocusable="false"
                 app:inputType="string"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/et_customer_name"
-                app:title="@string/so_no_title">
-
-            </dynamia.com.core.view.NormalInputLayout>
+                app:title="@string/so_no_title"/>
 
             <dynamia.com.core.view.NormalInputLayout
                 android:id="@+id/et_customer_po_no"
@@ -151,13 +153,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                app:etenabled="false"
+                app:etfocusable="false"
                 app:inputType="string"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/et_so_no"
-                app:title="@string/customer_po_no_title">
-
-            </dynamia.com.core.view.NormalInputLayout>
+                app:title="@string/customer_po_no_title"/>
 
             <dynamia.com.core.view.NormalInputLayout
                 android:id="@+id/et_order_date"
@@ -165,13 +167,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                app:etenabled="false"
+                app:etfocusable="false"
                 app:inputType="string"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/et_customer_po_no"
-                app:title="@string/order_date_title">
-
-            </dynamia.com.core.view.NormalInputLayout>
+                app:title="@string/order_date_title"/>
 
             <dynamia.com.core.view.NormalInputLayout
                 android:id="@+id/et_project_code"
@@ -179,11 +181,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                app:etenabled="false"
+                app:etfocusable="false"
                 app:inputType="string"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/et_order_date"
-                app:title="@string/project_code"></dynamia.com.core.view.NormalInputLayout>
+                app:title="@string/project_code"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_picking_detail"

@@ -3,5 +3,7 @@
     <declare-styleable name="NormalInputLayout">
         <attr name="title" format="string"/>
         <attr name="inputType" format="string"/>
+        <attr name="etenabled" format="boolean"/>
+        <attr name="etfocusable" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -76,7 +76,7 @@ class ReceiptDetailFragment : Fragment() {
         }
     }
 
-    fun setupListener(){
+    private fun setupListener(){
         cv_post.setOnClickListener {
 
         }
@@ -84,7 +84,11 @@ class ReceiptDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
         cv_receipt.setOnClickListener {
-
+            val action = ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
+                args.poNo,
+                args.source
+            )
+            findNavController().navigate(action)
         }
     }
 

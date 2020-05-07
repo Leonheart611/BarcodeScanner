@@ -37,6 +37,9 @@ interface ReceiptImportDao {
     @Query("DELETE FROM ReceiptImportHeader")
     fun clearReceiptImportLine()
 
+    // TODO: Querrynya di buatin sekalian
+  /*  @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :poNo AND ")*/
+
     //ReceiptImportScanEntries------------------------------------------------------
     @Query("SELECT * FROM ReceiptImportScanEntries")
     fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>>

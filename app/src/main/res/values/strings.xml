@@ -19,7 +19,7 @@
     <string name="multiple_item_warning">Harap Pilih Barang yang Ingin diInput</string>
     <string name="title_core">API Module</string>
     <string name="employee_title"><u>%1$s</u></string>
-      <string name="company_name">PT. MASTERSYSTEM INFOTAMA</string>
+    <string name="company_name">PT. MASTERSYSTEM INFOTAMA</string>
     <string name="today_activity">Today Activity</string>
     <string name="back">Back</string>
     <string name="picklistno_title">Picking List: %1$s</string>
@@ -35,7 +35,14 @@
     <string name="expect_receipt_date_title">Expected Receipt Date</string>
     <string name="project_code_title">Project Code</string>
     <string name="po_title_header">PO: %1$s</string>
-    
+    <string name="packing_id_title">Packing ID</string>
+    <string name="po_no_title">PO No</string>
+    <string name="shipset_title">Shipset</string>
+    <string name="tracking_id_title">Tracking ID</string>
+    <string name="mac_address_title">Mac Address</string>
+    <string name="item_no_title">Item No</string>
+    <string name="description_title">Description</string>
+    <string name="view_title">View</string>
     <string name="server_host_name">http://mikaoctofrentzen:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"</string>
     <string name="user_name">nav</string>
     <string name="password">12345</string>

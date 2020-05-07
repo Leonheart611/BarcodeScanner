@@ -12,6 +12,7 @@ import dynamia.com.core.data.repository.ReceiptLocalRepository
 import dynamia.com.core.util.Constant.HOST_DOMAIN_SHARED_PREFERENCES
 import dynamia.com.core.util.Constant.PASSWORD_SHARED_PREFERENCES
 import dynamia.com.core.util.Constant.USERNAME_SHARED_PREFERENCES
+import dynamia.com.core.util.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -29,7 +30,7 @@ class HomeViewModel(
         )
     }
 
-    val message = MutableLiveData<String>()
+    val message = MutableLiveData<Event<String>>()
 
     fun getAllDataFromAPI() {
         clearAllDB()
@@ -67,11 +68,11 @@ class HomeViewModel(
                 for (value in receiptLocalLine.value) {
                     receiptLocalRepository.insertReceiptLocalLine(value)
                 }
-                message.postValue("Success Hit API")
+                message.postValue(Event("Success Hit API"))
             } catch (e: Exception) {
                 Crashlytics.logException(e)
                 Log.e("Failed Call API", e.localizedMessage)
-                message.postValue(e.localizedMessage)
+                message.postValue(Event(e.localizedMessage))
             }
         }
     }

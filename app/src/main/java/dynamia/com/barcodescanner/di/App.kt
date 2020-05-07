@@ -2,10 +2,13 @@ package dynamia.com.barcodescanner.di
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.getIntent
 import android.content.SharedPreferences
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties
 import org.koin.android.ext.koin.androidLogger

@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +18,7 @@ import dynamia.com.core.data.model.*
 import dynamia.com.core.util.Constant.PICKING_LIST
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
+import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.readJsonAsset
 import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.home_fragment.*
@@ -50,7 +50,7 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
     }
 
     private fun setObservable() {
-        viewModel.message.observe(viewLifecycleOwner, Observer {
+        viewModel.message.observe(viewLifecycleOwner, EventObserver {
             it.let {
                 context?.showToast(it)
             }
