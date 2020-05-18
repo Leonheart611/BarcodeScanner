@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_part_no"
+        app:layout_constraintTop_toBottomOf="@+id/et_description"
         app:title="@string/sn_title">
 
     </dynamia.com.core.view.NormalInputLayout>
@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_mac_address"
+        app:layout_constraintTop_toBottomOf="@+id/et_part_no"
         app:title="@string/item_no_title">
 
     </dynamia.com.core.view.NormalInputLayout>

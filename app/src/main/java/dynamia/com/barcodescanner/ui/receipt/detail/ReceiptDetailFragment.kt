@@ -14,6 +14,8 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptImportLineAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptLocalLineAdapter
 import dynamia.com.core.util.Constant
+import dynamia.com.core.util.EventObserver
+import dynamia.com.core.util.showToast
 import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.receipt_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -36,7 +38,7 @@ class ReceiptDetailFragment : Fragment() {
     }
 
     private fun setupView() {
-        tv_receipt_detail_po.text = getString(R.string.po_title_header,args.poNo)
+        tv_receipt_detail_po.text = getString(R.string.po_title_header, args.poNo)
         when (args.source) {
             Constant.RECEIPT_LOCAL -> {
                 viewModel.receiptLocalRepository.getReceiptLocalHeader(args.poNo)
@@ -57,37 +59,52 @@ class ReceiptDetailFragment : Fragment() {
                         })
             }
             Constant.RECEIPT_IMPORT -> {
-                viewModel.receiptImportRepository.getReceiptImportHeader(args.poNo).observe(viewLifecycleOwner,
-                    Observer {
-                        nil_vendor_name.setText(it.buyFromVendorName)
-                        nil_expected_receipt_date.setText(it.postingDate.toNormalDate())
-                        nil_project_code.setText(it.purchaseOrderNo)
-                    })
-                viewModel.receiptImportRepository.getAllReceiptImportLine(args.poNo).observe(viewLifecycleOwner,
-                    Observer {receiptImportLines->
-                        with(rv_receipt_line) {
-                            adapter = ReceiptImportLineAdapter(receiptImportLines.toMutableList())
-                            layoutManager =
-                                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                        }
-                    })
+                viewModel.receiptImportRepository.getReceiptImportHeader(args.poNo)
+                    .observe(viewLifecycleOwner,
+                        Observer {
+                            nil_vendor_name.setText(it.buyFromVendorName)
+                            nil_expected_receipt_date.setText(it.postingDate.toNormalDate())
+                            nil_project_code.setText(it.purchaseOrderNo)
+                        })
+                viewModel.receiptImportRepository.getAllReceiptImportLine(args.poNo)
+                    .observe(viewLifecycleOwner,
+                        Observer { receiptImportLines ->
+                            with(rv_receipt_line) {
+                                adapter =
+                                    ReceiptImportLineAdapter(receiptImportLines.toMutableList())
+                                layoutManager =
+                                    LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                            }
+                        })
 
             }
         }
     }
 
-    private fun setupListener(){
+    private fun setupListener() {
         cv_post.setOnClickListener {
-
+            when (args.source) {
+                Constant.RECEIPT_IMPORT -> {
+                    viewModel.receiptImportRepository.getAllReceiptImportScanEntries()
+                        .observe(viewLifecycleOwner,
+                            Observer {
+                                viewModel.postReceiptImportData(it)
+                            })
+                    viewModel.postImportMessage.observe(viewLifecycleOwner, EventObserver {
+                        context?.showToast(it)
+                    })
+                }
+            }
         }
         cv_back.setOnClickListener {
             findNavController().popBackStack()
         }
         cv_receipt.setOnClickListener {
-            val action = ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
-                args.poNo,
-                args.source
-            )
+            val action =
+                ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
+                    args.poNo,
+                    args.source
+                )
             findNavController().navigate(action)
         }
     }

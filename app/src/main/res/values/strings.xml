@@ -23,6 +23,7 @@
     <string name="today_activity">Today Activity</string>
     <string name="back">Back</string>
     <string name="picklistno_title">Picking List: %1$s</string>
+    <string name="receipthistory_title">PO No : %1$s</string>
     <string name="pickingList_header_title">Picking List</string>
     <string name="receipt_local_header">Receipt Local</string>
     <string name="receipt_import_header">Receipt Header</string>
@@ -48,4 +49,8 @@
     <string name="password">12345</string>
     <string name="domain">MIKAOCTOFRENTZE</string>
     <string name="employee_name">STEVEN</string>
+
+    <string name="error_input_message">Wajib di isi</string>
+    <string name="posted_status_true">Post Status :  True</string>
+    <string name="posted_status_false">Post Status : False</string>
 </resources>

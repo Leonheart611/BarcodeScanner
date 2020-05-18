@@ -51,6 +51,9 @@ interface PickingListDao {
     @Delete
     fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
 
+    @Update
+    fun updatePickingScanEntry(pickingListScanEntriesValue: PickingListScanEntriesValue)
+
     @Query("DELETE FROM PickingListScanEntries")
     fun clearPickingListScanEntries()
 }

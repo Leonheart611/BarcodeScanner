@@ -45,7 +45,7 @@ class HomeViewModel(
                 pickingListHeader.value?.let { pickingListHeaders ->
                     for (value in pickingListHeaders) {
                         value?.let {
-                            pickingListRepository.insertPickingListHeader(it)
+                            val result = pickingListRepository.insertPickingListHeader(it)
                         }
                     }
                 }

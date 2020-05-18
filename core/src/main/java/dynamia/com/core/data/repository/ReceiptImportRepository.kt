@@ -23,11 +23,13 @@ interface ReceiptImportRepository {
     fun getAllReceiptImportLine(documentNo: String): LiveData<List<ReceiptImportLineValue>>
     fun insertReceiptImportLine(receiptImportLineValue: ReceiptImportLineValue): Job
     fun clearReceiptImportLine()
+    fun getDetailImportLine(documentNo: String,partNo:String):List<ReceiptImportLineValue>
 
     //ReceiptImportScanEntries------------------------------------------------------
     fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>>
-
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Job
+    fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
+    fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
     fun clearReceiptImportScanEntries()
 }
 
@@ -70,6 +72,13 @@ class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptIm
         dao.clearReceiptImportLine()
     }
 
+    override fun getDetailImportLine(
+        documentNo: String,
+        partNo: String
+    ): List<ReceiptImportLineValue> {
+        return dao.getDetailImportLine(documentNo, partNo)
+    }
+
     override fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>> {
         return dao.getAllReceiptImportScanEntries()
     }
@@ -78,6 +87,14 @@ class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptIm
         scope.launch(Dispatchers.IO) {
             dao.insertReceiptImportScanEntries(receiptImportScanEntries)
         }
+
+    override fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue) {
+        dao.deleteReceiptImportScanEntry(receiptImportScanEntries)
+    }
+
+    override fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue) {
+        dao.updateReceiptImportScanEntry(receiptImportScanEntries)
+    }
 
     override fun clearReceiptImportScanEntries() {
         dao.clearReceiptImportScanEntries()

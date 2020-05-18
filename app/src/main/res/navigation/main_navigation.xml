@@ -107,6 +107,9 @@
         <argument
             android:name="pickingListNo"
             app:argType="string" />
+        <argument
+            android:name="source"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/receiptDetailFragment"
@@ -136,5 +139,8 @@
         <argument
             android:name="source"
             app:argType="string" />
+        <action
+            android:id="@+id/action_receiptInputFragment_to_historyInputFragment"
+            app:destination="@id/historyInputFragment" />
     </fragment>
 </navigation>

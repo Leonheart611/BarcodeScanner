@@ -7,7 +7,7 @@ import dynamia.com.core.data.repository.PickingListRepository
 
 class PickingListViewModel(
     val pickingListRepository: PickingListRepository,
-    val sharedPreferences: SharedPreferences
+    sharedPreferences: SharedPreferences
 ) : ViewModelBase(sharedPreferences) {
 
 }

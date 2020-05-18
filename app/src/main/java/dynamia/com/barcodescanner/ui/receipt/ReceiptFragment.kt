@@ -14,8 +14,12 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptImportItemAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptLocalItemAdapter
 import dynamia.com.core.util.Constant
+import dynamia.com.core.util.EventObserver
+import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.header_layout.*
+import kotlinx.android.synthetic.main.receipt_detail_fragment.*
 import kotlinx.android.synthetic.main.receipt_fragment.*
+import kotlinx.android.synthetic.main.receipt_fragment.cv_back
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListener,

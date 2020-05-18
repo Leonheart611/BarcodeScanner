@@ -1,10 +1,7 @@
 package dynamia.com.core.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import dynamia.com.core.data.model.ReceiptImportHeaderValue
 import dynamia.com.core.data.model.ReceiptImportLineValue
 import dynamia.com.core.data.model.ReceiptImportScanEntriesValue
@@ -37,8 +34,8 @@ interface ReceiptImportDao {
     @Query("DELETE FROM ReceiptImportHeader")
     fun clearReceiptImportLine()
 
-    // TODO: Querrynya di buatin sekalian
-  /*  @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :poNo AND ")*/
+    @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :documentNo AND itemNo =:partNo")
+    fun getDetailImportLine(documentNo: String,partNo:String):List<ReceiptImportLineValue>
 
     //ReceiptImportScanEntries------------------------------------------------------
     @Query("SELECT * FROM ReceiptImportScanEntries")
@@ -46,6 +43,12 @@ interface ReceiptImportDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue)
+
+    @Delete
+    fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
+
+    @Update
+    fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
 
     @Query("DELETE FROM ReceiptImportScanEntries")
     fun clearReceiptImportScanEntries()

@@ -1,10 +1,7 @@
 package dynamia.com.core.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import dynamia.com.core.data.model.ReceiptLocalHeaderValue
 import dynamia.com.core.data.model.ReceiptLocalLineValue
 import dynamia.com.core.data.model.ReceiptLocalScanEntriesValue
@@ -31,6 +28,9 @@ interface ReceiptLocalDao {
     @Query("SELECT * FROM ReceiptLocalLine WHERE documentNo =:documentNo")
     fun getAllReceiptLocalLine(documentNo:String): LiveData<List<ReceiptLocalLineValue>>
 
+    @Query("SELECT * FROM ReceiptLocalLine WHERE documentNo =:documentNo AND `no`=:partNo")
+    fun getReceiptLocalLineDetail(documentNo: String,partNo:String):List<ReceiptLocalLineValue>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptLocalLine(receiptLocalLineValue: ReceiptLocalLineValue)
 
@@ -43,6 +43,12 @@ interface ReceiptLocalDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
+
+    @Delete
+    fun deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
+
+    @Update
+    fun updatePickingScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
 
     @Query("DELETE FROM ReceiptLocalHeader")
     fun clearReceiptLocalScanEntries()

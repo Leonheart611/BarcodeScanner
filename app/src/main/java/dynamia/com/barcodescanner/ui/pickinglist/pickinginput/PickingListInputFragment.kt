@@ -16,6 +16,9 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.model.PickingListScanEntriesValue
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingMultipleLineAdapter
+import dynamia.com.core.util.Constant.PICKING_LIST
+import dynamia.com.core.util.getCurrentDate
+import dynamia.com.core.util.getCurrentTime
 import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.item_input_header.*
@@ -82,7 +85,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         cv_view.setOnClickListener {
             val action =
                 PickingListInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
-                    args.pickingListNo
+                    args.pickingListNo,PICKING_LIST
                 )
             view?.findNavController()?.navigate(action)
         }
@@ -90,15 +93,15 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 
     private fun getPickingScanEntriesModel(): PickingListScanEntriesValue {
         return PickingListScanEntriesValue(
-            description = et_description.text.toString(),
             documentNo = pickListValue?.documentNo ?: "",
             lineNo = pickListValue?.lineNo ?: 0,
-            pickingListNo = args.pickingListNo,
-            itemNo = et_nks_no.text.toString(),
             partNo = et_part_no.text.toString(),
-            serialNumber = et_sn.text.toString(),
+            serialNo = et_sn.text.toString(),
             macAddress = et_mac_address.text.toString(),
-            note = et_note.text.toString()
+            note = et_note.text.toString(),
+            time = context?.getCurrentTime() ?: "",
+            date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
+            employeeCode = viewModel.getEmployeeName() ?: "", qtyScan = "1"
         )
     }
 

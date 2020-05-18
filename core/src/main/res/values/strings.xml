@@ -5,4 +5,5 @@
     <string name="username_shared">username</string>
     <string name="password_shared">password</string>
     <string name="employee_shared">employee</string>
+    <string name="border">Border only</string>
 </resources>

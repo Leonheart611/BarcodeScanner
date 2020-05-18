@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 fun View.rotateFab(rotate: Boolean): Boolean {
@@ -44,8 +45,12 @@ fun String.toNormalDate():String{
     return formatter.format(parser.parse(this))
 }
 
-fun TextView.setUnderlineText(text:String){
-    val content = SpannableString(text)
-    content.setSpan(UnderlineSpan(), 0, content.length, 0)
-    this.text = content
+fun Context.getCurrentTime(): String {
+    val sdf = SimpleDateFormat("HH:mm:ss")
+    return sdf.format(Date())
+}
+
+fun Context.getCurrentDate(): String {
+    val sdf = SimpleDateFormat("yyyy-MM-dd")
+    return sdf.format(Date())
 }

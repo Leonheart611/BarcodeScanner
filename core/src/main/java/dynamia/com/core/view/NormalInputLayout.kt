@@ -78,4 +78,15 @@ class NormalInputLayout : LinearLayoutCompat {
     fun addTextWatcher(textWatcher: TextWatcher){
         et_input_layout.addTextChangedListener(textWatcher)
     }
+
+    fun getTextLength():Int{
+        return et_input_layout.text.length
+    }
+
+    fun setError(message:String){
+        et_input_layout.error = message
+    }
+    fun clearText(){
+        et_input_layout.text.clear()
+    }
 }

@@ -36,9 +36,9 @@ val injectionModule = module {
     viewModel { HomeViewModel(get(),get(),get(),get()) }
     viewModel { PickingListViewModel(get(),get()) }
     viewModel { PickingDetailViewModel(get()) }
-    viewModel { PickingListInputViewModel(get()) }
+    viewModel { PickingListInputViewModel(get(),get()) }
     viewModel { ReceiptViewModel(get(),get(),get()) }
-    viewModel { HistoryInputViewModel(get(),get()) }
+    viewModel { HistoryInputViewModel(get(),get(),get(),get()) }
     viewModel { ReceiptDetailViewModel(get(),get(),get()) }
-    viewModel { ReceiptInputViewModel(get()) }
+    viewModel { ReceiptInputViewModel(get(),get(),get()) }
 }

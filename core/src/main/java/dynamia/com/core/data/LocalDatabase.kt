@@ -19,7 +19,7 @@ import dynamia.com.core.data.model.*
         ReceiptLocalHeaderValue::class,
         ReceiptLocalLineValue::class,
         ReceiptLocalScanEntriesValue::class
-    ], version = 5, exportSchema = false
+    ], version = 7, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun pickingListDao(): PickingListDao
