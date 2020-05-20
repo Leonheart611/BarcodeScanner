@@ -44,7 +44,7 @@
     <string name="item_no_title">Item No</string>
     <string name="description_title">Description</string>
     <string name="view_title">View</string>
-    <string name="server_host_name">http://mikaoctofrentzen:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"</string>
+    <string name="server_host_name">http://mikaoctofrentzen:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"/</string>
     <string name="user_name">nav</string>
     <string name="password">12345</string>
     <string name="domain">MIKAOCTOFRENTZE</string>
@@ -53,4 +53,5 @@
     <string name="error_input_message">Wajib di isi</string>
     <string name="posted_status_true">Post Status :  True</string>
     <string name="posted_status_false">Post Status : False</string>
+    <string name="success_save_data_local">Data Saved</string>
 </resources>

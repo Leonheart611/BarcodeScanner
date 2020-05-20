@@ -1,16 +1,20 @@
 package dynamia.com.core.view
 
+import android.app.Instrumentation
 import android.content.Context
+import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
 import dynamia.com.core.R
 import kotlinx.android.synthetic.main.normal_input_layout.view.*
 
 
-class NormalInputLayout : LinearLayoutCompat {
+class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
 
     private var attrs: AttributeSet? = null
     private var defStyleAttr: Int = 0
@@ -51,10 +55,35 @@ class NormalInputLayout : LinearLayoutCompat {
                     }
                     if (focusable.not()) {
                         et_input_layout.isFocusable = focusable
+                    } else {
+                        et_input_layout.addTextChangedListener(object : TextWatcher {
+                            override fun afterTextChanged(p0: Editable?) {
+                                nextTextView()
+                            }
+
+                            override fun beforeTextChanged(
+                                p0: CharSequence?,
+                                p1: Int,
+                                p2: Int,
+                                p3: Int
+                            ) {
+
+                            }
+
+                            override fun onTextChanged(
+                                p0: CharSequence?,
+                                p1: Int,
+                                p2: Int,
+                                p3: Int
+                            ) {
+
+                            }
+                        })
+
                     }
                     tv_input_layout.text = title
                 } catch (e: Exception) {
-                    Log.e("error view text",e.localizedMessage)
+                    Log.e("error view text", e.localizedMessage)
                 } finally {
                     this.recycle()
                 }
@@ -71,22 +100,38 @@ class NormalInputLayout : LinearLayoutCompat {
         et_input_layout.setText(value)
     }
 
-    fun isEmpty():Boolean{
+    fun isEmpty(): Boolean {
         return et_input_layout.text.isEmpty()
     }
 
-    fun addTextWatcher(textWatcher: TextWatcher){
+    fun addTextWatcher(textWatcher: TextWatcher) {
         et_input_layout.addTextChangedListener(textWatcher)
     }
 
-    fun getTextLength():Int{
+    fun getTextLength(): Int {
         return et_input_layout.text.length
     }
 
-    fun setError(message:String){
+    fun setError(message: String) {
         et_input_layout.error = message
     }
-    fun clearText(){
+
+    fun clearText() {
         et_input_layout.text.clear()
+    }
+
+    override fun onFocusChange(p0: View?, p1: Boolean) {
+        tv_input_layout.isFocusable = p1
+    }
+
+    fun nextTextView() {
+        Thread(Runnable {
+            try {
+                val inst = Instrumentation()
+                inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
+            } catch (e: InterruptedException) {
+                Log.e("Error Thread KeyCode",e.localizedMessage)
+            }
+        }).start()
     }
 }

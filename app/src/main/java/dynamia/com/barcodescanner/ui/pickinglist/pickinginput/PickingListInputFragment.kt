@@ -13,15 +13,17 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingMultipleLineAdapter
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.model.PickingListScanEntriesValue
-import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingMultipleLineAdapter
 import dynamia.com.core.util.Constant.PICKING_LIST
 import dynamia.com.core.util.getCurrentDate
 import dynamia.com.core.util.getCurrentTime
 import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.item_input_header.*
+import kotlinx.android.synthetic.main.item_input_header.et_part_no
+import kotlinx.android.synthetic.main.receipt_form_item.*
 import kotlinx.android.synthetic.main.receiving_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -51,11 +53,11 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
-        et_part_no.addTextChangedListener(object : TextWatcher {
+        et_part_no.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                if (et_part_no.text.toString().length > 3) {
+                if (et_part_no.getTextLength() > 3) {
                     val data = viewModel.pickingListRepository.getAllPickingListLineFromInsert(
-                        partNo = et_part_no.text.toString(),
+                        partNo = et_part_no.getTextAsString(),
                         picking_List_No = args.pickingListNo
                     )
                     checkOnDB(data)
@@ -77,9 +79,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                     getPickingScanEntriesModel()
                 )
                 clearAllView()
-                context?.showToast("Data Saved")
-            } else {
-                context?.showToast("harap lengkapi data yang mandatory")
+                context?.showToast(getString(R.string.success_save_data_local))
             }
         }
         cv_view.setOnClickListener {
@@ -95,10 +95,10 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         return PickingListScanEntriesValue(
             documentNo = pickListValue?.documentNo ?: "",
             lineNo = pickListValue?.lineNo ?: 0,
-            partNo = et_part_no.text.toString(),
-            serialNo = et_sn.text.toString(),
-            macAddress = et_mac_address.text.toString(),
-            note = et_note.text.toString(),
+            partNo = et_part_no.getTextAsString(),
+            serialNo = et_sn_picking.getTextAsString(),
+            macAddress = et_mac_address_picking.getTextAsString(),
+            note = et_note.getTextAsString(),
             time = context?.getCurrentTime() ?: "",
             date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
             employeeCode = viewModel.getEmployeeName() ?: "", qtyScan = "1"
@@ -106,14 +106,14 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     }
 
     private fun clearAllView() {
-        et_part_no.text?.clear()
-        et_sn.text?.clear()
-        et_mac_address.text?.clear()
-        et_nks_no.text?.clear()
-        et_so.text?.clear()
-        et_description.text?.clear()
-        et_pl_dor.text?.clear()
-        et_note.text?.clear()
+        et_part_no.clearText()
+        et_sn_picking.clearText()
+        et_mac_address_picking.clearText()
+        et_sn_picking.clearText()
+        et_so.clearText()
+        et_description.clearText()
+        et_pl_no.clearText()
+        et_note.clearText()
     }
 
     fun checkOnDB(data: List<PickingListLineValue>) {
@@ -123,33 +123,28 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
             } else {
                 showMultipleDataDialog(data)
             }
-        } else {
-            context?.showToast("DATA TIDAK DI TEMUKAN")
         }
     }
 
     private fun displayAutocompleteData(data: PickingListLineValue) {
         with(data) {
             et_description.setText(description)
-            et_nks_no.setText(no)
+            et_sn_picking.setText(no)
             et_so.setText(documentNo)
-            et_pl_dor.setText(pickingListNo)
+            et_pl_no.setText(pickingListNo)
         }
         pickListValue = data
     }
 
     private fun checkMandatoryDataEmpty(): Boolean {
         var anyEmpty = false
-        if (et_part_no.text.toString().isEmpty()) {
+        if (et_part_no.isEmpty()) {
             anyEmpty = true
         }
-        if (et_mac_address.text.toString().isEmpty()) {
+        if (et_mac_address_picking.isEmpty()) {
             anyEmpty = true
         }
-        if (et_nks_no.text.toString().isEmpty()) {
-            anyEmpty = true
-        }
-        if (et_sn.text.toString().isEmpty()) {
+        if (et_sn_picking.isEmpty()) {
             anyEmpty = true
         }
         return anyEmpty

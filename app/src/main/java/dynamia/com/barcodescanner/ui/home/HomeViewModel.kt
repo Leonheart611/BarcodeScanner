@@ -4,16 +4,15 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.crashlytics.android.Crashlytics
-import dynamia.com.barcodescanner.domain.RetrofitBuilder
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.repository.PickingListRepository
 import dynamia.com.core.data.repository.ReceiptImportRepository
 import dynamia.com.core.data.repository.ReceiptLocalRepository
+import dynamia.com.core.domain.RetrofitBuilder
 import dynamia.com.core.util.Constant.HOST_DOMAIN_SHARED_PREFERENCES
 import dynamia.com.core.util.Constant.PASSWORD_SHARED_PREFERENCES
 import dynamia.com.core.util.Constant.USERNAME_SHARED_PREFERENCES
 import dynamia.com.core.util.Event
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -31,8 +30,10 @@ class HomeViewModel(
     }
 
     val message = MutableLiveData<Event<String>>()
+    val loading = MutableLiveData<Event<Boolean>>()
 
     fun getAllDataFromAPI() {
+        loading.postValue(Event(true))
         clearAllDB()
         uiScope.launch {
             try {
@@ -42,6 +43,7 @@ class HomeViewModel(
                 val receiptImportLine = retrofitService.getReceiptImportLineAsync()
                 val receiptLocalHeader = retrofitService.getReceiptLocalHeaderAsync()
                 val receiptLocalLine = retrofitService.getReceiptLocalLineAsync()
+
                 pickingListHeader.value?.let { pickingListHeaders ->
                     for (value in pickingListHeaders) {
                         value?.let {
@@ -59,20 +61,28 @@ class HomeViewModel(
                         receiptImportRepository.insertReceiptImportHeader(value)
                     }
                 }
-                for (value in receiptImportLine.value) {
-                    receiptImportRepository.insertReceiptImportLine(value)
+                receiptImportLine.value.let {receiptImportLines->
+                    for (value in receiptImportLines) {
+                        receiptImportRepository.insertReceiptImportLine(value)
+                    }
                 }
-                for (value in receiptLocalHeader.value) {
-                    receiptLocalRepository.insertReceiptLocalHeader(value)
+                receiptLocalHeader.value.let {receiptLocalheaders->
+                    for (value in receiptLocalheaders) {
+                        receiptLocalRepository.insertReceiptLocalHeader(value)
+                    }
                 }
-                for (value in receiptLocalLine.value) {
-                    receiptLocalRepository.insertReceiptLocalLine(value)
+                receiptLocalLine.value.let {receiptLocalLines->
+                    for (value in receiptLocalLines) {
+                        receiptLocalRepository.insertReceiptLocalLine(value)
+                    }
                 }
                 message.postValue(Event("Success Hit API"))
+                loading.postValue(Event(false))
             } catch (e: Exception) {
                 Crashlytics.logException(e)
                 Log.e("Failed Call API", e.localizedMessage)
                 message.postValue(Event(e.localizedMessage))
+                loading.postValue(Event(false))
             }
         }
     }

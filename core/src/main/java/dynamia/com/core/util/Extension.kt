@@ -2,12 +2,9 @@ package dynamia.com.core.util
 
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
-import android.text.SpannableString
-import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import java.text.SimpleDateFormat
@@ -22,8 +19,8 @@ fun View.rotateFab(rotate: Boolean): Boolean {
     return rotate
 }
 
-fun Context.showToast(message:String){
-    Toast.makeText(this,message,Toast.LENGTH_LONG).show()
+fun Context.showToast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 }
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
@@ -39,7 +36,7 @@ fun Context.readJsonAsset(fileName: String): String {
     return String(buffer, Charsets.UTF_8)
 }
 
-fun String.toNormalDate():String{
+fun String.toNormalDate(): String {
     val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     val formatter = SimpleDateFormat("dd/MM/yyyy")
     return formatter.format(parser.parse(this))

@@ -31,7 +31,7 @@ interface ReceiptImportDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptImportLine(receiptImportLineValue: ReceiptImportLineValue)
 
-    @Query("DELETE FROM ReceiptImportHeader")
+    @Query("DELETE FROM ReceiptImportLine")
     fun clearReceiptImportLine()
 
     @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :documentNo AND itemNo =:partNo")
@@ -49,6 +49,9 @@ interface ReceiptImportDao {
 
     @Update
     fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
+
+    @Query("SELECT * FROM ReceiptImportScanEntries WHERE sycn_status = 0")
+    fun getAllUnsycnImportScanEntry():List<ReceiptImportScanEntriesValue>
 
     @Query("DELETE FROM ReceiptImportScanEntries")
     fun clearReceiptImportScanEntries()

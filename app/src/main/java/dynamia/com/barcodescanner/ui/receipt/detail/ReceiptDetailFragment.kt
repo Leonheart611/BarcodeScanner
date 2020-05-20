@@ -85,12 +85,14 @@ class ReceiptDetailFragment : Fragment() {
         cv_post.setOnClickListener {
             when (args.source) {
                 Constant.RECEIPT_IMPORT -> {
-                    viewModel.receiptImportRepository.getAllReceiptImportScanEntries()
-                        .observe(viewLifecycleOwner,
-                            Observer {
-                                viewModel.postReceiptImportData(it)
-                            })
+                    viewModel.postReceiptImportData()
                     viewModel.postImportMessage.observe(viewLifecycleOwner, EventObserver {
+                        context?.showToast(it)
+                    })
+                }
+                Constant.RECEIPT_LOCAL -> {
+                    viewModel.postReceiptLocalData()
+                    viewModel.postLocalMessage.observe(viewLifecycleOwner, EventObserver {
                         context?.showToast(it)
                     })
                 }

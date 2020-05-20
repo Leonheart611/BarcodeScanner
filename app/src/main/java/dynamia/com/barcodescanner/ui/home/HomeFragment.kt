@@ -7,25 +7,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.home.adapter.HomeAdapterView
-import dynamia.com.core.data.model.*
+import dynamia.com.core.base.BaseFragment
+import dynamia.com.core.data.model.HomeData
 import dynamia.com.core.util.Constant.PICKING_LIST
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
 import dynamia.com.core.util.EventObserver
-import dynamia.com.core.util.readJsonAsset
 import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.home_fragment.*
 import kotlinx.android.synthetic.main.refresh_warning_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
+class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
 
     private val viewModel: HomeViewModel by viewModel()
 
@@ -55,6 +53,9 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
                 context?.showToast(it)
             }
         })
+        viewModel.loading.observe(viewLifecycleOwner,EventObserver{
+            showLoading(it)
+        })
     }
 
     private fun initView() {
@@ -72,7 +73,7 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
             viewModel.clearSharedpreference()
             viewModel.clearAllDB()
             context?.showToast("Log Out")
-            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
         }
         cv_refresh.setOnClickListener {
             showDialog()
@@ -146,67 +147,4 @@ class HomeFragment : Fragment(), HomeAdapterView.OnHomeClicklistener {
             }
         }
     }
-
-    private fun resetDataFromJsonLocal() {
-        viewModel.clearAllDB()
-        val pickingListHeader = context?.readJsonAsset("PickingListHeader.json")
-        val pickingListLine = context?.readJsonAsset("PickingListLine.json")
-        val pickingListScanEntries = context?.readJsonAsset("PickingListScanEntries.json")
-
-        val pickingListHeaders = Gson().fromJson(pickingListHeader, PickingListHeader::class.java)
-
-        pickingListHeaders.value?.forEach { pickingListValue ->
-            pickingListValue?.let {
-                viewModel.pickingListRepository.insertPickingListHeader(it)
-            }
-        }
-        val pickingListLines = Gson().fromJson(pickingListLine, PickingListLine::class.java)
-        pickingListLines.value.forEach {
-            viewModel.pickingListRepository.insertPickingListLine(it)
-        }
-        val pickingListScanEntriesList = Gson().fromJson(
-            pickingListScanEntries,
-            PickingListScanEntries::class.java
-        )
-        pickingListScanEntriesList.value.forEach {
-            viewModel.pickingListRepository.insertPickingListScanEntries(it)
-        }
-
-        val receiptImportHeader = context?.readJsonAsset("ReceiptImportHeader.json")
-        val receiptImportLine = context?.readJsonAsset("ReceiptImportLine.json")
-        val receiptImportScanEntries = context?.readJsonAsset("ReceiptImportScanEntries.json")
-
-        Gson().fromJson(receiptImportHeader, ReceiptImportHeader::class.java).value.forEach {
-            viewModel.receiptImportRepository.insertReceiptImportHeader(it)
-        }
-        Gson().fromJson(receiptImportLine, ReceiptImportLine::class.java).value.forEach {
-            viewModel.receiptImportRepository.insertReceiptImportLine(it)
-        }
-        Gson().fromJson(
-            receiptImportScanEntries,
-            ReceiptImportScanEntries::class.java
-        ).value.forEach {
-            viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
-        }
-
-        val receiptLocalHeader = context?.readJsonAsset("ReceiptLocalHeader.json")
-        val receiptLocalLine = context?.readJsonAsset("ReceiptLocalLine.json")
-        val receiptLocalScanEntries = context?.readJsonAsset("ReceiptLocalScanEntries.json")
-
-        Gson().fromJson(receiptLocalHeader, ReceiptLocalHeader::class.java).value.forEach {
-            viewModel.receiptLocalRepository.insertReceiptLocalHeader(it)
-        }
-        Gson().fromJson(receiptLocalLine, ReceiptLocalLine::class.java).value.forEach {
-            viewModel.receiptLocalRepository.insertReceiptLocalLine(it)
-        }
-        Gson().fromJson(
-            receiptLocalScanEntries,
-            ReceiptLocalScanEntries::class.java
-        ).value.forEach {
-            viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
-        }
-
-    }
-
-
 }

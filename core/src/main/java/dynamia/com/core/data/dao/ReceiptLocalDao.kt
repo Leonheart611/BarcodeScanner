@@ -34,7 +34,7 @@ interface ReceiptLocalDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptLocalLine(receiptLocalLineValue: ReceiptLocalLineValue)
 
-    @Query("DELETE FROM ReceiptLocalHeader")
+    @Query("DELETE FROM ReceiptImportLine")
     fun clearReceiptLocalLine()
 
     //ReceiptLocalScanEntriesValue--------------------------------------------------
@@ -48,7 +48,10 @@ interface ReceiptLocalDao {
     fun deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
 
     @Update
-    fun updatePickingScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
+    fun updateReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
+
+    @Query("SELECT * FROM ReceiptLocalScanEntries WHERE sycn_status = 0")
+    fun getUnsycnReceiptLocalScanEntry():List<ReceiptLocalScanEntriesValue>
 
     @Query("DELETE FROM ReceiptLocalHeader")
     fun clearReceiptLocalScanEntries()

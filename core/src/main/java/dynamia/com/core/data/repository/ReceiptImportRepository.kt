@@ -30,6 +30,7 @@ interface ReceiptImportRepository {
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Job
     fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
     fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
+    fun getAllUnsycnImportScanEntry():List<ReceiptImportScanEntriesValue>
     fun clearReceiptImportScanEntries()
 }
 
@@ -94,6 +95,10 @@ class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptIm
 
     override fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue) {
         dao.updateReceiptImportScanEntry(receiptImportScanEntries)
+    }
+
+    override fun getAllUnsycnImportScanEntry(): List<ReceiptImportScanEntriesValue> {
+        return dao.getAllUnsycnImportScanEntry()
     }
 
     override fun clearReceiptImportScanEntries() {

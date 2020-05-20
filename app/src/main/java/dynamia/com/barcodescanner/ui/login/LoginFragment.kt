@@ -6,19 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.gson.Gson
+import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
-import dynamia.com.core.util.readJsonAsset
 import dynamia.com.core.util.showToast
-import dynamia.com.core.data.model.PickingListHeader
-import dynamia.com.core.data.model.PickingListLine
-import dynamia.com.core.data.model.PickingListScanEntries
-import dynamia.com.core.data.model.ReceiptImportHeader
-import dynamia.com.core.data.model.ReceiptImportLine
-import dynamia.com.core.data.model.ReceiptImportScanEntries
-import dynamia.com.core.data.model.ReceiptLocalHeader
-import dynamia.com.core.data.model.ReceiptLocalLine
-import dynamia.com.core.data.model.ReceiptLocalScanEntries
 import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -42,7 +32,17 @@ class LoginFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        initview()
         setupListener()
+    }
+
+    private fun initview(){
+        if (BuildConfig.DEBUG) {
+            et_server_host.setText(getString(R.string.server_host_name))
+            tied_username.setText(getString(R.string.user_name))
+            tied_password.setText(getString(R.string.password))
+            et_employee.setText(getString(R.string.employee_name))
+        }
     }
 
     private fun setupListener() {

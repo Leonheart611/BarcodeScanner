@@ -35,7 +35,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
-            android:text="@string/user_name"
             tools:text="@tools:sample/first_names" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,8 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:inputType="textPassword"
-            android:text="@string/password" />
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -103,8 +101,7 @@
             android:id="@+id/et_server_host"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Server Host"
-            android:text="@string/server_host_name" />
+            android:hint="Server Host" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -122,8 +119,7 @@
             android:id="@+id/et_employee"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Employee"
-            android:text="@string/employee_name" />
+            android:hint="Employee" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

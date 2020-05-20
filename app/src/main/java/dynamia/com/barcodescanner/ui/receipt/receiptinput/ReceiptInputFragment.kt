@@ -15,7 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleImportLineAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleLocalLineAdapter
-import dynamia.com.core.data.model.*
+import dynamia.com.core.data.model.ReceiptImportLineValue
+import dynamia.com.core.data.model.ReceiptImportScanEntriesValue
+import dynamia.com.core.data.model.ReceiptLocalLineValue
+import dynamia.com.core.data.model.ReceiptLocalScanEntriesValue
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.getCurrentDate
 import dynamia.com.core.util.getCurrentTime
@@ -332,5 +335,4 @@ class ReceiptInputFragment : Fragment(),
         et_description.clearText()
         et_item_no.clearText()
     }
-
 }

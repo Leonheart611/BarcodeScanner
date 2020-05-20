@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.domain
+package dynamia.com.core.domain
 
 import com.netcosports.ntlm.NTLMAuthenticator
 import okhttp3.Interceptor

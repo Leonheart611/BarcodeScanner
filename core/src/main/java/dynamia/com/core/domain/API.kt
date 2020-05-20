@@ -1,8 +1,6 @@
-package dynamia.com.barcodescanner.domain
+package dynamia.com.core.domain
 
 import dynamia.com.core.data.model.*
-import kotlinx.coroutines.Deferred
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -31,9 +29,11 @@ interface API {
     @POST("ReceiptImportEntry")
     suspend fun postReceiptImportEntry(@Body value:String): ReceiptImportScanEntriesValue
 
+    @Headers("Content-Type: application/json")
     @POST("RecieptLocalEntry")
-    suspend fun postReceiptLocalEntry(@Body value:ReceiptLocalScanEntriesValue): ReceiptLocalScanEntriesValue
+    suspend fun postReceiptLocalEntry(@Body value:String): ReceiptLocalScanEntriesValue
 
+    @Headers("Content-Type: application/json")
     @POST("PickingListEntry")
-    suspend fun postPickingListEntry(@Body value:PickingListScanEntriesValue):PickingListScanEntriesValue
+    suspend fun postPickingListEntry(@Body value:String):PickingListScanEntriesValue
 }

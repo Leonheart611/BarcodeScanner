@@ -29,7 +29,8 @@ interface ReceiptLocalRepository {
     fun getAllReceiptLocalScanEntries(): LiveData<List<ReceiptLocalScanEntriesValue>>
     fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Job
     fun deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
-    fun updatePickingScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
+    fun updateReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
+    fun getUnsycnReceiptLocalScanEntry():List<ReceiptLocalScanEntriesValue>
     fun clearReceiptLocalScanEntries()
 }
 
@@ -92,8 +93,12 @@ class ReceiptLocalRepositoryImpl(private val dao: ReceiptLocalDao) : ReceiptLoca
         dao.deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue)
     }
 
-    override fun updatePickingScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue) {
-        dao.updatePickingScanEntry(receiptLocalScanEntriesValue)
+    override fun updateReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue) {
+        dao.updateReceiptLocalScanEntry(receiptLocalScanEntriesValue)
+    }
+
+    override fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue> {
+        return dao.getUnsycnReceiptLocalScanEntry()
     }
 
     override fun clearReceiptLocalScanEntries() {
