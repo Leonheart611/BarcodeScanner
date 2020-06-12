@@ -38,15 +38,4 @@ jobs:
         with:
           name: app
           path: app/build/outputs/apk/debug/app-debug.apk  
-          
-          
-          steps:
-        - uses: actions/checkout@master
-        - uses: codecov/codecov-action@v1
-          with:
-          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          file: ./coverage.xml # optional
-          flags: unittests # optional
-          name: codecov-umbrella # optional
-          fail_ci_if_error: true # optional (default = false)
         
