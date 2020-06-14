@@ -5,10 +5,7 @@ import dynamia.com.core.data.dao.ReceiptLocalDao
 import dynamia.com.core.data.model.ReceiptLocalHeaderValue
 import dynamia.com.core.data.model.ReceiptLocalLineValue
 import dynamia.com.core.data.model.ReceiptLocalScanEntriesValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 interface ReceiptLocalRepository {
@@ -30,7 +27,7 @@ interface ReceiptLocalRepository {
     fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Job
     fun deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
     fun updateReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
-    fun getUnsycnReceiptLocalScanEntry():List<ReceiptLocalScanEntriesValue>
+    fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue>
     fun clearReceiptLocalScanEntries()
 }
 
@@ -80,9 +77,10 @@ class ReceiptLocalRepositoryImpl(private val dao: ReceiptLocalDao) : ReceiptLoca
         dao.clearReceiptLocalLine()
     }
 
-    override fun getAllReceiptLocalScanEntries(): LiveData<List<ReceiptLocalScanEntriesValue>> {
-        return getAllReceiptLocalScanEntries()
-    }
+    override fun getAllReceiptLocalScanEntries(): LiveData<List<ReceiptLocalScanEntriesValue>> =
+        runBlocking {
+            dao.getAllReceiptLocalScanEntries()
+        }
 
     override fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Job =
         scope.launch(Dispatchers.IO) {
@@ -97,9 +95,10 @@ class ReceiptLocalRepositoryImpl(private val dao: ReceiptLocalDao) : ReceiptLoca
         dao.updateReceiptLocalScanEntry(receiptLocalScanEntriesValue)
     }
 
-    override fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue> {
-        return dao.getUnsycnReceiptLocalScanEntry()
-    }
+    override fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue> =
+        runBlocking {
+            dao.getUnsycnReceiptLocalScanEntry()
+        }
 
     override fun clearReceiptLocalScanEntries() {
         dao.clearReceiptLocalScanEntries()

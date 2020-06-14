@@ -54,4 +54,8 @@
     <string name="posted_status_true">Post Status :  True</string>
     <string name="posted_status_false">Post Status : False</string>
     <string name="success_save_data_local">Data Saved</string>
+    <string name="stock_count">Stock Count</string>
+    <string name="srial_no_hint">Serial No</string>
+    <string name="post_data_title">Post</string>
+    <string name="post_all_data_or_no_data">No data / All data posted already</string>
 </resources>

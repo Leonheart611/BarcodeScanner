@@ -58,6 +58,9 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/main_navigation"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_stockCountingFragment"
+            app:destination="@id/stockCountingFragment" />
     </fragment>
     <fragment
         android:id="@+id/pickingListFragment"
@@ -144,4 +147,9 @@
             android:id="@+id/action_receiptInputFragment_to_historyInputFragment"
             app:destination="@id/historyInputFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/stockCountingFragment"
+        android:name="dynamia.com.barcodescanner.ui.stockcounting.StockCountingFragment"
+        android:label="stock_counting_fragment"
+        tools:layout="@layout/stock_counting_fragment" />
 </navigation>

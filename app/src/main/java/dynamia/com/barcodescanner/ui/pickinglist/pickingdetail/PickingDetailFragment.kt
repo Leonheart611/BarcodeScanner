@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -12,11 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingDetailAdapter
+import dynamia.com.core.base.BaseFragment
+import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.picking_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PickingDetailFragment : Fragment() {
+class PickingDetailFragment : BaseFragment() {
     private val viewModel: PickingDetailViewModel by viewModel()
     private val args: PickingDetailFragmentArgs by navArgs()
     private val pickingListHeaderValue by lazy {
@@ -44,7 +45,7 @@ class PickingDetailFragment : Fragment() {
     }
 
     private fun setupView() {
-        tv_picking_detail_so.text = getString(R.string.picklistno_title,args.pickingListNo)
+        tv_picking_detail_so.text = getString(R.string.picklistno_title, args.pickingListNo)
         with(pickingListHeaderValue) {
             et_customer_name.setText(sellToCustomerName)
             et_customer_po_no.setText(sellToCustomerNo)
@@ -62,6 +63,9 @@ class PickingDetailFragment : Fragment() {
                         LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     rv_picking_detail.adapter = adapter
                 })
+        viewModel.loading.observe(viewLifecycleOwner, EventObserver {
+            showLoading(it)
+        })
     }
 
     private fun setupListener() {
@@ -72,6 +76,9 @@ class PickingDetailFragment : Fragment() {
         }
         cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
+        }
+        cv_post.setOnClickListener {
+            viewModel.postPickingData()
         }
     }
 

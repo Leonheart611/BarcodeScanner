@@ -3,6 +3,8 @@ package dynamia.com.core.base
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dynamia.com.core.util.Constant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +15,10 @@ abstract class ViewModelBase(private val sharedPreferences: SharedPreferences) :
     val coroutineJob = Job()
     val coroutineContext = Dispatchers.IO + coroutineJob
     val uiScope = CoroutineScope(coroutineContext)
+    var gson: Gson = GsonBuilder()
+        .excludeFieldsWithoutExposeAnnotation()
+        .create()
+
 
     fun saveLoginVariable(
         hostname: String,

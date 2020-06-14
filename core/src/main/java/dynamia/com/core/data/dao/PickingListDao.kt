@@ -31,7 +31,6 @@ interface PickingListDao {
     //TODO:Make count for local pickingLine when insert into ScanEntries
 
 
-
     @Query("SELECT * FROM PickingListLine WHERE partNoOriginal = :partNo AND pickingListNo = :picking_List_No")
     fun getAllPickingListLineFromInsert(partNo:String, picking_List_No: String):List<PickingListLineValue>
 
@@ -56,4 +55,7 @@ interface PickingListDao {
 
     @Query("DELETE FROM PickingListScanEntries")
     fun clearPickingListScanEntries()
+
+    @Query("SELECT * FROM PickingListScanEntries WHERE sycn_status = 0")
+    fun getAllUnscynPickingListScanEntries():MutableList<PickingListScanEntriesValue>
 }

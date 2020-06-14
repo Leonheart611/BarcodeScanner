@@ -36,4 +36,8 @@ interface API {
     @Headers("Content-Type: application/json")
     @POST("PickingListEntry")
     suspend fun postPickingListEntry(@Body value:String):PickingListScanEntriesValue
+
+    @Headers("Content-Type: application/json")
+    @POST("StockCountEntry")
+    suspend fun postStockCountEntry(@Body value:String):StockCount
 }

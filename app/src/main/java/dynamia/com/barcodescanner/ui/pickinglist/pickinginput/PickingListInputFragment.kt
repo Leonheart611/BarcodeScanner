@@ -22,8 +22,6 @@ import dynamia.com.core.util.getCurrentTime
 import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.item_input_header.*
-import kotlinx.android.synthetic.main.item_input_header.et_part_no
-import kotlinx.android.synthetic.main.receipt_form_item.*
 import kotlinx.android.synthetic.main.receiving_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -85,7 +83,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         cv_view.setOnClickListener {
             val action =
                 PickingListInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
-                    args.pickingListNo,PICKING_LIST
+                    args.pickingListNo, PICKING_LIST
                 )
             view?.findNavController()?.navigate(action)
         }
@@ -111,9 +109,10 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         et_mac_address_picking.clearText()
         et_sn_picking.clearText()
         et_so.clearText()
-        et_description.clearText()
+        et_description_picking.clearText()
         et_pl_no.clearText()
         et_note.clearText()
+        et_item_no.clearText()
     }
 
     fun checkOnDB(data: List<PickingListLineValue>) {
@@ -128,7 +127,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 
     private fun displayAutocompleteData(data: PickingListLineValue) {
         with(data) {
-            et_description.setText(description)
+            et_description_picking.setText(description)
             et_sn_picking.setText(no)
             et_so.setText(documentNo)
             et_pl_no.setText(pickingListNo)
@@ -140,12 +139,15 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         var anyEmpty = false
         if (et_part_no.isEmpty()) {
             anyEmpty = true
+            et_part_no.setError(getString(R.string.error_input_message))
         }
         if (et_mac_address_picking.isEmpty()) {
             anyEmpty = true
+            et_mac_address_picking.setError(getString(R.string.error_input_message))
         }
         if (et_sn_picking.isEmpty()) {
             anyEmpty = true
+            et_sn_picking.setError(getString(R.string.error_input_message))
         }
         return anyEmpty
     }

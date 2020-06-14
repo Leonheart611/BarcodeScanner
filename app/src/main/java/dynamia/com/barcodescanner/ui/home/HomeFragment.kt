@@ -17,6 +17,7 @@ import dynamia.com.core.data.model.HomeData
 import dynamia.com.core.util.Constant.PICKING_LIST
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
+import dynamia.com.core.util.Constant.STOCK_COUNT
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.home_fragment.*
@@ -26,6 +27,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
 
     private val viewModel: HomeViewModel by viewModel()
+    private val adapter = HomeAdapterView(mutableListOf(), this)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,24 +51,34 @@ class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
     }
 
     private fun setObservable() {
-        viewModel.message.observe(viewLifecycleOwner, EventObserver {
+        viewModel.getAllDaataMessage.observe(viewLifecycleOwner, EventObserver {
             it.let {
                 context?.showToast(it)
+                adapter.updateData(getHomeDataList())
             }
         })
-        viewModel.loading.observe(viewLifecycleOwner,EventObserver{
+        viewModel.loading.observe(viewLifecycleOwner, EventObserver {
             showLoading(it)
+        })
+        viewModel.postImportMessage.observe(viewLifecycleOwner, EventObserver {
+            context?.showToast(it)
+        })
+        viewModel.postLocalMessage.observe(viewLifecycleOwner, EventObserver {
+            context?.showToast(it)
+        })
+        viewModel.postStockCountMessage.observe(viewLifecycleOwner, EventObserver {
+            context?.showToast(it)
+        })
+        viewModel.pickingPostMessage.observe(viewLifecycleOwner, EventObserver {
+            context?.showToast(it)
         })
     }
 
     private fun initView() {
         tv_employee_name.text = getString(R.string.employee_title, viewModel.getEmployeeName())
-        val adapter = HomeAdapterView(
-            getHomeDataList(),
-            this
-        )
         rv_home_list.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         rv_home_list.adapter = adapter
+        adapter.updateData(getHomeDataList())
     }
 
     private fun setListener() {
@@ -77,6 +90,12 @@ class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
         }
         cv_refresh.setOnClickListener {
             showDialog()
+        }
+        cv_upload.setOnClickListener {
+            viewModel.postPickingData()
+            viewModel.postReceiptImportData()
+            viewModel.postStockCountData()
+            viewModel.postReceiptLocalData()
         }
     }
 
@@ -100,6 +119,9 @@ class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
                 title = RECEIPT_LOCAL
             )
         )
+        homeDatas.add(
+            HomeData(null, STOCK_COUNT)
+        )
         return homeDatas
     }
 
@@ -108,14 +130,20 @@ class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
             PICKING_LIST -> {
                 findNavController().navigate(R.id.action_homeFragment_to_pickingListFragment)
             }
-            RECEIPT_LOCAL->{
+            RECEIPT_LOCAL -> {
                 val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
-                    RECEIPT_LOCAL)
+                    RECEIPT_LOCAL
+                )
                 findNavController().navigate(action)
             }
-            RECEIPT_IMPORT->{
+            RECEIPT_IMPORT -> {
                 val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
-                    RECEIPT_IMPORT)
+                    RECEIPT_IMPORT
+                )
+                findNavController().navigate(action)
+            }
+            STOCK_COUNT -> {
+                val action = HomeFragmentDirections.actionHomeFragmentToStockCountingFragment()
                 findNavController().navigate(action)
             }
             else -> {
@@ -137,7 +165,6 @@ class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
                     )
                 btn_refresh_yes.setOnClickListener {
                     viewModel.getAllDataFromAPI()
-                    initView()
                     dismiss()
                 }
                 btn_refresh_no.setOnClickListener {

@@ -4,6 +4,7 @@ object Constant {
     const val PICKING_LIST = "PICKING LIST"
     const val RECEIPT_IMPORT = "RECEIPT IMPORT"
     const val RECEIPT_LOCAL = "RECEIPT LOCAL"
+    const val STOCK_COUNT = "STOCK COUNT"
     
     const val USERNAME_SHARED_PREFERENCES = "USERNAME"
     const val PASSWORD_SHARED_PREFERENCES = "PASSWORD"

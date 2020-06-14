@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import dynamia.com.core.data.dao.PickingListDao
 import dynamia.com.core.data.dao.ReceiptImportDao
 import dynamia.com.core.data.dao.ReceiptLocalDao
+import dynamia.com.core.data.dao.StockCountDao
 import dynamia.com.core.data.model.*
 
 @Database(
@@ -18,13 +19,16 @@ import dynamia.com.core.data.model.*
         ReceiptImportScanEntriesValue::class,
         ReceiptLocalHeaderValue::class,
         ReceiptLocalLineValue::class,
-        ReceiptLocalScanEntriesValue::class
-    ], version = 7, exportSchema = false
+        ReceiptLocalScanEntriesValue::class,
+        StockCount::class
+    ], version = 9, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun pickingListDao(): PickingListDao
     abstract fun receiptImportDao(): ReceiptImportDao
     abstract fun receiptLocalHeaderDao(): ReceiptLocalDao
+    abstract fun stockCountDao(): StockCountDao
+
     companion object {
         @Volatile
         private var INSTANCE: LocalDatabase? = null

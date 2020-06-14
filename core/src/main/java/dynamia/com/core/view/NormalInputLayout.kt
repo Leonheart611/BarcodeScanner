@@ -2,7 +2,6 @@ package dynamia.com.core.view
 
 import android.app.Instrumentation
 import android.content.Context
-import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
@@ -55,32 +54,11 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
                     }
                     if (focusable.not()) {
                         et_input_layout.isFocusable = focusable
-                    } else {
-                        et_input_layout.addTextChangedListener(object : TextWatcher {
-                            override fun afterTextChanged(p0: Editable?) {
-                                nextTextView()
-                            }
-
-                            override fun beforeTextChanged(
-                                p0: CharSequence?,
-                                p1: Int,
-                                p2: Int,
-                                p3: Int
-                            ) {
-
-                            }
-
-                            override fun onTextChanged(
-                                p0: CharSequence?,
-                                p1: Int,
-                                p2: Int,
-                                p3: Int
-                            ) {
-
-                            }
-                        })
-
-                    }
+                    }/* else {
+                        et_input_layout.doAfterTextChanged{
+                            nextTextView() //TODO:Penting gak after scan langsung next edittext tanyain dulu ?
+                        }
+                    }*/
                     tv_input_layout.text = title
                 } catch (e: Exception) {
                     Log.e("error view text", e.localizedMessage)
@@ -117,7 +95,7 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
     }
 
     fun clearText() {
-        et_input_layout.text.clear()
+        et_input_layout.text?.clear()
     }
 
     override fun onFocusChange(p0: View?, p1: Boolean) {

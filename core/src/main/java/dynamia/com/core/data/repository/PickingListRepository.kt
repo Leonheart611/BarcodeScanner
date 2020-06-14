@@ -5,22 +5,23 @@ import dynamia.com.core.data.dao.PickingListDao
 import dynamia.com.core.data.model.PickingListHeaderValue
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.model.PickingListScanEntriesValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 interface PickingListRepository {
     fun getAllPickingListHeader(): LiveData<List<PickingListHeaderValue>>
     fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue): Job
     fun getCountPickingListHeader(): Int
-    fun getPickingListHeader(picking_List_No:String): PickingListHeaderValue
+    fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue
     fun clearPickingListHeader()
 
-    fun getAllPickingListLine(picking_List_No:String): LiveData<List<PickingListLineValue>>
+    fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>>
     fun insertPickingListLine(pickingListLineValue: PickingListLineValue): Job
-    fun getAllPickingListLineFromInsert(partNo:String,picking_List_No: String):List<PickingListLineValue>
+    fun getAllPickingListLineFromInsert(
+        partNo: String,
+        picking_List_No: String
+    ): List<PickingListLineValue>
+
     fun clearPickingListLine()
 
     fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>>
@@ -28,6 +29,7 @@ interface PickingListRepository {
     fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
     fun updatePickingScanEntry(pickingListScanEntriesValue: PickingListScanEntriesValue)
     fun clearPickingListScanEntries()
+    fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue>
 }
 
 class PickingListRepositoryImpl(private val pickingListDao: PickingListDao) :
@@ -61,8 +63,11 @@ class PickingListRepositoryImpl(private val pickingListDao: PickingListDao) :
         return pickingListDao.getAllPickingListLine(picking_List_No)
     }
 
-    override fun getAllPickingListLineFromInsert(partNo: String, picking_List_No: String): List<PickingListLineValue> {
-        return pickingListDao.getAllPickingListLineFromInsert(partNo,picking_List_No)
+    override fun getAllPickingListLineFromInsert(
+        partNo: String,
+        picking_List_No: String
+    ): List<PickingListLineValue> {
+        return pickingListDao.getAllPickingListLineFromInsert(partNo, picking_List_No)
     }
 
     override fun insertPickingListLine(pickingListLineValue: PickingListLineValue): Job =
@@ -94,5 +99,11 @@ class PickingListRepositoryImpl(private val pickingListDao: PickingListDao) :
     override fun clearPickingListScanEntries() {
         pickingListDao.clearPickingListScanEntries()
     }
+
+    override fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue> =
+        runBlocking {
+            pickingListDao.getAllUnscynPickingListScanEntries()
+        }
+
 }
 

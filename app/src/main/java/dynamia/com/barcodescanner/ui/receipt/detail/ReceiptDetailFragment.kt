@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptImportLineAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptLocalLineAdapter
+import dynamia.com.core.base.BaseFragment
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showToast
@@ -20,7 +20,7 @@ import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.receipt_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ReceiptDetailFragment : Fragment() {
+class ReceiptDetailFragment : BaseFragment() {
     private val args: ReceiptDetailFragmentArgs by navArgs()
     private val viewModel: ReceiptDetailViewModel by viewModel()
 
@@ -79,6 +79,9 @@ class ReceiptDetailFragment : Fragment() {
 
             }
         }
+        viewModel.loading.observe(viewLifecycleOwner,EventObserver{
+            showLoading(it)
+        })
     }
 
     private fun setupListener() {

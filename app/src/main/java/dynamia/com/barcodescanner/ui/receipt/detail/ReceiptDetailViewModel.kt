@@ -1,9 +1,9 @@
 package dynamia.com.barcodescanner.ui.receipt.detail
 
+import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import dynamia.com.barcodescanner.R
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.repository.ReceiptImportRepository
 import dynamia.com.core.data.repository.ReceiptLocalRepository
@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 class ReceiptDetailViewModel(
     val receiptLocalRepository: ReceiptLocalRepository,
     val receiptImportRepository: ReceiptImportRepository,
-    val sharedPreferences: SharedPreferences
+    val sharedPreferences: SharedPreferences,
+    val app: Application
 ) : ViewModelBase(sharedPreferences) {
     private val retrofitService by lazy {
         RetrofitBuilder.getClient(
@@ -26,14 +27,13 @@ class ReceiptDetailViewModel(
         )
     }
     val postImportMessage = MutableLiveData<Event<String>>()
-    var gson: Gson = GsonBuilder()
-        .excludeFieldsWithoutExposeAnnotation()
-        .create()
     val postLocalMessage = MutableLiveData<Event<String>>()
+    val loading = MutableLiveData<Event<Boolean>>()
 
     fun postReceiptImportData() {
         uiScope.launch {
             try {
+                loading.postValue(Event(true))
                 val receiptImportData = receiptImportRepository.getAllUnsycnImportScanEntry()
                 if (receiptImportData.isNotEmpty()) {
                     for (data in receiptImportData) {
@@ -45,14 +45,17 @@ class ReceiptDetailViewModel(
                                     sycn_status = true
                                 }
                                 receiptImportRepository.updateReceiptImportScanEntry(data)
-                                postImportMessage.postValue(Event("Berhasil Post Data :)"))
                             }
                         }
                     }
+                    loading.postValue(Event(false))
+                    postImportMessage.postValue(Event("Berhasil Post Data Receipt Import"))
                 }else{
-                    postImportMessage.postValue(Event("All data posted already"))
+                    loading.postValue(Event(false))
+                    postImportMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
                 }
             } catch (e: Exception) {
+                loading.postValue(Event(false))
                 postImportMessage.postValue(Event(e.localizedMessage))
             }
         }
@@ -62,6 +65,7 @@ class ReceiptDetailViewModel(
     fun postReceiptLocalData() {
         uiScope.launch {
             try {
+                loading.postValue(Event(true))
                 val receiptLocalData = receiptLocalRepository.getUnsycnReceiptLocalScanEntry()
                 if (receiptLocalData.isNotEmpty()){
                     for (data in receiptLocalData) {
@@ -73,15 +77,18 @@ class ReceiptDetailViewModel(
                                     sycn_status = true
                                 }
                                 receiptLocalRepository.updateReceiptLocalScanEntry(data)
-                                postLocalMessage.postValue(Event("Berhasil Post Data :)"))
                             }
                         }
                     }
+                    loading.postValue(Event(false))
+                    postLocalMessage.postValue(Event("Berhasil Post Data Receipt Local"))
                 }else{
-                    postLocalMessage.postValue(Event("All data posted already"))
+                    loading.postValue(Event(false))
+                    postLocalMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
                 }
 
             } catch (e: Exception) {
+                loading.postValue(Event(false))
                 postLocalMessage.postValue(Event(e.localizedMessage))
             }
         }

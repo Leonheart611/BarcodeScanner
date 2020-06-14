@@ -37,7 +37,7 @@ class HomeAdapterView(var homeDataList:MutableList<HomeData>, val listener:OnHom
         fun bind(homeData: HomeData, listener: OnHomeClicklistener){
             with(itemView){
                 tv_title_activities.text = homeData.title
-                tv_count_activities.text = homeData.countData.toString()
+                tv_count_activities.text = homeData.countData?.toString() ?: ""
                 setOnClickListener {
                     listener.onHomeClicklistener(homeData.title)
                 }

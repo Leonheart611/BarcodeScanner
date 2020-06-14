@@ -36,8 +36,8 @@ class LoginFragment : Fragment() {
         setupListener()
     }
 
-    private fun initview(){
-        if (BuildConfig.DEBUG) {
+    private fun initview() {
+        if (BuildConfig.BUILD_TYPE.equals("debug")) {
             et_server_host.setText(getString(R.string.server_host_name))
             tied_username.setText(getString(R.string.user_name))
             tied_password.setText(getString(R.string.password))
@@ -48,13 +48,17 @@ class LoginFragment : Fragment() {
     private fun setupListener() {
         btn_login.setOnClickListener {
             if (checkNotEmpty()) {
-                viewModel.saveLoginVariable(
-                    hostname = et_server_host.text.toString(),
-                    username = tied_username.text.toString(),
-                    password = tied_password.text.toString(),
-                    employee = et_employee.text.toString()
-                )
-                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                if (et_server_host.text.toString().endsWith("/")) {
+                    viewModel.saveLoginVariable(
+                        hostname = et_server_host.text.toString(),
+                        username = tied_username.text.toString(),
+                        password = tied_password.text.toString(),
+                        employee = et_employee.text.toString()
+                    )
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                } else {
+                    context?.showToast("Host Name Must end with (/)")
+                }
             } else {
                 context?.showToast("Please fill all form")
             }

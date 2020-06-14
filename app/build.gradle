@@ -28,11 +28,9 @@ android {
         debug {
             minifyEnabled false
             debuggable true
-            setProperty("archivesBaseName", "app-debug")
         }
         staging {
             initWith debug
-            setProperty("archivesBaseName", "app-staging")
         }
     }
     android {
@@ -43,7 +41,6 @@ android {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
-
     }
 }
 

@@ -52,7 +52,6 @@ class ReceiptInputFragment : Fragment(),
 
     private fun setupView() {
         tv_receipt_detail_po.text = args.poNo
-        et_part_no.setText("MIC.M04.0-077")
         et_part_no.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (p0.toString().length > 3) {
@@ -201,24 +200,25 @@ class ReceiptInputFragment : Fragment(),
                         createLocalScanEntry()
                         receiptLocalScanEntriesValue?.let {
                             viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
-                            clearAllText()
                         }
+                        clearAllText()
 
                     }
                     Constant.RECEIPT_IMPORT -> {
                         createImportScanEntry()
                         receiptImportScanEntriesValue?.let {
                             viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
-                            clearAllText()
                         }
+                        clearAllText()
                     }
                 }
             }
         }
         cv_view.setOnClickListener {
-            val action = ReceiptInputFragmentDirections.actionReceiptInputFragmentToHistoryInputFragment(
-                args.poNo,args.source
-            )
+            val action =
+                ReceiptInputFragmentDirections.actionReceiptInputFragmentToHistoryInputFragment(
+                    args.poNo, args.source
+                )
             view?.findNavController()?.navigate(action)
         }
     }

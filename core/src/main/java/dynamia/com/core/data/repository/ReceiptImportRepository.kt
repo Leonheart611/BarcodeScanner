@@ -5,17 +5,14 @@ import dynamia.com.core.data.dao.ReceiptImportDao
 import dynamia.com.core.data.model.ReceiptImportHeaderValue
 import dynamia.com.core.data.model.ReceiptImportLineValue
 import dynamia.com.core.data.model.ReceiptImportScanEntriesValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 interface ReceiptImportRepository {
     //ReceiptImportHeader------------------------------------------------------
     fun getAllReceiptImportHeader(): LiveData<List<ReceiptImportHeaderValue>>
     fun insertReceiptImportHeader(receiptImportHeaderValue: ReceiptImportHeaderValue): Job
-    fun getReceiptImportHeader(documentNo:String):LiveData<ReceiptImportHeaderValue>
+    fun getReceiptImportHeader(documentNo: String): LiveData<ReceiptImportHeaderValue>
     fun getCountReceiptImportHeader(): Int
     fun clearReceiptImportHeader()
 
@@ -23,14 +20,14 @@ interface ReceiptImportRepository {
     fun getAllReceiptImportLine(documentNo: String): LiveData<List<ReceiptImportLineValue>>
     fun insertReceiptImportLine(receiptImportLineValue: ReceiptImportLineValue): Job
     fun clearReceiptImportLine()
-    fun getDetailImportLine(documentNo: String,partNo:String):List<ReceiptImportLineValue>
+    fun getDetailImportLine(documentNo: String, partNo: String): List<ReceiptImportLineValue>
 
     //ReceiptImportScanEntries------------------------------------------------------
     fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>>
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Job
     fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
     fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
-    fun getAllUnsycnImportScanEntry():List<ReceiptImportScanEntriesValue>
+    fun getAllUnsycnImportScanEntry(): List<ReceiptImportScanEntriesValue>
     fun clearReceiptImportScanEntries()
 }
 
@@ -80,9 +77,10 @@ class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptIm
         return dao.getDetailImportLine(documentNo, partNo)
     }
 
-    override fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>> {
-        return dao.getAllReceiptImportScanEntries()
-    }
+    override fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>> =
+        runBlocking {
+            dao.getAllReceiptImportScanEntries()
+        }
 
     override fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Job =
         scope.launch(Dispatchers.IO) {
@@ -97,8 +95,8 @@ class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptIm
         dao.updateReceiptImportScanEntry(receiptImportScanEntries)
     }
 
-    override fun getAllUnsycnImportScanEntry(): List<ReceiptImportScanEntriesValue> {
-        return dao.getAllUnsycnImportScanEntry()
+    override fun getAllUnsycnImportScanEntry(): List<ReceiptImportScanEntriesValue> = runBlocking {
+        dao.getAllUnsycnImportScanEntry()
     }
 
     override fun clearReceiptImportScanEntries() {

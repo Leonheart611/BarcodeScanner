@@ -9,6 +9,4 @@ class ReceiptInputViewModel(
     sharedPreferences: SharedPreferences,
     val receiptLocalRepository: ReceiptLocalRepository,
     val receiptImportRepository: ReceiptImportRepository
-) : ViewModelBase(sharedPreferences) {
-
-}
+) : ViewModelBase(sharedPreferences)

@@ -11,7 +11,4 @@ class HistoryInputViewModel(
     val receiptImportRepository: ReceiptImportRepository,
     val receiptLocalRepository: ReceiptLocalRepository,
     sharedPreferences: SharedPreferences
-) : ViewModelBase(sharedPreferences) {
-
-
-}
+) : ViewModelBase(sharedPreferences)

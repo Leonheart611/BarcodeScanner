@@ -40,7 +40,7 @@ class PickingListAdapter(
                 tv_picklist_no.text = pickingListHeaderValue.pickingListNo
                 tv_sell_to_customer_name.text = pickingListHeaderValue.sellToCustomerName
                 setOnClickListener {
-                    listener.onPickingListClickListener(pickingListHeaderValue.pickingListNo ?: "")
+                    listener.onPickingListClickListener(pickingListHeaderValue.pickingListNo)
                 }
             }
         }
