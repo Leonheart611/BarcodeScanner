@@ -1,0 +1,19 @@
+{
+  "odata.metadata": "http://desktop-6cvbbk8:9068/mastersystem/OData/$metadata#ReceiptImportScanEntries",
+  "value": [
+    {
+      "Entry_No": "1",
+      "Transfer_Order_No": "TO129310\\",
+      "Line_No": 100,
+      "Packing_ID_No": "12931",
+      "Part_No": "SDHA",
+      "Item_No": "asde",
+      "Description": "ASDASDQW",
+      "Serial_Number": "23R1",
+      "Tracking_ID": "21412",
+      "Shipset": "1231",
+      "Mac_Address": "2313",
+      "ETag": "20;GsQAAAJ7ATEAAAAAAA==9;2904473740;"
+    }
+  ]
+}

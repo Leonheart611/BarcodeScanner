@@ -1,0 +1,61 @@
+{
+  "odata.metadata": "http://desktop-6cvbbk8:9068/mastersystem/OData/$metadata#PickingListHeader",
+  "value": [
+    {
+      "Picking_List_No": "PL/2017/001316", //header , PK*
+      "SO_No": "2017/SO/0617", //header
+      "Sell_to_Customer_Name": "HANJAYA MANDALA SAMPOERNA, TBK", //header
+      "Customer_Purchase_Order_No": "4501297484", //header2
+      "Posting_Date": "2017-04-18T00:00:00",
+      "Order_Date": "2017-03-13T00:00:00", //header
+      "Requested_Delivery_Date": "2017-05-18T00:00:00",
+      "Project_Code": "TH000317I0024", //header2
+      "Status": "Released",
+      "Assigned_Employee": "STEVEN",
+      "Update_from_PDT": false,
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADcALwAwADAAMQAzADEANgAAAAAA9;2904465640;"
+    },
+    {
+      "Picking_List_No": "PL/2017/001318",
+      "SO_No": "2017/SO/0590",
+      "Sell_to_Customer_Name": "HANJAYA MANDALA SAMPOERNA, TBK",
+      "Customer_Purchase_Order_No": "4501295881",
+      "Posting_Date": "2017-04-18T00:00:00",
+      "Order_Date": "2017-03-08T00:00:00",
+      "Requested_Delivery_Date": "2017-05-08T00:00:00",
+      "Project_Code": "TH000317I0021",
+      "Status": "Released",
+      "Assigned_Employee": "STEVEN",
+      "Update_from_PDT": false,
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADcALwAwADAAMQAzADEAOAAAAAAA9;2904465650;"
+    },
+    {
+      "Picking_List_No": "PL/2017/001319",
+      "SO_No": "2017/SO/0795",
+      "Sell_to_Customer_Name": "CIPTA - MASTER JOINT OPERATION",
+      "Customer_Purchase_Order_No": "J10.1701-POB-000001",
+      "Posting_Date": "2017-04-18T00:00:00",
+      "Order_Date": "2017-03-30T00:00:00",
+      "Requested_Delivery_Date": "2017-04-03T00:00:00",
+      "Project_Code": "TC005617E0012",
+      "Status": "Released",
+      "Assigned_Employee": "STEVEN",
+      "Update_from_PDT": false,
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADcALwAwADAAMQAzADEAOQAAAAAA9;2904465660;"
+    },
+    {
+      "Picking_List_No": "PL/2017/001325",
+      "SO_No": "2017/SO/0894",
+      "Sell_to_Customer_Name": "BANK MANDIRI TASPEN POS",
+      "Customer_Purchase_Order_No": "PPW.PAM/PRO.0414/2017",
+      "Posting_Date": "2017-06-21T00:00:00",
+      "Order_Date": "2017-04-12T00:00:00",
+      "Requested_Delivery_Date": "2017-04-17T00:00:00",
+      "Project_Code": "TB022117B0008",
+      "Status": "Released",
+      "Assigned_Employee": "STEVEN",
+      "Update_from_PDT": false,
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADcALwAwADAAMQAzADIANQAAAAAA9;2904465670;"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "odata.metadata": "http://desktop-6cvbbk8:9068/mastersystem/OData/$metadata#ReceiptImportHeader",
+  "value": [
+    {
+      "No": "TO/2017/0483",
+      "Transfer_from_Code": "GIT-CIS",
+      "Transfer_to_Code": "GDA",
+      "Posting_Date": "2020-02-25T00:00:00",
+      "Status": "Released",
+      "Purchase_Order_No": "2018/09.PO/0012",
+      "Vendor_No": "BANK.LOAN-006",
+      "Vendor_Shipment_No": "",
+      "Project_Code": "",
+      "Scan_from_PDT": "",
+      "Assigned_Employee_ID": "STEVEN",
+      "ETag": "48;bBYAAAJ7/1QATwAvADIAMAAxADcALwAwADQAOAAzAAAAAAA=9;2904472540;"
+    }
+  ]
+}
