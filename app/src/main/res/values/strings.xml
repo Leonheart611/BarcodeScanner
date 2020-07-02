@@ -12,7 +12,7 @@
     <string name="sn_hint">SN</string>
     <string name="so_hint">SO</string>
     <string name="mac_address">Mac Address</string>
-    <string name="pl_dor_hint">PL / PL DOR</string>
+    <string name="pl_dor_hint">PL No</string>
     <string name="note_hint">NOTE</string>
     <string name="save_and_exit">Save &amp; Exit</string>
     <string name="save_and_new">Save &amp; New</string>
@@ -26,7 +26,7 @@
     <string name="receipthistory_title">PO No : %1$s</string>
     <string name="pickingList_header_title">Picking List</string>
     <string name="receipt_local_header">Receipt Local</string>
-    <string name="receipt_import_header">Receipt Header</string>
+    <string name="receipt_import_header">Receipt Import</string>
     <string name="entry_no_title">Entry No</string>
     <string name="scan_by_title">Scan By</string>
     <string name="part_no_title">Part No</string>
@@ -44,7 +44,7 @@
     <string name="item_no_title">Item No</string>
     <string name="description_title">Description</string>
     <string name="view_title">View</string>
-    <string name="server_host_name">http://mikaoctofrentzen:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"/</string>
+    <string name="server_host_name">http://192.168.1.105:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"/</string>
     <string name="user_name">nav</string>
     <string name="password">12345</string>
     <string name="domain">MIKAOCTOFRENTZE</string>
@@ -58,4 +58,5 @@
     <string name="srial_no_hint">Serial No</string>
     <string name="post_data_title">Post</string>
     <string name="post_all_data_or_no_data">No data / All data posted already</string>
+    <string name="error_nopart_not_found">Part No tidak ada data yang sesuai</string>
 </resources>

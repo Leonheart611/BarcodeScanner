@@ -12,6 +12,7 @@ import dynamia.com.core.data.repository.ReceiptImportRepository
 import dynamia.com.core.data.repository.ReceiptLocalRepository
 import dynamia.com.core.data.repository.StockCountRepository
 import dynamia.com.core.domain.RetrofitBuilder
+import dynamia.com.core.util.Constant
 import dynamia.com.core.util.Constant.HOST_DOMAIN_SHARED_PREFERENCES
 import dynamia.com.core.util.Constant.PASSWORD_SHARED_PREFERENCES
 import dynamia.com.core.util.Constant.USERNAME_SHARED_PREFERENCES
@@ -38,8 +39,8 @@ class HomeViewModel(
 
     fun getAllDataFromAPI() {
         loading.postValue(Event(true))
-        clearAllDB()
         uiScope.launch {
+            clearAllDB()
             try {
                 val pickingListHeader = retrofitService.getPickingListHeaderAsync()
                 val pickingListLine = retrofitService.getPickingListLineAsync()
@@ -65,17 +66,17 @@ class HomeViewModel(
                         receiptImportRepository.insertReceiptImportHeader(value)
                     }
                 }
-                receiptImportLine.value.let {receiptImportLines->
+                receiptImportLine.value.let { receiptImportLines ->
                     for (value in receiptImportLines) {
                         receiptImportRepository.insertReceiptImportLine(value)
                     }
                 }
-                receiptLocalHeader.value.let {receiptLocalheaders->
+                receiptLocalHeader.value.let { receiptLocalheaders ->
                     for (value in receiptLocalheaders) {
                         receiptLocalRepository.insertReceiptLocalHeader(value)
                     }
                 }
-                receiptLocalLine.value.let {receiptLocalLines->
+                receiptLocalLine.value.let { receiptLocalLines ->
                     for (value in receiptLocalLines) {
                         receiptLocalRepository.insertReceiptLocalLine(value)
                     }
@@ -92,7 +93,7 @@ class HomeViewModel(
     }
 
     fun checkDBNotNull(): Boolean {
-        return pickingListRepository.getCountPickingListHeader() == 0
+        return pickingListRepository.getCheckEmptyOrNot(getEmployeeName())
     }
 
     fun clearAllDB() {
@@ -107,18 +108,27 @@ class HomeViewModel(
         receiptLocalRepository.clearReceiptLocalHeader()
         receiptLocalRepository.clearReceiptLocalLine()
         receiptLocalRepository.clearReceiptLocalScanEntries()
+
+        stockCountRepository.clearStockCount()
     }
 
-    fun clearSharedpreference(){
-        sharedPreferences.edit().clear().apply()
+    fun clearSharedpreference() {
+        with(sharedPreferences.edit()) {
+            remove(USERNAME_SHARED_PREFERENCES).apply()
+            remove(HOST_DOMAIN_SHARED_PREFERENCES).apply()
+            remove(PASSWORD_SHARED_PREFERENCES).apply()
+            remove(Constant.EMPLOYEE_SHARED_PREFERENCES).apply()
+        }
+
     }
 
     val pickingPostMessage = MutableLiveData<Event<String>>()
-    fun postPickingData(){
+    fun postPickingData() {
         uiScope.launch {
             loading.postValue(Event(true))
             try {
-                val pickingListScanEntries = pickingListRepository.getAllUnscynPickingListScanEntries()
+                val pickingListScanEntries =
+                    pickingListRepository.getAllUnscynPickingListScanEntries()
                 if (pickingListScanEntries.isNotEmpty()) {
                     for (data in pickingListScanEntries) {
                         val param = gson.toJson(data)
@@ -166,7 +176,7 @@ class HomeViewModel(
                     }
                     loading.postValue(Event(false))
                     postImportMessage.postValue(Event("Berhasil Post Data Receipt Import"))
-                }else{
+                } else {
                     loading.postValue(Event(false))
                     postImportMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
                 }
@@ -183,9 +193,9 @@ class HomeViewModel(
             try {
                 loading.postValue(Event(true))
                 val receiptLocalData = receiptLocalRepository.getUnsycnReceiptLocalScanEntry()
-                if (receiptLocalData.isNotEmpty()){
+                if (receiptLocalData.isNotEmpty()) {
                     for (data in receiptLocalData) {
-                        if (data.sycn_status.not()){
+                        if (data.sycn_status.not()) {
                             val param = gson.toJson(data)
                             val result = retrofitService.postReceiptLocalEntry(param)
                             result.let {
@@ -198,7 +208,7 @@ class HomeViewModel(
                     }
                     loading.postValue(Event(false))
                     postLocalMessage.postValue(Event("Berhasil Post Data Receipt Local"))
-                }else{
+                } else {
                     loading.postValue(Event(false))
                     postLocalMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
                 }

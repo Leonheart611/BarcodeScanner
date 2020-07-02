@@ -10,10 +10,10 @@ import kotlin.coroutines.CoroutineContext
 
 interface ReceiptImportRepository {
     //ReceiptImportHeader------------------------------------------------------
-    fun getAllReceiptImportHeader(): LiveData<List<ReceiptImportHeaderValue>>
+    fun getAllReceiptImportHeader(employeeCode: String): LiveData<List<ReceiptImportHeaderValue>>
     fun insertReceiptImportHeader(receiptImportHeaderValue: ReceiptImportHeaderValue): Job
     fun getReceiptImportHeader(documentNo: String): LiveData<ReceiptImportHeaderValue>
-    fun getCountReceiptImportHeader(): Int
+    fun getCountReceiptImportHeader(employeeCode: String): LiveData<Int>
     fun clearReceiptImportHeader()
 
     //ReceiptImportLine------------------------------------------------------
@@ -31,14 +31,17 @@ interface ReceiptImportRepository {
     fun clearReceiptImportScanEntries()
 }
 
-class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptImportRepository {
+class ReceiptImportRepositoryImpl(
+    private val dao: ReceiptImportDao
+) : ReceiptImportRepository {
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Main
     private val scope = CoroutineScope(coroutineContext)
 
-    override fun getAllReceiptImportHeader(): LiveData<List<ReceiptImportHeaderValue>> {
-        return dao.getAllReceiptImportHeader()
-    }
+    override fun getAllReceiptImportHeader(employeeCode: String): LiveData<List<ReceiptImportHeaderValue>> =
+        runBlocking {
+            dao.getAllReceiptImportHeader(employeeCode)
+        }
 
     override fun getReceiptImportHeader(documentNo: String): LiveData<ReceiptImportHeaderValue> {
         return dao.getReceiptImportHeader(documentNo)
@@ -49,9 +52,8 @@ class ReceiptImportRepositoryImpl(private val dao: ReceiptImportDao) : ReceiptIm
             dao.insertReceiptImportHeader(receiptImportHeaderValue)
         }
 
-    override fun getCountReceiptImportHeader(): Int {
-        return dao.getCountReceiptImportHeader()
-    }
+    override fun getCountReceiptImportHeader(employeeCode: String): LiveData<Int> =
+        dao.getCountReceiptImportHeader(employeeCode)
 
     override fun clearReceiptImportHeader() {
         dao.clearReceiptImportHeader()

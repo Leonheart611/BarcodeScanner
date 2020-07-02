@@ -12,8 +12,6 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
     private var retrofit: Retrofit? = null
-    private var baseURL =
-        "http://mikaoctofrentzen:7048/DynamicsNAV90/OData/Company('PT.%20Mastersystem%20Infotama')/"
 
     fun getClient(
         serverAddress: String = "",

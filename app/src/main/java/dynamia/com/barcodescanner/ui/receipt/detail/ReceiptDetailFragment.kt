@@ -15,7 +15,7 @@ import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptLocalLineAdapter
 import dynamia.com.core.base.BaseFragment
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.EventObserver
-import dynamia.com.core.util.showToast
+import dynamia.com.core.util.showLongToast
 import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.receipt_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -90,13 +90,13 @@ class ReceiptDetailFragment : BaseFragment() {
                 Constant.RECEIPT_IMPORT -> {
                     viewModel.postReceiptImportData()
                     viewModel.postImportMessage.observe(viewLifecycleOwner, EventObserver {
-                        context?.showToast(it)
+                        context?.showLongToast(it)
                     })
                 }
                 Constant.RECEIPT_LOCAL -> {
                     viewModel.postReceiptLocalData()
                     viewModel.postLocalMessage.observe(viewLifecycleOwner, EventObserver {
-                        context?.showToast(it)
+                        context?.showLongToast(it)
                     })
                 }
             }

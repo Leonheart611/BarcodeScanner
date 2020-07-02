@@ -27,9 +27,9 @@ class ReceiptLocalLineAdapter(private val pickingListLineValues: MutableList<Rec
     class ReceiptLocalLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(pickingListLineValue: ReceiptLocalLineValue) {
             with(itemView) {
+                tv_description_2.visibility = View.GONE
                 tv_line_no.text = pickingListLineValue.lineNo.toString()
                 tv_description.text = pickingListLineValue.description
-                tv_description_2.text = pickingListLineValue.documentNo
                 tv_outstanding.text =
                     " ${pickingListLineValue.quantity}/${pickingListLineValue.outstandingQuantity}"
             }

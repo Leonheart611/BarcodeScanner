@@ -10,10 +10,10 @@ import kotlin.coroutines.CoroutineContext
 
 interface ReceiptLocalRepository {
     //ReceiptLocalHeader--------------------------------------------------
-    fun getAllReceiptLocalHeader(): LiveData<List<ReceiptLocalHeaderValue>>
+    fun getAllReceiptLocalHeader(employeeCode: String): LiveData<List<ReceiptLocalHeaderValue>>
     fun getReceiptLocalHeader(documentNo: String): LiveData<ReceiptLocalHeaderValue>
     fun insertReceiptLocalHeader(receiptLocalHeaderValue: ReceiptLocalHeaderValue): Job
-    fun getCountReceiptLocalHeader(): Int
+    fun getCountReceiptLocalHeader(employeeCode: String): LiveData<Int>
     fun clearReceiptLocalHeader()
 
     //ReceiptLocalLineValue--------------------------------------------------
@@ -31,13 +31,15 @@ interface ReceiptLocalRepository {
     fun clearReceiptLocalScanEntries()
 }
 
-class ReceiptLocalRepositoryImpl(private val dao: ReceiptLocalDao) : ReceiptLocalRepository {
+class ReceiptLocalRepositoryImpl(
+    val dao: ReceiptLocalDao
+) : ReceiptLocalRepository {
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Main
     private val scope = CoroutineScope(coroutineContext)
 
-    override fun getAllReceiptLocalHeader(): LiveData<List<ReceiptLocalHeaderValue>> {
-        return dao.getAllReceiptLocalHeader()
+    override fun getAllReceiptLocalHeader(employeeCode: String): LiveData<List<ReceiptLocalHeaderValue>> {
+        return dao.getAllReceiptLocalHeader(employeeCode)
     }
 
     override fun getReceiptLocalHeader(documentNo: String): LiveData<ReceiptLocalHeaderValue> {
@@ -49,9 +51,9 @@ class ReceiptLocalRepositoryImpl(private val dao: ReceiptLocalDao) : ReceiptLoca
             dao.insertReceiptLocalHeader(receiptLocalHeaderValue)
         }
 
-    override fun getCountReceiptLocalHeader(): Int {
-        return dao.getCountReceiptLocalHeader()
-    }
+    override fun getCountReceiptLocalHeader(employeeCode: String): LiveData<Int> =
+        dao.getCountReceiptLocalHeader(employeeCode)
+
 
     override fun clearReceiptLocalHeader() {
         dao.clearReceiptLocalHeader()

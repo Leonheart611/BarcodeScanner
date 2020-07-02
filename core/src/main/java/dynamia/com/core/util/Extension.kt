@@ -19,8 +19,12 @@ fun View.rotateFab(rotate: Boolean): Boolean {
     return rotate
 }
 
-fun Context.showToast(message: String) {
+fun Context.showLongToast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+}
+
+fun Context.showShortToast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {

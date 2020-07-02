@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isNotEmpty
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -19,7 +20,8 @@ import dynamia.com.core.data.model.PickingListScanEntriesValue
 import dynamia.com.core.util.Constant.PICKING_LIST
 import dynamia.com.core.util.getCurrentDate
 import dynamia.com.core.util.getCurrentTime
-import dynamia.com.core.util.showToast
+import dynamia.com.core.util.showLongToast
+import dynamia.com.core.util.showShortToast
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.item_input_header.*
 import kotlinx.android.synthetic.main.receiving_fragment.*
@@ -77,7 +79,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                     getPickingScanEntriesModel()
                 )
                 clearAllView()
-                context?.showToast(getString(R.string.success_save_data_local))
+                context?.showLongToast(getString(R.string.success_save_data_local))
             }
         }
         cv_view.setOnClickListener {
@@ -91,7 +93,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 
     private fun getPickingScanEntriesModel(): PickingListScanEntriesValue {
         return PickingListScanEntriesValue(
-            documentNo = pickListValue?.documentNo ?: "",
+            documentNo = et_pl_no.getTextAsString(),
             lineNo = pickListValue?.lineNo ?: 0,
             partNo = et_part_no.getTextAsString(),
             serialNo = et_sn_picking.getTextAsString(),
@@ -107,7 +109,6 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         et_part_no.clearText()
         et_sn_picking.clearText()
         et_mac_address_picking.clearText()
-        et_sn_picking.clearText()
         et_so.clearText()
         et_description_picking.clearText()
         et_pl_no.clearText()
@@ -128,7 +129,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     private fun displayAutocompleteData(data: PickingListLineValue) {
         with(data) {
             et_description_picking.setText(description)
-            et_sn_picking.setText(no)
+            et_item_no.setText(no)
             et_so.setText(documentNo)
             et_pl_no.setText(pickingListNo)
         }
@@ -148,6 +149,25 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         if (et_sn_picking.isEmpty()) {
             anyEmpty = true
             et_sn_picking.setError(getString(R.string.error_input_message))
+        }
+        if (et_item_no.isEmpty()) {
+            anyEmpty = true
+            et_item_no.setError(getString(R.string.error_input_message))
+        }
+        if (et_description_picking.isEmpty()) {
+            anyEmpty = true
+            et_description_picking.setError(getString(R.string.error_input_message))
+        }
+        if (et_so.isEmpty()) {
+            anyEmpty = true
+            et_so.setError(getString(R.string.error_input_message))
+        }
+        if (et_pl_no.isEmpty()) {
+            anyEmpty = true
+            et_pl_no.setError(getString(R.string.error_input_message))
+        }
+        if (et_part_no.isNotEmpty() && et_item_no.isEmpty() && et_so.isEmpty() && et_pl_no.isEmpty()) {
+            context?.showShortToast(resources.getString(R.string.error_nopart_not_found))
         }
         return anyEmpty
     }

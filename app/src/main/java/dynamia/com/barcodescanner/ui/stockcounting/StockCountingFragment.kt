@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.stockcounting.adapter.StockCountAdapter
 import dynamia.com.core.base.BaseFragment
@@ -20,9 +19,10 @@ import dynamia.com.core.data.model.StockCount
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.getCurrentDate
 import dynamia.com.core.util.getCurrentTime
-import dynamia.com.core.util.showToast
+import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.stock_counting_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class StockCountingFragment : BaseFragment() {
 
@@ -50,7 +50,7 @@ class StockCountingFragment : BaseFragment() {
                 }
             })
         viewModel.postStockCountMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showToast(it)
+            context?.showLongToast(it)
         })
         viewModel.loading.observe(viewLifecycleOwner, EventObserver {
             showLoading(it)
@@ -63,13 +63,15 @@ class StockCountingFragment : BaseFragment() {
             viewModel.postStockCountData()
         }
         et_count_part_no.doAfterTextChanged {
-            tryInsertData()
-
+            if (et_count_part_no.text?.isNotEmpty() != false)
+                tryInsertData()
         }
         et_count_item_no.doAfterTextChanged {
+            if (et_count_item_no.text?.isNotEmpty() != false)
             tryInsertData()
         }
         et_count_serial_no.doAfterTextChanged {
+            if (et_count_serial_no.text?.isNotEmpty() != false)
             tryInsertData()
         }
         cv_back.setOnClickListener {
@@ -86,12 +88,11 @@ class StockCountingFragment : BaseFragment() {
                     Item_No = et_count_item_no.text.toString(),
                     time = context?.getCurrentTime() ?: "",
                     date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
-                    Employee_COde = viewModel.getEmployeeName() ?: ""
+                    Employee_COde = viewModel.getEmployeeName()
                 )
             )
             clearInputData()
-            et_count_part_no.isFocusable = true
-        }else{
+        } else {
             nextTextView()
         }
     }
@@ -101,19 +102,20 @@ class StockCountingFragment : BaseFragment() {
             .isNotEmpty() && et_count_item_no.text.toString().isNotEmpty()
     }
 
-    private fun clearInputData(){
+    private fun clearInputData() {
         et_count_serial_no.text?.clear()
         et_count_item_no.text?.clear()
         et_count_part_no.text?.clear()
+        et_count_part_no.requestFocus()
     }
 
-    fun nextTextView() {
+    private fun nextTextView() {
         Thread(Runnable {
             try {
                 val inst = Instrumentation()
                 inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
             } catch (e: InterruptedException) {
-                Log.e("Error Thread KeyCode",e.localizedMessage)
+                Log.e("Error Thread KeyCode", e.localizedMessage)
             }
         }).start()
     }

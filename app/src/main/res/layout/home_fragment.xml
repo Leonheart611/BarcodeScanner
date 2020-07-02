@@ -26,19 +26,6 @@
             android:text="Upload" />
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_home_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/cv_upload"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView11"
-        tools:itemCount="4"
-        tools:listitem="@layout/home_item_list" />
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_home"
         android:layout_width="0dp"
@@ -119,5 +106,13 @@
         app:layout_constraintEnd_toEndOf="@+id/tv_employee_name"
         app:layout_constraintStart_toStartOf="@+id/tv_employee_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_employee_name" />
+
+    <include
+        layout="@layout/home_item_detail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

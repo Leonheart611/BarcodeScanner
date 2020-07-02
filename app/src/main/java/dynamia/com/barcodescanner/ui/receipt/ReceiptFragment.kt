@@ -14,12 +14,8 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptImportItemAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptLocalItemAdapter
 import dynamia.com.core.util.Constant
-import dynamia.com.core.util.EventObserver
-import dynamia.com.core.util.showToast
 import kotlinx.android.synthetic.main.header_layout.*
-import kotlinx.android.synthetic.main.receipt_detail_fragment.*
 import kotlinx.android.synthetic.main.receipt_fragment.*
-import kotlinx.android.synthetic.main.receipt_fragment.cv_back
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListener,
@@ -62,7 +58,7 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
     private fun setRecylerView() {
         when (args.source) {
             Constant.RECEIPT_LOCAL -> {
-                viewModel.receiptLocalRepository.getAllReceiptLocalHeader()
+                viewModel.receiptLocalRepository.getAllReceiptLocalHeader(viewModel.getEmployeeName())
                     .observe(viewLifecycleOwner,
                         Observer { receiptLocalHeaders ->
                             with(rv_receipt_list) {
@@ -76,7 +72,7 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
                         })
             }
             Constant.RECEIPT_IMPORT -> {
-                viewModel.receiptImportRepository.getAllReceiptImportHeader()
+                viewModel.receiptImportRepository.getAllReceiptImportHeader(viewModel.getEmployeeName())
                     .observe(viewLifecycleOwner,
                         Observer { receiptImportHeaders ->
                             with(rv_receipt_list) {

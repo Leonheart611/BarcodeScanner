@@ -9,17 +9,17 @@ import dynamia.com.core.data.model.ReceiptImportScanEntriesValue
 @Dao
 interface ReceiptImportDao {
     //ReceiptImportHeader------------------------------------------------------
-    @Query("SELECT * FROM ReceiptImportHeader")
-    fun getAllReceiptImportHeader(): LiveData<List<ReceiptImportHeaderValue>>
+    @Query("SELECT * FROM ReceiptImportHeader WHERE employeeCode =:employeeCode COLLATE NOCASE")
+    fun getAllReceiptImportHeader(employeeCode: String): LiveData<List<ReceiptImportHeaderValue>>
 
     @Query("SELECT * FROM ReceiptImportHeader WHERE `no`= :documentNo")
-    fun getReceiptImportHeader(documentNo:String):LiveData<ReceiptImportHeaderValue>
+    fun getReceiptImportHeader(documentNo: String): LiveData<ReceiptImportHeaderValue>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptImportHeader(receiptImportHeaderValue: ReceiptImportHeaderValue)
 
-    @Query("SELECT count(*) from ReceiptImportHeader")
-    fun getCountReceiptImportHeader(): Int
+    @Query("SELECT count(*) from ReceiptImportHeader WHERE employeeCode =:employeeCode COLLATE NOCASE")
+    fun getCountReceiptImportHeader(employeeCode: String): LiveData<Int>
 
     @Query("DELETE FROM ReceiptImportHeader")
     fun clearReceiptImportHeader()
@@ -34,8 +34,8 @@ interface ReceiptImportDao {
     @Query("DELETE FROM ReceiptImportLine")
     fun clearReceiptImportLine()
 
-    @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :documentNo AND itemNo =:partNo")
-    fun getDetailImportLine(documentNo: String,partNo:String):List<ReceiptImportLineValue>
+    @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :documentNo AND partNo =:partNo")
+    fun getDetailImportLine(documentNo: String, partNo: String): List<ReceiptImportLineValue>
 
     //ReceiptImportScanEntries------------------------------------------------------
     @Query("SELECT * FROM ReceiptImportScanEntries")
@@ -51,7 +51,7 @@ interface ReceiptImportDao {
     fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
 
     @Query("SELECT * FROM ReceiptImportScanEntries WHERE sycn_status = 0")
-    fun getAllUnsycnImportScanEntry():List<ReceiptImportScanEntriesValue>
+    fun getAllUnsycnImportScanEntry(): List<ReceiptImportScanEntriesValue>
 
     @Query("DELETE FROM ReceiptImportScanEntries")
     fun clearReceiptImportScanEntries()

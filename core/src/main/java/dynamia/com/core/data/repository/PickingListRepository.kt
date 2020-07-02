@@ -9,10 +9,11 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 interface PickingListRepository {
-    fun getAllPickingListHeader(): LiveData<List<PickingListHeaderValue>>
+    fun getAllPickingListHeader(employeeCode: String): LiveData<List<PickingListHeaderValue>>
     fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue): Job
-    fun getCountPickingListHeader(): Int
+    fun getCountPickingListHeader(employeeCode: String): LiveData<Int>
     fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue
+    fun getCheckEmptyOrNot(employeeCode: String): Boolean
     fun clearPickingListHeader()
 
     fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>>
@@ -32,43 +33,54 @@ interface PickingListRepository {
     fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue>
 }
 
-class PickingListRepositoryImpl(private val pickingListDao: PickingListDao) :
+class PickingListRepositoryImpl(
+    private val pickingListDao: PickingListDao
+) :
     PickingListRepository {
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Main
     private val scope = CoroutineScope(coroutineContext)
 
-    override fun getAllPickingListHeader(): LiveData<List<PickingListHeaderValue>> {
-        return pickingListDao.getAllPickingListHeader()
-    }
+
+    override fun getAllPickingListHeader(employeeCode: String): LiveData<List<PickingListHeaderValue>> =
+        runBlocking {
+            pickingListDao.getAllPickingListHeader(employeeCode)
+        }
+
 
     override fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue): Job =
         scope.launch(Dispatchers.IO) {
             pickingListDao.insertPickingListHeader(pickingListHeaderValue)
         }
 
-    override fun getCountPickingListHeader(): Int {
-        return pickingListDao.getCountPickingListHeader()
-    }
+    override fun getCountPickingListHeader(employeeCode: String): LiveData<Int> =
+        pickingListDao.getCountPickingListHeader(employeeCode)
 
-    override fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue {
-        return pickingListDao.getPickingListHeader(picking_List_No)
-    }
+
+    override fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue =
+        runBlocking {
+            pickingListDao.getPickingListHeader(picking_List_No)
+        }
+
+    override fun getCheckEmptyOrNot(employeeCode: String): Boolean = pickingListDao.getCheckEmptyOrNot(employeeCode) == 0
 
     override fun clearPickingListHeader() {
         pickingListDao.clearPickingListHeader()
     }
 
-    override fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>> {
-        return pickingListDao.getAllPickingListLine(picking_List_No)
-    }
+    override fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>> =
+        runBlocking {
+            pickingListDao.getAllPickingListLine(picking_List_No)
+        }
+
 
     override fun getAllPickingListLineFromInsert(
         partNo: String,
         picking_List_No: String
-    ): List<PickingListLineValue> {
-        return pickingListDao.getAllPickingListLineFromInsert(partNo, picking_List_No)
+    ): List<PickingListLineValue> = runBlocking {
+        pickingListDao.getAllPickingListLineFromInsert(partNo, picking_List_No)
     }
+
 
     override fun insertPickingListLine(pickingListLineValue: PickingListLineValue): Job =
         scope.launch(Dispatchers.IO) {
@@ -79,9 +91,11 @@ class PickingListRepositoryImpl(private val pickingListDao: PickingListDao) :
         pickingListDao.clearPickingListLine()
     }
 
-    override fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>> {
-        return pickingListDao.getAllPickingListScanEntries()
-    }
+    override fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>> =
+        runBlocking {
+            pickingListDao.getAllPickingListScanEntries()
+        }
+
 
     override fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue): Job =
         scope.launch(Dispatchers.IO) {

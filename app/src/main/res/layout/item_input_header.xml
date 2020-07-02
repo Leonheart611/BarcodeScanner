@@ -26,7 +26,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_part_no"
-        app:title="@string/item_no_title" />
+        app:etenabled="false"
+        app:etfocusable="false"
+        app:title="@string/item_no_title"/>
 
     <dynamia.com.core.view.NormalInputLayout
         android:id="@+id/et_description_picking"
@@ -37,7 +39,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_item_no"
-        app:title="@string/description_title" />
+        app:etenabled="false"
+        app:etfocusable="false"
+        app:title="@string/description_title"/>
 
     <dynamia.com.core.view.NormalInputLayout
         android:id="@+id/et_part_no"
@@ -59,6 +63,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_sn_picking"
+        app:etenabled="false"
+        app:etfocusable="false"
         app:title="@string/so_hint"/>
 
     <dynamia.com.core.view.NormalInputLayout
@@ -81,6 +87,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_mac_address_picking"
+        app:etenabled="false"
+        app:etfocusable="false"
         app:title="@string/pl_dor_hint"/>
 
     <dynamia.com.core.view.NormalInputLayout

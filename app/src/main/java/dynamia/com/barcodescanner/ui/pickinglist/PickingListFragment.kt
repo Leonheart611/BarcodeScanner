@@ -35,16 +35,17 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
     private fun initView() {
         tv_employee_name.text = viewModel.getEmployeeName()
         tv_title_header.text = getString(R.string.pickingList_header_title)
-        viewModel.pickingListRepository.getAllPickingListHeader().observe(viewLifecycleOwner,
-            Observer {
-                val adapter = PickingListAdapter(
-                    it.toMutableList(),
-                    this
-                )
-                rv_pickinglist.layoutManager =
-                    LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                rv_pickinglist.adapter = adapter
-            })
+        viewModel.pickingListRepository.getAllPickingListHeader(viewModel.getEmployeeName())
+            .observe(viewLifecycleOwner,
+                Observer {
+                    val adapter = PickingListAdapter(
+                        it.toMutableList(),
+                        this
+                    )
+                    rv_pickinglist.layoutManager =
+                        LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                    rv_pickinglist.adapter = adapter
+                })
     }
 
     private fun setupListener() {

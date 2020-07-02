@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isNotEmpty
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -22,6 +23,7 @@ import dynamia.com.core.data.model.ReceiptLocalScanEntriesValue
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.getCurrentDate
 import dynamia.com.core.util.getCurrentTime
+import dynamia.com.core.util.showShortToast
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.receipt_form_item.*
 import kotlinx.android.synthetic.main.receipt_input_fragment.*
@@ -62,7 +64,7 @@ class ReceiptInputFragment : Fragment(),
                                     args.poNo,
                                     p0.toString()
                                 )
-                            checkDB(dataLocal = localLineDetail)
+                            checkDBLocal(dataLocal = localLineDetail)
                         }
                         Constant.RECEIPT_IMPORT -> {
                             val importLineDetail =
@@ -70,7 +72,7 @@ class ReceiptInputFragment : Fragment(),
                                     args.poNo,
                                     p0.toString()
                                 )
-                            checkDB(dataImport = importLineDetail)
+                            checkDBImport(dataImport = importLineDetail)
                         }
                     }
                 }
@@ -103,32 +105,31 @@ class ReceiptInputFragment : Fragment(),
         super.onResume()
         when (args.source) {
             Constant.RECEIPT_LOCAL -> {
-                setData(dataLocal = receiptLocalScanEntriesValue)
+                setDataLocal(dataLocal = receiptLocalScanEntriesValue)
             }
             Constant.RECEIPT_IMPORT -> {
-                setData(dataImport = receiptImportScanEntriesValue)
+                setDataImport(dataImport = receiptImportScanEntriesValue)
             }
         }
     }
 
-    fun checkDB(
-        dataLocal: List<ReceiptLocalLineValue>? = null,
-        dataImport: List<ReceiptImportLineValue>? = null
-    ) {
+    fun checkDBImport(dataImport: List<ReceiptImportLineValue>? = null) {
         dataImport?.let { data ->
             if (data.isNotEmpty()) {
                 if (data.size == 1) {
-                    displayAutocompleteData(dataImport = data[0])
+                    displayAutocompleteDataImport(dataImport = data[0])
                 } else {
                     showMultipleDataDialog(dataImport = data)
                 }
             }
-
         }
+    }
+
+    fun checkDBLocal(dataLocal: List<ReceiptLocalLineValue>? = null) {
         dataLocal?.let { data ->
             if (data.isNotEmpty()) {
                 if (data.size == 1) {
-                    displayAutocompleteData(dataLocal = data[0])
+                    displayAutocompleteDataLocal(dataLocal = data[0])
                 } else {
                     showMultipleDataDialog(dataLocal = data)
                 }
@@ -136,15 +137,16 @@ class ReceiptInputFragment : Fragment(),
         }
     }
 
-    private fun displayAutocompleteData(
-        dataLocal: ReceiptLocalLineValue? = null,
-        dataImport: ReceiptImportLineValue? = null
-    ) {
+    private fun displayAutocompleteDataImport(dataImport: ReceiptImportLineValue? = null) {
         dataImport?.let { data ->
             et_description.setText(data.description)
             et_item_no.setText(data.itemNo)
             lineNo = data.lineNo
         }
+
+    }
+
+    private fun displayAutocompleteDataLocal(dataLocal: ReceiptLocalLineValue? = null) {
         dataLocal?.let { data ->
             et_description.setText(data.description)
             et_item_no.setText(data.no)
@@ -221,6 +223,9 @@ class ReceiptInputFragment : Fragment(),
                 )
             view?.findNavController()?.navigate(action)
         }
+        cv_back_and_save.setOnClickListener {
+            view?.findNavController()?.popBackStack()
+        }
     }
 
     fun checkMandatoryData(): Boolean {
@@ -253,22 +258,21 @@ class ReceiptInputFragment : Fragment(),
             result = false
             et_mac_address.setError(getString(R.string.error_input_message))
         }
+        if (et_description.isEmpty()) {
+            result = false
+            et_description.setError(getString(R.string.error_input_message))
+        }
+        if (et_item_no.isEmpty()) {
+            result = false
+            et_item_no.setError(getString(R.string.error_input_message))
+        }
+        if (et_part_no.isNotEmpty() && et_description.isEmpty() && et_item_no.isEmpty()) {
+            context?.showShortToast(resources.getString(R.string.error_nopart_not_found))
+        }
         return result
     }
 
-    private fun setData(
-        dataImport: ReceiptImportScanEntriesValue? = null,
-        dataLocal: ReceiptLocalScanEntriesValue? = null
-    ) {
-        dataImport?.let { data ->
-            et_mac_address.setText(data.macAddress)
-            et_part_no.setText(data.partNo)
-            et_packingid.setText(data.packingID)
-            et_po_no.setText(data.pONo)
-            et_sn_no.setText(data.serialNo)
-            et_shipset.setText(data.shipset)
-            et_trackingid.setText(data.trackingID)
-        }
+    private fun setDataLocal(dataLocal: ReceiptLocalScanEntriesValue?) {
         dataLocal?.let { data ->
             et_mac_address.setText(data.macAddress)
             et_part_no.setText(data.partNo)
@@ -277,6 +281,20 @@ class ReceiptInputFragment : Fragment(),
             et_sn_no.setText(data.serialNo)
             et_shipset.setText(data.shipset)
             et_trackingid.setText(data.trackingID)
+            lineNo = data.lineNo
+        }
+    }
+
+    fun setDataImport(dataImport: ReceiptImportScanEntriesValue?) {
+        dataImport?.let { data ->
+            et_mac_address.setText(data.macAddress)
+            et_part_no.setText(data.partNo)
+            et_packingid.setText(data.packingID)
+            et_po_no.setText(data.pONo)
+            et_sn_no.setText(data.serialNo)
+            et_shipset.setText(data.shipset)
+            et_trackingid.setText(data.trackingID)
+            lineNo = data.lineNo
         }
     }
 
@@ -315,12 +333,12 @@ class ReceiptInputFragment : Fragment(),
     }
 
     override fun onMultipleImportLineSelected(data: ReceiptImportLineValue) {
-        displayAutocompleteData(dataImport = data)
+        displayAutocompleteDataImport(dataImport = data)
         dialog?.dismiss()
     }
 
     override fun onMultipleLocalLineSelected(data: ReceiptLocalLineValue) {
-        displayAutocompleteData(dataLocal = data)
+        displayAutocompleteDataLocal(dataLocal = data)
         dialog?.dismiss()
     }
 

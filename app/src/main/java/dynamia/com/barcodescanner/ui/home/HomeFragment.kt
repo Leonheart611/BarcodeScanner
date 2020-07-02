@@ -7,27 +7,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.ui.home.adapter.HomeAdapterView
 import dynamia.com.core.base.BaseFragment
-import dynamia.com.core.data.model.HomeData
-import dynamia.com.core.util.Constant.PICKING_LIST
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
-import dynamia.com.core.util.Constant.STOCK_COUNT
 import dynamia.com.core.util.EventObserver
-import dynamia.com.core.util.showToast
+import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.home_fragment.*
+import kotlinx.android.synthetic.main.home_item_detail.*
 import kotlinx.android.synthetic.main.refresh_warning_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
+class HomeFragment : BaseFragment() {
 
     private val viewModel: HomeViewModel by viewModel()
-    private val adapter = HomeAdapterView(mutableListOf(), this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,39 +48,47 @@ class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
     private fun setObservable() {
         viewModel.getAllDaataMessage.observe(viewLifecycleOwner, EventObserver {
             it.let {
-                context?.showToast(it)
-                adapter.updateData(getHomeDataList())
+                context?.showLongToast(it)
             }
         })
         viewModel.loading.observe(viewLifecycleOwner, EventObserver {
             showLoading(it)
         })
         viewModel.postImportMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showToast(it)
+            context?.showLongToast(it)
         })
         viewModel.postLocalMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showToast(it)
+            context?.showLongToast(it)
         })
         viewModel.postStockCountMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showToast(it)
+            context?.showLongToast(it)
         })
         viewModel.pickingPostMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showToast(it)
+            context?.showLongToast(it)
         })
+        viewModel.pickingListRepository.getCountPickingListHeader(viewModel.getEmployeeName())
+            .observe(viewLifecycleOwner, Observer {
+                tv_picking_list_count.text = it.toString()
+            })
+        viewModel.receiptImportRepository.getCountReceiptImportHeader(viewModel.getEmployeeName())
+            .observe(viewLifecycleOwner, Observer {
+                tv_count_receipt_import.text = it.toString()
+            })
+        viewModel.receiptLocalRepository.getCountReceiptLocalHeader(viewModel.getEmployeeName())
+            .observe(viewLifecycleOwner, Observer {
+                tv_count_receipt_local.text = it.toString()
+            })
     }
 
     private fun initView() {
         tv_employee_name.text = getString(R.string.employee_title, viewModel.getEmployeeName())
-        rv_home_list.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        rv_home_list.adapter = adapter
-        adapter.updateData(getHomeDataList())
     }
 
     private fun setListener() {
         cv_log_out.setOnClickListener {
             viewModel.clearSharedpreference()
             viewModel.clearAllDB()
-            context?.showToast("Log Out")
+            context?.showLongToast("Log Out")
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
         }
         cv_refresh.setOnClickListener {
@@ -97,58 +100,24 @@ class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
             viewModel.postStockCountData()
             viewModel.postReceiptLocalData()
         }
-    }
-
-    private fun getHomeDataList(): MutableList<HomeData> {
-        val homeDatas: MutableList<HomeData> = mutableListOf()
-        homeDatas.add(
-            HomeData(
-                countData = viewModel.pickingListRepository.getCountPickingListHeader(),
-                title = PICKING_LIST
+        cv_picking_list.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_pickingListFragment)
+        }
+        cv_receipt_import.setOnClickListener {
+            val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
+                RECEIPT_IMPORT
             )
-        )
-        homeDatas.add(
-            HomeData(
-                countData = viewModel.receiptImportRepository.getCountReceiptImportHeader(),
-                title = RECEIPT_IMPORT
+            findNavController().navigate(action)
+        }
+        cv_receipt_local.setOnClickListener {
+            val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
+                RECEIPT_LOCAL
             )
-        )
-        homeDatas.add(
-            HomeData(
-                countData = viewModel.receiptLocalRepository.getCountReceiptLocalHeader(),
-                title = RECEIPT_LOCAL
-            )
-        )
-        homeDatas.add(
-            HomeData(null, STOCK_COUNT)
-        )
-        return homeDatas
-    }
-
-    override fun onHomeClicklistener(value: String) {
-        when (value) {
-            PICKING_LIST -> {
-                findNavController().navigate(R.id.action_homeFragment_to_pickingListFragment)
-            }
-            RECEIPT_LOCAL -> {
-                val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
-                    RECEIPT_LOCAL
-                )
-                findNavController().navigate(action)
-            }
-            RECEIPT_IMPORT -> {
-                val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
-                    RECEIPT_IMPORT
-                )
-                findNavController().navigate(action)
-            }
-            STOCK_COUNT -> {
-                val action = HomeFragmentDirections.actionHomeFragmentToStockCountingFragment()
-                findNavController().navigate(action)
-            }
-            else -> {
-                context?.showToast("Under Maintenance please contact the Developer")
-            }
+            findNavController().navigate(action)
+        }
+        cv_stock_count.setOnClickListener {
+            val action = HomeFragmentDirections.actionHomeFragmentToStockCountingFragment()
+            findNavController().navigate(action)
         }
     }
 
@@ -173,5 +142,9 @@ class HomeFragment : BaseFragment(), HomeAdapterView.OnHomeClicklistener {
                 show()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 }

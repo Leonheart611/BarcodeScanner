@@ -9,30 +9,36 @@ import dynamia.com.core.data.model.PickingListScanEntriesValue
 @Dao
 interface PickingListDao {
     //PickingListHeader---------------------------------------------------------
-    @Query("SELECT * FROM PickingListHeader")
-    fun getAllPickingListHeader(): LiveData<List<PickingListHeaderValue>>
+    @Query("SELECT * FROM PickingListHeader WHERE employeeCode = :employeeCode COLLATE NOCASE")
+    fun getAllPickingListHeader(employeeCode: String): LiveData<List<PickingListHeaderValue>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue)
 
     @Query("SELECT * FROM PickingListHeader WHERE pickingListNo = :picking_List_No")
-    fun getPickingListHeader(picking_List_No:String): PickingListHeaderValue
+    fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue
 
-    @Query("SELECT count(*) from PickingListHeader")
-    fun getCountPickingListHeader(): Int
+    @Query("SELECT count(*) from PickingListHeader WHERE employeeCode = :employeeCode COLLATE NOCASE")
+    fun getCountPickingListHeader(employeeCode: String): LiveData<Int>
+
+    @Query("SELECT count(*) from PickingListHeader WHERE employeeCode = :employeeCode COLLATE NOCASE")
+    fun getCheckEmptyOrNot(employeeCode: String): Int
 
     @Query("DELETE FROM PickingListHeader")
     fun clearPickingListHeader()
 
     //PickingListLine---------------------------------------------------------
     @Query("SELECT * FROM PickingListLine WHERE pickingListNo = :picking_List_No")
-    fun getAllPickingListLine(picking_List_No:String): LiveData<List<PickingListLineValue>>
+    fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>>
 
     //TODO:Make count for local pickingLine when insert into ScanEntries
 
 
     @Query("SELECT * FROM PickingListLine WHERE partNoOriginal = :partNo AND pickingListNo = :picking_List_No")
-    fun getAllPickingListLineFromInsert(partNo:String, picking_List_No: String):List<PickingListLineValue>
+    fun getAllPickingListLineFromInsert(
+        partNo: String,
+        picking_List_No: String
+    ): List<PickingListLineValue>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPickingListLine(pickingListLineValue: PickingListLineValue)
@@ -57,5 +63,5 @@ interface PickingListDao {
     fun clearPickingListScanEntries()
 
     @Query("SELECT * FROM PickingListScanEntries WHERE sycn_status = 0")
-    fun getAllUnscynPickingListScanEntries():MutableList<PickingListScanEntriesValue>
+    fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue>
 }

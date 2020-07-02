@@ -25,6 +25,8 @@ data class ReceiptLocalLineValue(
     val no: String,
     @SerializedName("Description")
     val description: String,
+    @SerializedName("Part_No")
+    val partNo: String,
     @SerializedName("Quantity")
     val quantity: String,
     @SerializedName("Outstanding_Quantity")

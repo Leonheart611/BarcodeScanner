@@ -25,24 +25,23 @@ abstract class ViewModelBase(private val sharedPreferences: SharedPreferences) :
         username: String,
         password: String,
         employee: String
-    ): Boolean {
-        return with(sharedPreferences.edit()) {
-            putString(Constant.EMPLOYEE_SHARED_PREFERENCES, employee)
-            putString(Constant.HOST_DOMAIN_SHARED_PREFERENCES, hostname)
-            putString(Constant.PASSWORD_SHARED_PREFERENCES, password)
-            putString(Constant.USERNAME_SHARED_PREFERENCES, username)
-            commit()
+    ) {
+        with(sharedPreferences.edit()) {
+            putString(Constant.EMPLOYEE_SHARED_PREFERENCES, employee).apply()
+            putString(Constant.HOST_DOMAIN_SHARED_PREFERENCES, hostname).apply()
+            putString(Constant.PASSWORD_SHARED_PREFERENCES, password).apply()
+            putString(Constant.USERNAME_SHARED_PREFERENCES, username).apply()
         }
     }
 
-    fun getEmployeeName(): String? {
-        return sharedPreferences.getString(Constant.EMPLOYEE_SHARED_PREFERENCES, "")
+    fun getEmployeeName(): String {
+        return sharedPreferences.getString(Constant.EMPLOYEE_SHARED_PREFERENCES, "") ?: ""
     }
 
     fun checkLoginVariables(): Boolean {
         with(sharedPreferences) {
             val hostDomain = this.getString(Constant.HOST_DOMAIN_SHARED_PREFERENCES, "")
-            Log.e("HostDomain",hostDomain)
+            Log.e("HostDomain", hostDomain)
             return !hostDomain.isNullOrEmpty()
         }
     }

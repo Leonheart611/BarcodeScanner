@@ -1,4 +1,5 @@
 package dynamia.com.core.data.model
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -21,12 +22,14 @@ data class ReceiptImportLineValue(
     val itemNo: String,
     @SerializedName("Description")
     val description: String,
+    @SerializedName("Part_No")
+    val partNo: String,
     @SerializedName("Quantity")
     val quantity: String,
     @SerializedName("Outstanding_Quantity")
     val outstandingQuantity: String,
     @SerializedName("Status")
     val status: String,
-    @SerializedName("Employee_Code")
+    @SerializedName("Employe_Code")
     val employeeCode: String
 )

@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
-import dynamia.com.core.util.showToast
+import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -57,10 +57,10 @@ class LoginFragment : Fragment() {
                     )
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 } else {
-                    context?.showToast("Host Name Must end with (/)")
+                    context?.showLongToast("Host Name Must end with (/)")
                 }
             } else {
-                context?.showToast("Please fill all form")
+                context?.showLongToast("Please fill all form")
             }
         }
     }
