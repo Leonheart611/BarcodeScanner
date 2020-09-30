@@ -1,21 +1,14 @@
 package dynamia.com.barcodescanner.ui.home
 
 import android.app.Application
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.crashlytics.android.Crashlytics
 import dynamia.com.barcodescanner.R
 import dynamia.com.core.base.ViewModelBase
-import dynamia.com.core.data.repository.PickingListRepository
-import dynamia.com.core.data.repository.ReceiptImportRepository
-import dynamia.com.core.data.repository.ReceiptLocalRepository
-import dynamia.com.core.data.repository.StockCountRepository
+import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.RetrofitBuilder
 import dynamia.com.core.util.Constant
-import dynamia.com.core.util.Constant.HOST_DOMAIN_SHARED_PREFERENCES
-import dynamia.com.core.util.Constant.PASSWORD_SHARED_PREFERENCES
-import dynamia.com.core.util.Constant.USERNAME_SHARED_PREFERENCES
 import dynamia.com.core.util.Event
 import kotlinx.coroutines.launch
 
@@ -24,14 +17,15 @@ class HomeViewModel(
     val receiptImportRepository: ReceiptImportRepository,
     val receiptLocalRepository: ReceiptLocalRepository,
     val stockCountRepository: StockCountRepository,
-    private val sharedPreferences: SharedPreferences,
+    val userRepository: UserRepository,
     val app: Application
-) : ViewModelBase(sharedPreferences) {
+) : ViewModelBase(userRepository) {
+    private val userData by lazy { userRepository.getUserData() }
     private val retrofitService by lazy {
         RetrofitBuilder.getClient(
-            serverAddress = sharedPreferences.getString(HOST_DOMAIN_SHARED_PREFERENCES, "") ?: "",
-            password = sharedPreferences.getString(PASSWORD_SHARED_PREFERENCES, "") ?: "",
-            username = sharedPreferences.getString(USERNAME_SHARED_PREFERENCES, "") ?: ""
+            serverAddress = userData.hostName,
+            password = userData.password,
+            username = userData.username
         )
     }
     val getAllDaataMessage = MutableLiveData<Event<String>>()
@@ -113,13 +107,7 @@ class HomeViewModel(
     }
 
     fun clearSharedpreference() {
-        with(sharedPreferences.edit()) {
-            remove(USERNAME_SHARED_PREFERENCES).apply()
-            remove(HOST_DOMAIN_SHARED_PREFERENCES).apply()
-            remove(PASSWORD_SHARED_PREFERENCES).apply()
-            remove(Constant.EMPLOYEE_SHARED_PREFERENCES).apply()
-        }
-
+        userRepository.clearUserData()
     }
 
     val pickingPostMessage = MutableLiveData<Event<String>>()
@@ -144,7 +132,7 @@ class HomeViewModel(
                     loading.postValue(Event(false))
 
                 } else {
-                    pickingPostMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
+                    pickingPostMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data,Constant.PICKING_LIST)))
                     loading.postValue(Event(false))
                 }
             } catch (e: java.lang.Exception) {
@@ -178,7 +166,7 @@ class HomeViewModel(
                     postImportMessage.postValue(Event("Berhasil Post Data Receipt Import"))
                 } else {
                     loading.postValue(Event(false))
-                    postImportMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
+                    postImportMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data,Constant.RECEIPT_IMPORT)))
                 }
             } catch (e: Exception) {
                 loading.postValue(Event(false))
@@ -210,7 +198,7 @@ class HomeViewModel(
                     postLocalMessage.postValue(Event("Berhasil Post Data Receipt Local"))
                 } else {
                     loading.postValue(Event(false))
-                    postLocalMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
+                    postLocalMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data,Constant.RECEIPT_LOCAL)))
                 }
 
             } catch (e: Exception) {
@@ -241,7 +229,7 @@ class HomeViewModel(
                     loading.postValue(Event(false))
 
                 } else {
-                    postStockCountMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
+                    postStockCountMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data,Constant.STOCK_COUNT)))
                     loading.postValue(Event(false))
                 }
             } catch (e: Exception) {

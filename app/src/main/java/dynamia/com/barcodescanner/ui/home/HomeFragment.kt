@@ -86,9 +86,9 @@ class HomeFragment : BaseFragment() {
 
     private fun setListener() {
         cv_log_out.setOnClickListener {
-            viewModel.clearSharedpreference()
             viewModel.clearAllDB()
             context?.showLongToast("Log Out")
+            viewModel.clearSharedpreference()
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
         }
         cv_refresh.setOnClickListener {
@@ -144,7 +144,4 @@ class HomeFragment : BaseFragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
 }

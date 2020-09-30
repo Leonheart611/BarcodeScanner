@@ -13,8 +13,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_description_picking"
+        app:layout_constraintTop_toBottomOf="@+id/et_mac_address_picking"
         app:title="@string/sn_hint" />
 
     <dynamia.com.core.view.NormalInputLayout
@@ -60,12 +61,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_sn_picking"
         app:etenabled="false"
         app:etfocusable="false"
-        app:title="@string/so_hint"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_description_picking"
+        app:title="@string/so_hint" />
 
     <dynamia.com.core.view.NormalInputLayout
         android:id="@+id/et_mac_address_picking"
@@ -75,8 +76,8 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_so"
-        app:title="@string/mac_address"/>
+        app:layout_constraintTop_toBottomOf="@+id/et_note"
+        app:title="@string/mac_address" />
 
     <dynamia.com.core.view.NormalInputLayout
         android:id="@+id/et_pl_no"
@@ -84,12 +85,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_mac_address_picking"
         app:etenabled="false"
         app:etfocusable="false"
-        app:title="@string/pl_dor_hint"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_so"
+        app:title="@string/pl_dor_hint" />
 
     <dynamia.com.core.view.NormalInputLayout
         android:id="@+id/et_note"
@@ -97,11 +98,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_po_no_picking"
+        app:title="@string/note_hint" />
+
+    <dynamia.com.core.view.NormalInputLayout
+        android:id="@+id/et_po_no_picking"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_pl_no"
-        app:title="@string/note_hint" />
+        app:title="@string/po_no_title">
+
+    </dynamia.com.core.view.NormalInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

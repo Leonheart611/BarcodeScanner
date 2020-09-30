@@ -23,5 +23,6 @@ data class PickingListScanEntriesValue(
     @SerializedName("Employee_Code")@Expose(serialize = true) val employeeCode: String,
     @SerializedName("Date")@Expose(serialize = true) val date: String,
     @SerializedName("Time")@Expose(serialize = true) val time: String,
-    @Expose(serialize = false,deserialize = false)var sycn_status:Boolean = false
+    @Expose(serialize = false,deserialize = false)var sycn_status:Boolean = false,
+    @Expose(serialize = false,deserialize = false)var pickingListNo:String
 )

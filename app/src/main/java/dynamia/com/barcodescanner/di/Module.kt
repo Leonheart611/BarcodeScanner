@@ -9,6 +9,7 @@ import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.PickingListInputVi
 import dynamia.com.barcodescanner.ui.receipt.ReceiptViewModel
 import dynamia.com.barcodescanner.ui.receipt.detail.ReceiptDetailViewModel
 import dynamia.com.barcodescanner.ui.receipt.receiptinput.ReceiptInputViewModel
+import dynamia.com.barcodescanner.ui.search.SearchViewModel
 import dynamia.com.barcodescanner.ui.stockcounting.StockCountingViewModel
 import dynamia.com.core.data.LocalDatabase
 import dynamia.com.core.data.repository.*
@@ -24,11 +25,13 @@ val injectionModule = module {
     single { get<LocalDatabase>().receiptImportDao() }
     single { get<LocalDatabase>().receiptLocalHeaderDao() }
     single { get<LocalDatabase>().stockCountDao() }
+    single { get<LocalDatabase>().userDao() }
 
     single<PickingListRepository> { PickingListRepositoryImpl(get()) }
     single<ReceiptImportRepository> { ReceiptImportRepositoryImpl(get()) }
     single<ReceiptLocalRepository> { ReceiptLocalRepositoryImpl(get()) }
     single<StockCountRepository> { StockCountRepositoryImpl(get()) }
+    single<UserRepository> { UserRepositoryImpl(get()) }
 
     viewModel { LoginViewModel(get(), get(), get(), get()) }
     viewModel { HomeViewModel(get(), get(), get(), get(), get(), get()) }
@@ -40,4 +43,5 @@ val injectionModule = module {
     viewModel { ReceiptDetailViewModel(get(), get(), get(), get()) }
     viewModel { ReceiptInputViewModel(get(), get(), get()) }
     viewModel { StockCountingViewModel(get(), get(), get()) }
+    viewModel { SearchViewModel(get(), get(), get()) }
 }

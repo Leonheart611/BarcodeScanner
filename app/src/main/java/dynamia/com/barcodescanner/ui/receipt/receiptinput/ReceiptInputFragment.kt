@@ -7,24 +7,24 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isNotEmpty
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.pickinglist.adapter.LocalHistoryAdapter
+import dynamia.com.barcodescanner.ui.receipt.adapter.ImportHistoryAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleImportLineAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleLocalLineAdapter
 import dynamia.com.core.data.model.ReceiptImportLineValue
 import dynamia.com.core.data.model.ReceiptImportScanEntriesValue
 import dynamia.com.core.data.model.ReceiptLocalLineValue
 import dynamia.com.core.data.model.ReceiptLocalScanEntriesValue
-import dynamia.com.core.util.Constant
-import dynamia.com.core.util.getCurrentDate
-import dynamia.com.core.util.getCurrentTime
-import dynamia.com.core.util.showShortToast
+import dynamia.com.core.util.*
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
+import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
 import kotlinx.android.synthetic.main.receipt_form_item.*
 import kotlinx.android.synthetic.main.receipt_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -35,9 +35,12 @@ class ReceiptInputFragment : Fragment(),
     private val viewModel: ReceiptInputViewModel by viewModel()
     private val args: ReceiptInputFragmentArgs by navArgs()
     private var dialog: Dialog? = null
+    private var partNoDialog: Dialog? = null
     private var receiptImportScanEntriesValue: ReceiptImportScanEntriesValue? = null
     private var lineNo = 0
     private var receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue? = null
+    private var historyImportAdapter = ImportHistoryAdapter(mutableListOf())
+    private var historyLocalAdapter = LocalHistoryAdapter(mutableListOf())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,9 +53,30 @@ class ReceiptInputFragment : Fragment(),
         super.onActivityCreated(savedInstanceState)
         setupView()
         setupListener()
+        setObseverable()
+    }
+
+    private fun setObseverable() {
+        when (args.source) {
+            Constant.RECEIPT_IMPORT -> {
+                viewModel.receiptImportRepository.getReceiptImportScanEntries(args.poNo, 5)
+                    .observe(viewLifecycleOwner,
+                        Observer {
+                            historyImportAdapter.update(it.toMutableList())
+                        })
+            }
+            Constant.RECEIPT_LOCAL -> {
+                viewModel.receiptLocalRepository.getReceiptLocalScanEntries(args.poNo, 5)
+                    .observe(viewLifecycleOwner,
+                        Observer {
+                            historyLocalAdapter.update(it.toMutableList())
+                        })
+            }
+        }
     }
 
     private fun setupView() {
+        et_packingid.requestFocus()
         tv_receipt_detail_po.text = args.poNo
         et_part_no.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
@@ -78,6 +102,28 @@ class ReceiptInputFragment : Fragment(),
                 }
             }
 
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+        })
+        et_po_no.addTextWatcher(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {}
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (checkPONo(p0.toString()).not()) {
+                    et_po_no.setError(getString(R.string.error_po_no_not_same))
+                }
+            }
+        })
+        et_sn_no.addTextWatcher(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                if (p0.toString().length > 3)
+                    saveData(true)
+            }
+
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
@@ -85,8 +131,27 @@ class ReceiptInputFragment : Fragment(),
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
-
         })
+        when (args.source) {
+            Constant.RECEIPT_IMPORT -> {
+                with(rv_receipt_history) {
+                    layoutManager =
+                        LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+                    adapter = historyImportAdapter
+                }
+            }
+            Constant.RECEIPT_LOCAL -> {
+                with(rv_receipt_history) {
+                    layoutManager =
+                        LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+                    adapter = historyLocalAdapter
+                }
+            }
+        }
+    }
+
+    fun checkPONo(value: String): Boolean {
+        return value == args.poNo
     }
 
     override fun onPause() {
@@ -121,6 +186,8 @@ class ReceiptInputFragment : Fragment(),
                 } else {
                     showMultipleDataDialog(dataImport = data)
                 }
+            }else{
+                showErrorPoNoDialog()
             }
         }
     }
@@ -133,6 +200,8 @@ class ReceiptInputFragment : Fragment(),
                 } else {
                     showMultipleDataDialog(dataLocal = data)
                 }
+            }else{
+                showErrorPoNoDialog()
             }
         }
     }
@@ -196,39 +265,73 @@ class ReceiptInputFragment : Fragment(),
 
     private fun setupListener() {
         cv_save_new.setOnClickListener {
-            if (checkMandatoryData()) {
-                when (args.source) {
-                    Constant.RECEIPT_LOCAL -> {
-                        createLocalScanEntry()
-                        receiptLocalScanEntriesValue?.let {
-                            viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
-                        }
-                        clearAllText()
-
-                    }
-                    Constant.RECEIPT_IMPORT -> {
-                        createImportScanEntry()
-                        receiptImportScanEntriesValue?.let {
-                            viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
-                        }
-                        clearAllText()
-                    }
-                }
-            }
+            saveData(false)
         }
-        cv_view.setOnClickListener {
-            val action =
-                ReceiptInputFragmentDirections.actionReceiptInputFragmentToHistoryInputFragment(
-                    args.poNo, args.source
-                )
-            view?.findNavController()?.navigate(action)
+        cv_clear_data_recipt.setOnClickListener {
+            clearAllText()
+            et_packingid.requestFocus()
         }
         cv_back_and_save.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
+        tb_receipt_history.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.history_data -> {
+                    val action =
+                        ReceiptInputFragmentDirections.actionReceiptInputFragmentToHistoryInputFragment(
+                            args.poNo, args.source, showAll = false
+                        )
+                    view?.findNavController()?.navigate(action)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
-    fun checkMandatoryData(): Boolean {
+    private fun saveData(clearSnAndMac: Boolean) {
+        if (checkMandatoryData()) {
+            when (args.source) {
+                Constant.RECEIPT_LOCAL -> {
+                    createLocalScanEntry()
+                    receiptLocalScanEntriesValue?.let {
+                        val input =
+                            viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
+                        if (input) {
+                            context?.showLongToast(getString(R.string.success_save_data_local))
+                            if (clearSnAndMac) {
+                                clearSN()
+                            } else {
+                                clearAllText()
+                            }
+                        } else {
+                            context?.showLongToast(getString(R.string.error_qty_over_outstanding))
+                        }
+                    }
+                }
+                Constant.RECEIPT_IMPORT -> {
+                    createImportScanEntry()
+                    receiptImportScanEntriesValue?.let {
+                        val input =
+                            viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
+                        if (input) {
+                            context?.showLongToast(getString(R.string.success_save_data_local))
+                            if (clearSnAndMac) {
+                                clearSN()
+                            } else {
+                                clearAllText()
+                            }
+                        } else {
+                            context?.showLongToast(getString(R.string.error_qty_over_outstanding))
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private fun checkMandatoryData(): Boolean {
         var result = true
         if (et_packingid.isEmpty()) {
             result = false
@@ -237,6 +340,9 @@ class ReceiptInputFragment : Fragment(),
         if (et_po_no.isEmpty()) {
             result = false
             et_po_no.setError(getString(R.string.error_input_message))
+        } else if (checkPONo(et_po_no.getTextAsString()).not()) {
+            result = false
+            et_po_no.setError(getString(R.string.error_po_no_not_same))
         }
         if (et_part_no.isEmpty()) {
             result = false
@@ -246,17 +352,9 @@ class ReceiptInputFragment : Fragment(),
             result = false
             et_sn_no.setError(getString(R.string.error_input_message))
         }
-        if (et_shipset.isEmpty()) {
-            result = false
-            et_shipset.setError(getString(R.string.error_input_message))
-        }
         if (et_trackingid.isEmpty()) {
             result = false
             et_trackingid.setError(getString(R.string.error_input_message))
-        }
-        if (et_mac_address.isEmpty()) {
-            result = false
-            et_mac_address.setError(getString(R.string.error_input_message))
         }
         if (et_description.isEmpty()) {
             result = false
@@ -265,9 +363,6 @@ class ReceiptInputFragment : Fragment(),
         if (et_item_no.isEmpty()) {
             result = false
             et_item_no.setError(getString(R.string.error_input_message))
-        }
-        if (et_part_no.isNotEmpty() && et_description.isEmpty() && et_item_no.isEmpty()) {
-            context?.showShortToast(resources.getString(R.string.error_nopart_not_found))
         }
         return result
     }
@@ -279,20 +374,18 @@ class ReceiptInputFragment : Fragment(),
             et_packingid.setText(data.packingID)
             et_po_no.setText(data.pONo)
             et_sn_no.setText(data.serialNo)
-            et_shipset.setText(data.shipset)
             et_trackingid.setText(data.trackingID)
             lineNo = data.lineNo
         }
     }
 
-    fun setDataImport(dataImport: ReceiptImportScanEntriesValue?) {
+    private fun setDataImport(dataImport: ReceiptImportScanEntriesValue?) {
         dataImport?.let { data ->
             et_mac_address.setText(data.macAddress)
             et_part_no.setText(data.partNo)
             et_packingid.setText(data.packingID)
             et_po_no.setText(data.pONo)
             et_sn_no.setText(data.serialNo)
-            et_shipset.setText(data.shipset)
             et_trackingid.setText(data.trackingID)
             lineNo = data.lineNo
         }
@@ -301,11 +394,11 @@ class ReceiptInputFragment : Fragment(),
     private fun createLocalScanEntry() {
         receiptLocalScanEntriesValue = ReceiptLocalScanEntriesValue(
             documentNo = args.poNo,
-            employeeCode = viewModel.getEmployeeName() ?: "",
-            macAddress = et_mac_address.getTextAsString(),
+            employeeCode = viewModel.getEmployeeName(),
+            macAddress = et_mac_address.getTextAsString().emptySetZero(),
             partNo = et_part_no.getTextAsString(),
             packingID = et_packingid.getTextAsString(),
-            shipset = et_shipset.getTextAsString(),
+            shipset = "-",
             serialNo = et_sn_no.getTextAsString(),
             lineNo = lineNo,
             date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
@@ -319,16 +412,16 @@ class ReceiptInputFragment : Fragment(),
         receiptImportScanEntriesValue = ReceiptImportScanEntriesValue(
             documentNo = args.poNo,
             employeeCode = viewModel.getEmployeeName() ?: "",
-            macAddress = et_mac_address.getTextAsString(),
+            macAddress = et_mac_address.getTextAsString().emptySetZero(),
             partNo = et_part_no.getTextAsString(),
             packingID = et_packingid.getTextAsString(),
-            shipset = et_shipset.getTextAsString(),
+            shipset = "-",
             serialNo = et_sn_no.getTextAsString(),
             lineNo = lineNo,
             date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
             time = "${context?.getCurrentTime()}",
             trackingID = et_trackingid.getTextAsString(),
-            pONo = args.poNo
+            pONo = et_po_no.getTextAsString()
         )
     }
 
@@ -347,10 +440,41 @@ class ReceiptInputFragment : Fragment(),
         et_po_no.clearText()
         et_part_no.clearText()
         et_sn_no.clearText()
-        et_shipset.clearText()
         et_trackingid.clearText()
         et_mac_address.clearText()
         et_description.clearText()
         et_item_no.clearText()
+    }
+
+    private fun showErrorPoNoDialog() {
+        context?.let { context ->
+            partNoDialog = Dialog(context)
+            partNoDialog?.let { dialog ->
+                with(dialog) {
+                    setContentView(R.layout.dialog_part_no_not_found)
+                    window
+                        ?.setLayout(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    btn_ok.setOnClickListener {
+                        dismiss()
+                        clearPartNo()
+                    }
+                    show()
+                }
+            }
+
+        }
+    }
+
+    private fun clearPartNo() {
+        et_part_no.clearText()
+        et_part_no.requestFocus()
+    }
+
+
+    private fun clearSN() {
+        et_sn_no.clearText()
     }
 }

@@ -24,7 +24,12 @@ interface ReceiptImportRepository {
 
     //ReceiptImportScanEntries------------------------------------------------------
     fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>>
-    fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Job
+    fun getReceiptImportScanEntries(
+        importPoNo: String,
+        limit: Int? = null
+    ): LiveData<List<ReceiptImportScanEntriesValue>>
+
+    fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Boolean
     fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
     fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
     fun getAllUnsycnImportScanEntry(): List<ReceiptImportScanEntriesValue>
@@ -84,18 +89,55 @@ class ReceiptImportRepositoryImpl(
             dao.getAllReceiptImportScanEntries()
         }
 
-    override fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Job =
-        scope.launch(Dispatchers.IO) {
-            dao.insertReceiptImportScanEntries(receiptImportScanEntries)
+    override fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Boolean =
+        runBlocking(Dispatchers.IO) {
+            try {
+                val importLineValue = dao.getDetailImportLineData(
+                    receiptImportScanEntries.lineNo,
+                    receiptImportScanEntries.partNo
+                )
+                if (importLineValue.alreadyScanned < importLineValue.outstandingQuantity.toInt()) {
+                    importLineValue.apply {
+                        this.alreadyScanned = ++alreadyScanned
+                    }
+                    dao.insertReceiptImportScanEntries(receiptImportScanEntries)
+                    dao.updateImportLineData(importLineValue)
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                false
+            }
         }
 
     override fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue) {
-        dao.deleteReceiptImportScanEntry(receiptImportScanEntries)
+        scope.launch(Dispatchers.IO) {
+            dao.deleteReceiptImportScanEntry(receiptImportScanEntries)
+            val importLineValue = dao.getDetailImportLineData(
+                receiptImportScanEntries.lineNo,
+                receiptImportScanEntries.partNo
+            )
+            importLineValue.apply {
+                this.alreadyScanned = --alreadyScanned
+            }
+            dao.updateImportLineData(importLineValue)
+        }
     }
 
     override fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue) {
         dao.updateReceiptImportScanEntry(receiptImportScanEntries)
     }
+
+    override fun getReceiptImportScanEntries(
+        importPoNo: String,
+        limit: Int?
+    ): LiveData<List<ReceiptImportScanEntriesValue>> =
+        runBlocking {
+            limit?.let {
+                dao.getReceiptImportScanEntries(importPoNo, it)
+            } ?: dao.getReceiptImportScanEntriesNoLimit(importPoNo)
+        }
 
     override fun getAllUnsycnImportScanEntry(): List<ReceiptImportScanEntriesValue> = runBlocking {
         dao.getAllUnsycnImportScanEntry()

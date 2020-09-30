@@ -37,9 +37,24 @@ interface ReceiptImportDao {
     @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :documentNo AND partNo =:partNo")
     fun getDetailImportLine(documentNo: String, partNo: String): List<ReceiptImportLineValue>
 
+    @Query("SELECT * FROM ReceiptImportLine WHERE lineNo = :lineNo AND partNo =:partNo ")
+    fun getDetailImportLineData(lineNo: Int, partNo: String): ReceiptImportLineValue
+
+    @Update
+    fun updateImportLineData(importLineValue: ReceiptImportLineValue)
+
     //ReceiptImportScanEntries------------------------------------------------------
     @Query("SELECT * FROM ReceiptImportScanEntries")
     fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>>
+
+    @Query("SELECT * FROM ReceiptImportScanEntries WHERE documentNo = :importPoNo ORDER BY id DESC")
+    fun getReceiptImportScanEntriesNoLimit(importPoNo: String): LiveData<List<ReceiptImportScanEntriesValue>>
+
+    @Query("SELECT * FROM ReceiptImportScanEntries WHERE documentNo = :importPoNo ORDER BY id DESC LIMIT :limit")
+    fun getReceiptImportScanEntries(
+        importPoNo: String,
+        limit: Int
+    ): LiveData<List<ReceiptImportScanEntriesValue>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue)

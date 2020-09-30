@@ -72,6 +72,9 @@
             app:destination="@id/pickingDetailFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_pickingListFragment_to_historyInputFragment"
+            app:destination="@id/historyInputFragment" />
     </fragment>
     <fragment
         android:id="@+id/pickingDetailFragment"
@@ -86,6 +89,14 @@
             app:destination="@id/receivingFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_pickingDetailFragment_to_receiptSearchFragment"
+            app:destination="@id/receiptSearchFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_pickingDetailFragment_to_historyInputFragment"
+            app:destination="@id/historyInputFragment" />
     </fragment>
     <fragment
         android:id="@+id/receiptFragment"
@@ -102,6 +113,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_receiptFragment_to_historyInputFragment"
+            app:destination="@id/historyInputFragment" />
     </fragment>
     <fragment
         android:id="@+id/historyInputFragment"
@@ -114,6 +128,10 @@
         <argument
             android:name="source"
             app:argType="string" />
+        <argument
+            android:name="showAll"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/receiptDetailFragment"
@@ -131,6 +149,14 @@
             app:destination="@id/receiptInputFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_receiptDetailFragment_to_receiptSearchFragment"
+            app:destination="@id/receiptSearchFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_receiptDetailFragment_to_historyInputFragment"
+            app:destination="@id/historyInputFragment" />
     </fragment>
     <fragment
         android:id="@+id/receiptInputFragment"
@@ -152,4 +178,15 @@
         android:name="dynamia.com.barcodescanner.ui.stockcounting.StockCountingFragment"
         android:label="stock_counting_fragment"
         tools:layout="@layout/stock_counting_fragment" />
+    <fragment
+        android:id="@+id/receiptSearchFragment"
+        android:name="dynamia.com.barcodescanner.ui.search.SearchFragment"
+        android:label="receipt_search_fragment"
+        tools:layout="@layout/receipt_search_fragment" >
+        <argument android:name="PoNo"
+            app:argType="string" />
+        <argument
+            android:name="source"
+            app:argType="string" />
+    </fragment>
 </navigation>

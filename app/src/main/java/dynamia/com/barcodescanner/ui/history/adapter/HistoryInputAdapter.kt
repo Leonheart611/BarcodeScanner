@@ -13,6 +13,12 @@ class HistoryInputAdapter(
     private val listener: OnHistorySelected
 ) : RecyclerView.Adapter<HistoryInputAdapter.HistoryInputHolder>() {
 
+    fun updateData(data: MutableList<PickingListScanEntriesValue>) {
+        pickingListScanEntriesValues.clear()
+        pickingListScanEntriesValues.addAll(data)
+        notifyDataSetChanged()
+    }
+
     interface OnHistorySelected {
         fun onHistorySelectDelete(value: PickingListScanEntriesValue)
     }
@@ -43,13 +49,14 @@ class HistoryInputAdapter(
                         listener.onHistorySelectDelete(value)
                     }
                 }
-                if (value.sycn_status){
+                if (value.sycn_status) {
                     tv_post_status.setText(R.string.posted_status_true)
                     tv_post_status.setTextColor(resources.getColor(R.color.posted_true))
-                }else{
+                } else {
                     tv_post_status.setText(R.string.posted_status_false)
                     tv_post_status.setTextColor(resources.getColor(R.color.posted_false))
                 }
+                tv_scanby_history.text = value.employeeCode
             }
         }
     }

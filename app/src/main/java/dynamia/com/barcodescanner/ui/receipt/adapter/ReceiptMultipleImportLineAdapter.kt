@@ -36,7 +36,8 @@ class ReceiptMultipleImportLineAdapter(
                 tv_line_no.text = data.lineNo.toString()
                 tv_description.text = data.description
                 tv_description_2.text = data.itemNo
-                tv_outstanding.visibility = View.GONE
+                tv_outstanding.text =
+                    "${data.alreadyScanned}/${data.quantity}/${data.outstandingQuantity}"
                 setOnClickListener {
                     listener.onMultipleImportLineSelected(data)
                 }

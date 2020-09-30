@@ -43,19 +43,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_description"
+        app:layout_constraintTop_toBottomOf="@+id/et_mac_address"
         app:title="@string/sn_title">
-
-    </dynamia.com.core.view.NormalInputLayout>
-
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_shipset"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_sn_no"
-        app:title="@string/shipset_title">
 
     </dynamia.com.core.view.NormalInputLayout>
 
@@ -65,7 +54,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_shipset"
+        app:layout_constraintTop_toBottomOf="@+id/et_description"
         app:title="@string/tracking_id_title">
 
     </dynamia.com.core.view.NormalInputLayout>

@@ -34,12 +34,28 @@ interface ReceiptLocalDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptLocalLine(receiptLocalLineValue: ReceiptLocalLineValue)
 
+    @Query("SELECT * FROM ReceiptLocalLine WHERE lineNo= :lineNo AND partNo = :partNo")
+    fun getDetailReceiptLocalLineData(lineNo: Int, partNo: String): ReceiptLocalLineValue
+
+    @Update
+    fun updateReceiptLocalLine(receiptLocalLineValue: ReceiptLocalLineValue)
+
     @Query("DELETE FROM ReceiptLocalLine")
     fun clearReceiptLocalLine()
 
     //ReceiptLocalScanEntriesValue--------------------------------------------------
     @Query("SELECT * FROM ReceiptLocalScanEntries")
     fun getAllReceiptLocalScanEntries(): LiveData<List<ReceiptLocalScanEntriesValue>>
+
+    @Query("SELECT * FROM ReceiptLocalScanEntries WHERE documentNo = :localPoNo ORDER BY id DESC")
+    fun getReceiptLocalScanEntriesNoLimit(localPoNo: String): LiveData<List<ReceiptLocalScanEntriesValue>>
+
+    @Query("SELECT * FROM ReceiptLocalScanEntries WHERE documentNo = :localPoNo ORDER BY id DESC LIMIT :limit")
+    fun getReceiptLocalScanEntries(
+        localPoNo: String,
+        limit: Int
+    ): LiveData<List<ReceiptLocalScanEntriesValue>>
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)

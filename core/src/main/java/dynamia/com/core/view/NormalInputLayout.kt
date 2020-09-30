@@ -19,10 +19,6 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
     private var attrs: AttributeSet? = null
     private var defStyleAttr: Int = 0
 
-    interface OncompleteInput {
-        fun checkDB()
-    }
-
     constructor(ctx: Context) : super(ctx)
 
     constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs) {
@@ -63,7 +59,7 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
                     tv_input_layout.text = title
                     et_input_layout.setOnKeyListener { _, _, event ->
                         var handled = false
-                        if (et_input_layout.text.isNotEmpty() && event.keyCode == KeyEvent.KEYCODE_UNKNOWN) {
+                        if (et_input_layout.text.isNotEmpty() && event.keyCode == KeyEvent.KEYCODE_UNKNOWN ) {
                             nextTextView()
                             handled = true
                         }
@@ -95,6 +91,7 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
         et_input_layout.addTextChangedListener(textWatcher)
     }
 
+
     fun getTextLength(): Int {
         return et_input_layout.text.length
     }
@@ -122,7 +119,7 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
         }).start()
     }
 
-    fun addKeylistener(listener:KeyListener){
+    fun addKeylistener(listener: KeyListener) {
         tv_input_layout.keyListener = listener
 
     }

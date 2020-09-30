@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingDetailAdapter
 import dynamia.com.core.base.BaseFragment
+import dynamia.com.core.util.Constant
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.picking_detail_fragment.*
@@ -79,6 +80,28 @@ class PickingDetailFragment : BaseFragment() {
         }
         cv_post.setOnClickListener {
             viewModel.postPickingData()
+        }
+        toolbar_picking_detail.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_search -> {
+                    val action =
+                        PickingDetailFragmentDirections.actionPickingDetailFragmentToReceiptSearchFragment(
+                            PoNo = args.pickingListNo,
+                            source = Constant.PICKING_LIST
+                        )
+                    view?.findNavController()?.navigate(action)
+                    true
+                }
+                R.id.menu_history -> {
+                    val action =
+                        PickingDetailFragmentDirections.actionPickingDetailFragmentToHistoryInputFragment(
+                            args.pickingListNo, Constant.PICKING_LIST
+                        )
+                    view?.findNavController()?.navigate(action)
+                    true
+                }
+                else -> false
+            }
         }
     }
 

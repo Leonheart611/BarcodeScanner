@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingListAdapter
+import dynamia.com.core.util.Constant
 import kotlinx.android.synthetic.main.header_layout.*
 import kotlinx.android.synthetic.main.pickinglist_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -51,6 +52,19 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
     private fun setupListener() {
         cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
+        }
+        tb_posolist.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.history_data -> {
+                    val action =
+                        PickingListFragmentDirections.actionPickingListFragmentToHistoryInputFragment(
+                            "", Constant.PICKING_LIST, true
+                        )
+                    view?.findNavController()?.navigate(action)
+                    true
+                }
+                else -> false
+            }
         }
     }
 

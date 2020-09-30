@@ -14,7 +14,7 @@
     <string name="mac_address">Mac Address</string>
     <string name="pl_dor_hint">PL No</string>
     <string name="note_hint">NOTE</string>
-    <string name="save_and_exit">Save &amp; Exit</string>
+    <string name="save_only">Save</string>
     <string name="save_and_new">Save &amp; New</string>
     <string name="multiple_item_warning">Harap Pilih Barang yang Ingin diInput</string>
     <string name="title_core">API Module</string>
@@ -23,7 +23,7 @@
     <string name="today_activity">Today Activity</string>
     <string name="back">Back</string>
     <string name="picklistno_title">Picking List: %1$s</string>
-    <string name="receipthistory_title">PO No : %1$s</string>
+    <string name="receipthistory_title">History PO No : %1$s</string>
     <string name="pickingList_header_title">Picking List</string>
     <string name="receipt_local_header">Receipt Local</string>
     <string name="receipt_import_header">Receipt Import</string>
@@ -57,6 +57,17 @@
     <string name="stock_count">Stock Count</string>
     <string name="srial_no_hint">Serial No</string>
     <string name="post_data_title">Post</string>
-    <string name="post_all_data_or_no_data">No data / All data posted already</string>
+    <string name="post_all_data_or_no_data">No data  %1$s/ All data posted already</string>
     <string name="error_nopart_not_found">Part No tidak ada data yang sesuai</string>
+    <string name="error_qty_over_outstanding">Data yang diinput sudah melebihi batas yang tersedia</string>
+    <string name="error_sn_on_same_pickinglistno">Nomor SN yang di input di Pickinglist ini sudah ada</string>
+    <string name="error_po_no_not_same">Po No harus sama dengan yang di input</string>
+    <string name="line_no_hint">Line No</string>
+    <string name="search_hint">Description / Line No</string>
+    <string name="search_title_toolbar">Search %1$s</string>
+    <string name="clear_data_title">Clear Data</string>
+    <string name="picklistno_history_title">History Picking List: %1$s</string>
+    <string name="pickinglist_all_history">History All Picking List</string>
+    <string name="import_and_local_all_history">History All Receipt</string>
+    <string name="part_no_error_message">Part No yang Anda Scan tidak di temukan Harap Scan Ulang</string>
 </resources>

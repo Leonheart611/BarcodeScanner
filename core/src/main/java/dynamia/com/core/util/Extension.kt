@@ -55,3 +55,15 @@ fun Context.getCurrentDate(): String {
     val sdf = SimpleDateFormat("yyyy-MM-dd")
     return sdf.format(Date())
 }
+
+fun String.removeSpecialChart(char: String): String {
+    return this.removePrefix(char)
+}
+
+fun String.emptySetZero(): String {
+    return if (this.isEmpty()) {
+        "0"
+    } else {
+        this
+    }
+}

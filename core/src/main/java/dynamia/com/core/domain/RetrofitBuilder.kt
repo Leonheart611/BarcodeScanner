@@ -14,9 +14,9 @@ object RetrofitBuilder {
     private var retrofit: Retrofit? = null
 
     fun getClient(
-        serverAddress: String = "",
-        username: String = "nav",
-        password: String = "12345"
+        serverAddress: String,
+        username: String,
+        password: String
     ): API {
         if (retrofit == null) {
             val logger = HttpLoggingInterceptor()
@@ -43,9 +43,9 @@ object RetrofitBuilder {
     class CustomInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val url = chain.request().url.newBuilder()
-                .addQueryParameter("\$format", "json")
                 .build()
             val request = chain.request().newBuilder()
+                .addHeader("Accept", "application/json")
                 .url(url)
                 .build()
             return chain.proceed(request)

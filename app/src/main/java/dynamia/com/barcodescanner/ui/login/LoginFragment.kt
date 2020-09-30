@@ -37,7 +37,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun initview() {
-        if (BuildConfig.BUILD_TYPE.equals("debug")) {
+        if (BuildConfig.BUILD_TYPE == "debug") {
             et_server_host.setText(getString(R.string.server_host_name))
             tied_username.setText(getString(R.string.user_name))
             tied_password.setText(getString(R.string.password))

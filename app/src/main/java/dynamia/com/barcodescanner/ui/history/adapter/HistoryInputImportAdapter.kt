@@ -14,6 +14,12 @@ class HistoryInputImportAdapter(
     private val listener: OnImportClicklistener
 ) : RecyclerView.Adapter<HistoryInputImportAdapter.HistoryInputHolder>() {
 
+    fun updateData(data: MutableList<ReceiptImportScanEntriesValue>) {
+        pickingListScanEntriesValues.clear()
+        pickingListScanEntriesValues.addAll(data)
+        notifyDataSetChanged()
+    }
+
     interface OnImportClicklistener {
         fun onLocalClicklistener(value: ReceiptImportScanEntriesValue)
     }
@@ -44,13 +50,14 @@ class HistoryInputImportAdapter(
                         listener.onLocalClicklistener(value)
                     }
                 }
-                if (value.sycn_status){
+                if (value.sycn_status) {
                     tv_post_status.setText(R.string.posted_status_true)
                     tv_post_status.setTextColor(resources.getColor(R.color.posted_true))
-                }else{
+                } else {
                     tv_post_status.setText(R.string.posted_status_false)
                     tv_post_status.setTextColor(resources.getColor(R.color.posted_false))
                 }
+                tv_scanby_history.text = value.employeeCode
 
             }
         }

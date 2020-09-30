@@ -115,7 +115,7 @@
             android:id="@+id/et_count_item_no"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/item_no_title"
+            android:hint="@string/po_no_title"
             android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -79,7 +80,7 @@ class ReceiptDetailFragment : BaseFragment() {
 
             }
         }
-        viewModel.loading.observe(viewLifecycleOwner,EventObserver{
+        viewModel.loading.observe(viewLifecycleOwner, EventObserver {
             showLoading(it)
         })
     }
@@ -112,7 +113,27 @@ class ReceiptDetailFragment : BaseFragment() {
                 )
             findNavController().navigate(action)
         }
+        tb_receipt_detail.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_search -> {
+                    val action =
+                        ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptSearchFragment(
+                            PoNo = args.poNo,
+                            source = args.source
+                        )
+                    view?.findNavController()?.navigate(action)
+                    true
+                }
+                R.id.menu_history -> {
+                    val action =
+                        ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToHistoryInputFragment(
+                            args.poNo, args.source
+                        )
+                    view?.findNavController()?.navigate(action)
+                    true
+                }
+                else -> false
+            }
+        }
     }
-
-
 }

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +53,19 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
     private fun setListener() {
         cv_back.setOnClickListener {
             findNavController().popBackStack()
+        }
+        tb_posolist.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.history_data -> {
+                    val action =
+                        ReceiptFragmentDirections.actionReceiptFragmentToHistoryInputFragment(
+                            "", args.source, true
+                        )
+                    view?.findNavController()?.navigate(action)
+                    true
+                }
+                else -> false
+            }
         }
     }
 

@@ -24,7 +24,12 @@ interface ReceiptLocalRepository {
 
     //ReceiptLocalScanEntriesValue--------------------------------------------------
     fun getAllReceiptLocalScanEntries(): LiveData<List<ReceiptLocalScanEntriesValue>>
-    fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Job
+    fun getReceiptLocalScanEntries(
+        localPoNo: String,
+        limit: Int? = null
+    ): LiveData<List<ReceiptLocalScanEntriesValue>>
+
+    fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Boolean
     fun deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
     fun updateReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
     fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue>
@@ -84,18 +89,57 @@ class ReceiptLocalRepositoryImpl(
             dao.getAllReceiptLocalScanEntries()
         }
 
-    override fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Job =
-        scope.launch(Dispatchers.IO) {
-            dao.insertReceiptLocalScanEntries(receiptLocalScanEntriesValue)
+    override fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Boolean =
+        runBlocking {
+            try {
+                val localLineData = dao.getDetailReceiptLocalLineData(
+                    receiptLocalScanEntriesValue.lineNo,
+                    receiptLocalScanEntriesValue.partNo
+                )
+                if (localLineData.alredyScanned < localLineData.outstandingQuantity.toInt()) {
+                    localLineData.apply {
+                        this.alredyScanned = ++alredyScanned
+                    }
+                    dao.insertReceiptLocalScanEntries(receiptLocalScanEntriesValue)
+                    dao.updateReceiptLocalLine(localLineData)
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                false
+            }
         }
 
+
     override fun deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue) {
-        dao.deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue)
+        scope.launch(Dispatchers.IO) {
+            val localLineData = dao.getDetailReceiptLocalLineData(
+                receiptLocalScanEntriesValue.lineNo,
+                receiptLocalScanEntriesValue.partNo
+            )
+            localLineData.apply {
+                this.alredyScanned = --alredyScanned
+            }
+            dao.deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue)
+            dao.updateReceiptLocalLine(localLineData)
+        }
+
     }
 
     override fun updateReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue) {
         dao.updateReceiptLocalScanEntry(receiptLocalScanEntriesValue)
     }
+
+    override fun getReceiptLocalScanEntries(
+        localPoNo: String,
+        limit: Int?
+    ): LiveData<List<ReceiptLocalScanEntriesValue>> =
+        runBlocking {
+            limit?.let {
+                dao.getReceiptLocalScanEntries(localPoNo, it)
+            } ?: dao.getReceiptLocalScanEntriesNoLimit(localPoNo)
+        }
 
     override fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue> =
         runBlocking {

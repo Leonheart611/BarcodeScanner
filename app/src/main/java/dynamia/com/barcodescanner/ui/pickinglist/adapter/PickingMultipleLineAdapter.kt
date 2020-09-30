@@ -36,7 +36,8 @@ class PickingMultipleLineAdapter(
                 tv_line_no.text = pickingListLineValue.lineNo.toString()
                 tv_description.text = pickingListLineValue.description
                 tv_description_2.text = pickingListLineValue.partNoOriginal
-                tv_outstanding.visibility = View.GONE
+                tv_outstanding.text =
+                    "${pickingListLineValue.alreadyPickup}/${pickingListLineValue.qtyToShip}/${pickingListLineValue.outstandingQuantity}"
                 setOnClickListener {
                     listener.onMultiplelineSelected(pickingListLineValue)
                 }

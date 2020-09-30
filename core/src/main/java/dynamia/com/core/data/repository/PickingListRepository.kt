@@ -26,7 +26,13 @@ interface PickingListRepository {
     fun clearPickingListLine()
 
     fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>>
-    fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue): Job
+    fun getPickingListScanEntries(
+        noPickingList: String,
+        limit: Int? = null
+    ): LiveData<List<PickingListScanEntriesValue>>
+
+    fun checkPickingListNoandSN(noPickingList: String, serialNo: String, partNo: String): Boolean
+    fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue): Boolean
     fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
     fun updatePickingScanEntry(pickingListScanEntriesValue: PickingListScanEntriesValue)
     fun clearPickingListScanEntries()
@@ -62,7 +68,9 @@ class PickingListRepositoryImpl(
             pickingListDao.getPickingListHeader(picking_List_No)
         }
 
-    override fun getCheckEmptyOrNot(employeeCode: String): Boolean = pickingListDao.getCheckEmptyOrNot(employeeCode) == 0
+    override fun getCheckEmptyOrNot(employeeCode: String): Boolean =
+        pickingListDao.getCheckEmptyOrNot(employeeCode) == 0
+
 
     override fun clearPickingListHeader() {
         pickingListDao.clearPickingListHeader()
@@ -97,13 +105,41 @@ class PickingListRepositoryImpl(
         }
 
 
-    override fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue): Job =
-        scope.launch(Dispatchers.IO) {
-            pickingListDao.insertPickingListScanEntries(pickingListScanEntriesValue)
+    override fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue): Boolean =
+        runBlocking(Dispatchers.IO) {
+            try {
+                val pickingListData = pickingListDao.getPickingListDetail(
+                    lineNo = pickingListScanEntriesValue.lineNo,
+                    partNo = pickingListScanEntriesValue.partNo
+                )
+                if (pickingListData.alreadyPickup < pickingListData.outstandingQuantity.toInt()) {
+                    pickingListData.apply {
+                        this.alreadyPickup = ++alreadyPickup
+                    }
+                    pickingListDao.insertPickingListScanEntries(pickingListScanEntriesValue)
+                    pickingListDao.updatePickingListLine(pickingListData)
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                false
+            }
         }
 
     override fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue) {
-        pickingListDao.deletePickingListScanEntries(pickingListScanEntriesValue)
+        scope.launch(Dispatchers.IO) {
+            pickingListDao.deletePickingListScanEntries(pickingListScanEntriesValue)
+            val pickingListData = pickingListDao.getPickingListDetail(
+                lineNo = pickingListScanEntriesValue.lineNo,
+                partNo = pickingListScanEntriesValue.partNo
+            )
+            pickingListData.apply {
+                this.alreadyPickup = --alreadyPickup
+            }
+            pickingListDao.updatePickingListLine(pickingListData)
+        }
+
     }
 
     override fun updatePickingScanEntry(pickingListScanEntriesValue: PickingListScanEntriesValue) {
@@ -114,10 +150,28 @@ class PickingListRepositoryImpl(
         pickingListDao.clearPickingListScanEntries()
     }
 
+    override fun getPickingListScanEntries(
+        noPickingList: String,
+        limit: Int?
+    ): LiveData<List<PickingListScanEntriesValue>> =
+        runBlocking {
+            limit?.let {
+                pickingListDao.getPickingListScanEntries(noPickingList, it)
+            } ?: pickingListDao.getPickingListScanEntriesNoLimit(noPickingList)
+        }
+
+    override fun checkPickingListNoandSN(
+        noPickingList: String,
+        serialNo: String,
+        partNo: String
+    ): Boolean =
+        runBlocking {
+            pickingListDao.checkPickingListNoandSN(noPickingList, serialNo, partNo).isEmpty()
+        }
+
     override fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue> =
         runBlocking {
             pickingListDao.getAllUnscynPickingListScanEntries()
         }
-
 }
 
