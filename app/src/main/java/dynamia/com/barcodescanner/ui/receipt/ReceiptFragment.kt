@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -73,31 +72,29 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
         when (args.source) {
             Constant.RECEIPT_LOCAL -> {
                 viewModel.receiptLocalRepository.getAllReceiptLocalHeader(viewModel.getEmployeeName())
-                    .observe(viewLifecycleOwner,
-                        Observer { receiptLocalHeaders ->
-                            with(rv_receipt_list) {
-                                adapter = ReceiptLocalItemAdapter(
-                                    receiptLocalHeaders.toMutableList(),
-                                    this@ReceiptFragment
-                                )
-                                layoutManager =
-                                    LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                            }
-                        })
+                    .observe(viewLifecycleOwner, { receiptLocalHeaders ->
+                        with(rv_receipt_list) {
+                            adapter = ReceiptLocalItemAdapter(
+                                receiptLocalHeaders.toMutableList(),
+                                this@ReceiptFragment
+                            )
+                            layoutManager =
+                                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                        }
+                    })
             }
             Constant.RECEIPT_IMPORT -> {
                 viewModel.receiptImportRepository.getAllReceiptImportHeader(viewModel.getEmployeeName())
-                    .observe(viewLifecycleOwner,
-                        Observer { receiptImportHeaders ->
-                            with(rv_receipt_list) {
-                                adapter = ReceiptImportItemAdapter(
-                                    receiptImportHeaders.toMutableList(),
-                                    this@ReceiptFragment
-                                )
-                                layoutManager =
-                                    LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                            }
-                        })
+                    .observe(viewLifecycleOwner, { receiptImportHeaders ->
+                        with(rv_receipt_list) {
+                            adapter = ReceiptImportItemAdapter(
+                                receiptImportHeaders.toMutableList(),
+                                this@ReceiptFragment
+                            )
+                            layoutManager =
+                                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                        }
+                    })
             }
         }
     }
@@ -118,4 +115,8 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
         findNavController().navigate(action)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        rv_receipt_list.adapter = null
+    }
 }

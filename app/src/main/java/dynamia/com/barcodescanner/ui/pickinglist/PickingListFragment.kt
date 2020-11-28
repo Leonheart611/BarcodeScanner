@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener {
 
     private val viewModel: PickingListViewModel by viewModel()
-
+    private val pickingListAdapter = PickingListAdapter(mutableListOf(), this)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,24 +28,28 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setupRecylerView()
         initView()
         setupListener()
+
+    }
+
+    private fun setupRecylerView() {
+        with(rv_pickinglist) {
+            layoutManager =
+                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = pickingListAdapter
+        }
+
     }
 
     private fun initView() {
         tv_employee_name.text = viewModel.getEmployeeName()
         tv_title_header.text = getString(R.string.pickingList_header_title)
         viewModel.pickingListRepository.getAllPickingListHeader(viewModel.getEmployeeName())
-            .observe(viewLifecycleOwner,
-                Observer {
-                    val adapter = PickingListAdapter(
-                        it.toMutableList(),
-                        this
-                    )
-                    rv_pickinglist.layoutManager =
-                        LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                    rv_pickinglist.adapter = adapter
-                })
+            .observe(viewLifecycleOwner, {
+                pickingListAdapter.updateData(it.toMutableList())
+            })
     }
 
     private fun setupListener() {
@@ -74,5 +77,10 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
             pickingListNo
         )
         view?.findNavController()?.navigate(action)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        rv_pickinglist?.adapter = null
     }
 }

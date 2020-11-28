@@ -2,6 +2,7 @@ package dynamia.com.core.view
 
 import android.app.Instrumentation
 import android.content.Context
+import android.os.Handler
 import android.text.TextWatcher
 import android.text.method.KeyListener
 import android.util.AttributeSet
@@ -18,6 +19,8 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
 
     private var attrs: AttributeSet? = null
     private var defStyleAttr: Int = 0
+    var nextTextView = Handler()
+
 
     constructor(ctx: Context) : super(ctx)
 
@@ -59,7 +62,7 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
                     tv_input_layout.text = title
                     et_input_layout.setOnKeyListener { _, _, event ->
                         var handled = false
-                        if (et_input_layout.text.isNotEmpty() && event.keyCode == KeyEvent.KEYCODE_UNKNOWN ) {
+                        if (et_input_layout.text.isNotEmpty() && event.keyCode == KeyEvent.KEYCODE_UNKNOWN) {
                             nextTextView()
                             handled = true
                         }
@@ -102,6 +105,7 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
 
     fun clearText() {
         et_input_layout.text?.clear()
+        et_input_layout.error = null
     }
 
     override fun onFocusChange(p0: View?, p1: Boolean) {

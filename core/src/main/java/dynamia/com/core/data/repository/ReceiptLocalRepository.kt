@@ -14,13 +14,13 @@ interface ReceiptLocalRepository {
     fun getReceiptLocalHeader(documentNo: String): LiveData<ReceiptLocalHeaderValue>
     fun insertReceiptLocalHeader(receiptLocalHeaderValue: ReceiptLocalHeaderValue): Job
     fun getCountReceiptLocalHeader(employeeCode: String): LiveData<Int>
-    fun clearReceiptLocalHeader()
+    suspend fun clearReceiptLocalHeader()
 
     //ReceiptLocalLineValue--------------------------------------------------
     fun getAllReceiptLocalLine(documentNo: String): LiveData<List<ReceiptLocalLineValue>>
     fun insertReceiptLocalLine(receiptLocalLineValue: ReceiptLocalLineValue): Job
     fun getReceiptLocalLineDetail(documentNo: String, partNo: String): List<ReceiptLocalLineValue>
-    fun clearReceiptLocalLine()
+    suspend fun clearReceiptLocalLine()
 
     //ReceiptLocalScanEntriesValue--------------------------------------------------
     fun getAllReceiptLocalScanEntries(): LiveData<List<ReceiptLocalScanEntriesValue>>
@@ -32,8 +32,9 @@ interface ReceiptLocalRepository {
     fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Boolean
     fun deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
     fun updateReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
-    fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue>
-    fun clearReceiptLocalScanEntries()
+    suspend fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue>
+    suspend fun clearReceiptLocalScanEntries()
+    suspend fun checkSN(serialNo: String): Boolean
 }
 
 class ReceiptLocalRepositoryImpl(
@@ -60,7 +61,7 @@ class ReceiptLocalRepositoryImpl(
         dao.getCountReceiptLocalHeader(employeeCode)
 
 
-    override fun clearReceiptLocalHeader() {
+    override suspend fun clearReceiptLocalHeader() {
         dao.clearReceiptLocalHeader()
     }
 
@@ -80,7 +81,7 @@ class ReceiptLocalRepositoryImpl(
         return dao.getReceiptLocalLineDetail(documentNo, partNo)
     }
 
-    override fun clearReceiptLocalLine() {
+    override suspend fun clearReceiptLocalLine() {
         dao.clearReceiptLocalLine()
     }
 
@@ -141,12 +142,12 @@ class ReceiptLocalRepositoryImpl(
             } ?: dao.getReceiptLocalScanEntriesNoLimit(localPoNo)
         }
 
-    override fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue> =
-        runBlocking {
-            dao.getUnsycnReceiptLocalScanEntry()
-        }
+    override suspend fun getUnsycnReceiptLocalScanEntry(): List<ReceiptLocalScanEntriesValue> =
+        dao.getUnsycnReceiptLocalScanEntry()
 
-    override fun clearReceiptLocalScanEntries() {
+    override suspend fun clearReceiptLocalScanEntries() {
         dao.clearReceiptLocalScanEntries()
     }
+
+    override suspend fun checkSN(serialNo: String): Boolean = dao.checkSN(serialNo).isEmpty()
 }

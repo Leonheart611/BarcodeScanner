@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.MainActivity
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -16,11 +18,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModel()
+    var activity: MainActivity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (viewModel.checkLoginVariables())
-            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        viewModel.checkSharedPreferences()
     }
 
     override fun onCreateView(
@@ -32,8 +34,10 @@ class LoginFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        activity = requireActivity() as MainActivity
         initview()
         setupListener()
+        setObservable()
     }
 
     private fun initview() {
@@ -49,13 +53,12 @@ class LoginFragment : Fragment() {
         btn_login.setOnClickListener {
             if (checkNotEmpty()) {
                 if (et_server_host.text.toString().endsWith("/")) {
-                    viewModel.saveLoginVariable(
+                    viewModel.saveSharedPreferences(
                         hostname = et_server_host.text.toString(),
                         username = tied_username.text.toString(),
                         password = tied_password.text.toString(),
                         employee = et_employee.text.toString()
                     )
-                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 } else {
                     context?.showLongToast("Host Name Must end with (/)")
                 }
@@ -80,5 +83,25 @@ class LoginFragment : Fragment() {
             result = false
         }
         return result
+    }
+
+    private fun setObservable() {
+        viewModel.modelState.observe(viewLifecycleOwner, {
+            when (it) {
+                is Success -> {
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                    context?.showLongToast("Success Save data")
+                }
+                is Error -> {
+                    context?.showLongToast(it.message)
+                }
+                is ShowLoading -> {
+                    activity?.showLoading(it.boolean)
+                }
+                is UserhasLogin -> {
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                }
+            }
+        })
     }
 }

@@ -18,6 +18,12 @@ class PickingListAdapter(
         fun onPickingListClickListener(pickingListNo: String)
     }
 
+    fun updateData(data: MutableList<PickingListHeaderValue>) {
+        pickingListHeaderValues.clear()
+        pickingListHeaderValues.addAll(data)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickingListHolder {
         return PickingListHolder(parent.inflate(R.layout.list_item_recieving))
     }

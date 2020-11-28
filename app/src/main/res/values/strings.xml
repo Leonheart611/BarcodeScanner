@@ -3,7 +3,7 @@
     <string name="so_no_title">SO No.</string>
     <string name="customer_name_title">Customer Name</string>
     <string name="customer_po_no_title">Customer PO No.</string>
-    <string name="order_date_title">Order Date</string>
+    <string name="order_date_title">Tanggal system</string>
     <string name="project_code">Project Code</string>
     <string name="refresh_warning">Semua data akan dihapus anda yakin ingin mengupdate data?</string>
     <string name="part_no_hint">Part No.</string>
@@ -44,11 +44,12 @@
     <string name="item_no_title">Item No</string>
     <string name="description_title">Description</string>
     <string name="view_title">View</string>
-    <string name="server_host_name">http://192.168.1.105:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"/</string>
+    <string name="server_host_name">http://192.168.18.126:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"/</string>
     <string name="user_name">nav</string>
     <string name="password">12345</string>
     <string name="domain">MIKAOCTOFRENTZE</string>
     <string name="employee_name">STEVEN</string>
+    <string name="salesperson_text">Salesperson</string>
 
     <string name="error_input_message">Wajib di isi</string>
     <string name="posted_status_true">Post Status :  True</string>
@@ -63,11 +64,18 @@
     <string name="error_sn_on_same_pickinglistno">Nomor SN yang di input di Pickinglist ini sudah ada</string>
     <string name="error_po_no_not_same">Po No harus sama dengan yang di input</string>
     <string name="line_no_hint">Line No</string>
-    <string name="search_hint">Description / Line No</string>
+    <string name="search_hint">Description / Line No / Part No</string>
     <string name="search_title_toolbar">Search %1$s</string>
     <string name="clear_data_title">Clear Data</string>
     <string name="picklistno_history_title">History Picking List: %1$s</string>
     <string name="pickinglist_all_history">History All Picking List</string>
     <string name="import_and_local_all_history">History All Receipt</string>
     <string name="part_no_error_message">Part No yang Anda Scan tidak di temukan Harap Scan Ulang</string>
+    <string name="sn_no_already_inputed">No SN yang di masukan sudah ada</string>
+    <string name="stock_count_post">Stock Count Post Data</string>
+    <string name="total_data_posted">Data Posted</string>
+    <string name="total_data_need_posted">Total Data to Post</string>
+    <string name="picking_list_post">Picking List Post Data</string>
+    <string name="receipt_local_post">Receipt Local Post Data</string>
+    <string name="receipt_import_post">Receipt Import Post Data</string>
 </resources>

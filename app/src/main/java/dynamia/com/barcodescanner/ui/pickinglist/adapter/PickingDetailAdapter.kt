@@ -14,6 +14,13 @@ import java.util.*
 
 class PickingDetailAdapter(private var pickingListLineValues: MutableList<PickingListLineValue>) :
     RecyclerView.Adapter<PickingDetailAdapter.PickingDetailHolder>(), Filterable {
+
+    var listener: OnPickingListDetailAdapterClicklistener? = null
+
+    fun setOnClickListener(clicklistener: OnPickingListDetailAdapterClicklistener) {
+        listener = clicklistener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickingDetailHolder {
         return PickingDetailHolder(parent.inflate(R.layout.picking_detail_line_item))
     }
@@ -46,6 +53,7 @@ class PickingDetailAdapter(private var pickingListLineValues: MutableList<Pickin
                     allData.filter {
                         it.description.toUpperCase(Locale.ROOT).contains(query) ||
                                 it.lineNo.toString().contains(query)
+                                || it.partNoOriginal.toUpperCase(Locale.ROOT).contains(query)
                     }
                 }
                 return filterResult
@@ -58,7 +66,7 @@ class PickingDetailAdapter(private var pickingListLineValues: MutableList<Pickin
         }
     }
 
-    class PickingDetailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PickingDetailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(pickingListLineValue: PickingListLineValue) {
             with(itemView) {
                 tv_line_no.text = pickingListLineValue.lineNo.toString()
@@ -67,8 +75,15 @@ class PickingDetailAdapter(private var pickingListLineValues: MutableList<Pickin
                 tv_outstanding.text =
                     "${pickingListLineValue.alreadyPickup}/${pickingListLineValue.qtyToShip}/${pickingListLineValue.outstandingQuantity}"
                 tv_purchase_order.text = pickingListLineValue.purchOrderNo
+                setOnClickListener {
+                    listener?.onclicklistener(pickingListLineValue)
+                }
             }
         }
+    }
+
+    interface OnPickingListDetailAdapterClicklistener {
+        fun onclicklistener(pickingListLineValue: PickingListLineValue)
     }
 
 

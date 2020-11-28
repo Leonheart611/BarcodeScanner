@@ -4,28 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingDetailAdapter
-import dynamia.com.core.base.BaseFragment
+import dynamia.com.core.data.model.PickingListHeaderValue
+import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.util.Constant
-import dynamia.com.core.util.EventObserver
+import dynamia.com.core.util.showLongToast
 import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.picking_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PickingDetailFragment : BaseFragment() {
+class PickingDetailFragment : Fragment() {
     private val viewModel: PickingDetailViewModel by viewModel()
     private val args: PickingDetailFragmentArgs by navArgs()
-    private val pickingListHeaderValue by lazy {
-        viewModel.pickingListRepository.getPickingListHeader(
-            args.pickingListNo
-        )
-    }
+    val adapter = PickingDetailAdapter(mutableListOf())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,37 +33,44 @@ class PickingDetailFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel.getPickingDetail(args.pickingListNo)
         setupView()
         setupListener()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setupView()
+        setObseverable()
     }
 
     private fun setupView() {
         tv_picking_detail_so.text = getString(R.string.picklistno_title, args.pickingListNo)
-        with(pickingListHeaderValue) {
+        et_customer_po_no.setText(viewModel.getEmployeeName())
+        rv_picking_detail.layoutManager =
+            LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        rv_picking_detail.adapter = adapter
+        viewModel.pickingListRepository.getAllPickingListLine(args.pickingListNo)
+            .observe(viewLifecycleOwner, {
+                adapter.update(it.toMutableList())
+            })
+    }
+
+    private fun setObseverable() {
+        viewModel.pickingDetailViewState.observe(viewLifecycleOwner, {
+            when (it) {
+                is PickingDetailViewModel.PickingDetailViewState.SuccessGetLocalData -> {
+                    setupMainView(it.value)
+                }
+                is PickingDetailViewModel.PickingDetailViewState.ErrorGetLocalData -> {
+                    context?.showLongToast(it.message)
+                }
+            }
+        })
+    }
+
+    private fun setupMainView(value: PickingListHeaderValue) {
+        with(value) {
             et_customer_name.setText(sellToCustomerName)
-            et_customer_po_no.setText(sellToCustomerNo)
             et_order_date.setText(requestedDeliveryDate.toNormalDate())
             et_so_no.setText(sONo)
             et_project_code.setText(projectCode)
         }
-        viewModel.pickingListRepository.getAllPickingListLine(args.pickingListNo)
-            .observe(viewLifecycleOwner,
-                Observer {
-                    val adapter = PickingDetailAdapter(
-                        it.toMutableList()
-                    )
-                    rv_picking_detail.layoutManager =
-                        LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                    rv_picking_detail.adapter = adapter
-                })
-        viewModel.loading.observe(viewLifecycleOwner, EventObserver {
-            showLoading(it)
-        })
     }
 
     private fun setupListener() {
@@ -79,7 +83,7 @@ class PickingDetailFragment : BaseFragment() {
             view?.findNavController()?.popBackStack()
         }
         cv_post.setOnClickListener {
-            viewModel.postPickingData()
+            showPostDialog()
         }
         toolbar_picking_detail.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -103,6 +107,27 @@ class PickingDetailFragment : BaseFragment() {
                 else -> false
             }
         }
+        adapter.setOnClickListener(object :
+            PickingDetailAdapter.OnPickingListDetailAdapterClicklistener {
+            override fun onclicklistener(pickingListLineValue: PickingListLineValue) {
+                val action =
+                    PickingDetailFragmentDirections.actionPickingDetailFragmentToHistoryInputFragment(
+                        args.pickingListNo,
+                        Constant.PICKING_LIST,
+                        partNo = pickingListLineValue.partNoOriginal
+                    )
+                view?.findNavController()?.navigate(action)
+            }
+        })
     }
 
+    private fun showPostDialog() {
+        val dialog = PickingPostDialog()
+        dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        rv_picking_detail?.adapter = null
+    }
 }

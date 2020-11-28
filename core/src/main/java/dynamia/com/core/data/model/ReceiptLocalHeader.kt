@@ -11,18 +11,11 @@ data class ReceiptLocalHeader(
 
 @Entity(tableName = "ReceiptLocalHeader")
 data class ReceiptLocalHeaderValue(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int,
-    @SerializedName("Document_Type")
-    val documentType: String,
-    @SerializedName("No")
-    val no: String,
-    @SerializedName("Buy_from_Vendor_No")
-    val buyFromVendorNo: String,
-    @SerializedName("Buy_from_Vendor_Name")
-    val buyFromVendorName: String,
-    @SerializedName("Employee_Code")
-    val employeeCode: String,
-    @SerializedName("Expected_Receipt_Date")
-    val expectedReceiptDate: String
+    @PrimaryKey(autoGenerate = true) var id: Int,
+    @SerializedName("Document_Type") val documentType: String,
+    @SerializedName("No") val no: String,
+    @SerializedName("Buy_from_Vendor_No") val buyFromVendorNo: String,
+    @SerializedName("Buy_from_Vendor_Name") val buyFromVendorName: String,
+    @SerializedName("Employee_Code") val employeeCode: String,
+    @SerializedName("Expected_Receipt_Date") val expectedReceiptDate: String
 )

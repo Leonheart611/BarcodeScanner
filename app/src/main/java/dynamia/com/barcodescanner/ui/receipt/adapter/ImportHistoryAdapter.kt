@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.core.data.model.ReceiptImportScanEntriesValue
 import dynamia.com.core.util.inflate
+import kotlinx.android.synthetic.main.history_input_layout.view.*
 
 class ImportHistoryAdapter(val data: MutableList<ReceiptImportScanEntriesValue>) :
     RecyclerView.Adapter<ImportHistoryAdapter.ImportHistoryHolder>() {
@@ -17,7 +18,7 @@ class ImportHistoryAdapter(val data: MutableList<ReceiptImportScanEntriesValue>)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImportHistoryHolder {
-        return ImportHistoryHolder(parent.inflate(R.layout.item_history_input))
+        return ImportHistoryHolder(parent.inflate(R.layout.history_input_layout))
     }
 
     override fun onBindViewHolder(holder: ImportHistoryHolder, position: Int) {
@@ -32,7 +33,7 @@ class ImportHistoryAdapter(val data: MutableList<ReceiptImportScanEntriesValue>)
 
     class ImportHistoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(data: ReceiptImportScanEntriesValue) {
-
+            with(itemView) { tv_sn_history.text = data.serialNo }
         }
     }
 

@@ -1,5 +1,6 @@
 package dynamia.com.core.util
 
+import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.view.LayoutInflater
@@ -10,14 +11,6 @@ import androidx.annotation.LayoutRes
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-fun View.rotateFab(rotate: Boolean): Boolean {
-    this.animate().setDuration(200)
-        .setListener(object : AnimatorListenerAdapter() {
-        })
-        .rotation(if (rotate) 135f else 0f)
-    return rotate
-}
 
 fun Context.showLongToast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
@@ -60,10 +53,41 @@ fun String.removeSpecialChart(char: String): String {
     return this.removePrefix(char)
 }
 
+fun String.checkFirstCharacter(char: String): String {
+    return if (this[0].equals('k', true)) {
+        this.replaceFirst(char, "", true)
+    } else {
+        this
+    }
+}
+
 fun String.emptySetZero(): String {
     return if (this.isEmpty()) {
         "0"
     } else {
         this
     }
+}
+
+fun View.crossFade(animationDuration: Long, hide: View) {
+    this.apply {
+        alpha = 0f
+        visibility = View.VISIBLE
+        animate()
+            .alpha(1f)
+            .setDuration(animationDuration)
+            .setListener(null)
+    }
+    hide.animate()
+        .alpha(0f)
+        .setDuration(animationDuration)
+        .setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                hide.visibility = View.GONE
+            }
+        })
+}
+
+fun View.gone() {
+    this.visibility = View.GONE
 }

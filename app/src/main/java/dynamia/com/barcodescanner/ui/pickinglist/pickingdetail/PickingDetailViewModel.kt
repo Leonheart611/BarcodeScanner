@@ -1,58 +1,97 @@
 package dynamia.com.barcodescanner.ui.pickinglist.pickingdetail
 
 import android.app.Application
+import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import dynamia.com.barcodescanner.R
+import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
+import dynamia.com.core.data.model.PickingListHeaderValue
+import dynamia.com.core.data.repository.NetworkRepository
 import dynamia.com.core.data.repository.PickingListRepository
-import dynamia.com.core.data.repository.UserRepository
-import dynamia.com.core.domain.RetrofitBuilder
-import dynamia.com.core.util.Event
+import dynamia.com.core.util.io
+import dynamia.com.core.util.ui
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class PickingDetailViewModel(
     val pickingListRepository: PickingListRepository,
-    sharedPreferences: UserRepository,
+    sharedPreferences: SharedPreferences,
+    private val networkRepository: NetworkRepository,
     val app: Application
 ) : ViewModelBase(sharedPreferences) {
-    private val userData by lazy { sharedPreferences.getUserData() }
-    private val retrofitService by lazy {
-        RetrofitBuilder.getClient(
-            serverAddress = userData.hostName,
-            password = userData.password,
-            username = userData.username
-        )
-    }
-    val pickingPostMessage = MutableLiveData<Event<String>>()
-    val loading = MutableLiveData<Event<Boolean>>()
-    fun postPickingData(){
-        uiScope.launch {
-            loading.postValue(Event(true))
+
+    private val _pickingDetailViewState = MutableLiveData<PickingDetailViewState>()
+    val pickingDetailViewState: LiveData<PickingDetailViewState> by lazy { _pickingDetailViewState }
+
+    private val _pickingPostViewState = MutableLiveData<PickingDetailPostViewState>()
+    val pickingPostViewState: LiveData<PickingDetailPostViewState> by lazy { _pickingPostViewState }
+
+    fun postPickingDataNew() {
+        viewModelScope.launch {
             try {
-                val pickingListScanEntries = pickingListRepository.getAllUnscynPickingListScanEntries()
-                if (pickingListScanEntries.isNotEmpty()) {
-                    for (data in pickingListScanEntries) {
+                var dataPosted = 0
+                io {
+                    val pickingListEntries =
+                        pickingListRepository.getAllUnscynPickingListScanEntries()
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.GetUnpostedData(pickingListEntries.size)
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                    }
+                    for (data in pickingListEntries) {
                         val param = gson.toJson(data)
-                        val result = retrofitService.postPickingListEntry(param)
-                        result.let {
+                        networkRepository.postPickingListEntry(param).collect {
+                            dataPosted++
+                            ui {
+                                _pickingPostViewState.value =
+                                    PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                            }
                             data.apply {
                                 sycn_status = true
                             }
                             pickingListRepository.updatePickingScanEntry(data)
                         }
                     }
-                    pickingPostMessage.postValue(Event("Berhasil Post Data :)"))
-                    loading.postValue(Event(false))
-
-                } else {
-                    pickingPostMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
-                    loading.postValue(Event(false))
+                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
                 }
             } catch (e: Exception) {
-                loading.postValue(Event(false))
-                pickingPostMessage.postValue(Event(e.localizedMessage))
+                _pickingPostViewState.value =
+                    PickingDetailPostViewState.ErrorPostData(e.localizedMessage)
             }
         }
+    }
+
+
+    fun getPickingDetail(listNo: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    val data = pickingListRepository.getPickingListHeader(listNo)
+                    ui {
+                        _pickingDetailViewState.value =
+                            PickingDetailViewState.SuccessGetLocalData(data)
+                    }
+                }
+            } catch (e: Exception) {
+                _pickingDetailViewState.value =
+                    PickingDetailViewState.ErrorGetLocalData(e.localizedMessage)
+            }
+        }
+
+    }
+
+    sealed class PickingDetailViewState {
+        class SuccessGetLocalData(val value: PickingListHeaderValue) : PickingDetailViewState()
+        class ErrorGetLocalData(val message: String) : PickingDetailViewState()
+    }
+
+    sealed class PickingDetailPostViewState {
+        class GetUnpostedData(val data: Int) : PickingDetailPostViewState()
+        class GetSuccessfullyPostedData(val data: Int) : PickingDetailPostViewState()
+        class ErrorPostData(val message: String) : PickingDetailPostViewState()
+        object AllDataPosted : PickingDetailPostViewState()
     }
 
 

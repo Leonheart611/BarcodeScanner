@@ -11,16 +11,10 @@ data class ReceiptImportHeader(
 
 @Entity(tableName = "ReceiptImportHeader")
 data class ReceiptImportHeaderValue(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int,
-    @SerializedName("No")
-    val no: String,
-    @SerializedName("Purchase_Order_No")
-    val purchaseOrderNo: String,
-    @SerializedName("Buy_from_Vendor_Name")
-    val buyFromVendorName: String,
-    @SerializedName("Employee_Code")
-    val employeeCode: String,
-    @SerializedName("Posting_Date")
-    val postingDate: String
+    @PrimaryKey(autoGenerate = true) var id: Int,
+    @SerializedName("No") val no: String,
+    @SerializedName("Purchase_Order_No") val purchaseOrderNo: String,
+    @SerializedName("Buy_from_Vendor_Name") val buyFromVendorName: String,
+    @SerializedName("Employee_Code") val employeeCode: String,
+    @SerializedName("Posting_Date") val postingDate: String
 )

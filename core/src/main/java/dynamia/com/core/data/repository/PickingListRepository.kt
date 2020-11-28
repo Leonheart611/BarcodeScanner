@@ -12,18 +12,18 @@ interface PickingListRepository {
     fun getAllPickingListHeader(employeeCode: String): LiveData<List<PickingListHeaderValue>>
     fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue): Job
     fun getCountPickingListHeader(employeeCode: String): LiveData<Int>
-    fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue
-    fun getCheckEmptyOrNot(employeeCode: String): Boolean
-    fun clearPickingListHeader()
+    suspend fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue
+    suspend fun getCheckEmptyOrNot(employeeCode: String): Boolean
+    suspend fun clearPickingListHeader()
 
     fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>>
     fun insertPickingListLine(pickingListLineValue: PickingListLineValue): Job
-    fun getAllPickingListLineFromInsert(
+    suspend fun getAllPickingListLineFromInsert(
         partNo: String,
         picking_List_No: String
     ): List<PickingListLineValue>
 
-    fun clearPickingListLine()
+    suspend fun clearPickingListLine()
 
     fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>>
     fun getPickingListScanEntries(
@@ -31,22 +31,25 @@ interface PickingListRepository {
         limit: Int? = null
     ): LiveData<List<PickingListScanEntriesValue>>
 
-    fun checkPickingListNoandSN(noPickingList: String, serialNo: String, partNo: String): Boolean
+    suspend fun checkPickingListNoandSN(serialNo: String): Boolean
     fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue): Boolean
-    fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
+    suspend fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
     fun updatePickingScanEntry(pickingListScanEntriesValue: PickingListScanEntriesValue)
-    fun clearPickingListScanEntries()
+    suspend fun clearPickingListScanEntries()
     fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue>
+    fun getPickingListandPartNo(
+        pickingListNo: String,
+        partNo: String
+    ): LiveData<List<PickingListScanEntriesValue>>
 }
 
 class PickingListRepositoryImpl(
     private val pickingListDao: PickingListDao
-) :
-    PickingListRepository {
+) : PickingListRepository {
+
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Main
     private val scope = CoroutineScope(coroutineContext)
-
 
     override fun getAllPickingListHeader(employeeCode: String): LiveData<List<PickingListHeaderValue>> =
         runBlocking {
@@ -63,31 +66,26 @@ class PickingListRepositoryImpl(
         pickingListDao.getCountPickingListHeader(employeeCode)
 
 
-    override fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue =
-        runBlocking {
-            pickingListDao.getPickingListHeader(picking_List_No)
-        }
+    override suspend fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue =
+        pickingListDao.getPickingListHeader(picking_List_No)
 
-    override fun getCheckEmptyOrNot(employeeCode: String): Boolean =
+    override suspend fun getCheckEmptyOrNot(employeeCode: String): Boolean =
         pickingListDao.getCheckEmptyOrNot(employeeCode) == 0
 
 
-    override fun clearPickingListHeader() {
+    override suspend fun clearPickingListHeader() {
         pickingListDao.clearPickingListHeader()
     }
 
     override fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>> =
-        runBlocking {
-            pickingListDao.getAllPickingListLine(picking_List_No)
-        }
+        pickingListDao.getAllPickingListLine(picking_List_No)
 
 
-    override fun getAllPickingListLineFromInsert(
+    override suspend fun getAllPickingListLineFromInsert(
         partNo: String,
         picking_List_No: String
-    ): List<PickingListLineValue> = runBlocking {
+    ): List<PickingListLineValue> =
         pickingListDao.getAllPickingListLineFromInsert(partNo, picking_List_No)
-    }
 
 
     override fun insertPickingListLine(pickingListLineValue: PickingListLineValue): Job =
@@ -95,7 +93,7 @@ class PickingListRepositoryImpl(
             pickingListDao.insertPickingListLine(pickingListLineValue)
         }
 
-    override fun clearPickingListLine() {
+    override suspend fun clearPickingListLine() {
         pickingListDao.clearPickingListLine()
     }
 
@@ -110,7 +108,8 @@ class PickingListRepositoryImpl(
             try {
                 val pickingListData = pickingListDao.getPickingListDetail(
                     lineNo = pickingListScanEntriesValue.lineNo,
-                    partNo = pickingListScanEntriesValue.partNo
+                    partNo = pickingListScanEntriesValue.partNo,
+                    pickingListNo = pickingListScanEntriesValue.pickingListNo
                 )
                 if (pickingListData.alreadyPickup < pickingListData.outstandingQuantity.toInt()) {
                     pickingListData.apply {
@@ -127,12 +126,13 @@ class PickingListRepositoryImpl(
             }
         }
 
-    override fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue) {
+    override suspend fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue) {
         scope.launch(Dispatchers.IO) {
             pickingListDao.deletePickingListScanEntries(pickingListScanEntriesValue)
             val pickingListData = pickingListDao.getPickingListDetail(
                 lineNo = pickingListScanEntriesValue.lineNo,
-                partNo = pickingListScanEntriesValue.partNo
+                partNo = pickingListScanEntriesValue.partNo,
+                pickingListNo = pickingListScanEntriesValue.pickingListNo
             )
             pickingListData.apply {
                 this.alreadyPickup = --alreadyPickup
@@ -146,7 +146,7 @@ class PickingListRepositoryImpl(
         pickingListDao.updatePickingScanEntry(pickingListScanEntriesValue)
     }
 
-    override fun clearPickingListScanEntries() {
+    override suspend fun clearPickingListScanEntries() {
         pickingListDao.clearPickingListScanEntries()
     }
 
@@ -160,18 +160,19 @@ class PickingListRepositoryImpl(
             } ?: pickingListDao.getPickingListScanEntriesNoLimit(noPickingList)
         }
 
-    override fun checkPickingListNoandSN(
-        noPickingList: String,
-        serialNo: String,
-        partNo: String
-    ): Boolean =
-        runBlocking {
-            pickingListDao.checkPickingListNoandSN(noPickingList, serialNo, partNo).isEmpty()
-        }
+    override suspend fun checkPickingListNoandSN(serialNo: String): Boolean =
+        pickingListDao.checkPickingListSN(serialNo).isEmpty()
 
     override fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue> =
         runBlocking {
             pickingListDao.getAllUnscynPickingListScanEntries()
         }
+
+    override fun getPickingListandPartNo(
+        pickingListNo: String,
+        partNo: String
+    ): LiveData<List<PickingListScanEntriesValue>> = runBlocking {
+        pickingListDao.getPickingListandPartNo(pickingListNo, partNo)
+    }
 }
 

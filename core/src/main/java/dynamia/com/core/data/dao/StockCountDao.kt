@@ -20,4 +20,9 @@ interface StockCountDao {
 
     @Update
     fun updateStockCount(data:StockCount)
+
+    @Query("SELECT * FROM StockCount WHERE Serial_No = :serialNo ORDER BY id DESC")
+    fun checkSN(
+        serialNo: String
+    ): List<StockCount>
 }

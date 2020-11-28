@@ -32,11 +32,12 @@ val injectionModule = module {
     single<ReceiptLocalRepository> { ReceiptLocalRepositoryImpl(get()) }
     single<StockCountRepository> { StockCountRepositoryImpl(get()) }
     single<UserRepository> { UserRepositoryImpl(get()) }
+    single<NetworkRepository> { NetworkRepositoryImpl(get()) }
 
     viewModel { LoginViewModel(get(), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { PickingListViewModel(get(), get()) }
-    viewModel { PickingDetailViewModel(get(), get(), get()) }
+    viewModel { PickingDetailViewModel(get(), get(), get(), get()) }
     viewModel { PickingListInputViewModel(get(), get()) }
     viewModel { ReceiptViewModel(get(), get(), get()) }
     viewModel { HistoryInputViewModel(get(), get(), get(), get()) }

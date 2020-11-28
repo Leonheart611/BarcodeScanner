@@ -43,8 +43,8 @@ interface PickingListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPickingListLine(pickingListLineValue: PickingListLineValue)
 
-    @Query("SELECT * FROM PickingListLine WHERE lineNo = :lineNo AND partNoOriginal = :partNo")
-    fun getPickingListDetail(lineNo: Int, partNo: String): PickingListLineValue
+    @Query("SELECT * FROM PickingListLine WHERE pickingListNo = :pickingListNo AND lineNo = :lineNo AND partNoOriginal = :partNo")
+    fun getPickingListDetail(lineNo: Int, partNo: String,pickingListNo:String): PickingListLineValue
 
     @Query("DELETE FROM PickingListLine")
     fun clearPickingListLine()
@@ -62,11 +62,9 @@ interface PickingListDao {
     @Query("SELECT * FROM PickingListScanEntries WHERE pickingListNo = :noPickingList ORDER BY id DESC")
     fun getPickingListScanEntriesNoLimit(noPickingList: String): LiveData<List<PickingListScanEntriesValue>>
 
-    @Query("SELECT * FROM PickingListScanEntries WHERE pickingListNo = :noPickingList AND serialNo = :serialNo AND partNo =:partNo ORDER BY id DESC")
-    fun checkPickingListNoandSN(
-        noPickingList: String,
-        serialNo: String,
-        partNo: String
+    @Query("SELECT * FROM PickingListScanEntries WHERE serialNo = :serialNo ORDER BY id DESC")
+    fun checkPickingListSN(
+        serialNo: String
     ): List<PickingListScanEntriesValue>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -83,4 +81,10 @@ interface PickingListDao {
 
     @Query("SELECT * FROM PickingListScanEntries WHERE sycn_status = 0")
     fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue>
+
+    @Query("SELECT * FROM PickingListScanEntries WHERE pickingListNo = :pickingListNo AND partNo = :partNo ORDER BY id DESC")
+    fun getPickingListandPartNo(
+        pickingListNo: String,
+        partNo: String
+    ): LiveData<List<PickingListScanEntriesValue>>
 }

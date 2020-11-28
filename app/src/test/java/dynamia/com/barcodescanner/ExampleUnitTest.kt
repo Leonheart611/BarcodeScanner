@@ -1,5 +1,6 @@
 package dynamia.com.barcodescanner
 
+import dynamia.com.core.util.checkFirstCharacter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -26,5 +27,26 @@ class ExampleUnitTest {
         val value = "XPAI000001"
         val result = value.removePrefix("1p")
         assertEquals(result,"XPAI000001")
+    }
+
+    @Test
+    fun removek_correct(){
+        val value = "K2019/po.09/0001"
+        val result = value.checkFirstCharacter("K")
+        assertEquals(result,"2019/po.09/0001")
+    }
+
+    @Test
+    fun removeK_correct(){
+        val value = "KPO NO"
+        val result = value.checkFirstCharacter("K")
+        assertEquals(result,"PO NO")
+    }
+
+    @Test
+    fun removek_isCorrect(){
+        val value = "2019/pok.09/k0001"
+        val result = value.checkFirstCharacter("K")
+        assertEquals(result,"2019/pok.09/k0001")
     }
 }

@@ -15,6 +15,11 @@ class ReceiptImportLineAdapter(private var reciptImportLines: MutableList<Receip
     RecyclerView.Adapter<ReceiptImportLineAdapter.ReceiptImportLineHolder>(), Filterable {
 
     val allData by lazy { reciptImportLines }
+    var listener: OnReceiptImportClicklistener? = null
+
+    fun setonclicklistener(listener: OnReceiptImportClicklistener) {
+        this.listener = listener
+    }
 
     fun update(data: MutableList<ReceiptImportLineValue>) {
         reciptImportLines.clear()
@@ -46,7 +51,8 @@ class ReceiptImportLineAdapter(private var reciptImportLines: MutableList<Receip
                 else {
                     allData.filter {
                         it.description.toUpperCase(Locale.ROOT).contains(query) ||
-                                it.lineNo.toString().contains(query)
+                                it.lineNo.toString().contains(query) ||
+                                it.partNo.toUpperCase(Locale.ROOT).contains(query)
                     }
                 }
                 return filterResult
@@ -59,7 +65,7 @@ class ReceiptImportLineAdapter(private var reciptImportLines: MutableList<Receip
         }
     }
 
-    class ReceiptImportLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ReceiptImportLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(pickingListLineValue: ReceiptImportLineValue) {
             with(itemView) {
                 tv_description_2.text = pickingListLineValue.partNo
@@ -67,7 +73,15 @@ class ReceiptImportLineAdapter(private var reciptImportLines: MutableList<Receip
                 tv_description.text = pickingListLineValue.description
                 tv_outstanding.text =
                     "${pickingListLineValue.alreadyScanned}/${pickingListLineValue.quantity}/${pickingListLineValue.outstandingQuantity}"
+                setOnClickListener {
+                    listener?.clicklistener(pickingListLineValue)
+                }
             }
         }
     }
+
+    interface OnReceiptImportClicklistener {
+        fun clicklistener(pickingListLineValue: ReceiptImportLineValue)
+    }
+
 }

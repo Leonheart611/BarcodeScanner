@@ -56,6 +56,11 @@ interface ReceiptImportDao {
         limit: Int
     ): LiveData<List<ReceiptImportScanEntriesValue>>
 
+    @Query("SELECT * FROM ReceiptImportScanEntries WHERE serialNo = :serialNo ORDER BY id DESC")
+    fun checkSN(
+        serialNo: String
+    ): List<ReceiptImportScanEntriesValue>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue)
 

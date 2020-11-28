@@ -1,57 +1,85 @@
 package dynamia.com.barcodescanner.ui.stockcounting
 
-import android.app.Application
+import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import dynamia.com.barcodescanner.R
+import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
+import dynamia.com.core.data.repository.NetworkRepository
 import dynamia.com.core.data.repository.StockCountRepository
-import dynamia.com.core.data.repository.UserRepository
-import dynamia.com.core.domain.RetrofitBuilder
-import dynamia.com.core.util.Event
+import dynamia.com.core.util.io
+import dynamia.com.core.util.ui
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class StockCountingViewModel(
     val stockCountRepository: StockCountRepository,
-    sharedPreferences: UserRepository,
-    val app: Application
+    sharedPreferences: SharedPreferences,
+    private val networkRepository: NetworkRepository
 ) : ViewModelBase(sharedPreferences) {
-    private val userData by lazy { sharedPreferences.getUserData() }
-    private val retrofitService by lazy {
-        RetrofitBuilder.getClient(
-            serverAddress = userData.hostName,
-            password = userData.password,
-            username = userData.username
-        )
-    }
-    val postStockCountMessage = MutableLiveData<Event<String>>()
-    val loading = MutableLiveData<Event<Boolean>>()
-    fun postStockCountData() {
-        uiScope.launch {
-            loading.postValue(Event(true))
+    private val _stockCountViewState = MutableLiveData<StockCountingViewState>()
+    val stockCountViewState: LiveData<StockCountingViewState> by lazy { _stockCountViewState }
+
+    private val _stockCountPostViewState = MutableLiveData<StockCountPostViewState>()
+    val stockCountPostViewState: LiveData<StockCountPostViewState> by lazy { _stockCountPostViewState }
+
+    fun postStockCountDataNew() {
+        viewModelScope.launch {
             try {
-                val stockCounts = stockCountRepository.getAllUnsycnStockCount()
-                if (stockCounts.isNotEmpty()) {
+                var dataPosted = 0
+                io {
+                    val stockCounts = stockCountRepository.getAllUnsycnStockCount()
+                    ui {
+                        _stockCountPostViewState.value =
+                            StockCountPostViewState.GetUnpostedData(stockCounts.size)
+                        _stockCountPostViewState.value =
+                            StockCountPostViewState.UpdateSuccessPosted(dataPosted)
+                    }
                     for (data in stockCounts) {
-                        val param = gson.toJson(data)
-                        val result = retrofitService.postStockCountEntry(param)
-                        result.let {
+                        val body = gson.toJson(data)
+                        networkRepository.postStockCountEntry(body).collect {
+                            dataPosted++
+                            ui {
+                                _stockCountPostViewState.value =
+                                    StockCountPostViewState.UpdateSuccessPosted(dataPosted)
+                            }
                             data.apply {
                                 sycn_status = true
                             }
                             stockCountRepository.updateStockCount(data)
                         }
                     }
-                    postStockCountMessage.postValue(Event("Success Post Data Stock Count"))
-                    loading.postValue(Event(false))
-
-                } else {
-                    postStockCountMessage.postValue(Event(app.resources.getString(R.string.post_all_data_or_no_data)))
-                    loading.postValue(Event(false))
                 }
+                ui { _stockCountPostViewState.value = StockCountPostViewState.SuccessPostedAllData }
             } catch (e: Exception) {
-                loading.postValue(Event(false))
-                postStockCountMessage.postValue(Event(e.localizedMessage))
+                _stockCountPostViewState.value =
+                    StockCountPostViewState.ErrorPostData(e.localizedMessage)
             }
         }
+    }
+
+    fun checkSnNo(serialNo: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    val result = stockCountRepository.checkSN(serialNo)
+                    ui { _stockCountViewState.value = StockCountingViewState.CheckedSnNo(result) }
+                }
+            } catch (e: Exception) {
+                _stockCountViewState.value = StockCountingViewState.Error(e.localizedMessage)
+            }
+        }
+    }
+
+    sealed class StockCountingViewState {
+        class CheckedSnNo(val isEmpty: Boolean) : StockCountingViewState()
+        class Error(val message: String) : StockCountingViewState()
+    }
+
+    sealed class StockCountPostViewState {
+        class GetUnpostedData(val data: Int) : StockCountPostViewState()
+        class UpdateSuccessPosted(val data: Int) : StockCountPostViewState()
+        class ErrorPostData(val message: String) : StockCountPostViewState()
+        object SuccessPostedAllData : StockCountPostViewState()
     }
 }

@@ -72,6 +72,7 @@
         android:layout_marginBottom="8dp"
         android:paddingStart="5dp"
         android:paddingRight="5dp"
+        app:cardBackgroundColor="@color/pick_btn_color"
         app:cardElevation="5dp"
         app:cardPreventCornerOverlap="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -84,6 +85,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:text="Pick"
+            android:textColor="@android:color/white"
             android:textSize="18sp" />
     </androidx.cardview.widget.CardView>
 
@@ -160,7 +162,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/et_so_no"
-                app:title="@string/customer_po_no_title"/>
+                app:title="@string/salesperson_text" />
 
             <dynamia.com.core.view.NormalInputLayout
                 android:id="@+id/et_order_date"

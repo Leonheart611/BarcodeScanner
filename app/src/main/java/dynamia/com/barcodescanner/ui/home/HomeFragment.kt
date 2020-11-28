@@ -7,10 +7,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.R
-import dynamia.com.core.base.BaseFragment
+import dynamia.com.barcodescanner.ui.MainActivity
+import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeViewState.DBhasEmpty
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
 import dynamia.com.core.util.EventObserver
@@ -20,26 +21,22 @@ import kotlinx.android.synthetic.main.home_item_detail.*
 import kotlinx.android.synthetic.main.refresh_warning_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeFragment : BaseFragment() {
+class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModel()
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (viewModel.checkDBNotNull())
-            viewModel.getAllDataFromAPI()
-    }
+    private var activity: MainActivity? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel.checkDBNotNull()
         return inflater.inflate(R.layout.home_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        activity = requireActivity() as MainActivity
         setObservable()
         initView()
         setListener()
@@ -52,7 +49,7 @@ class HomeFragment : BaseFragment() {
             }
         })
         viewModel.loading.observe(viewLifecycleOwner, EventObserver {
-            showLoading(it)
+            activity?.showLoading(it)
         })
         viewModel.postImportMessage.observe(viewLifecycleOwner, EventObserver {
             context?.showLongToast(it)
@@ -67,17 +64,51 @@ class HomeFragment : BaseFragment() {
             context?.showLongToast(it)
         })
         viewModel.pickingListRepository.getCountPickingListHeader(viewModel.getEmployeeName())
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 tv_picking_list_count.text = it.toString()
             })
         viewModel.receiptImportRepository.getCountReceiptImportHeader(viewModel.getEmployeeName())
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 tv_count_receipt_import.text = it.toString()
             })
         viewModel.receiptLocalRepository.getCountReceiptLocalHeader(viewModel.getEmployeeName())
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 tv_count_receipt_local.text = it.toString()
             })
+
+        viewModel.homeViewState.observe(viewLifecycleOwner, {
+            when (it) {
+                is DBhasEmpty -> {
+                    if (it.boolean) {
+                        openStatusApi()
+                    }
+                }
+                is HomeViewModel.HomeViewState.Success -> {
+
+                }
+                is HomeViewModel.HomeViewState.Error -> {
+                    context?.showLongToast(it.message)
+                }
+                is HomeViewModel.HomeViewState.ShowLoading -> {
+
+                }
+                is HomeViewModel.HomeViewState.HasSuccessLogout -> {
+                    activity?.showLoading(false)
+                    context?.showLongToast("Log Out")
+                    findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+                }
+            }
+        })
+    }
+
+    private fun openStatusApi() {
+        val dialog = HomeGetDataDialog()
+        dialog.show(requireActivity().supportFragmentManager, HomeGetDataDialog.TAG)
+    }
+
+    private fun openPostStatusApi() {
+        val dialog = HomePostAllDialog()
+        dialog.show(requireActivity().supportFragmentManager, dialog.tag)
     }
 
     private fun initView() {
@@ -86,19 +117,13 @@ class HomeFragment : BaseFragment() {
 
     private fun setListener() {
         cv_log_out.setOnClickListener {
-            viewModel.clearAllDB()
-            context?.showLongToast("Log Out")
-            viewModel.clearSharedpreference()
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+            viewModel.logOutSharedPreferences()
         }
         cv_refresh.setOnClickListener {
             showDialog()
         }
         cv_upload.setOnClickListener {
-            viewModel.postPickingData()
-            viewModel.postReceiptImportData()
-            viewModel.postStockCountData()
-            viewModel.postReceiptLocalData()
+            openPostStatusApi()
         }
         cv_picking_list.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_pickingListFragment)
@@ -133,7 +158,8 @@ class HomeFragment : BaseFragment() {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 btn_refresh_yes.setOnClickListener {
-                    viewModel.getAllDataFromAPI()
+                    viewModel.clearAllDB()
+                    openStatusApi()
                     dismiss()
                 }
                 btn_refresh_no.setOnClickListener {

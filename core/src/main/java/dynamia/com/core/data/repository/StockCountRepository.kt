@@ -12,10 +12,10 @@ import kotlin.coroutines.CoroutineContext
 interface StockCountRepository {
     fun getAllStockCount(): LiveData<MutableList<StockCount>>
     fun insertStockCount(data: StockCount): Job
-    fun clearStockCount()
-    fun getAllUnsycnStockCount(): MutableList<StockCount>
-    fun updateStockCount(data:StockCount)
-
+    suspend fun clearStockCount()
+    suspend fun getAllUnsycnStockCount(): MutableList<StockCount>
+    fun updateStockCount(data: StockCount)
+    suspend fun checkSN(serialNo: String): Boolean
 }
 
 class StockCountRepositoryImpl(val dao: StockCountDao) : StockCountRepository {
@@ -30,13 +30,16 @@ class StockCountRepositoryImpl(val dao: StockCountDao) : StockCountRepository {
         dao.insertStockCount(data)
     }
 
-    override fun clearStockCount() {
+    override suspend fun clearStockCount() {
         dao.clearStockCount()
     }
 
-    override fun getAllUnsycnStockCount(): MutableList<StockCount> = dao.getAllUnsycnStockCount()
+    override suspend fun getAllUnsycnStockCount(): MutableList<StockCount> = dao.getAllUnsycnStockCount()
 
     override fun updateStockCount(data: StockCount) {
         dao.updateStockCount(data)
     }
+
+    override suspend fun checkSN(serialNo: String): Boolean =
+        dao.checkSN(serialNo).isEmpty()
 }

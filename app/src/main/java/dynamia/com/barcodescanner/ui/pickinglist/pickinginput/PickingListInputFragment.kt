@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isNotEmpty
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,8 +25,10 @@ import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
 import kotlinx.android.synthetic.main.item_input_header.*
 import kotlinx.android.synthetic.main.receiving_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleLineSelected {
+
     private val viewModel: PickingListInputViewModel by viewModel()
     private val args: PickingListInputFragmentArgs by navArgs()
     private var pickListValue: PickingListLineValue? = null
@@ -35,6 +36,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     private var dialog: Dialog? = null
     private var poNoDialog: Dialog? = null
     private var purchaseNo: String = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -51,10 +53,42 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 
     private fun setupObserverable() {
         viewModel.pickingListRepository.getPickingListScanEntries(args.pickingListNo, 5)
-            .observe(viewLifecycleOwner,
-                Observer {
-                    inputHistoryAdapter.update(it.toMutableList())
-                })
+            .observe(viewLifecycleOwner, {
+                inputHistoryAdapter.update(it.toMutableList())
+            })
+        viewModel.pickingInputViewState.observe(viewLifecycleOwner, {
+            when (it) {
+                is PickingListInputViewModel.PickingInputViewState.SuccessGetValue -> {
+                    checkOnDB(it.data)
+                }
+                is PickingListInputViewModel.PickingInputViewState.ErrorGetData -> {
+                    context?.showLongToast(it.message)
+                }
+                is PickingListInputViewModel.PickingInputViewState.CheckSNResult -> {
+                    if (it.boolean) {
+                        val input = viewModel.pickingListRepository.insertPickingListScanEntries(
+                            getPickingScanEntriesModel()
+                        )
+                        if (input) {
+                            context?.showLongToast(getString(R.string.success_save_data_local))
+                            if (et_mac_address_picking.isEmpty()) {
+                                clearSn()
+                            } else {
+                                clearSnAndMac()
+                            }
+                        } else {
+                            context?.showLongToast(getString(R.string.error_qty_over_outstanding))
+                            et_sn_picking.clearText()
+                            et_sn_picking.requestFocus()
+                        }
+                    } else {
+                        context?.showLongToast(getString(R.string.error_sn_on_same_pickinglistno))
+                        et_sn_picking.clearText()
+                        et_sn_picking.requestFocus()
+                    }
+                }
+            }
+        })
     }
 
     private fun setupView() {
@@ -70,6 +104,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     override fun onResume() {
         super.onResume()
         clearAllView()
+        et_part_no.requestFocus()
     }
 
     private fun setupListener() {
@@ -79,11 +114,10 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         et_part_no.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (et_part_no.getTextLength() > 3) {
-                    val data = viewModel.pickingListRepository.getAllPickingListLineFromInsert(
+                    viewModel.getPickingListLineValue(
                         partNo = et_part_no.getTextAsString(),
-                        picking_List_No = args.pickingListNo
+                        pickingListNo = args.pickingListNo
                     )
-                    checkOnDB(data)
                 }
             }
 
@@ -97,7 +131,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 
         })
         cv_save_new.setOnClickListener {
-            saveDataLocal(false)
+            saveDataLocal()
         }
         cv_clear_data.setOnClickListener {
             clearAllView()
@@ -119,7 +153,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         et_sn_picking.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (p0.toString().length > 3)
-                    saveDataLocal(true)
+                    saveDataLocal()
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -136,42 +170,19 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (purchaseNo.isNotEmpty()) {
-                    if (checkPONo(et_po_no_picking.getTextAsString()).not()) {
-                        et_po_no_picking.setError(getString(R.string.error_po_no_not_same))
+                if (purchaseNo.isNotEmpty() && et_po_no_picking.isEmpty().not()) {
+                    val currentPoNo = et_po_no_picking.getTextAsString().checkFirstCharacter("K")
+                    if (checkPONo(currentPoNo).not()) {
+                        showErrorPONoDialog(getString(R.string.error_po_no_not_same))
                     }
                 }
             }
         })
     }
 
-
-    private fun saveDataLocal(clearSnAndMac: Boolean) {
+    private fun saveDataLocal() {
         if (checkMandatoryDataEmpty().not()) {
-            if (viewModel.pickingListRepository.checkPickingListNoandSN(
-                    args.pickingListNo,
-                    et_sn_picking.getTextAsString(),
-                    partNo = et_part_no.getTextAsString()
-                )
-            ) {
-                val input = viewModel.pickingListRepository.insertPickingListScanEntries(
-                    getPickingScanEntriesModel()
-                )
-                if (input) {
-                    context?.showLongToast(getString(R.string.success_save_data_local))
-                    if (clearSnAndMac) {
-                        clearSn()
-                    } else {
-                        clearAllView()
-                    }
-                } else {
-                    context?.showLongToast(getString(R.string.error_qty_over_outstanding))
-                }
-            } else {
-                context?.showLongToast(getString(R.string.error_sn_on_same_pickinglistno))
-                et_sn_picking.clearText()
-            }
-
+            viewModel.checkSn(et_sn_picking.getTextAsString())
         }
     }
 
@@ -214,7 +225,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                 showMultipleDataDialog(data)
             }
         } else {
-            showErrorPoNoDialog()
+            showErrorPartNo()
         }
     }
 
@@ -262,7 +273,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         if (et_po_no_picking.isEmpty()) {
             anyEmpty = true
             et_po_no_picking.setError(getString(R.string.error_input_message))
-        } else if (checkPONo(et_po_no_picking.getTextAsString()).not()) {
+        } else if (checkPONo(et_po_no_picking.getTextAsString().checkFirstCharacter("K")).not()) {
             anyEmpty = true
             et_po_no_picking.setError(getString(R.string.error_po_no_not_same))
         }
@@ -299,7 +310,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         }
     }
 
-    private fun showErrorPoNoDialog() {
+    private fun showErrorPartNo() {
         context?.let { context ->
             poNoDialog = Dialog(context)
             poNoDialog?.let { dialog ->
@@ -317,8 +328,36 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                     show()
                 }
             }
-
         }
+    }
+
+    private fun showErrorPONoDialog(message: String) {
+        context?.let { context ->
+            poNoDialog = Dialog(context)
+            poNoDialog?.let { dialog ->
+                with(dialog) {
+                    setContentView(R.layout.dialog_part_no_not_found)
+                    window
+                        ?.setLayout(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    tv_error_message.text = message
+                    btn_ok.setOnClickListener {
+                        dismiss()
+                        clearPONo()
+                    }
+                    show()
+                }
+            }
+        }
+    }
+
+    private fun clearSnAndMac() {
+        et_mac_address_picking.clearText()
+        et_mac_address_picking.requestFocus()
+        clearSn()
+
     }
 
     private fun clearPartNo() {
@@ -326,13 +365,14 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         et_part_no.requestFocus()
     }
 
+    private fun clearPONo() {
+        et_po_no_picking.clearText()
+        et_po_no_picking.requestFocus()
+    }
+
     override fun onMultiplelineSelected(data: PickingListLineValue) {
         displayAutocompleteData(data)
         dialog?.dismiss()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
 }

@@ -16,6 +16,12 @@ class ReceiptLocalLineAdapter(private var receiptLocalLines: MutableList<Receipt
 
     val allData by lazy { receiptLocalLines }
 
+    var listener: OnReceiptLocalListener? = null
+
+    fun setonClickListener(listener: OnReceiptLocalListener) {
+        this.listener = listener
+    }
+
     fun update(data: MutableList<ReceiptLocalLineValue>) {
         receiptLocalLines.clear()
         receiptLocalLines = data
@@ -46,7 +52,8 @@ class ReceiptLocalLineAdapter(private var receiptLocalLines: MutableList<Receipt
                 else {
                     allData.filter {
                         it.description.toUpperCase(Locale.ROOT).contains(query) ||
-                                it.lineNo.toString().contains(query)
+                                it.lineNo.toString().contains(query) ||
+                                it.partNo.toUpperCase(Locale.ROOT).contains(query)
                     }
                 }
                 return filterResult
@@ -59,7 +66,7 @@ class ReceiptLocalLineAdapter(private var receiptLocalLines: MutableList<Receipt
         }
     }
 
-    class ReceiptLocalLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ReceiptLocalLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(pickingListLineValue: ReceiptLocalLineValue) {
             with(itemView) {
                 tv_description_2.text = pickingListLineValue.partNo
@@ -67,7 +74,14 @@ class ReceiptLocalLineAdapter(private var receiptLocalLines: MutableList<Receipt
                 tv_description.text = pickingListLineValue.description
                 tv_outstanding.text =
                     "${pickingListLineValue.alredyScanned}/${pickingListLineValue.quantity}/${pickingListLineValue.outstandingQuantity}"
+                setOnClickListener {
+                    listener?.onClicklistener(pickingListLineValue)
+                }
             }
         }
+    }
+
+    interface OnReceiptLocalListener {
+        fun onClicklistener(receiptLocalLineValue: ReceiptLocalLineValue)
     }
 }

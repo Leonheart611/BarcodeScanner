@@ -1,4 +1,5 @@
 package dynamia.com.core.data.model
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -6,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 
 data class PickingListHeader(
     @SerializedName("value")
-    val value: List<PickingListHeaderValue?>?
+    val value: List<PickingListHeaderValue>?
 )
 
 @Entity(tableName = "PickingListHeader")

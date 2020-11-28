@@ -71,10 +71,20 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                 } else {
                     tv_picking_detail_so.text =
                         getString(R.string.picklistno_title, args.pickingListNo)
-                    viewModel.pickingListRepository.getPickingListScanEntries(args.pickingListNo)
-                        .observe(viewLifecycleOwner, Observer {
+                    if (args.partNo.trim().isEmpty()) {
+                        viewModel.pickingListRepository.getPickingListScanEntries(args.pickingListNo)
+                            .observe(viewLifecycleOwner, Observer {
+                                pickingListAdapter.updateData(it.toMutableList())
+                            })
+                    } else {
+                        viewModel.pickingListRepository.getPickingListandPartNo(
+                            args.pickingListNo,
+                            args.partNo
+                        ).observe(viewLifecycleOwner, Observer {
                             pickingListAdapter.updateData(it.toMutableList())
                         })
+                    }
+
                 }
             }
             Constant.RECEIPT_IMPORT -> {
@@ -130,7 +140,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 btn_delete.setOnClickListener {
-                    viewModel.pickingListRepository.deletePickingListScanEntries(value)
+                    //viewModel.pickingListRepository.deletePickingListScanEntries(value) TODO()
                     dismiss()
                     setupView()
                 }
@@ -154,7 +164,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 btn_delete.setOnClickListener {
-                    viewModel.receiptLocalRepository.deleteReceiptLocalScanEntry(value)
+                    //viewModel.receiptLocalRepository.deleteReceiptLocalScanEntry(value)
                     dismiss()
                     setupView()
                 }

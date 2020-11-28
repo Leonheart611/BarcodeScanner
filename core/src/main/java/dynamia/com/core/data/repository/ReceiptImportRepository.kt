@@ -14,13 +14,16 @@ interface ReceiptImportRepository {
     fun insertReceiptImportHeader(receiptImportHeaderValue: ReceiptImportHeaderValue): Job
     fun getReceiptImportHeader(documentNo: String): LiveData<ReceiptImportHeaderValue>
     fun getCountReceiptImportHeader(employeeCode: String): LiveData<Int>
-    fun clearReceiptImportHeader()
+    suspend fun clearReceiptImportHeader()
 
     //ReceiptImportLine------------------------------------------------------
     fun getAllReceiptImportLine(documentNo: String): LiveData<List<ReceiptImportLineValue>>
     fun insertReceiptImportLine(receiptImportLineValue: ReceiptImportLineValue): Job
-    fun clearReceiptImportLine()
-    fun getDetailImportLine(documentNo: String, partNo: String): List<ReceiptImportLineValue>
+    suspend fun clearReceiptImportLine()
+    suspend fun getDetailImportLine(
+        documentNo: String,
+        partNo: String
+    ): List<ReceiptImportLineValue>
 
     //ReceiptImportScanEntries------------------------------------------------------
     fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>>
@@ -29,11 +32,12 @@ interface ReceiptImportRepository {
         limit: Int? = null
     ): LiveData<List<ReceiptImportScanEntriesValue>>
 
+    suspend fun checkSN(serialNo: String): Boolean
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Boolean
     fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
     fun updateReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
     fun getAllUnsycnImportScanEntry(): List<ReceiptImportScanEntriesValue>
-    fun clearReceiptImportScanEntries()
+    suspend fun clearReceiptImportScanEntries()
 }
 
 class ReceiptImportRepositoryImpl(
@@ -60,7 +64,7 @@ class ReceiptImportRepositoryImpl(
     override fun getCountReceiptImportHeader(employeeCode: String): LiveData<Int> =
         dao.getCountReceiptImportHeader(employeeCode)
 
-    override fun clearReceiptImportHeader() {
+    override suspend fun clearReceiptImportHeader() {
         dao.clearReceiptImportHeader()
     }
 
@@ -73,16 +77,15 @@ class ReceiptImportRepositoryImpl(
             dao.insertReceiptImportLine(receiptImportLineValue)
         }
 
-    override fun clearReceiptImportLine() {
+    override suspend fun clearReceiptImportLine() {
         dao.clearReceiptImportLine()
     }
 
-    override fun getDetailImportLine(
+    override suspend fun getDetailImportLine(
         documentNo: String,
         partNo: String
-    ): List<ReceiptImportLineValue> {
-        return dao.getDetailImportLine(documentNo, partNo)
-    }
+    ): List<ReceiptImportLineValue> = dao.getDetailImportLine(documentNo, partNo)
+
 
     override fun getAllReceiptImportScanEntries(): LiveData<List<ReceiptImportScanEntriesValue>> =
         runBlocking {
@@ -143,8 +146,10 @@ class ReceiptImportRepositoryImpl(
         dao.getAllUnsycnImportScanEntry()
     }
 
-    override fun clearReceiptImportScanEntries() {
+    override suspend fun clearReceiptImportScanEntries() {
         dao.clearReceiptImportScanEntries()
     }
+
+    override suspend fun checkSN(serialNo: String): Boolean = dao.checkSN(serialNo).isEmpty()
 
 }

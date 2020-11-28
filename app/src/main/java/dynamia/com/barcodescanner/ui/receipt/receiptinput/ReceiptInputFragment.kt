@@ -32,12 +32,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ReceiptInputFragment : Fragment(),
     ReceiptMultipleImportLineAdapter.OnMultipleImportLineListener,
     ReceiptMultipleLocalLineAdapter.OnMultipleLocalLineListener {
+
     private val viewModel: ReceiptInputViewModel by viewModel()
     private val args: ReceiptInputFragmentArgs by navArgs()
     private var dialog: Dialog? = null
     private var partNoDialog: Dialog? = null
-    private var receiptImportScanEntriesValue: ReceiptImportScanEntriesValue? = null
+    private var snNoDialog: Dialog? = null
     private var lineNo = 0
+    private var receiptImportScanEntriesValue: ReceiptImportScanEntriesValue? = null
     private var receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue? = null
     private var historyImportAdapter = ImportHistoryAdapter(mutableListOf())
     private var historyLocalAdapter = LocalHistoryAdapter(mutableListOf())
@@ -59,21 +61,79 @@ class ReceiptInputFragment : Fragment(),
     private fun setObseverable() {
         when (args.source) {
             Constant.RECEIPT_IMPORT -> {
-                viewModel.receiptImportRepository.getReceiptImportScanEntries(args.poNo, 5)
+                viewModel.receiptImportRepository.getReceiptImportScanEntries(args.documentNo, 5)
                     .observe(viewLifecycleOwner,
                         Observer {
                             historyImportAdapter.update(it.toMutableList())
                         })
             }
             Constant.RECEIPT_LOCAL -> {
-                viewModel.receiptLocalRepository.getReceiptLocalScanEntries(args.poNo, 5)
+                viewModel.receiptLocalRepository.getReceiptLocalScanEntries(args.documentNo, 5)
                     .observe(viewLifecycleOwner,
                         Observer {
                             historyLocalAdapter.update(it.toMutableList())
                         })
             }
         }
+        viewModel.receiptInputViewState.observe(viewLifecycleOwner, {
+            when (it) {
+                is ReceiptInputViewModel.ReceiptInputViewState.SuccessGetImportLine -> {
+                    checkDBImport(dataImport = it.data)
+                }
+                is ReceiptInputViewModel.ReceiptInputViewState.SuccessGetLocalLine -> {
+                    checkDBLocal(dataLocal = it.data)
+                }
+                is ReceiptInputViewModel.ReceiptInputViewState.ErrorGetReceiptLine -> {
+                    context?.showLongToast(it.message)
+                }
+                is ReceiptInputViewModel.ReceiptInputViewState.CheckLocalSNResult -> {
+                    createLocalScanEntry()
+                    receiptLocalScanEntriesValue?.let { data ->
+                        if (it.result) {
+                            val input =
+                                viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(data)
+                            if (input) {
+                                context?.showLongToast(getString(R.string.success_save_data_local))
+                                if (et_mac_address.isEmpty().not()) {
+                                    clearSnAndMac()
+                                } else {
+                                    clearSN()
+                                }
+                            } else {
+                                context?.showLongToast(getString(R.string.error_qty_over_outstanding))
+                            }
+                        } else {
+                            showErroSnDialog(getString(R.string.sn_no_already_inputed))
+                        }
+                    }
+                }
+                is ReceiptInputViewModel.ReceiptInputViewState.CheckImportSNResult -> {
+                    createImportScanEntry()
+                    receiptImportScanEntriesValue?.let { data ->
+                        if (it.result) {
+                            val input =
+                                viewModel.receiptImportRepository.insertReceiptImportScanEntries(
+                                    data
+                                )
+                            if (input) {
+                                context?.showLongToast(getString(R.string.success_save_data_local))
+                                if (et_mac_address.isEmpty().not()) {
+                                    clearSnAndMac()
+                                } else {
+                                    clearSN()
+                                }
+                            } else {
+                                context?.showLongToast(getString(R.string.error_qty_over_outstanding))
+                            }
+                        } else {
+                            showErroSnDialog(getString(R.string.sn_no_already_inputed))
+                        }
+                    }
+                }
+            }
+        })
     }
+
 
     private fun setupView() {
         et_packingid.requestFocus()
@@ -83,20 +143,11 @@ class ReceiptInputFragment : Fragment(),
                 if (p0.toString().length > 3) {
                     when (args.source) {
                         Constant.RECEIPT_LOCAL -> {
-                            val localLineDetail =
-                                viewModel.receiptLocalRepository.getReceiptLocalLineDetail(
-                                    args.poNo,
-                                    p0.toString()
-                                )
-                            checkDBLocal(dataLocal = localLineDetail)
+                            viewModel.getReceiptLocalLine(args.documentNo, p0.toString())
                         }
+
                         Constant.RECEIPT_IMPORT -> {
-                            val importLineDetail =
-                                viewModel.receiptImportRepository.getDetailImportLine(
-                                    args.poNo,
-                                    p0.toString()
-                                )
-                            checkDBImport(dataImport = importLineDetail)
+                            viewModel.getReceiptImportLine(args.documentNo, p0.toString())
                         }
                     }
                 }
@@ -113,15 +164,19 @@ class ReceiptInputFragment : Fragment(),
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (checkPONo(p0.toString()).not()) {
-                    et_po_no.setError(getString(R.string.error_po_no_not_same))
+                if (p0.toString().isNotEmpty()) {
+                    if (checkPONo(p0.toString().checkFirstCharacter("K")).not()) {
+                        context?.showLongToast(getString(R.string.error_po_no_not_same))
+                        et_po_no.clearText()
+                        et_po_no.requestFocus()
+                    }
                 }
             }
         })
         et_sn_no.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (p0.toString().length > 3)
-                    saveData(true)
+                    saveData()
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -151,7 +206,7 @@ class ReceiptInputFragment : Fragment(),
     }
 
     fun checkPONo(value: String): Boolean {
-        return value == args.poNo
+        return args.poNo?.let { value == it } ?: kotlin.run { value == args.documentNo }
     }
 
     override fun onPause() {
@@ -168,14 +223,7 @@ class ReceiptInputFragment : Fragment(),
 
     override fun onResume() {
         super.onResume()
-        when (args.source) {
-            Constant.RECEIPT_LOCAL -> {
-                setDataLocal(dataLocal = receiptLocalScanEntriesValue)
-            }
-            Constant.RECEIPT_IMPORT -> {
-                setDataImport(dataImport = receiptImportScanEntriesValue)
-            }
-        }
+        clearAllText()
     }
 
     fun checkDBImport(dataImport: List<ReceiptImportLineValue>? = null) {
@@ -186,7 +234,7 @@ class ReceiptInputFragment : Fragment(),
                 } else {
                     showMultipleDataDialog(dataImport = data)
                 }
-            }else{
+            } else {
                 showErrorPoNoDialog()
             }
         }
@@ -200,7 +248,7 @@ class ReceiptInputFragment : Fragment(),
                 } else {
                     showMultipleDataDialog(dataLocal = data)
                 }
-            }else{
+            } else {
                 showErrorPoNoDialog()
             }
         }
@@ -265,7 +313,7 @@ class ReceiptInputFragment : Fragment(),
 
     private fun setupListener() {
         cv_save_new.setOnClickListener {
-            saveData(false)
+            saveData()
         }
         cv_clear_data_recipt.setOnClickListener {
             clearAllText()
@@ -279,7 +327,7 @@ class ReceiptInputFragment : Fragment(),
                 R.id.history_data -> {
                     val action =
                         ReceiptInputFragmentDirections.actionReceiptInputFragmentToHistoryInputFragment(
-                            args.poNo, args.source, showAll = false
+                            args.documentNo, args.source, showAll = false
                         )
                     view?.findNavController()?.navigate(action)
                     true
@@ -289,46 +337,23 @@ class ReceiptInputFragment : Fragment(),
         }
     }
 
-    private fun saveData(clearSnAndMac: Boolean) {
+    private fun saveData() {
         if (checkMandatoryData()) {
             when (args.source) {
                 Constant.RECEIPT_LOCAL -> {
-                    createLocalScanEntry()
-                    receiptLocalScanEntriesValue?.let {
-                        val input =
-                            viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(it)
-                        if (input) {
-                            context?.showLongToast(getString(R.string.success_save_data_local))
-                            if (clearSnAndMac) {
-                                clearSN()
-                            } else {
-                                clearAllText()
-                            }
-                        } else {
-                            context?.showLongToast(getString(R.string.error_qty_over_outstanding))
-                        }
-                    }
+                    viewModel.checkLocalSN(et_sn_no.getTextAsString())
                 }
                 Constant.RECEIPT_IMPORT -> {
-                    createImportScanEntry()
-                    receiptImportScanEntriesValue?.let {
-                        val input =
-                            viewModel.receiptImportRepository.insertReceiptImportScanEntries(it)
-                        if (input) {
-                            context?.showLongToast(getString(R.string.success_save_data_local))
-                            if (clearSnAndMac) {
-                                clearSN()
-                            } else {
-                                clearAllText()
-                            }
-                        } else {
-                            context?.showLongToast(getString(R.string.error_qty_over_outstanding))
-                        }
-                    }
-
+                    viewModel.checkImportSn(et_sn_no.getTextAsString())
                 }
             }
         }
+    }
+
+    private fun clearSnAndMac() {
+        et_sn_no.clearText()
+        et_mac_address.clearText()
+        et_mac_address.requestFocus()
     }
 
     private fun checkMandatoryData(): Boolean {
@@ -340,7 +365,7 @@ class ReceiptInputFragment : Fragment(),
         if (et_po_no.isEmpty()) {
             result = false
             et_po_no.setError(getString(R.string.error_input_message))
-        } else if (checkPONo(et_po_no.getTextAsString()).not()) {
+        } else if (checkPONo(et_po_no.getTextAsString().checkFirstCharacter("K")).not()) {
             result = false
             et_po_no.setError(getString(R.string.error_po_no_not_same))
         }
@@ -393,7 +418,7 @@ class ReceiptInputFragment : Fragment(),
 
     private fun createLocalScanEntry() {
         receiptLocalScanEntriesValue = ReceiptLocalScanEntriesValue(
-            documentNo = args.poNo,
+            documentNo = args.documentNo,
             employeeCode = viewModel.getEmployeeName(),
             macAddress = et_mac_address.getTextAsString().emptySetZero(),
             partNo = et_part_no.getTextAsString(),
@@ -410,7 +435,7 @@ class ReceiptInputFragment : Fragment(),
 
     private fun createImportScanEntry() {
         receiptImportScanEntriesValue = ReceiptImportScanEntriesValue(
-            documentNo = args.poNo,
+            documentNo = args.documentNo,
             employeeCode = viewModel.getEmployeeName() ?: "",
             macAddress = et_mac_address.getTextAsString().emptySetZero(),
             partNo = et_part_no.getTextAsString(),
@@ -468,6 +493,28 @@ class ReceiptInputFragment : Fragment(),
         }
     }
 
+    private fun showErroSnDialog(message: String) {
+        context?.let {
+            snNoDialog = Dialog(it)
+            snNoDialog?.let { dialog ->
+                with(dialog) {
+                    setContentView(R.layout.dialog_part_no_not_found)
+                    window
+                        ?.setLayout(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    tv_error_message.text = message
+                    btn_ok.setOnClickListener {
+                        dismiss()
+                        clearSnAndFocus()
+                    }
+                    show()
+                }
+            }
+        }
+    }
+
     private fun clearPartNo() {
         et_part_no.clearText()
         et_part_no.requestFocus()
@@ -477,4 +524,10 @@ class ReceiptInputFragment : Fragment(),
     private fun clearSN() {
         et_sn_no.clearText()
     }
+
+    private fun clearSnAndFocus() {
+        clearSN()
+        et_sn_no.requestFocus()
+    }
+
 }

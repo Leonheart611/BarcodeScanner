@@ -132,6 +132,10 @@
             android:name="showAll"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="partNo"
+            android:defaultValue="    "
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/receiptDetailFragment"
@@ -142,7 +146,7 @@
             android:name="source"
             app:argType="string" />
         <argument
-            android:name="poNo"
+            android:name="documentNo"
             app:argType="string" />
         <action
             android:id="@+id/action_receiptDetailFragment_to_receiptInputFragment"
@@ -165,13 +169,17 @@
         tools:layout="@layout/receipt_input_fragment" >
         <argument
             android:name="poNo"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="source"
             app:argType="string" />
         <action
             android:id="@+id/action_receiptInputFragment_to_historyInputFragment"
             app:destination="@id/historyInputFragment" />
+        <argument
+            android:name="documentNo"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/stockCountingFragment"
@@ -188,5 +196,8 @@
         <argument
             android:name="source"
             app:argType="string" />
+        <action
+            android:id="@+id/action_receiptSearchFragment_to_historyInputFragment"
+            app:destination="@id/historyInputFragment" />
     </fragment>
 </navigation>

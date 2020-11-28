@@ -71,4 +71,9 @@ interface ReceiptLocalDao {
 
     @Query("DELETE FROM ReceiptLocalScanEntries")
     fun clearReceiptLocalScanEntries()
+
+    @Query("SELECT * FROM ReceiptLocalScanEntries WHERE serialNo = :serialNo ORDER BY id DESC")
+    fun checkSN(
+        serialNo: String
+    ): List<ReceiptLocalScanEntriesValue>
 }
