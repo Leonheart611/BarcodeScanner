@@ -27,7 +27,7 @@
     </dynamia.com.core.view.NormalInputLayout>
 
     <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_part_no"
+        android:id="@+id/et_part_receipt_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,16 +37,16 @@
 
     </dynamia.com.core.view.NormalInputLayout>
 
-    <dynamia.com.core.view.NormalInputLayout
+    <dynamia.com.core.view.DoneInputLayout
         android:id="@+id/et_sn_no"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_mac_address"
-        app:title="@string/sn_title">
+        app:layout_constraintTop_toBottomOf="@+id/et_mac_address_receipt_input"
+        app:title_text="@string/sn_title">
 
-    </dynamia.com.core.view.NormalInputLayout>
+    </dynamia.com.core.view.DoneInputLayout>
 
     <dynamia.com.core.view.NormalInputLayout
         android:id="@+id/et_trackingid"
@@ -60,7 +60,7 @@
     </dynamia.com.core.view.NormalInputLayout>
 
     <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_mac_address"
+        android:id="@+id/et_mac_address_receipt_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,7 +78,7 @@
         app:etfocusable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_part_no"
+        app:layout_constraintTop_toBottomOf="@+id/et_part_receipt_input"
         app:title="@string/item_no_title">
 
     </dynamia.com.core.view.NormalInputLayout>

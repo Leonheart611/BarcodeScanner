@@ -19,7 +19,7 @@ import dynamia.com.core.data.model.*
         ReceiptLocalScanEntriesValue::class,
         StockCount::class,
         UserData::class
-    ], version = 15, exportSchema = false
+    ], version = 17, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun pickingListDao(): PickingListDao
@@ -40,7 +40,7 @@ abstract class LocalDatabase : RoomDatabase() {
                     context.applicationContext,
                     LocalDatabase::class.java,
                     "barcodeDB.sqlite"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }

@@ -1,5 +1,6 @@
 package dynamia.com.barcodescanner.ui.pickinglist.pickingdetail
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.showLongToast
 import dynamia.com.core.util.toNormalDate
+import kotlinx.android.synthetic.main.dialog_validate_s.*
 import kotlinx.android.synthetic.main.picking_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -23,6 +25,7 @@ class PickingDetailFragment : Fragment() {
     private val viewModel: PickingDetailViewModel by viewModel()
     private val args: PickingDetailFragmentArgs by navArgs()
     val adapter = PickingDetailAdapter(mutableListOf())
+    private var settingDialog: Dialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +37,7 @@ class PickingDetailFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.getPickingDetail(args.pickingListNo)
+        viewModel.getPickingListLine(args.pickingListNo)
         setupView()
         setupListener()
         setObseverable()
@@ -45,10 +49,6 @@ class PickingDetailFragment : Fragment() {
         rv_picking_detail.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         rv_picking_detail.adapter = adapter
-        viewModel.pickingListRepository.getAllPickingListLine(args.pickingListNo)
-            .observe(viewLifecycleOwner, {
-                adapter.update(it.toMutableList())
-            })
     }
 
     private fun setObseverable() {
@@ -59,6 +59,9 @@ class PickingDetailFragment : Fragment() {
                 }
                 is PickingDetailViewModel.PickingDetailViewState.ErrorGetLocalData -> {
                     context?.showLongToast(it.message)
+                }
+                is PickingDetailViewModel.PickingDetailViewState.SuccessGetPickingLineData -> {
+                    adapter.update(it.values)
                 }
             }
         })
@@ -75,9 +78,7 @@ class PickingDetailFragment : Fragment() {
 
     private fun setupListener() {
         cv_pick.setOnClickListener {
-            val action =
-                PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(args.pickingListNo)
-            view?.findNavController()?.navigate(action)
+            pickingInputDialog()
         }
         cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
@@ -129,5 +130,53 @@ class PickingDetailFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         rv_picking_detail?.adapter = null
+    }
+
+    fun pickingInputDialog() {
+        context?.let { context ->
+            settingDialog = Dialog(context)
+            settingDialog?.let { dialog ->
+                with(dialog) {
+                    setContentView(R.layout.dialog_validate_s)
+                    window
+                        ?.setLayout(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    cb_check_s_false.setOnClickListener {
+                        when (cb_check_s_false.isChecked) {
+                            true -> {
+                                cb_check_s_true.isChecked = false
+                            }
+                        }
+                    }
+
+                    cb_check_s_true.setOnClickListener {
+                        when (cb_check_s_true.isChecked) {
+                            true -> {
+                                cb_check_s_false.isChecked = false
+                            }
+                        }
+                    }
+
+                    btn_setting_continue.setOnClickListener {
+                        dismiss()
+                        val action = if (cb_check_s_true.isChecked) {
+                            PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(
+                                args.pickingListNo,
+                                true
+                            )
+                        } else {
+                            PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(
+                                args.pickingListNo,
+                                false
+                            )
+                        }
+                        view?.findNavController()?.navigate(action)
+                    }
+                    show()
+                }
+            }
+        }
     }
 }

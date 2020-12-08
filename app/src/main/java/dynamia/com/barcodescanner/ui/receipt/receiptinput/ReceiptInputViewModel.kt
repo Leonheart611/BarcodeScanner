@@ -37,7 +37,6 @@ class ReceiptInputViewModel(
                 e.localizedMessage?.let {
                     _receiptInputViewState.value = ReceiptInputViewState.ErrorGetReceiptLine(it)
                 }
-
             }
         }
     }

@@ -31,7 +31,6 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
         setupRecylerView()
         initView()
         setupListener()
-
     }
 
     private fun setupRecylerView() {

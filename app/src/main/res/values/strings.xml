@@ -78,4 +78,11 @@
     <string name="picking_list_post">Picking List Post Data</string>
     <string name="receipt_local_post">Receipt Local Post Data</string>
     <string name="receipt_import_post">Receipt Import Post Data</string>
+    <string name="input_settings">Input Settings</string>
+    <string name="valide_s_title">Validate S</string>
+    <string name="yes_text">Yes</string>
+    <string name="no_text">No</string>
+    <string name="continue_btn_text">Continue</string>
+    <string name="manual_switch_text">Manual Input</string>
+    <string name="automatic_switch_text">Automatic Input</string>
 </resources>

@@ -140,7 +140,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 btn_delete.setOnClickListener {
-                    //viewModel.pickingListRepository.deletePickingListScanEntries(value) TODO()
+                    viewModel.pickingListRepository.deletePickingListScanEntries(value)
                     dismiss()
                     setupView()
                 }
@@ -164,7 +164,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 btn_delete.setOnClickListener {
-                    //viewModel.receiptLocalRepository.deleteReceiptLocalScanEntry(value)
+                    viewModel.receiptLocalRepository.deleteReceiptLocalScanEntry(value)
                     dismiss()
                     setupView()
                 }

@@ -21,15 +21,15 @@ interface PickingListDao {
     @Query("SELECT count(*) from PickingListHeader WHERE employeeCode = :employeeCode COLLATE NOCASE")
     fun getCountPickingListHeader(employeeCode: String): LiveData<Int>
 
-    @Query("SELECT count(*) from PickingListHeader WHERE employeeCode = :employeeCode COLLATE NOCASE")
-    fun getCheckEmptyOrNot(employeeCode: String): Int
+    @Query("SELECT count(*) from PickingListHeader")
+    fun getCheckEmptyOrNot(): Int
 
     @Query("DELETE FROM PickingListHeader")
     fun clearPickingListHeader()
 
     //PickingListLine---------------------------------------------------------
     @Query("SELECT * FROM PickingListLine WHERE pickingListNo = :picking_List_No")
-    fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>>
+    fun getAllPickingListLine(picking_List_No: String): List<PickingListLineValue>
 
     @Update
     fun updatePickingListLine(pickingListLineValue: PickingListLineValue)
@@ -44,7 +44,11 @@ interface PickingListDao {
     fun insertPickingListLine(pickingListLineValue: PickingListLineValue)
 
     @Query("SELECT * FROM PickingListLine WHERE pickingListNo = :pickingListNo AND lineNo = :lineNo AND partNoOriginal = :partNo")
-    fun getPickingListDetail(lineNo: Int, partNo: String,pickingListNo:String): PickingListLineValue
+    fun getPickingListDetail(
+        lineNo: Int,
+        partNo: String,
+        pickingListNo: String
+    ): PickingListLineValue
 
     @Query("DELETE FROM PickingListLine")
     fun clearPickingListLine()

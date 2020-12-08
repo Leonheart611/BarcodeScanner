@@ -9,12 +9,13 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import dynamia.com.core.R
-import kotlinx.android.synthetic.main.normal_input_layout.view.*
+import kotlinx.android.synthetic.main.done_input_layout.view.*
 
 
-class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
+class DoneInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
 
     private var attrs: AttributeSet? = null
     private var defStyleAttr: Int = 0
@@ -41,16 +42,16 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
         val wrapContent = LayoutParams.WRAP_CONTENT
         val matchParent = LayoutParams.MATCH_PARENT
         layoutParams = LayoutParams(matchParent, wrapContent)
-        LayoutInflater.from(ctx).inflate(R.layout.normal_input_layout, this, true)
+        LayoutInflater.from(ctx).inflate(R.layout.done_input_layout, this, true)
         attrs?.let {
             ctx.obtainStyledAttributes(
                 it,
-                R.styleable.NormalInputLayout, 0, 0
+                R.styleable.DoneInputLayout, 0, 0
             ).apply {
                 try {
-                    val title = getText(R.styleable.NormalInputLayout_title)
-                    val enabled = getBoolean(R.styleable.NormalInputLayout_etenabled, true)
-                    val focusable = getBoolean(R.styleable.NormalInputLayout_etfocusable, true)
+                    val title = getText(R.styleable.DoneInputLayout_title_text)
+                    val enabled = getBoolean(R.styleable.DoneInputLayout_etenabled_done, true)
+                    val focusable = getBoolean(R.styleable.DoneInputLayout_etfocusable_done, true)
                     if (enabled.not()) {
                         et_input_layout.isEnabled = enabled
                     }
@@ -123,7 +124,10 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
 
     fun addKeylistener(listener: KeyListener) {
         tv_input_layout.keyListener = listener
+    }
 
+    fun addSetOnEditorClickListener(listener: TextView.OnEditorActionListener) {
+        et_input_layout.setOnEditorActionListener(listener)
     }
 
 }

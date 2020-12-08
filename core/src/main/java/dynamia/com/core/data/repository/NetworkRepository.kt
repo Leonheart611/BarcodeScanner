@@ -1,7 +1,10 @@
 package dynamia.com.core.data.repository
 
 import android.content.SharedPreferences
+import com.google.gson.Gson
 import dynamia.com.core.data.model.*
+import dynamia.com.core.domain.ErrorResponse
+import dynamia.com.core.domain.ResultWrapper
 import dynamia.com.core.domain.RetrofitBuilder
 import dynamia.com.core.util.Constant
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +12,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.http.Body
 
 interface NetworkRepository {
-    suspend fun getPickingListHeaderAsync(): Flow<MutableList<PickingListHeaderValue>>
+    suspend fun getPickingListHeaderAsync(): Flow<ResultWrapper<MutableList<PickingListHeaderValue>>>
     suspend fun getPickingListLineAsync(): Flow<MutableList<PickingListLineValue>>
     suspend fun getReceiptImportHeaderAsync(): Flow<MutableList<ReceiptImportHeaderValue>>
     suspend fun getReceiptImportLineAsync(): Flow<MutableList<ReceiptImportLineValue>>
@@ -18,7 +21,7 @@ interface NetworkRepository {
     suspend fun postReceiptImportEntry(@Body value: String): Flow<ReceiptImportScanEntriesValue>
     suspend fun postReceiptLocalEntry(@Body value: String): Flow<ReceiptLocalScanEntriesValue>
     suspend fun postPickingListEntry(@Body value: String): Flow<PickingListScanEntriesValue>
-    suspend fun postStockCountEntry(@Body value: String): Flow<StockCount>
+    suspend fun postStockCountEntry(@Body value: String): Flow<ResultWrapper<StockCount>>
 }
 
 class NetworkRepositoryImpl(
@@ -32,12 +35,24 @@ class NetworkRepositoryImpl(
         )
     }
 
-    override suspend fun getPickingListHeaderAsync(): Flow<MutableList<PickingListHeaderValue>> =
+    override suspend fun getPickingListHeaderAsync(): Flow<ResultWrapper<MutableList<PickingListHeaderValue>>> =
         flow {
-            retrofitService.getPickingListHeaderAsync().value?.let {
-                emit(it.toMutableList())
+            try {
+                val result = retrofitService.getPickingListHeaderAsync()
+                when (result.isSuccessful) {
+                    true -> {
+                        result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
+                    }
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(it.charStream().readText(), ErrorResponse::class.java)
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError)
             }
-
         }
 
     override suspend fun getPickingListLineAsync(): Flow<MutableList<PickingListLineValue>> = flow {
@@ -89,9 +104,20 @@ class NetworkRepositoryImpl(
             emit(retrofitService.postPickingListEntry(value))
         }
 
-    override suspend fun postStockCountEntry(value: String): Flow<StockCount> = flow {
-        emit(retrofitService.postStockCountEntry(value))
-    }
+    override suspend fun postStockCountEntry(value: String): Flow<ResultWrapper<StockCount>> =
+        flow {
+            val result = retrofitService.postStockCountEntry(value)
+            if (result.isSuccessful) {
+                result.body()?.let { emit(ResultWrapper.Success(it)) }
+            } else {
+                result.errorBody()
+                    ?.let {
+                        val errorMessage =
+                            Gson().fromJson(it.charStream().readText(), ErrorResponse::class.java)
+                        emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                    }
+            }
+        }
 }
 
 

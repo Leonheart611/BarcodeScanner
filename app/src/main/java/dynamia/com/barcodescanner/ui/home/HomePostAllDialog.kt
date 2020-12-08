@@ -10,6 +10,7 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.core.util.crossFade
 import dynamia.com.core.util.gone
 import kotlinx.android.synthetic.main.fragment_post_stock_count_dialog.*
+import kotlinx.android.synthetic.main.home_post_all_dialog.*
 import kotlinx.android.synthetic.main.picking_post_bottom_dialog.*
 import kotlinx.android.synthetic.main.receipt_post_bottom_sheet_dialog.*
 import kotlinx.android.synthetic.main.receipt_post_import_bottom_sheet_dialog.*
@@ -34,6 +35,9 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
         setupView()
         setObseverable()
         callAllApi()
+        btn_dismiss_all_post.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
     }
 
     private fun callAllApi() {

@@ -1,5 +1,6 @@
 package dynamia.com.barcodescanner.ui.receipt.detail
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,14 +18,17 @@ import dynamia.com.core.data.model.ReceiptImportHeaderValue
 import dynamia.com.core.data.model.ReceiptLocalHeaderValue
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.toNormalDate
+import kotlinx.android.synthetic.main.dialog_validate_s.*
 import kotlinx.android.synthetic.main.receipt_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReceiptDetailFragment : Fragment() {
+
     private val args: ReceiptDetailFragmentArgs by navArgs()
     private val viewModel: ReceiptDetailViewModel by viewModel()
     private var receiptImportHeader: ReceiptImportHeaderValue? = null
     private var receiptLocalHeader: ReceiptLocalHeaderValue? = null
+    private var settingDialog: Dialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -102,22 +106,7 @@ class ReceiptDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
         cv_receipt.setOnClickListener {
-            val action = receiptImportHeader?.let {
-                ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
-                    documentNo = args.documentNo,
-                    source = args.source,
-                    poNo = it.purchaseOrderNo
-                )
-            } ?: run {
-                receiptLocalHeader?.let {
-                    ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
-                        documentNo = args.documentNo,
-                        source = args.source,
-                        poNo = it.no
-                    )
-                }
-            }
-            action?.let { findNavController().navigate(it) }
+            receiptDetailDialog()
         }
         tb_receipt_detail.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -139,6 +128,78 @@ class ReceiptDetailFragment : Fragment() {
                     true
                 }
                 else -> false
+            }
+        }
+    }
+
+    fun receiptDetailDialog() {
+        context?.let { context ->
+            settingDialog = Dialog(context)
+            settingDialog?.let { dialog ->
+                with(dialog) {
+                    setContentView(dynamia.com.barcodescanner.R.layout.dialog_validate_s)
+                    window
+                        ?.setLayout(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    cb_check_s_false.setOnClickListener {
+                        when (cb_check_s_false.isChecked) {
+                            true -> {
+                                cb_check_s_true.isChecked = false
+                            }
+                        }
+                    }
+
+                    cb_check_s_true.setOnClickListener {
+                        when (cb_check_s_true.isChecked) {
+                            true -> {
+                                cb_check_s_false.isChecked = false
+                            }
+                        }
+                    }
+
+                    btn_setting_continue.setOnClickListener { // Check Validate S
+                        dismiss()
+                        val action = receiptImportHeader?.let {
+                            if (cb_check_s_true.isChecked) {
+                                ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
+                                    documentNo = args.documentNo,
+                                    source = args.source,
+                                    poNo = it.purchaseOrderNo,
+                                    validateS = true
+                                )
+                            } else {
+                                ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
+                                    documentNo = args.documentNo,
+                                    source = args.source,
+                                    poNo = it.purchaseOrderNo,
+                                    validateS = false
+                                )
+                            }
+                        } ?: run {
+                            receiptLocalHeader?.let {
+                                if (cb_check_s_true.isChecked) {
+                                    ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
+                                        documentNo = args.documentNo,
+                                        source = args.source,
+                                        poNo = it.no,
+                                        validateS = true
+                                    )
+                                } else {
+                                    ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
+                                        documentNo = args.documentNo,
+                                        source = args.source,
+                                        poNo = it.no,
+                                        validateS = false
+                                    )
+                                }
+                            }
+                        }
+                        action?.let { findNavController().navigate(it) }
+                    }
+                    show()
+                }
             }
         }
     }

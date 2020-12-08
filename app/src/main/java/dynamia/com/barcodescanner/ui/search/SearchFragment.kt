@@ -18,6 +18,7 @@ import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.model.ReceiptImportLineValue
 import dynamia.com.core.data.model.ReceiptLocalLineValue
 import dynamia.com.core.util.Constant
+import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.receipt_search_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -51,18 +52,13 @@ class SearchFragment : Fragment() {
     private fun setupObserverable() {
         when (arg.source) {
             Constant.PICKING_LIST -> {
-                viewModel.pickingListRepository.getAllPickingListLine(arg.PoNo)
-                    .observe(viewLifecycleOwner, {
-                        pickinglistAdapter.update(it.toMutableList())
-                    })
+                viewModel.getPickingLineData(arg.PoNo)
             }
             Constant.RECEIPT_LOCAL -> {
                 viewModel.receiptLocalRepository.getAllReceiptLocalLine(arg.PoNo)
-                    .observe(viewLifecycleOwner,
-                        {
-                            receiptLocalLineAdapter.update(it.toMutableList())
-
-                        })
+                    .observe(
+                        viewLifecycleOwner,
+                        { receiptLocalLineAdapter.update(it.toMutableList()) })
             }
             Constant.RECEIPT_IMPORT -> {
                 viewModel.receiptImportRepository.getAllReceiptImportLine(arg.PoNo)
@@ -72,6 +68,17 @@ class SearchFragment : Fragment() {
                         })
             }
         }
+
+        viewModel.searchViewState.observe(viewLifecycleOwner, {
+            when (it) {
+                is SearchViewModel.SearchViewState.SuccessGetPickingLine -> {
+                    pickinglistAdapter.update(it.data)
+                }
+                is SearchViewModel.SearchViewState.ErrorGetLocalData -> {
+                    context?.showLongToast(it.message)
+                }
+            }
+        })
 
     }
 

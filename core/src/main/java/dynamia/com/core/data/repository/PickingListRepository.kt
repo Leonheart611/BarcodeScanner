@@ -6,6 +6,8 @@ import dynamia.com.core.data.model.PickingListHeaderValue
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.model.PickingListScanEntriesValue
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlin.coroutines.CoroutineContext
 
 interface PickingListRepository {
@@ -13,10 +15,10 @@ interface PickingListRepository {
     fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue): Job
     fun getCountPickingListHeader(employeeCode: String): LiveData<Int>
     suspend fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue
-    suspend fun getCheckEmptyOrNot(employeeCode: String): Boolean
+    suspend fun getCheckEmptyOrNot(): Flow<Boolean>
     suspend fun clearPickingListHeader()
 
-    fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>>
+    suspend fun getAllPickingListLine(picking_List_No: String): Flow<List<PickingListLineValue>>
     fun insertPickingListLine(pickingListLineValue: PickingListLineValue): Job
     suspend fun getAllPickingListLineFromInsert(
         partNo: String,
@@ -33,7 +35,7 @@ interface PickingListRepository {
 
     suspend fun checkPickingListNoandSN(serialNo: String): Boolean
     fun insertPickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue): Boolean
-    suspend fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
+    fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue)
     fun updatePickingScanEntry(pickingListScanEntriesValue: PickingListScanEntriesValue)
     suspend fun clearPickingListScanEntries()
     fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue>
@@ -69,16 +71,19 @@ class PickingListRepositoryImpl(
     override suspend fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue =
         pickingListDao.getPickingListHeader(picking_List_No)
 
-    override suspend fun getCheckEmptyOrNot(employeeCode: String): Boolean =
-        pickingListDao.getCheckEmptyOrNot(employeeCode) == 0
+    override suspend fun getCheckEmptyOrNot(): Flow<Boolean> = flow {
+        emit(pickingListDao.getCheckEmptyOrNot() == 0)
+    }
 
 
     override suspend fun clearPickingListHeader() {
         pickingListDao.clearPickingListHeader()
     }
 
-    override fun getAllPickingListLine(picking_List_No: String): LiveData<List<PickingListLineValue>> =
-        pickingListDao.getAllPickingListLine(picking_List_No)
+    override suspend fun getAllPickingListLine(picking_List_No: String): Flow<List<PickingListLineValue>> =
+        flow {
+            emit(pickingListDao.getAllPickingListLine(picking_List_No))
+        }
 
 
     override suspend fun getAllPickingListLineFromInsert(
@@ -126,7 +131,7 @@ class PickingListRepositoryImpl(
             }
         }
 
-    override suspend fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue) {
+    override fun deletePickingListScanEntries(pickingListScanEntriesValue: PickingListScanEntriesValue) {
         scope.launch(Dispatchers.IO) {
             pickingListDao.deletePickingListScanEntries(pickingListScanEntriesValue)
             val pickingListData = pickingListDao.getPickingListDetail(

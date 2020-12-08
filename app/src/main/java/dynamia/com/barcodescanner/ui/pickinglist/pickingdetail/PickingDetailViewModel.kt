@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.model.PickingListHeaderValue
+import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.repository.NetworkRepository
 import dynamia.com.core.data.repository.PickingListRepository
 import dynamia.com.core.util.io
@@ -26,6 +27,7 @@ class PickingDetailViewModel(
 
     private val _pickingPostViewState = MutableLiveData<PickingDetailPostViewState>()
     val pickingPostViewState: LiveData<PickingDetailPostViewState> by lazy { _pickingPostViewState }
+
 
     fun postPickingDataNew() {
         viewModelScope.launch {
@@ -82,8 +84,30 @@ class PickingDetailViewModel(
 
     }
 
+    fun getPickingListLine(pickingListNo: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    pickingListRepository.getAllPickingListLine(pickingListNo).collect {
+                        ui {
+                            _pickingDetailViewState.value =
+                                PickingDetailViewState.SuccessGetPickingLineData(it.toMutableList())
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _pickingDetailViewState.value =
+                    PickingDetailViewState.ErrorGetLocalData(e.localizedMessage)
+            }
+
+        }
+    }
+
     sealed class PickingDetailViewState {
         class SuccessGetLocalData(val value: PickingListHeaderValue) : PickingDetailViewState()
+        class SuccessGetPickingLineData(val values: MutableList<PickingListLineValue>) :
+            PickingDetailViewState()
+
         class ErrorGetLocalData(val message: String) : PickingDetailViewState()
     }
 

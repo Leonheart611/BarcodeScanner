@@ -6,4 +6,10 @@
         <attr name="etenabled" format="boolean"/>
         <attr name="etfocusable" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="DoneInputLayout">
+        <attr name="title_text" format="string"/>
+        <attr name="inputType_done" format="string"/>
+        <attr name="etenabled_done" format="boolean"/>
+        <attr name="etfocusable_done" format="boolean"/>
+    </declare-styleable>
 </resources>

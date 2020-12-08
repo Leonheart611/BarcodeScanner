@@ -27,7 +27,7 @@ class StockCountAdapter (var stockCounts :MutableList<StockCount>):RecyclerView.
         fun bind(data:StockCount){
             with(itemView){
                 tv_stock_part_no.text = data.Part_No
-                tv_stock_item_no.text = data.Item_No
+                tv_stock_item_no.text = data.Item_No.toString()
                 tv_stock_serial_no.text = data.Serial_No
                 if (data.sycn_status){
                     tv_stock_sycn_status.setText(R.string.posted_status_true)

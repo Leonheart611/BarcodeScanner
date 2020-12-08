@@ -14,7 +14,6 @@ import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeViewState.DBhasEmpty
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
-import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.home_fragment.*
 import kotlinx.android.synthetic.main.home_item_detail.*
@@ -43,26 +42,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setObservable() {
-        viewModel.getAllDaataMessage.observe(viewLifecycleOwner, EventObserver {
-            it.let {
-                context?.showLongToast(it)
-            }
-        })
-        viewModel.loading.observe(viewLifecycleOwner, EventObserver {
-            activity?.showLoading(it)
-        })
-        viewModel.postImportMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showLongToast(it)
-        })
-        viewModel.postLocalMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showLongToast(it)
-        })
-        viewModel.postStockCountMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showLongToast(it)
-        })
-        viewModel.pickingPostMessage.observe(viewLifecycleOwner, EventObserver {
-            context?.showLongToast(it)
-        })
         viewModel.pickingListRepository.getCountPickingListHeader(viewModel.getEmployeeName())
             .observe(viewLifecycleOwner, {
                 tv_picking_list_count.text = it.toString()
@@ -82,9 +61,6 @@ class HomeFragment : Fragment() {
                     if (it.boolean) {
                         openStatusApi()
                     }
-                }
-                is HomeViewModel.HomeViewState.Success -> {
-
                 }
                 is HomeViewModel.HomeViewState.Error -> {
                     context?.showLongToast(it.message)

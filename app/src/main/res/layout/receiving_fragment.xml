@@ -173,4 +173,17 @@
         app:layout_constraintEnd_toEndOf="@+id/tv_picking_detail_so"
         app:layout_constraintStart_toStartOf="@+id/tv_picking_detail_so"
         app:layout_constraintTop_toBottomOf="@+id/tv_picking_detail_so" />
+
+    <Switch
+        android:id="@+id/switch_manual_picking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/automatic_switch_text"
+        android:textOff="@string/manual_switch_text"
+        android:textOn="@string/automatic_switch_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cv_clear_data"
+        app:layout_constraintStart_toEndOf="@+id/cv_back"
+        app:layout_constraintTop_toBottomOf="@+id/nestedScrollView2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

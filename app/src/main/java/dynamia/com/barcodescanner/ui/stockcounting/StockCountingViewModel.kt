@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.repository.NetworkRepository
 import dynamia.com.core.data.repository.StockCountRepository
+import dynamia.com.core.domain.ResultWrapper
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
@@ -38,15 +39,28 @@ class StockCountingViewModel(
                     for (data in stockCounts) {
                         val body = gson.toJson(data)
                         networkRepository.postStockCountEntry(body).collect {
-                            dataPosted++
-                            ui {
-                                _stockCountPostViewState.value =
-                                    StockCountPostViewState.UpdateSuccessPosted(dataPosted)
+                            when (it) {
+                                is ResultWrapper.Success -> {
+                                    dataPosted++
+                                    ui {
+                                        _stockCountPostViewState.value =
+                                            StockCountPostViewState.UpdateSuccessPosted(dataPosted)
+                                    }
+                                    data.apply {
+                                        sycn_status = true
+                                    }
+                                    stockCountRepository.updateStockCount(data)
+                                }
+                                is ResultWrapper.GenericError -> {
+                                    ui {
+                                        _stockCountPostViewState.value =
+                                            StockCountPostViewState.ErrorPostData("${it.code} ${it.error?.odataError?.message?.value}")
+                                    }
+                                }
+                                ResultWrapper.NetworkError -> {
+
+                                }
                             }
-                            data.apply {
-                                sycn_status = true
-                            }
-                            stockCountRepository.updateStockCount(data)
                         }
                     }
                 }

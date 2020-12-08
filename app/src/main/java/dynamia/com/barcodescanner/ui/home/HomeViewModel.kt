@@ -6,14 +6,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.model.UserData
 import dynamia.com.core.data.repository.*
+import dynamia.com.core.domain.ResultWrapper.*
 import dynamia.com.core.domain.RetrofitBuilder
 import dynamia.com.core.util.Constant
-import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
@@ -23,7 +22,7 @@ class HomeViewModel(
     val pickingListRepository: PickingListRepository,
     val receiptImportRepository: ReceiptImportRepository,
     val receiptLocalRepository: ReceiptLocalRepository,
-    val stockCountRepository: StockCountRepository,
+    private val stockCountRepository: StockCountRepository,
     private val sharedPreferences: SharedPreferences,
     private val networkRepository: NetworkRepository,
     val app: Application
@@ -39,9 +38,6 @@ class HomeViewModel(
         )
     }
 
-    val getAllDaataMessage = MutableLiveData<Event<String>>()
-    val loading = MutableLiveData<Event<Boolean>>()
-
     private var _homeViewState = MutableLiveData<HomeViewState>()
     val homeViewState: LiveData<HomeViewState> by lazy { _homeViewState }
 
@@ -53,12 +49,15 @@ class HomeViewModel(
 
     fun checkDBNotNull() {
         viewModelScope.launch {
-            var result: Boolean? = null
             try {
                 io {
-                    result = pickingListRepository.getCheckEmptyOrNot(getEmployeeName())
+                    pickingListRepository.getCheckEmptyOrNot().collect {
+                        ui {
+                            if (it)
+                                _homeViewState.value = HomeViewState.DBhasEmpty(it)
+                        }
+                    }
                 }
-                result?.let { ui { _homeViewState.value = HomeViewState.DBhasEmpty(it) } }
             } catch (e: Exception) {
                 _homeViewState.value = HomeViewState.Error(e.localizedMessage)
             }
@@ -100,163 +99,6 @@ class HomeViewModel(
         _homeViewState.value = HomeViewState.HasSuccessLogout
     }
 
-    val pickingPostMessage = MutableLiveData<Event<String>>()
-    fun postPickingData() {
-        uiScope.launch {
-            loading.postValue(Event(true))
-            try {
-                val pickingListScanEntries =
-                    pickingListRepository.getAllUnscynPickingListScanEntries()
-                if (pickingListScanEntries.isNotEmpty()) {
-                    for (data in pickingListScanEntries) {
-                        val param = gson.toJson(data)
-                        val result = retrofitService.postPickingListEntry(param)
-                        result.let {
-                            data.apply {
-                                sycn_status = true
-                            }
-                            pickingListRepository.updatePickingScanEntry(data)
-                        }
-                    }
-                    pickingPostMessage.postValue(Event("Success Post Data PickingList"))
-                    loading.postValue(Event(false))
-
-                } else {
-                    pickingPostMessage.postValue(
-                        Event(
-                            app.resources.getString(
-                                R.string.post_all_data_or_no_data,
-                                Constant.PICKING_LIST
-                            )
-                        )
-                    )
-                    loading.postValue(Event(false))
-                }
-            } catch (e: java.lang.Exception) {
-                loading.postValue(Event(false))
-                pickingPostMessage.postValue(Event(e.localizedMessage))
-            }
-        }
-    }
-
-    val postImportMessage = MutableLiveData<Event<String>>()
-    val postLocalMessage = MutableLiveData<Event<String>>()
-    fun postReceiptImportData() {
-        uiScope.launch {
-            try {
-                loading.postValue(Event(true))
-                val receiptImportData = receiptImportRepository.getAllUnsycnImportScanEntry()
-                if (receiptImportData.isNotEmpty()) {
-                    for (data in receiptImportData) {
-                        if (data.sycn_status.not()) {
-                            val param = gson.toJson(data)
-                            val result = retrofitService.postReceiptImportEntry(param)
-                            result.let {
-                                data.apply {
-                                    sycn_status = true
-                                }
-                                receiptImportRepository.updateReceiptImportScanEntry(data)
-                            }
-                        }
-                    }
-                    loading.postValue(Event(false))
-                    postImportMessage.postValue(Event("Berhasil Post Data Receipt Import"))
-                } else {
-                    loading.postValue(Event(false))
-                    postImportMessage.postValue(
-                        Event(
-                            app.resources.getString(
-                                R.string.post_all_data_or_no_data,
-                                Constant.RECEIPT_IMPORT
-                            )
-                        )
-                    )
-                }
-            } catch (e: Exception) {
-                loading.postValue(Event(false))
-                postImportMessage.postValue(Event(e.localizedMessage))
-            }
-        }
-    }
-
-
-    fun postReceiptLocalData() {
-        uiScope.launch {
-            try {
-                loading.postValue(Event(true))
-                val receiptLocalData = receiptLocalRepository.getUnsycnReceiptLocalScanEntry()
-                if (receiptLocalData.isNotEmpty()) {
-                    for (data in receiptLocalData) {
-                        if (data.sycn_status.not()) {
-                            val param = gson.toJson(data)
-                            val result = retrofitService.postReceiptLocalEntry(param)
-                            result.let {
-                                data.apply {
-                                    sycn_status = true
-                                }
-                                receiptLocalRepository.updateReceiptLocalScanEntry(data)
-                            }
-                        }
-                    }
-                    loading.postValue(Event(false))
-                    postLocalMessage.postValue(Event("Berhasil Post Data Receipt Local"))
-                } else {
-                    loading.postValue(Event(false))
-                    postLocalMessage.postValue(
-                        Event(
-                            app.resources.getString(
-                                R.string.post_all_data_or_no_data,
-                                Constant.RECEIPT_LOCAL
-                            )
-                        )
-                    )
-                }
-
-            } catch (e: Exception) {
-                loading.postValue(Event(false))
-                postLocalMessage.postValue(Event(e.localizedMessage))
-            }
-        }
-    }
-
-    val postStockCountMessage = MutableLiveData<Event<String>>()
-    fun postStockCountData() {
-        uiScope.launch {
-            loading.postValue(Event(true))
-            try {
-                val stockCounts = stockCountRepository.getAllUnsycnStockCount()
-                if (stockCounts.isNotEmpty()) {
-                    for (data in stockCounts) {
-                        val param = gson.toJson(data)
-                        val result = retrofitService.postStockCountEntry(param)
-                        result.let {
-                            data.apply {
-                                sycn_status = true
-                            }
-                            stockCountRepository.updateStockCount(data)
-                        }
-                    }
-                    postStockCountMessage.postValue(Event("Berhasil Post Data StockCount"))
-                    loading.postValue(Event(false))
-
-                } else {
-                    postStockCountMessage.postValue(
-                        Event(
-                            app.resources.getString(
-                                R.string.post_all_data_or_no_data,
-                                Constant.STOCK_COUNT
-                            )
-                        )
-                    )
-                    loading.postValue(Event(false))
-                }
-            } catch (e: Exception) {
-                loading.postValue(Event(false))
-                postStockCountMessage.postValue(Event(e.localizedMessage))
-            }
-        }
-    }
-
     private fun getUserData(): UserData {
         return UserData(
             1,
@@ -272,8 +114,19 @@ class HomeViewModel(
             try {
                 io {
                     networkRepository.getPickingListHeaderAsync().collect { dataHeader ->
-                        dataHeader.forEach {
-                            pickingListRepository.insertPickingListHeader(it)
+                        when (dataHeader) {
+                            is Success -> dataHeader.value.forEach {
+                                pickingListRepository.insertPickingListHeader(it)
+                            }
+                            is GenericError -> {
+                                ui {
+                                    _homeGetApiViewState.value =
+                                        FailedGetPickingList("${dataHeader.code} ${dataHeader.error}")
+                                }
+                            }
+                            NetworkError -> {
+
+                            }
                         }
                     }
                     networkRepository.getPickingListLineAsync().collect { data ->
@@ -486,7 +339,6 @@ class HomeViewModel(
 
 
     sealed class HomeViewState {
-        class Success(val message: String) : HomeViewState()
         class Error(val message: String) : HomeViewState()
         class ShowLoading(val boolean: Boolean) : HomeViewState()
         class DBhasEmpty(val boolean: Boolean) : HomeViewState()

@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isNotEmpty
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -28,7 +29,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleLineSelected {
-
     private val viewModel: PickingListInputViewModel by viewModel()
     private val args: PickingListInputFragmentArgs by navArgs()
     private var pickListValue: PickingListLineValue? = null
@@ -36,6 +36,8 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     private var dialog: Dialog? = null
     private var poNoDialog: Dialog? = null
     private var purchaseNo: String = ""
+    private val DELAY: Long = 2000
+    private var pickingListValue: PickingListScanEntriesValue? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,9 +46,23 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         return inflater.inflate(R.layout.receiving_fragment, container, false)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        pickingListValue = getPickingScanEntriesModel()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        pickingListValue?.let { setAllDataView(it) }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupListener()
         setupObserverable()
     }
@@ -101,22 +117,36 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         et_part_no.requestFocus()
     }
 
-    override fun onResume() {
-        super.onResume()
-        clearAllView()
-        et_part_no.requestFocus()
-    }
-
     private fun setupListener() {
         cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
         et_part_no.addTextWatcher(object : TextWatcher {
+            private var timer = Timer()
+
             override fun afterTextChanged(p0: Editable?) {
-                if (et_part_no.getTextLength() > 3) {
-                    viewModel.getPickingListLineValue(
-                        partNo = et_part_no.getTextAsString(),
-                        pickingListNo = args.pickingListNo
+                if (switch_manual_picking.isChecked) {
+                    if (et_part_no.getTextLength() > 3) {
+                        viewModel.getPickingListLineValue(
+                            partNo = et_part_no.getTextAsString(),
+                            pickingListNo = args.pickingListNo
+                        )
+                    }
+                } else {
+                    timer.cancel()
+                    timer = Timer()
+                    timer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                if (et_part_no.getTextLength() > 3) {
+                                    viewModel.getPickingListLineValue(
+                                        partNo = et_part_no.getTextAsString(),
+                                        pickingListNo = args.pickingListNo
+                                    )
+                                }
+                            }
+                        },
+                        DELAY
                     )
                 }
             }
@@ -152,8 +182,10 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         }
         et_sn_picking.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                if (p0.toString().length > 3)
-                    saveDataLocal()
+                if (switch_manual_picking.isChecked) {
+                    if (p0.toString().length > 3)
+                        saveDataLocal()
+                }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -161,28 +193,68 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
         et_po_no_picking.addTextWatcher(object : TextWatcher {
+            private var timer = Timer()
+
             override fun afterTextChanged(p0: Editable?) {
-
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (purchaseNo.isNotEmpty() && et_po_no_picking.isEmpty().not()) {
-                    val currentPoNo = et_po_no_picking.getTextAsString().checkFirstCharacter("K")
-                    if (checkPONo(currentPoNo).not()) {
-                        showErrorPONoDialog(getString(R.string.error_po_no_not_same))
+                if (switch_manual_picking.isChecked) {
+                    if (purchaseNo.isNotEmpty() && et_po_no_picking.isEmpty().not()) {
+                        val currentPoNo =
+                            et_po_no_picking.getTextAsString().checkFirstCharacter("K")
+                        if (checkPONo(currentPoNo).not()) {
+                            showErrorPONoDialog(getString(R.string.error_po_no_not_same))
+                        } else {
+                            et_note.requestFocus()
+                        }
                     }
+                } else {
+                    timer.cancel()
+                    timer = Timer()
+                    timer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                if (purchaseNo.isNotEmpty() && et_po_no_picking.isEmpty().not()) {
+                                    val currentPoNo =
+                                        et_po_no_picking.getTextAsString().checkFirstCharacter("K")
+                                    if (checkPONo(currentPoNo).not()) {
+                                        showErrorPONoDialog(getString(R.string.error_po_no_not_same))
+                                    } else {
+                                        et_note.requestFocus()
+                                    }
+                                }
+                            }
+                        },
+                        DELAY
+                    )
                 }
             }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
+
+        et_sn_picking.addSetOnEditorClickListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                saveDataLocal()
+            }
+            false
+        }
     }
 
     private fun saveDataLocal() {
         if (checkMandatoryDataEmpty().not()) {
-            viewModel.checkSn(et_sn_picking.getTextAsString())
+            when (args.validateS) {
+                true -> {
+                    if (et_sn_picking.getTextAsString().startsWith("S", true)) {
+                        viewModel.checkSn(et_sn_picking.getTextAsString())
+                    } else {
+                        context?.showLongToast("SN Harus di awali dengan S")
+                        clearSn()
+                    }
+                }
+                false -> {
+                    viewModel.checkSn(et_sn_picking.getTextAsString())
+                }
+            }
         }
     }
 
@@ -199,6 +271,16 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
             employeeCode = viewModel.getEmployeeName(), qtyScan = "1",
             pickingListNo = args.pickingListNo
         )
+    }
+
+    private fun setAllDataView(data: PickingListScanEntriesValue) {
+        with(data) {
+            et_part_no.setText(partNo)
+            et_pl_no.setText(documentNo)
+            et_sn_picking.setText(serialNo)
+            et_mac_address_picking.setText(macAddress)
+            et_note.setText(note)
+        }
     }
 
     private fun clearAllView() {
@@ -238,6 +320,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         }
         purchaseNo = data.purchOrderNo
         pickListValue = data
+        et_po_no_picking.requestFocus()
     }
 
     private fun checkPONo(poNO: String): Boolean {

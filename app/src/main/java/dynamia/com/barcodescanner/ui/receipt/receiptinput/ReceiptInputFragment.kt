@@ -7,8 +7,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,14 +25,16 @@ import dynamia.com.core.data.model.ReceiptLocalScanEntriesValue
 import dynamia.com.core.util.*
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
+import kotlinx.android.synthetic.main.item_input_header.*
+import kotlinx.android.synthetic.main.item_input_header.et_item_no
 import kotlinx.android.synthetic.main.receipt_form_item.*
 import kotlinx.android.synthetic.main.receipt_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 class ReceiptInputFragment : Fragment(),
     ReceiptMultipleImportLineAdapter.OnMultipleImportLineListener,
     ReceiptMultipleLocalLineAdapter.OnMultipleLocalLineListener {
-
     private val viewModel: ReceiptInputViewModel by viewModel()
     private val args: ReceiptInputFragmentArgs by navArgs()
     private var dialog: Dialog? = null
@@ -51,28 +53,55 @@ class ReceiptInputFragment : Fragment(),
         return inflater.inflate(R.layout.receipt_input_fragment, container, false)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        when (args.source) {
+            Constant.RECEIPT_LOCAL -> {
+                createLocalScanEntry()
+            }
+            Constant.RECEIPT_IMPORT -> {
+                createImportScanEntry()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        clearAllText()
+        when (args.source) {
+            Constant.RECEIPT_LOCAL -> {
+                setDataLocal(receiptLocalScanEntriesValue)
+            }
+            Constant.RECEIPT_IMPORT -> {
+                setDataImport(receiptImportScanEntriesValue)
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupListener()
+        setObseverable()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupView()
-        setupListener()
-        setObseverable()
     }
 
     private fun setObseverable() {
         when (args.source) {
             Constant.RECEIPT_IMPORT -> {
                 viewModel.receiptImportRepository.getReceiptImportScanEntries(args.documentNo, 5)
-                    .observe(viewLifecycleOwner,
-                        Observer {
-                            historyImportAdapter.update(it.toMutableList())
-                        })
+                    .observe(viewLifecycleOwner, {
+                        historyImportAdapter.update(it.toMutableList())
+                    })
             }
             Constant.RECEIPT_LOCAL -> {
                 viewModel.receiptLocalRepository.getReceiptLocalScanEntries(args.documentNo, 5)
-                    .observe(viewLifecycleOwner,
-                        Observer {
-                            historyLocalAdapter.update(it.toMutableList())
-                        })
+                    .observe(viewLifecycleOwner, {
+                        historyLocalAdapter.update(it.toMutableList())
+                    })
             }
         }
         viewModel.receiptInputViewState.observe(viewLifecycleOwner, {
@@ -94,7 +123,7 @@ class ReceiptInputFragment : Fragment(),
                                 viewModel.receiptLocalRepository.insertReceiptLocalScanEntries(data)
                             if (input) {
                                 context?.showLongToast(getString(R.string.success_save_data_local))
-                                if (et_mac_address.isEmpty().not()) {
+                                if (et_mac_address_receipt_input.isEmpty().not()) {
                                     clearSnAndMac()
                                 } else {
                                     clearSN()
@@ -117,7 +146,7 @@ class ReceiptInputFragment : Fragment(),
                                 )
                             if (input) {
                                 context?.showLongToast(getString(R.string.success_save_data_local))
-                                if (et_mac_address.isEmpty().not()) {
+                                if (et_mac_address_receipt_input.isEmpty().not()) {
                                     clearSnAndMac()
                                 } else {
                                     clearSN()
@@ -138,95 +167,14 @@ class ReceiptInputFragment : Fragment(),
     private fun setupView() {
         et_packingid.requestFocus()
         tv_receipt_detail_po.text = args.poNo
-        et_part_no.addTextWatcher(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-                if (p0.toString().length > 3) {
-                    when (args.source) {
-                        Constant.RECEIPT_LOCAL -> {
-                            viewModel.getReceiptLocalLine(args.documentNo, p0.toString())
-                        }
-
-                        Constant.RECEIPT_IMPORT -> {
-                            viewModel.getReceiptImportLine(args.documentNo, p0.toString())
-                        }
-                    }
-                }
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-        })
-        et_po_no.addTextWatcher(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (p0.toString().isNotEmpty()) {
-                    if (checkPONo(p0.toString().checkFirstCharacter("K")).not()) {
-                        context?.showLongToast(getString(R.string.error_po_no_not_same))
-                        et_po_no.clearText()
-                        et_po_no.requestFocus()
-                    }
-                }
-            }
-        })
-        et_sn_no.addTextWatcher(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-                if (p0.toString().length > 3)
-                    saveData()
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-        })
-        when (args.source) {
-            Constant.RECEIPT_IMPORT -> {
-                with(rv_receipt_history) {
-                    layoutManager =
-                        LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-                    adapter = historyImportAdapter
-                }
-            }
-            Constant.RECEIPT_LOCAL -> {
-                with(rv_receipt_history) {
-                    layoutManager =
-                        LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-                    adapter = historyLocalAdapter
-                }
-            }
-        }
     }
 
     fun checkPONo(value: String): Boolean {
         return args.poNo?.let { value == it } ?: kotlin.run { value == args.documentNo }
     }
 
-    override fun onPause() {
-        super.onPause()
-        when (args.source) {
-            Constant.RECEIPT_LOCAL -> {
-                createLocalScanEntry()
-            }
-            Constant.RECEIPT_IMPORT -> {
-                createImportScanEntry()
-            }
-        }
-    }
 
-    override fun onResume() {
-        super.onResume()
-        clearAllText()
-    }
-
-    fun checkDBImport(dataImport: List<ReceiptImportLineValue>? = null) {
+    private fun checkDBImport(dataImport: List<ReceiptImportLineValue>? = null) {
         dataImport?.let { data ->
             if (data.isNotEmpty()) {
                 if (data.size == 1) {
@@ -240,7 +188,7 @@ class ReceiptInputFragment : Fragment(),
         }
     }
 
-    fun checkDBLocal(dataLocal: List<ReceiptLocalLineValue>? = null) {
+    private fun checkDBLocal(dataLocal: List<ReceiptLocalLineValue>? = null) {
         dataLocal?.let { data ->
             if (data.isNotEmpty()) {
                 if (data.size == 1) {
@@ -259,6 +207,8 @@ class ReceiptInputFragment : Fragment(),
             et_description.setText(data.description)
             et_item_no.setText(data.itemNo)
             lineNo = data.lineNo
+            et_trackingid.requestFocus()
+            clearSN()
         }
 
     }
@@ -268,6 +218,8 @@ class ReceiptInputFragment : Fragment(),
             et_description.setText(data.description)
             et_item_no.setText(data.no)
             lineNo = data.lineNo
+            et_trackingid.requestFocus()
+            clearSN()
         }
     }
 
@@ -312,6 +264,215 @@ class ReceiptInputFragment : Fragment(),
     }
 
     private fun setupListener() {
+        et_part_receipt_input.addTextWatcher(object : TextWatcher {
+            private var timer = Timer()
+            private val DELAY: Long = 1000
+            override fun afterTextChanged(p0: Editable?) {
+                if (switch_receipt_input.isChecked) {
+                    if (et_part_receipt_input.getTextAsString().length > 3) {
+                        when (args.source) {
+                            Constant.RECEIPT_LOCAL -> {
+                                viewModel.getReceiptLocalLine(
+                                    args.documentNo,
+                                    et_part_receipt_input.getTextAsString()
+                                )
+                            }
+
+                            Constant.RECEIPT_IMPORT -> {
+                                viewModel.getReceiptImportLine(
+                                    args.documentNo,
+                                    et_part_receipt_input.getTextAsString()
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    timer.cancel()
+                    timer = Timer()
+                    timer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                if (p0.toString().length > 3) {
+                                    when (args.source) {
+                                        Constant.RECEIPT_LOCAL -> {
+                                            viewModel.getReceiptLocalLine(
+                                                args.documentNo,
+                                                p0.toString()
+                                            )
+                                        }
+
+                                        Constant.RECEIPT_IMPORT -> {
+                                            viewModel.getReceiptImportLine(
+                                                args.documentNo,
+                                                p0.toString()
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }, DELAY
+                    )
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+        })
+
+        et_mac_address_receipt_input.addTextWatcher(object : TextWatcher {
+            private var timer = Timer()
+            private val DELAY: Long = 1000
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(p0: Editable?) {
+                timer.cancel()
+                timer = Timer()
+                timer.schedule(
+                    object : TimerTask() {
+                        override fun run() {
+                            this@ReceiptInputFragment.activity?.runOnUiThread {
+                                et_sn_no.requestFocus()
+                            }
+                        }
+                    }, DELAY
+                )
+            }
+        })
+
+        et_trackingid.addTextWatcher(object : TextWatcher {
+            private var timer = Timer()
+            private val DELAY: Long = 1000
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(p0: Editable?) {
+                timer.cancel()
+                timer = Timer()
+                timer.schedule(
+                    object : TimerTask() {
+                        override fun run() {
+                            this@ReceiptInputFragment.activity?.runOnUiThread {
+                                et_mac_address_receipt_input.requestFocus()
+                            }
+                        }
+                    }, DELAY
+                )
+            }
+        })
+
+        et_packingid.addTextWatcher(object : TextWatcher {
+            private var timer = Timer()
+            private val DELAY: Long = 1000
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(p0: Editable?) {
+                timer.cancel()
+                timer = Timer()
+                timer.schedule(
+                    object : TimerTask() {
+                        override fun run() {
+                            this@ReceiptInputFragment.activity?.runOnUiThread {
+                                et_po_no.requestFocus()
+                            }
+                        }
+                    }, DELAY
+                )
+            }
+        })
+
+        et_po_no.addTextWatcher(object : TextWatcher {
+            private var timer = Timer()
+            private val DELAY: Long = 1000
+            override fun afterTextChanged(p0: Editable?) {
+                if (switch_receipt_input.isChecked) {
+                    if (p0.toString().isNotEmpty()) {
+                        if (checkPONo(p0.toString().checkFirstCharacter("K")).not()) {
+                            context?.showLongToast(getString(R.string.error_po_no_not_same))
+                            et_po_no.clearText()
+                            et_po_no.requestFocus()
+                        } else {
+                            et_part_receipt_input.requestFocus()
+                        }
+                    }
+                } else {
+                    timer.cancel()
+                    timer = Timer()
+                    timer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                this@ReceiptInputFragment.activity?.runOnUiThread {
+                                    if (p0.toString().isNotEmpty()) {
+                                        if (checkPONo(
+                                                p0.toString().checkFirstCharacter("K")
+                                            ).not()
+                                        ) {
+                                            context?.showLongToast(getString(R.string.error_po_no_not_same))
+                                            et_po_no.clearText()
+                                            et_po_no.requestFocus()
+                                        } else {
+                                            et_part_receipt_input.requestFocus()
+                                        }
+                                    }
+                                }
+                            }
+                        }, DELAY
+                    )
+                }
+
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
+        et_sn_no.addTextWatcher(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                if (switch_receipt_input.isChecked) {
+                    if (p0.toString().length > 3)
+                        saveData()
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
+        et_sn_no.addSetOnEditorClickListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                saveData()
+            }
+            false
+        }
+
+
+        when (args.source) {
+            Constant.RECEIPT_IMPORT -> {
+                with(rv_receipt_history) {
+                    layoutManager =
+                        LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+                    adapter = historyImportAdapter
+                }
+            }
+            Constant.RECEIPT_LOCAL -> {
+                with(rv_receipt_history) {
+                    layoutManager =
+                        LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+                    adapter = historyLocalAdapter
+                }
+            }
+        }
         cv_save_new.setOnClickListener {
             saveData()
         }
@@ -325,6 +486,7 @@ class ReceiptInputFragment : Fragment(),
         tb_receipt_history.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.history_data -> {
+                    et_description.clearText()
                     val action =
                         ReceiptInputFragmentDirections.actionReceiptInputFragmentToHistoryInputFragment(
                             args.documentNo, args.source, showAll = false
@@ -341,10 +503,36 @@ class ReceiptInputFragment : Fragment(),
         if (checkMandatoryData()) {
             when (args.source) {
                 Constant.RECEIPT_LOCAL -> {
-                    viewModel.checkLocalSN(et_sn_no.getTextAsString())
+                    when (args.validateS) {
+                        true -> {
+                            if (et_sn_no.getTextAsString().startsWith("S", true)) {
+                                viewModel.checkLocalSN(et_sn_no.getTextAsString())
+                            } else {
+                                context?.showLongToast("SN Harus di awali dengan S")
+                                clearSnAndFocus()
+                            }
+                        }
+                        false -> {
+                            viewModel.checkLocalSN(et_sn_no.getTextAsString())
+                        }
+                    }
+
                 }
                 Constant.RECEIPT_IMPORT -> {
-                    viewModel.checkImportSn(et_sn_no.getTextAsString())
+                    when (args.validateS) {
+                        true -> {
+                            if (et_sn_no.getTextAsString().startsWith("S", true)) {
+                                viewModel.checkImportSn(et_sn_no.getTextAsString())
+                            } else {
+                                context?.showLongToast("SN Harus di awali dengan S")
+                                clearSnAndFocus()
+                            }
+                        }
+                        false -> {
+                            viewModel.checkImportSn(et_sn_no.getTextAsString())
+                        }
+                    }
+
                 }
             }
         }
@@ -352,8 +540,8 @@ class ReceiptInputFragment : Fragment(),
 
     private fun clearSnAndMac() {
         et_sn_no.clearText()
-        et_mac_address.clearText()
-        et_mac_address.requestFocus()
+        et_mac_address_receipt_input.clearText()
+        et_mac_address_receipt_input.requestFocus()
     }
 
     private fun checkMandatoryData(): Boolean {
@@ -369,9 +557,9 @@ class ReceiptInputFragment : Fragment(),
             result = false
             et_po_no.setError(getString(R.string.error_po_no_not_same))
         }
-        if (et_part_no.isEmpty()) {
+        if (et_part_receipt_input.isEmpty()) {
             result = false
-            et_part_no.setError(getString(R.string.error_input_message))
+            et_part_receipt_input.setError(getString(R.string.error_input_message))
         }
         if (et_sn_no.isEmpty()) {
             result = false
@@ -394,11 +582,10 @@ class ReceiptInputFragment : Fragment(),
 
     private fun setDataLocal(dataLocal: ReceiptLocalScanEntriesValue?) {
         dataLocal?.let { data ->
-            et_mac_address.setText(data.macAddress)
-            et_part_no.setText(data.partNo)
+            et_mac_address_receipt_input.setText(data.macAddress)
+            et_part_receipt_input.setText(data.partNo)
             et_packingid.setText(data.packingID)
             et_po_no.setText(data.pONo)
-            et_sn_no.setText(data.serialNo)
             et_trackingid.setText(data.trackingID)
             lineNo = data.lineNo
         }
@@ -406,11 +593,10 @@ class ReceiptInputFragment : Fragment(),
 
     private fun setDataImport(dataImport: ReceiptImportScanEntriesValue?) {
         dataImport?.let { data ->
-            et_mac_address.setText(data.macAddress)
-            et_part_no.setText(data.partNo)
+            et_mac_address_receipt_input.setText(data.macAddress)
+            et_part_receipt_input.setText(data.partNo)
             et_packingid.setText(data.packingID)
             et_po_no.setText(data.pONo)
-            et_sn_no.setText(data.serialNo)
             et_trackingid.setText(data.trackingID)
             lineNo = data.lineNo
         }
@@ -420,8 +606,8 @@ class ReceiptInputFragment : Fragment(),
         receiptLocalScanEntriesValue = ReceiptLocalScanEntriesValue(
             documentNo = args.documentNo,
             employeeCode = viewModel.getEmployeeName(),
-            macAddress = et_mac_address.getTextAsString().emptySetZero(),
-            partNo = et_part_no.getTextAsString(),
+            macAddress = et_mac_address_receipt_input.getTextAsString().emptySetZero(),
+            partNo = et_part_receipt_input.getTextAsString(),
             packingID = et_packingid.getTextAsString(),
             shipset = "-",
             serialNo = et_sn_no.getTextAsString(),
@@ -433,12 +619,13 @@ class ReceiptInputFragment : Fragment(),
         )
     }
 
+
     private fun createImportScanEntry() {
         receiptImportScanEntriesValue = ReceiptImportScanEntriesValue(
             documentNo = args.documentNo,
             employeeCode = viewModel.getEmployeeName() ?: "",
-            macAddress = et_mac_address.getTextAsString().emptySetZero(),
-            partNo = et_part_no.getTextAsString(),
+            macAddress = et_mac_address_receipt_input.getTextAsString().emptySetZero(),
+            partNo = et_part_receipt_input.getTextAsString(),
             packingID = et_packingid.getTextAsString(),
             shipset = "-",
             serialNo = et_sn_no.getTextAsString(),
@@ -463,10 +650,10 @@ class ReceiptInputFragment : Fragment(),
     private fun clearAllText() {
         et_packingid.clearText()
         et_po_no.clearText()
-        et_part_no.clearText()
+        et_part_receipt_input.clearText()
         et_sn_no.clearText()
         et_trackingid.clearText()
-        et_mac_address.clearText()
+        et_mac_address_receipt_input.clearText()
         et_description.clearText()
         et_item_no.clearText()
     }
@@ -516,8 +703,8 @@ class ReceiptInputFragment : Fragment(),
     }
 
     private fun clearPartNo() {
-        et_part_no.clearText()
-        et_part_no.requestFocus()
+        et_part_receipt_input.clearText()
+        et_part_receipt_input.requestFocus()
     }
 
 

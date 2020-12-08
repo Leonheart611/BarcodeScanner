@@ -8,9 +8,10 @@ import dynamia.com.core.util.Constant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import org.koin.core.KoinComponent
 
 
-abstract class ViewModelBase(val userRepository: SharedPreferences) : ViewModel() {
+abstract class ViewModelBase(private val userRepository: SharedPreferences) : ViewModel(), KoinComponent {
     val coroutineJob = Job()
     val coroutineContext = Dispatchers.IO + coroutineJob
     val uiScope = CoroutineScope(coroutineContext)

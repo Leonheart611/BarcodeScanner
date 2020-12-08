@@ -16,37 +16,44 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun remove_isCorrect(){
+    fun remove_isCorrect() {
         val value = "1p000001"
         val result = value.removePrefix("1p")
-        assertEquals(result,"000001")
+        assertEquals(result, "000001")
     }
 
     @Test
-    fun remove_isCorrectAgain(){
+    fun remove_isCorrectAgain() {
         val value = "XPAI000001"
         val result = value.removePrefix("1p")
-        assertEquals(result,"XPAI000001")
+        assertEquals(result, "XPAI000001")
     }
 
     @Test
-    fun removek_correct(){
+    fun removek_correct() {
         val value = "K2019/po.09/0001"
         val result = value.checkFirstCharacter("K")
-        assertEquals(result,"2019/po.09/0001")
+        assertEquals(result, "2019/po.09/0001")
     }
 
     @Test
-    fun removeK_correct(){
+    fun removeK_correct() {
         val value = "KPO NO"
         val result = value.checkFirstCharacter("K")
-        assertEquals(result,"PO NO")
+        assertEquals(result, "PO NO")
     }
 
     @Test
-    fun removek_isCorrect(){
+    fun removek_isCorrect() {
         val value = "2019/pok.09/k0001"
         val result = value.checkFirstCharacter("K")
-        assertEquals(result,"2019/pok.09/k0001")
+        assertEquals(result, "2019/pok.09/k0001")
+    }
+
+    @Test
+    fun checkIsFirstCharIsS_isCorrect() {
+        val value = "S64648465136165wef"
+        val result = value.startsWith("S")
+        assertEquals(result, true)
     }
 }

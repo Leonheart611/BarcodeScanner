@@ -3,12 +3,13 @@ package dynamia.com.barcodescanner.ui.stockcounting
 import android.app.Dialog
 import android.app.Instrumentation
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -23,6 +24,7 @@ import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
 import kotlinx.android.synthetic.main.stock_counting_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 
 class StockCountingFragment : Fragment() {
@@ -59,18 +61,80 @@ class StockCountingFragment : Fragment() {
         cv_count_post.setOnClickListener {
             showPostDialog()
         }
-        et_count_part_no.doAfterTextChanged {
-            if (et_count_part_no.text?.isNotEmpty() != false)
-                tryInsertData()
-        }
-        et_count_item_no.doAfterTextChanged {
-            if (et_count_item_no.text?.isNotEmpty() != false)
-                tryInsertData()
-        }
-        et_count_serial_no.doAfterTextChanged {
-            if (et_count_serial_no.text?.isNotEmpty() != false)
-                tryInsertData()
-        }
+        et_count_part_no.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            private var timer = Timer()
+            private val DELAY: Long = 1000
+            override fun afterTextChanged(p0: Editable?) {
+                timer.cancel()
+                timer = Timer()
+                timer.schedule(
+                    object : TimerTask() {
+                        override fun run() {
+                            activity?.runOnUiThread { et_count_item_no.requestFocus() }
+                        }
+                    }, DELAY
+                )
+            }
+        })
+        et_count_item_no.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            private var timer = Timer()
+            private val DELAY: Long = 1000
+            override fun afterTextChanged(p0: Editable?) {
+                timer.cancel()
+                timer = Timer()
+                timer.schedule(
+                    object : TimerTask() {
+                        override fun run() {
+                            activity?.runOnUiThread { et_count_serial_no.requestFocus() }
+
+                        }
+                    }, DELAY
+                )
+            }
+        })
+        et_count_serial_no.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+
+            private var timer = Timer()
+            private val DELAY: Long = 1000
+            override fun afterTextChanged(p0: Editable?) {
+                if (switch_stock_count.isChecked) {
+                    if (et_count_serial_no.text?.isNotEmpty() != false)
+                        tryInsertData()
+                } else {
+                    timer.cancel()
+                    timer = Timer()
+                    timer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                if (et_count_serial_no.text?.isNotEmpty() != false)
+                                    tryInsertData()
+                            }
+                        }, DELAY
+                    )
+                }
+            }
+        })
+
         cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
@@ -87,8 +151,6 @@ class StockCountingFragment : Fragment() {
     private fun tryInsertData() {
         if (checkMandatory()) {
             viewModel.checkSnNo(et_count_serial_no.text.toString())
-        } else {
-            nextTextView()
         }
     }
 
@@ -107,7 +169,7 @@ class StockCountingFragment : Fragment() {
                                 Employee_COde = viewModel.getEmployeeName()
                             )
                         )
-                        clearInputData()
+                        clearSnInput()
                     } else {
                         showErroSnDialog(getString(R.string.sn_no_already_inputed))
                     }
@@ -130,6 +192,11 @@ class StockCountingFragment : Fragment() {
         et_count_item_no.text?.clear()
         et_count_part_no.text?.clear()
         et_count_part_no.requestFocus()
+    }
+
+    private fun clearSnInput() {
+        et_count_serial_no.text?.clear()
+        et_count_serial_no.requestFocus()
     }
 
     private fun nextTextView() {
