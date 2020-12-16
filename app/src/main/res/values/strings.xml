@@ -85,4 +85,6 @@
     <string name="continue_btn_text">Continue</string>
     <string name="manual_switch_text">Manual Input</string>
     <string name="automatic_switch_text">Automatic Input</string>
+    <string name="sn_normal_scan">SN</string>
+    <string name="sn_pn_scan">SN - PN</string>
 </resources>

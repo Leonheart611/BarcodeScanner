@@ -88,7 +88,12 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                         if (input) {
                             context?.showLongToast(getString(R.string.success_save_data_local))
                             if (et_mac_address_picking.isEmpty()) {
-                                clearSn()
+                                if (switch_sn_mode.isChecked) {
+                                    et_sn_picking.clearText()
+                                    clearPartNo()
+                                } else {
+                                    clearSn()
+                                }
                             } else {
                                 clearSnAndMac()
                             }
@@ -115,6 +120,12 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
             adapter = inputHistoryAdapter
         }
         et_part_no.requestFocus()
+        switch_sn_mode.setOnCheckedChangeListener { p0, isChecked ->
+            if (isChecked)
+                switch_sn_mode.text = getString(R.string.sn_pn_scan)
+            else
+                switch_sn_mode.text = getString(R.string.sn_normal_scan)
+        }
     }
 
     private fun setupListener() {
@@ -320,7 +331,13 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         }
         purchaseNo = data.purchOrderNo
         pickListValue = data
-        et_po_no_picking.requestFocus()
+        if (et_po_no_picking.getTextAsString().isNullOrEmpty()) {
+            et_po_no_picking.requestFocus()
+        } else {
+            if (switch_sn_mode.isChecked) {
+                et_sn_picking.requestFocus()
+            }
+        }
     }
 
     private fun checkPONo(poNO: String): Boolean {

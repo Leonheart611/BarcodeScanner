@@ -11,7 +11,6 @@ import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.model.UserData
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.ResultWrapper.*
-import dynamia.com.core.domain.RetrofitBuilder
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
@@ -27,16 +26,6 @@ class HomeViewModel(
     private val networkRepository: NetworkRepository,
     val app: Application
 ) : ViewModelBase(sharedPreferences) {
-
-    private val newUserData by lazy { getUserData() }
-
-    private val retrofitService by lazy {
-        RetrofitBuilder.getClient(
-            serverAddress = newUserData.hostName,
-            password = newUserData.password,
-            username = newUserData.username
-        )
-    }
 
     private var _homeViewState = MutableLiveData<HomeViewState>()
     val homeViewState: LiveData<HomeViewState> by lazy { _homeViewState }

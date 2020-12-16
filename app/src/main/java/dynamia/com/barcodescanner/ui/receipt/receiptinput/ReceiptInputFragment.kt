@@ -126,7 +126,12 @@ class ReceiptInputFragment : Fragment(),
                                 if (et_mac_address_receipt_input.isEmpty().not()) {
                                     clearSnAndMac()
                                 } else {
-                                    clearSN()
+                                    if (switch_sn_scan_receipt.isChecked) {
+                                        clearSN()
+                                        clearPartNo()
+                                    } else {
+                                        clearSN()
+                                    }
                                 }
                             } else {
                                 context?.showLongToast(getString(R.string.error_qty_over_outstanding))
@@ -149,7 +154,12 @@ class ReceiptInputFragment : Fragment(),
                                 if (et_mac_address_receipt_input.isEmpty().not()) {
                                     clearSnAndMac()
                                 } else {
-                                    clearSN()
+                                    if (switch_sn_scan_receipt.isChecked) {
+                                        clearSN()
+                                        clearPartNo()
+                                    } else {
+                                        clearSN()
+                                    }
                                 }
                             } else {
                                 context?.showLongToast(getString(R.string.error_qty_over_outstanding))
@@ -167,6 +177,12 @@ class ReceiptInputFragment : Fragment(),
     private fun setupView() {
         et_packingid.requestFocus()
         tv_receipt_detail_po.text = args.poNo
+        switch_sn_scan_receipt.setOnCheckedChangeListener { compoundButton, b ->
+            if (b)
+                switch_sn_scan_receipt.text = getString(R.string.sn_pn_scan)
+            else
+                switch_sn_scan_receipt.text = getString(R.string.sn_normal_scan)
+        }
     }
 
     fun checkPONo(value: String): Boolean {
@@ -207,8 +223,12 @@ class ReceiptInputFragment : Fragment(),
             et_description.setText(data.description)
             et_item_no.setText(data.itemNo)
             lineNo = data.lineNo
-            et_trackingid.requestFocus()
-            clearSN()
+            if (switch_sn_scan_receipt.isChecked) {
+                clearSnAndFocus()
+            } else {
+                clearSN()
+                et_trackingid.requestFocus()
+            }
         }
 
     }
@@ -218,8 +238,12 @@ class ReceiptInputFragment : Fragment(),
             et_description.setText(data.description)
             et_item_no.setText(data.no)
             lineNo = data.lineNo
-            et_trackingid.requestFocus()
-            clearSN()
+            if (switch_sn_scan_receipt.isChecked) {
+                clearSnAndFocus()
+            } else {
+                clearSN()
+                et_trackingid.requestFocus()
+            }
         }
     }
 
