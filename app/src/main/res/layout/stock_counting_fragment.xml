@@ -161,6 +161,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:visibility="gone"
         app:cardCornerRadius="5dp"
         app:cardElevation="5dp"
         app:cardPreventCornerOverlap="true"
@@ -183,7 +184,17 @@
         android:checked="true"
         android:text="@string/automatic_switch_text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/cv_count_post"
+        app:layout_constraintEnd_toStartOf="@+id/switch_sn_pn_stock"
         app:layout_constraintStart_toEndOf="@+id/cv_back"
+        app:layout_constraintTop_toBottomOf="@+id/rv_stock_count" />
+
+    <Switch
+        android:id="@+id/switch_sn_pn_stock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/sn_normal_scan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rv_stock_count" />
 </androidx.constraintlayout.widget.ConstraintLayout>

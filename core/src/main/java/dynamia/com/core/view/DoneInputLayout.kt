@@ -3,7 +3,6 @@ package dynamia.com.core.view
 import android.app.Instrumentation
 import android.content.Context
 import android.text.TextWatcher
-import android.text.method.KeyListener
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
@@ -120,10 +119,6 @@ class DoneInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
                 Log.e("Error Thread KeyCode", e.localizedMessage)
             }
         }).start()
-    }
-
-    fun addKeylistener(listener: KeyListener) {
-        tv_input_layout.keyListener = listener
     }
 
     fun addSetOnEditorClickListener(listener: TextView.OnEditorActionListener) {

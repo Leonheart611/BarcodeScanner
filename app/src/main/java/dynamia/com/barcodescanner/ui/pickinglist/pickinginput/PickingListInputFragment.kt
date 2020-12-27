@@ -143,7 +143,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                             pickingListNo = args.pickingListNo
                         )
                     }
-                } else {
+                } /*else {
                     timer.cancel()
                     timer = Timer()
                     timer.schedule(
@@ -159,7 +159,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                         },
                         DELAY
                     )
-                }
+                }*/
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -217,7 +217,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                             et_note.requestFocus()
                         }
                     }
-                } else {
+                } /*else {
                     timer.cancel()
                     timer = Timer()
                     timer.schedule(
@@ -236,7 +236,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                         },
                         DELAY
                     )
-                }
+                }*/
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -246,6 +246,29 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         et_sn_picking.addSetOnEditorClickListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 saveDataLocal()
+            }
+            false
+        }
+
+        et_part_no.addSetOnEditorClickListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                viewModel.getPickingListLineValue(
+                    partNo = et_part_no.getTextAsString(),
+                    pickingListNo = args.pickingListNo
+                )
+            }
+            false
+        }
+
+        et_po_no_picking.addSetOnEditorClickListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                val currentPoNo =
+                    et_po_no_picking.getTextAsString().checkFirstCharacter("K")
+                if (checkPONo(currentPoNo).not()) {
+                    showErrorPONoDialog(getString(R.string.error_po_no_not_same))
+                } else {
+                    et_note.requestFocus()
+                }
             }
             false
         }

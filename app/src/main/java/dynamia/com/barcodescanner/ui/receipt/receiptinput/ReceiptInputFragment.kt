@@ -310,7 +310,7 @@ class ReceiptInputFragment : Fragment(),
                             }
                         }
                     }
-                } else {
+                } /*else {
                     timer.cancel()
                     timer = Timer()
                     timer.schedule(
@@ -336,7 +336,7 @@ class ReceiptInputFragment : Fragment(),
                             }
                         }, DELAY
                     )
-                }
+                }*/
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -353,17 +353,19 @@ class ReceiptInputFragment : Fragment(),
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(p0: Editable?) {
-                timer.cancel()
-                timer = Timer()
-                timer.schedule(
-                    object : TimerTask() {
-                        override fun run() {
-                            this@ReceiptInputFragment.activity?.runOnUiThread {
-                                et_sn_no.requestFocus()
+                if (switch_receipt_input.isChecked) {
+                    timer.cancel()
+                    timer = Timer()
+                    timer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                this@ReceiptInputFragment.activity?.runOnUiThread {
+                                    et_sn_no.requestFocus()
+                                }
                             }
-                        }
-                    }, DELAY
-                )
+                        }, DELAY
+                    )
+                }
             }
         })
 
@@ -375,17 +377,19 @@ class ReceiptInputFragment : Fragment(),
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(p0: Editable?) {
-                timer.cancel()
-                timer = Timer()
-                timer.schedule(
-                    object : TimerTask() {
-                        override fun run() {
-                            this@ReceiptInputFragment.activity?.runOnUiThread {
-                                et_mac_address_receipt_input.requestFocus()
+                if (switch_receipt_input.isChecked) {
+                    timer.cancel()
+                    timer = Timer()
+                    timer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                this@ReceiptInputFragment.activity?.runOnUiThread {
+                                    et_mac_address_receipt_input.requestFocus()
+                                }
                             }
-                        }
-                    }, DELAY
-                )
+                        }, DELAY
+                    )
+                }
             }
         })
 
@@ -396,17 +400,19 @@ class ReceiptInputFragment : Fragment(),
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(p0: Editable?) {
-                timer.cancel()
-                timer = Timer()
-                timer.schedule(
-                    object : TimerTask() {
-                        override fun run() {
-                            this@ReceiptInputFragment.activity?.runOnUiThread {
-                                et_po_no.requestFocus()
+                if (switch_receipt_input.isChecked) {
+                    timer.cancel()
+                    timer = Timer()
+                    timer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                this@ReceiptInputFragment.activity?.runOnUiThread {
+                                    et_po_no.requestFocus()
+                                }
                             }
-                        }
-                    }, DELAY
-                )
+                        }, DELAY
+                    )
+                }
             }
         })
 
@@ -424,7 +430,7 @@ class ReceiptInputFragment : Fragment(),
                             et_part_receipt_input.requestFocus()
                         }
                     }
-                } else {
+                } /*else {
                     timer.cancel()
                     timer = Timer()
                     timer.schedule(
@@ -447,7 +453,7 @@ class ReceiptInputFragment : Fragment(),
                             }
                         }, DELAY
                     )
-                }
+                }*/
 
             }
 
@@ -476,6 +482,40 @@ class ReceiptInputFragment : Fragment(),
         et_sn_no.addSetOnEditorClickListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 saveData()
+            }
+            false
+        }
+
+        et_part_receipt_input.addSetOnEditorClickListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                when (args.source) {
+                    Constant.RECEIPT_LOCAL -> {
+                        viewModel.getReceiptLocalLine(
+                            args.documentNo,
+                            et_part_receipt_input.getTextAsString()
+                        )
+                    }
+
+                    Constant.RECEIPT_IMPORT -> {
+                        viewModel.getReceiptImportLine(
+                            args.documentNo,
+                            et_part_receipt_input.getTextAsString()
+                        )
+                    }
+                }
+            }
+            false
+        }
+
+        et_po_no.addSetOnEditorClickListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                if (checkPONo(et_po_no.getTextAsString().checkFirstCharacter("K")).not()) {
+                    context?.showLongToast(getString(R.string.error_po_no_not_same))
+                    et_po_no.clearText()
+                    et_po_no.requestFocus()
+                } else {
+                    et_part_receipt_input.requestFocus()
+                }
             }
             false
         }

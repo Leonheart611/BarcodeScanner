@@ -3,12 +3,12 @@ package dynamia.com.core.view
 import android.app.Instrumentation
 import android.content.Context
 import android.text.TextWatcher
-import android.text.method.KeyListener
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import dynamia.com.core.R
 import kotlinx.android.synthetic.main.normal_input_layout.view.*
@@ -121,9 +121,7 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
         }).start()
     }
 
-    fun addKeylistener(listener: KeyListener) {
-        tv_input_layout.keyListener = listener
-
+    fun addSetOnEditorClickListener(listener: TextView.OnEditorActionListener) {
+        et_input_layout.setOnEditorActionListener(listener)
     }
-
 }
