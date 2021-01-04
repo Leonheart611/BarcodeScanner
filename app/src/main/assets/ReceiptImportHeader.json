@@ -1,19 +1,13 @@
 {
-  "odata.metadata": "http://desktop-6cvbbk8:9068/mastersystem/OData/$metadata#ReceiptImportHeader",
+  "odata.metadata": "http://192.168.18.126:7048/DynamicsNAV90/OData/$metadata#ReceiptImportHeader",
   "value": [
     {
-      "No": "TO/2017/0483",
-      "Transfer_from_Code": "GIT-CIS",
-      "Transfer_to_Code": "GDA",
-      "Posting_Date": "2020-02-25T00:00:00",
-      "Status": "Released",
-      "Purchase_Order_No": "2018/09.PO/0012",
-      "Vendor_No": "BANK.LOAN-006",
-      "Vendor_Shipment_No": "",
-      "Project_Code": "",
-      "Scan_from_PDT": "",
-      "Assigned_Employee_ID": "STEVEN",
-      "ETag": "48;bBYAAAJ7/1QATwAvADIAMAAxADcALwAwADQAOAAzAAAAAAA=9;2904472540;"
+      "No": "TO/2019/0795",
+      "Purchase_Order_No": "2019/08.PO/0209",
+      "Buy_from_Vendor_Name": "MICROSOFT",
+      "Employee_Code": "STEVEN",
+      "Posting_Date": "2019-08-23T00:00:00",
+      "ETag": "48;bBYAAAJ7/1QATwAvADIAMAAxADkALwAwADcAOQA1AAAAAAA=9;9588161280;"
     }
   ]
 }

@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.base.ViewModelBase
-import dynamia.com.core.data.model.UserData
+import dynamia.com.core.data.model.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.ResultWrapper.*
 import dynamia.com.core.util.Constant
@@ -40,11 +40,8 @@ class HomeViewModel(
         viewModelScope.launch {
             try {
                 io {
-                    pickingListRepository.getCheckEmptyOrNot().collect {
-                        ui {
-                            if (it)
-                                _homeViewState.value = HomeViewState.DBhasEmpty(it)
-                        }
+                    pickingListRepository.getCheckEmptyOrNot().collect { data->
+                        ui { _homeViewState.value = HomeViewState.DBhasEmpty(data) }
                     }
                 }
             } catch (e: Exception) {
@@ -322,6 +319,57 @@ class HomeViewModel(
             } catch (e: Exception) {
                 _homePostViewState.value =
                     HomePostViewState.ErrorPostCount(e.localizedMessage)
+            }
+        }
+    }
+
+    fun savePickingHeader(
+        pickingListHeader: PickingListHeader,
+        pickingListLine: PickingListLine,
+        receiptImportHeader: ReceiptImportHeader,
+        receiptImportLine: ReceiptImportLine,
+        receiptLocalHeader: ReceiptLocalHeader,
+        receiptLocalLine: ReceiptLocalLine
+    ) {
+        viewModelScope.launch {
+            io {
+                pickingListHeader.value?.let {
+                    it.forEach {
+                        pickingListRepository.insertPickingListHeader(it)
+                    }
+                }
+
+                pickingListLine.value.let {
+                    it.forEach { data ->
+                        pickingListRepository.insertPickingListLine(data)
+                    }
+                    ui { _homeGetApiViewState.value = SuccessGetPickingList }
+                }
+
+                receiptImportHeader.value.let {
+                    it.forEach { data ->
+                        receiptImportRepository.insertReceiptImportHeader(data)
+                    }
+                }
+                receiptImportLine.value.let {
+                    it.forEach { data ->
+                        receiptImportRepository.insertReceiptImportLine(data)
+                    }
+                    ui { _homeGetApiViewState.value = SuccessGetReceiptImport }
+                }
+
+                receiptLocalHeader.value.let {
+                    it.forEach { data ->
+                        receiptLocalRepository.insertReceiptLocalHeader(data)
+                    }
+                }
+                receiptLocalLine.value.let {
+                    it.forEach { data ->
+                        receiptLocalRepository.insertReceiptLocalLine(data)
+                    }
+                    ui { _homeGetApiViewState.value = SuccessGetReceiptLocal }
+                }
+
             }
         }
     }

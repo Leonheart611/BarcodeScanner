@@ -1,61 +1,101 @@
 {
-  "odata.metadata": "http://desktop-6cvbbk8:9068/mastersystem/OData/$metadata#PickingListHeader",
+  "odata.metadata": "http://192.168.18.126:7048/DynamicsNAV90/OData/$metadata#PickingListHeader",
   "value": [
     {
-      "Picking_List_No": "PL/2017/001316", //header , PK*
-      "SO_No": "2017/SO/0617", //header
-      "Sell_to_Customer_Name": "HANJAYA MANDALA SAMPOERNA, TBK", //header
-      "Customer_Purchase_Order_No": "4501297484", //header2
-      "Posting_Date": "2017-04-18T00:00:00",
-      "Order_Date": "2017-03-13T00:00:00", //header
-      "Requested_Delivery_Date": "2017-05-18T00:00:00",
-      "Project_Code": "TH000317I0024", //header2
-      "Status": "Released",
-      "Assigned_Employee": "STEVEN",
-      "Update_from_PDT": false,
-      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADcALwAwADAAMQAzADEANgAAAAAA9;2904465640;"
+      "Picking_List_No": "PL/2019/002006",
+      "SO_No": "2019/SO/1627",
+      "Sell_to_Customer_No": "CU0002",
+      "Sell_to_Customer_Name": "ULTIMA SISTEM INFORMASI",
+      "Salesperson_Code": "Z",
+      "Salesperson_Name": "",
+      "Project_Code": "TU000219Z0001",
+      "Requested_Delivery_Date": "2019-07-25T00:00:00",
+      "Employee_Code": "STEVEN",
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADkALwAwADAAMgAwADAANgAAAAAA9;9590373840;"
     },
     {
-      "Picking_List_No": "PL/2017/001318",
-      "SO_No": "2017/SO/0590",
-      "Sell_to_Customer_Name": "HANJAYA MANDALA SAMPOERNA, TBK",
-      "Customer_Purchase_Order_No": "4501295881",
-      "Posting_Date": "2017-04-18T00:00:00",
-      "Order_Date": "2017-03-08T00:00:00",
-      "Requested_Delivery_Date": "2017-05-08T00:00:00",
-      "Project_Code": "TH000317I0021",
-      "Status": "Released",
-      "Assigned_Employee": "STEVEN",
-      "Update_from_PDT": false,
-      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADcALwAwADAAMQAzADEAOAAAAAAA9;2904465650;"
+      "Picking_List_No": "PL/2019/002221",
+      "SO_No": "2019/SO/1468",
+      "Sell_to_Customer_No": "CB0027",
+      "Sell_to_Customer_Name": "BANK CENTRAL ASIA, TBK",
+      "Salesperson_Code": "D03",
+      "Salesperson_Name": "",
+      "Project_Code": "TB002719D0040",
+      "Requested_Delivery_Date": "2019-09-03T00:00:00",
+      "Employee_Code": "STEVEN",
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADkALwAwADAAMgAyADIAMQAAAAAA9;9584000950;"
     },
     {
-      "Picking_List_No": "PL/2017/001319",
-      "SO_No": "2017/SO/0795",
-      "Sell_to_Customer_Name": "CIPTA - MASTER JOINT OPERATION",
-      "Customer_Purchase_Order_No": "J10.1701-POB-000001",
-      "Posting_Date": "2017-04-18T00:00:00",
-      "Order_Date": "2017-03-30T00:00:00",
-      "Requested_Delivery_Date": "2017-04-03T00:00:00",
-      "Project_Code": "TC005617E0012",
-      "Status": "Released",
-      "Assigned_Employee": "STEVEN",
-      "Update_from_PDT": false,
-      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADcALwAwADAAMQAzADEAOQAAAAAA9;2904465660;"
+      "Picking_List_No": "PL/2019/002232",
+      "SO_No": "2019/SO/1597",
+      "Sell_to_Customer_No": "CB0020",
+      "Sell_to_Customer_Name": "BANK TABUNGAN NEGARA",
+      "Salesperson_Code": "B15",
+      "Salesperson_Name": "",
+      "Project_Code": "TB002019B0012",
+      "Requested_Delivery_Date": "2019-07-23T00:00:00",
+      "Employee_Code": "STEVEN",
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADkALwAwADAAMgAyADMAMgAAAAAA9;9584000970;"
     },
     {
-      "Picking_List_No": "PL/2017/001325",
-      "SO_No": "2017/SO/0894",
-      "Sell_to_Customer_Name": "BANK MANDIRI TASPEN POS",
-      "Customer_Purchase_Order_No": "PPW.PAM/PRO.0414/2017",
-      "Posting_Date": "2017-06-21T00:00:00",
-      "Order_Date": "2017-04-12T00:00:00",
-      "Requested_Delivery_Date": "2017-04-17T00:00:00",
-      "Project_Code": "TB022117B0008",
-      "Status": "Released",
-      "Assigned_Employee": "STEVEN",
-      "Update_from_PDT": false,
-      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADcALwAwADAAMQAzADIANQAAAAAA9;2904465670;"
+      "Picking_List_No": "PL/2019/002330",
+      "SO_No": "2019/SO/1905",
+      "Sell_to_Customer_No": "CB0181",
+      "Sell_to_Customer_Name": "BANK TABUNGAN PENSIUNAN NASIONAL SYARIAH TBK",
+      "Salesperson_Code": "B11",
+      "Salesperson_Name": "",
+      "Project_Code": "TB018119B0009",
+      "Requested_Delivery_Date": "2019-08-22T00:00:00",
+      "Employee_Code": "STEVEN",
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADkALwAwADAAMgAzADMAMAAAAAAA9;9584000990;"
+    },
+    {
+      "Picking_List_No": "PL/2019/002463",
+      "SO_No": "2019/SO/1890",
+      "Sell_to_Customer_No": "CA0022",
+      "Sell_to_Customer_Name": "APLIKANUSA LINTASARTA",
+      "Salesperson_Code": "E09",
+      "Salesperson_Name": "",
+      "Project_Code": "TA002219E0051",
+      "Requested_Delivery_Date": "2019-08-20T00:00:00",
+      "Employee_Code": "STEVEN2",
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADkALwAwADAAMgA0ADYAMwAAAAAA9;9584001000;"
+    },
+    {
+      "Picking_List_No": "PL/2019/002561",
+      "SO_No": "2019/SO/2049",
+      "Sell_to_Customer_No": "CB0010",
+      "Sell_to_Customer_Name": "BANK MANDIRI (PERSERO)",
+      "Salesperson_Code": "C04",
+      "Salesperson_Name": "",
+      "Project_Code": "TB001018C0061",
+      "Requested_Delivery_Date": "2019-09-06T00:00:00",
+      "Employee_Code": "STEVEN2",
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADkALwAwADAAMgA1ADYAMQAAAAAA9;9584001020;"
+    },
+    {
+      "Picking_List_No": "PL/2019/002648",
+      "SO_No": "2019/SO/1976",
+      "Sell_to_Customer_No": "CB0004",
+      "Sell_to_Customer_Name": "BANK CIMB NIAGA, TBK",
+      "Salesperson_Code": "I02",
+      "Salesperson_Name": "",
+      "Project_Code": "TB000419I0013",
+      "Requested_Delivery_Date": "2019-09-04T00:00:00",
+      "Employee_Code": "STEVEN2",
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADkALwAwADAAMgA2ADQAOAAAAAAA9;9584001040;"
+    },
+    {
+      "Picking_List_No": "PL/2019/002658",
+      "SO_No": "2018/SO/2383",
+      "Sell_to_Customer_No": "CP0042",
+      "Sell_to_Customer_Name": "PERTAMINA EP",
+      "Salesperson_Code": "G09",
+      "Salesperson_Name": "",
+      "Project_Code": "TP004218G0001",
+      "Requested_Delivery_Date": "2018-12-30T00:00:00",
+      "Employee_Code": "STEVEN2",
+      "ETag": "52;cMMAAAJ7/1AATAAvADIAMAAxADkALwAwADAAMgA2ADUAOAAAAAAA9;9584001060;"
     }
   ]
 }

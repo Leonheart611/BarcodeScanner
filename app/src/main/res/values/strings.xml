@@ -87,4 +87,8 @@
     <string name="automatic_switch_text">Automatic Input</string>
     <string name="sn_normal_scan">SN</string>
     <string name="sn_pn_scan">SN - PN</string>
+    <string name="validation_k_sn">SN required K</string>
+    <string name="validation_k_sn_no">SN </string>
+    <string name="validation_stock_count_k_message">Semua field harus di isi dan SN harus di awali dengan huruf K</string>
+    <string name="validation_stock_count_message">Semua field harus di isi</string>
 </resources>

@@ -59,6 +59,13 @@ class StockCountingFragment : Fragment() {
             else
                 switch_sn_pn_stock.text = getString(R.string.sn_normal_scan)
         }
+        switch_k_validation.setOnCheckedChangeListener { compoundButton, isChecked ->
+            if (isChecked) {
+                switch_k_validation.text = getString(R.string.validation_k_sn)
+            } else {
+                switch_k_validation.text = getString(R.string.validation_k_sn_no)
+            }
+        }
     }
 
     private fun setupListeneer() {
@@ -169,6 +176,12 @@ class StockCountingFragment : Fragment() {
     private fun tryInsertData() {
         if (checkMandatory()) {
             viewModel.checkSnNo(et_count_serial_no.text.toString())
+        } else {
+            if (switch_k_validation.isChecked) {
+                context?.showLongToast(getString(R.string.validation_stock_count_k_message))
+            } else {
+                context?.showLongToast(getString(R.string.validation_stock_count_message))
+            }
         }
     }
 
@@ -208,8 +221,17 @@ class StockCountingFragment : Fragment() {
 
 
     private fun checkMandatory(): Boolean {
-        return et_count_part_no.text.toString().isNotEmpty() && et_count_serial_no.text.toString()
-            .isNotEmpty() && et_count_item_no.text.toString().isNotEmpty()
+        return when (switch_k_validation.isChecked) {
+            true -> {
+                et_count_part_no.text.toString().isNotEmpty() && et_count_serial_no.text.toString()
+                    .isNotEmpty() && et_count_item_no.text.toString()
+                    .isNotEmpty() && et_count_serial_no.text.toString().startsWith("K", true)
+            }
+            false -> {
+                et_count_part_no.text.toString().isNotEmpty() && et_count_serial_no.text.toString()
+                    .isNotEmpty() && et_count_item_no.text.toString().isNotEmpty()
+            }
+        }
     }
 
     private fun clearInputData() {
