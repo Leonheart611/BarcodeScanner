@@ -16,6 +16,7 @@ interface StockCountRepository {
     suspend fun getAllUnsycnStockCount(): MutableList<StockCount>
     fun updateStockCount(data: StockCount)
     suspend fun checkSN(serialNo: String): Boolean
+    fun deleteSn(data: StockCount)
 }
 
 class StockCountRepositoryImpl(val dao: StockCountDao) : StockCountRepository {
@@ -34,7 +35,8 @@ class StockCountRepositoryImpl(val dao: StockCountDao) : StockCountRepository {
         dao.clearStockCount()
     }
 
-    override suspend fun getAllUnsycnStockCount(): MutableList<StockCount> = dao.getAllUnsycnStockCount()
+    override suspend fun getAllUnsycnStockCount(): MutableList<StockCount> =
+        dao.getAllUnsycnStockCount()
 
     override fun updateStockCount(data: StockCount) {
         dao.updateStockCount(data)
@@ -42,4 +44,8 @@ class StockCountRepositoryImpl(val dao: StockCountDao) : StockCountRepository {
 
     override suspend fun checkSN(serialNo: String): Boolean =
         dao.checkSN(serialNo).isEmpty()
+
+    override fun deleteSn(data: StockCount) {
+        dao.deleteSN(data)
+    }
 }

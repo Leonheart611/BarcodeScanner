@@ -26,7 +26,7 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar4"
+        app:layout_constraintTop_toBottomOf="@+id/tb_stock_count"
         tools:text="Hyoh The Delta Star" />
 
     <TextView
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view12" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar4"
+        android:id="@+id/tb_stock_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
@@ -112,7 +112,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_count_item_no"
+            android:id="@+id/et_po_stock_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/po_no_title"

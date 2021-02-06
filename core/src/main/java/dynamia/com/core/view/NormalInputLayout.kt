@@ -124,4 +124,8 @@ class NormalInputLayout : LinearLayoutCompat, View.OnFocusChangeListener {
     fun addSetOnEditorClickListener(listener: TextView.OnEditorActionListener) {
         et_input_layout.setOnEditorActionListener(listener)
     }
+
+    fun setTitle(text: String) {
+        tv_input_layout.text = text
+    }
 }

@@ -1,6 +1,8 @@
 package dynamia.com.barcodescanner.ui.pickinglist.pickinginput
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,26 +17,34 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.history.adapter.HistoryInputAdapter
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.InsertHistoryAdapter
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingMultipleLineAdapter
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.model.PickingListScanEntriesValue
 import dynamia.com.core.util.*
-import dynamia.com.core.util.Constant.PICKING_LIST
+import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
+import kotlinx.android.synthetic.main.dialog_part_no_not_found.tv_error_message
+import kotlinx.android.synthetic.main.history_input_fragment.*
 import kotlinx.android.synthetic.main.item_input_header.*
 import kotlinx.android.synthetic.main.receiving_fragment.*
+import kotlinx.android.synthetic.main.receiving_fragment.cv_back
+import kotlinx.android.synthetic.main.receiving_fragment.tv_picking_detail_so
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleLineSelected {
+class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleLineSelected,
+    HistoryInputAdapter.OnHistorySelected {
     private val viewModel: PickingListInputViewModel by viewModel()
     private val args: PickingListInputFragmentArgs by navArgs()
     private var pickListValue: PickingListLineValue? = null
     private var inputHistoryAdapter = InsertHistoryAdapter(mutableListOf())
+    private var scanEntriesAdapter = HistoryInputAdapter(mutableListOf(), this)
     private var dialog: Dialog? = null
     private var poNoDialog: Dialog? = null
+    private var historyDialog: Dialog? = null
     private var purchaseNo: String = ""
     private val DELAY: Long = 2000
     private var pickingListValue: PickingListScanEntriesValue? = null
@@ -108,6 +118,9 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                         et_sn_picking.requestFocus()
                     }
                 }
+                is PickingListInputViewModel.PickingInputViewState.SuccessGetHistoryValue -> {
+                    scanEntriesAdapter.updateData(it.data)
+                }
             }
         })
     }
@@ -116,7 +129,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         tv_picking_detail_so.text = getString(R.string.picklistno_title, args.pickingListNo)
         with(rv_history_input) {
             layoutManager =
-                LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false);
+                LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
             adapter = inputHistoryAdapter
         }
         et_part_no.requestFocus()
@@ -181,11 +194,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
         toolbar_picking_list_input.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.history_data -> {
-                    val action =
-                        PickingListInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
-                            args.pickingListNo, PICKING_LIST
-                        )
-                    view?.findNavController()?.navigate(action)
+                    openHistoryDialog()
                     true
                 }
                 else -> false
@@ -429,7 +438,6 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                     show()
                 }
             }
-
         }
     }
 
@@ -496,6 +504,35 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     override fun onMultiplelineSelected(data: PickingListLineValue) {
         displayAutocompleteData(data)
         dialog?.dismiss()
+    }
+
+    private fun openHistoryDialog() {
+        val bottomSheetFragment = PickingHistoryBottomSheet.newInstance(args.pickingListNo)
+        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+    }
+
+    override fun onHistorySelectDelete(value: PickingListScanEntriesValue) {
+        context?.let { context ->
+            val dialog = Dialog(context)
+            with(dialog) {
+                setContentView(R.layout.delete_confirmation_dialog)
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                window
+                    ?.setLayout(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                btn_delete.setOnClickListener {
+                    viewModel.pickingListRepository.deletePickingListScanEntries(value)
+                    dismiss()
+                    setupView()
+                }
+                btn_cancel.setOnClickListener {
+                    dismiss()
+                }
+                show()
+            }
+        }
     }
 
 }

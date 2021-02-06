@@ -34,6 +34,11 @@ class PickingDetailFragment : Fragment() {
         return inflater.inflate(R.layout.picking_detail_fragment, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        et_customer_po_no.setText(viewModel.getEmployeeName())
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.getPickingDetail(args.pickingListNo)

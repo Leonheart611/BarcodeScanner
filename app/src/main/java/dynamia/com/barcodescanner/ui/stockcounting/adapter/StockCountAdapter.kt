@@ -8,7 +8,17 @@ import dynamia.com.core.data.model.StockCount
 import dynamia.com.core.util.inflate
 import kotlinx.android.synthetic.main.stock_count_item.view.*
 
-class StockCountAdapter (var stockCounts :MutableList<StockCount>):RecyclerView.Adapter<StockCountAdapter.StockCountHolder>(){
+class StockCountAdapter(
+    var stockCounts: MutableList<StockCount>,
+    val listener: OnStockClicklistener
+) : RecyclerView.Adapter<StockCountAdapter.StockCountHolder>() {
+
+    fun updateData(stockCounts: MutableList<StockCount>) {
+        this.stockCounts.clear()
+        this.stockCounts.addAll(stockCounts)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockCountHolder {
         return StockCountHolder(parent.inflate(R.layout.stock_count_item))
     }
@@ -23,21 +33,27 @@ class StockCountAdapter (var stockCounts :MutableList<StockCount>):RecyclerView.
         }
     }
 
-    class StockCountHolder(itemView:View):RecyclerView.ViewHolder(itemView){
-        fun bind(data:StockCount){
-            with(itemView){
+    inner class StockCountHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(data: StockCount) {
+            with(itemView) {
                 tv_stock_part_no.text = data.Part_No
                 tv_stock_item_no.text = data.Item_No.toString()
                 tv_stock_serial_no.text = data.Serial_No
-                if (data.sycn_status){
+                if (data.sycn_status) {
                     tv_stock_sycn_status.setText(R.string.posted_status_true)
                     tv_stock_sycn_status.setTextColor(resources.getColor(R.color.posted_true))
-                }else{
+                } else {
                     tv_stock_sycn_status.setText(R.string.posted_status_false)
                     tv_stock_sycn_status.setTextColor(resources.getColor(R.color.posted_false))
                 }
-
+                setOnClickListener {
+                    listener.onStockClicklistener(data)
+                }
             }
         }
+    }
+
+    interface OnStockClicklistener {
+        fun onStockClicklistener(data: StockCount)
     }
 }

@@ -15,7 +15,7 @@ interface PickingListRepository {
     fun insertPickingListHeader(pickingListHeaderValue: PickingListHeaderValue): Job
     fun getCountPickingListHeader(employeeCode: String): LiveData<Int>
     suspend fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue
-    suspend fun getCheckEmptyOrNot(): Flow<Boolean>
+    suspend fun getCheckEmptyOrNot(): Flow<Int>
     suspend fun clearPickingListHeader()
 
     suspend fun getAllPickingListLine(picking_List_No: String): Flow<List<PickingListLineValue>>
@@ -27,7 +27,8 @@ interface PickingListRepository {
 
     suspend fun clearPickingListLine()
 
-    fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>>
+    fun getAllPickingListScanEntries(): Flow<List<PickingListScanEntriesValue>>
+    fun getAllPickingListScanLiveData(): LiveData<List<PickingListScanEntriesValue>>
     fun getPickingListScanEntries(
         noPickingList: String,
         limit: Int? = null
@@ -71,8 +72,8 @@ class PickingListRepositoryImpl(
     override suspend fun getPickingListHeader(picking_List_No: String): PickingListHeaderValue =
         pickingListDao.getPickingListHeader(picking_List_No)
 
-    override suspend fun getCheckEmptyOrNot(): Flow<Boolean> = flow {
-        emit(pickingListDao.getCheckEmptyOrNot() == 0)
+    override suspend fun getCheckEmptyOrNot(): Flow<Int> = flow {
+        emit(pickingListDao.getCheckEmptyOrNot())
     }
 
 
@@ -102,9 +103,9 @@ class PickingListRepositoryImpl(
         pickingListDao.clearPickingListLine()
     }
 
-    override fun getAllPickingListScanEntries(): LiveData<List<PickingListScanEntriesValue>> =
-        runBlocking {
-            pickingListDao.getAllPickingListScanEntries()
+    override fun getAllPickingListScanEntries(): Flow<List<PickingListScanEntriesValue>> =
+        flow {
+            pickingListDao.getAllPickingListScanEntries().value?.let { emit(it) }
         }
 
 
@@ -179,5 +180,8 @@ class PickingListRepositoryImpl(
     ): LiveData<List<PickingListScanEntriesValue>> = runBlocking {
         pickingListDao.getPickingListandPartNo(pickingListNo, partNo)
     }
+
+    override fun getAllPickingListScanLiveData(): LiveData<List<PickingListScanEntriesValue>> =
+        pickingListDao.getAllPickingListScanEntries()
 }
 

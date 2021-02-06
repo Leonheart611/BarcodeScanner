@@ -7,7 +7,8 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.core.data.model.ReceiptImportHeaderValue
 import dynamia.com.core.util.inflate
 import dynamia.com.core.util.toNormalDate
-import kotlinx.android.synthetic.main.item_receipt_list.view.*
+import kotlinx.android.synthetic.main.item_receipt_import_list.view.*
+
 
 class ReceiptImportItemAdapter(
     val receiptImportHeaderValue: MutableList<ReceiptImportHeaderValue>,
@@ -20,7 +21,7 @@ class ReceiptImportItemAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceiptItemHolder {
-        return ReceiptItemHolder(parent.inflate(R.layout.item_receipt_list))
+        return ReceiptItemHolder(parent.inflate(R.layout.item_receipt_import_list))
     }
 
     override fun getItemCount(): Int {
@@ -40,6 +41,7 @@ class ReceiptImportItemAdapter(
                 tv_receipt_vendor_no.text = value.purchaseOrderNo
                 tv_receipt_vendor_name.text = value.buyFromVendorName
                 tv_date_expected.text = value.postingDate.toNormalDate()
+                tv_receipt_shipmentno.text = value.vendorShipmentNo
                 setOnClickListener {
                     listener.onReceiptImportClickListener(value.no)
                 }

@@ -40,7 +40,7 @@ class HomeViewModel(
         viewModelScope.launch {
             try {
                 io {
-                    pickingListRepository.getCheckEmptyOrNot().collect { data->
+                    pickingListRepository.getCheckEmptyOrNot().collect { data ->
                         ui { _homeViewState.value = HomeViewState.DBhasEmpty(data) }
                     }
                 }
@@ -378,7 +378,7 @@ class HomeViewModel(
     sealed class HomeViewState {
         class Error(val message: String) : HomeViewState()
         class ShowLoading(val boolean: Boolean) : HomeViewState()
-        class DBhasEmpty(val boolean: Boolean) : HomeViewState()
+        class DBhasEmpty(val value: Int) : HomeViewState()
         object HasSuccessLogout : HomeViewState()
     }
 

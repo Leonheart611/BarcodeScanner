@@ -9,7 +9,6 @@ import dynamia.com.core.domain.RetrofitBuilder
 import dynamia.com.core.util.Constant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.http.Body
 
 interface NetworkRepository {
     suspend fun getPickingListHeaderAsync(): Flow<ResultWrapper<MutableList<PickingListHeaderValue>>>
@@ -18,10 +17,10 @@ interface NetworkRepository {
     suspend fun getReceiptImportLineAsync(): Flow<MutableList<ReceiptImportLineValue>>
     suspend fun getReceiptLocalHeaderAsync(): Flow<MutableList<ReceiptLocalHeaderValue>>
     suspend fun getReceiptLocalLineAsync(): Flow<MutableList<ReceiptLocalLineValue>>
-    suspend fun postReceiptImportEntry(@Body value: String): Flow<ReceiptImportScanEntriesValue>
-    suspend fun postReceiptLocalEntry(@Body value: String): Flow<ReceiptLocalScanEntriesValue>
-    suspend fun postPickingListEntry(@Body value: String): Flow<PickingListScanEntriesValue>
-    suspend fun postStockCountEntry(@Body value: String): Flow<ResultWrapper<StockCount>>
+    suspend fun postReceiptImportEntry(value: String): Flow<ReceiptImportScanEntriesValue>
+    suspend fun postReceiptLocalEntry(value: String): Flow<ReceiptLocalScanEntriesValue>
+    suspend fun postPickingListEntry(value: String): Flow<PickingListScanEntriesValue>
+    suspend fun postStockCountEntry(value: String): Flow<ResultWrapper<StockCount>>
 }
 
 class NetworkRepositoryImpl(
@@ -45,7 +44,10 @@ class NetworkRepositoryImpl(
                     }
                     else -> {
                         result.errorBody()?.let {
-                            val errorMessage = Gson().fromJson(it.charStream().readText(), ErrorResponse::class.java)
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
                             emit(ResultWrapper.GenericError(result.code(), errorMessage))
                         }
                     }

@@ -58,7 +58,7 @@ class HomeFragment : Fragment() {
         viewModel.homeViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is DBhasEmpty -> {
-                    if (it.boolean) {
+                    if (it.value == 0) {
                         openStatusApi()
                     }
                 }

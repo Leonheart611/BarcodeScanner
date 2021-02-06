@@ -86,12 +86,12 @@ class ReceiptLocalRepositoryImpl(
     }
 
     override fun getAllReceiptLocalScanEntries(): LiveData<List<ReceiptLocalScanEntriesValue>> =
-        runBlocking {
+        runBlocking(Dispatchers.IO) {
             dao.getAllReceiptLocalScanEntries()
         }
 
     override fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Boolean =
-        runBlocking {
+        runBlocking(Dispatchers.IO) {
             try {
                 val localLineData = dao.getDetailReceiptLocalLineData(
                     receiptLocalScanEntriesValue.lineNo,

@@ -289,8 +289,6 @@ class ReceiptInputFragment : Fragment(),
 
     private fun setupListener() {
         et_part_receipt_input.addTextWatcher(object : TextWatcher {
-            private var timer = Timer()
-            private val DELAY: Long = 1000
             override fun afterTextChanged(p0: Editable?) {
                 if (switch_receipt_input.isChecked) {
                     if (et_part_receipt_input.getTextAsString().length > 3) {
@@ -310,33 +308,7 @@ class ReceiptInputFragment : Fragment(),
                             }
                         }
                     }
-                } /*else {
-                    timer.cancel()
-                    timer = Timer()
-                    timer.schedule(
-                        object : TimerTask() {
-                            override fun run() {
-                                if (p0.toString().length > 3) {
-                                    when (args.source) {
-                                        Constant.RECEIPT_LOCAL -> {
-                                            viewModel.getReceiptLocalLine(
-                                                args.documentNo,
-                                                p0.toString()
-                                            )
-                                        }
-
-                                        Constant.RECEIPT_IMPORT -> {
-                                            viewModel.getReceiptImportLine(
-                                                args.documentNo,
-                                                p0.toString()
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }, DELAY
-                    )
-                }*/
+                }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -377,18 +349,36 @@ class ReceiptInputFragment : Fragment(),
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(p0: Editable?) {
-                if (switch_receipt_input.isChecked) {
-                    timer.cancel()
-                    timer = Timer()
-                    timer.schedule(
-                        object : TimerTask() {
-                            override fun run() {
-                                this@ReceiptInputFragment.activity?.runOnUiThread {
+                when (args.source) {
+                    Constant.RECEIPT_LOCAL -> {
+                        if (switch_receipt_input.isChecked) {
+                            if (et_trackingid.getTextLength() > 3) {
+                                timer.cancel()
+                                timer = Timer()
+                                timer.schedule(
+                                    object : TimerTask() {
+                                        override fun run() {
+                                            this@ReceiptInputFragment.activity?.runOnUiThread {
+                                                et_mac_address_receipt_input.requestFocus()
+                                            }
+                                        }
+                                    }, DELAY
+                                )
+                            }
+                        }
+                    }
+
+                    Constant.RECEIPT_IMPORT -> {
+                        if (switch_receipt_input.isChecked) {
+                            if (et_trackingid.getTextLength() > 3) {
+                                if (et_trackingid.getTextAsString() == args.shipmentNo) {
                                     et_mac_address_receipt_input.requestFocus()
+                                } else {
+                                    showErrorShippingDialog()
                                 }
                             }
-                        }, DELAY
-                    )
+                        }
+                    }
                 }
             }
         })
@@ -417,8 +407,6 @@ class ReceiptInputFragment : Fragment(),
         })
 
         et_po_no.addTextWatcher(object : TextWatcher {
-            private var timer = Timer()
-            private val DELAY: Long = 1000
             override fun afterTextChanged(p0: Editable?) {
                 if (switch_receipt_input.isChecked) {
                     if (p0.toString().isNotEmpty()) {
@@ -430,31 +418,7 @@ class ReceiptInputFragment : Fragment(),
                             et_part_receipt_input.requestFocus()
                         }
                     }
-                } /*else {
-                    timer.cancel()
-                    timer = Timer()
-                    timer.schedule(
-                        object : TimerTask() {
-                            override fun run() {
-                                this@ReceiptInputFragment.activity?.runOnUiThread {
-                                    if (p0.toString().isNotEmpty()) {
-                                        if (checkPONo(
-                                                p0.toString().checkFirstCharacter("K")
-                                            ).not()
-                                        ) {
-                                            context?.showLongToast(getString(R.string.error_po_no_not_same))
-                                            et_po_no.clearText()
-                                            et_po_no.requestFocus()
-                                        } else {
-                                            et_part_receipt_input.requestFocus()
-                                        }
-                                    }
-                                }
-                            }
-                        }, DELAY
-                    )
-                }*/
-
+                }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -520,6 +484,25 @@ class ReceiptInputFragment : Fragment(),
             false
         }
 
+        et_trackingid.addSetOnEditorClickListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                when (args.source) {
+                    Constant.RECEIPT_LOCAL -> {
+                        et_mac_address_receipt_input.requestFocus()
+                    }
+
+                    Constant.RECEIPT_IMPORT -> {
+                        if (et_trackingid.getTextAsString() == args.shipmentNo) {
+                            et_mac_address_receipt_input.requestFocus()
+                        } else {
+                            showErrorShippingDialog()
+                        }
+                    }
+                }
+            }
+            false
+        }
+
 
         when (args.source) {
             Constant.RECEIPT_IMPORT -> {
@@ -550,17 +533,18 @@ class ReceiptInputFragment : Fragment(),
         tb_receipt_history.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.history_data -> {
-                    et_description.clearText()
-                    val action =
-                        ReceiptInputFragmentDirections.actionReceiptInputFragmentToHistoryInputFragment(
-                            args.documentNo, args.source, showAll = false
-                        )
-                    view?.findNavController()?.navigate(action)
+                    openHistoryBottomSheet()
                     true
                 }
                 else -> false
             }
         }
+    }
+
+    private fun openHistoryBottomSheet() {
+        val bottomSheetFragment =
+            ReceiptHistoryBottomSheet.newInstance(args.documentNo, args.source)
+        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
     }
 
     private fun saveData() {
@@ -687,7 +671,7 @@ class ReceiptInputFragment : Fragment(),
     private fun createImportScanEntry() {
         receiptImportScanEntriesValue = ReceiptImportScanEntriesValue(
             documentNo = args.documentNo,
-            employeeCode = viewModel.getEmployeeName() ?: "",
+            employeeCode = viewModel.getEmployeeName(),
             macAddress = et_mac_address_receipt_input.getTextAsString().emptySetZero(),
             partNo = et_part_receipt_input.getTextAsString(),
             packingID = et_packingid.getTextAsString(),
@@ -740,8 +724,34 @@ class ReceiptInputFragment : Fragment(),
                     show()
                 }
             }
-
         }
+    }
+
+    fun showErrorShippingDialog() {
+        context?.let { context ->
+            partNoDialog = Dialog(context)
+            partNoDialog?.let { dialog ->
+                with(dialog) {
+                    setContentView(R.layout.dialog_part_no_not_found)
+                    window
+                        ?.setLayout(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    tv_error_message.text = getString(R.string.shipment_not_match_error)
+                    btn_ok.setOnClickListener {
+                        dismiss()
+                        clearShipmentId()
+                    }
+                    show()
+                }
+            }
+        }
+    }
+
+    fun clearShipmentId() {
+        et_trackingid.clearText()
+        et_trackingid.requestFocus()
     }
 
     private fun showErroSnDialog(message: String) {

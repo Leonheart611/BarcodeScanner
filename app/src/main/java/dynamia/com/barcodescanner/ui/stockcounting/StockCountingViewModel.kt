@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
+import dynamia.com.core.data.model.StockCount
 import dynamia.com.core.data.repository.NetworkRepository
 import dynamia.com.core.data.repository.StockCountRepository
 import dynamia.com.core.domain.ResultWrapper
@@ -81,6 +82,18 @@ class StockCountingViewModel(
                 }
             } catch (e: Exception) {
                 _stockCountViewState.value = StockCountingViewState.Error(e.localizedMessage)
+            }
+        }
+    }
+
+    fun deleteSnNo(data: StockCount) {
+        viewModelScope.launch {
+            try {
+                io {
+                    stockCountRepository.deleteSn(data)
+                }
+            } catch (e: Exception) {
+
             }
         }
     }

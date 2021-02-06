@@ -68,6 +68,7 @@ class ReceiptDetailFragment : Fragment() {
                     .observe(viewLifecycleOwner, {
                         nil_vendor_name.setText(it.buyFromVendorName)
                         nil_expected_receipt_date.setText(it.postingDate.toNormalDate())
+                        nil_project_code.setTitle(getString(R.string.po_no_title))
                         nil_project_code.setText(it.purchaseOrderNo)
                         receiptImportHeader = it
                     })
@@ -132,16 +133,16 @@ class ReceiptDetailFragment : Fragment() {
         }
     }
 
-    fun receiptDetailDialog() {
+    private fun receiptDetailDialog() {
         context?.let { context ->
             settingDialog = Dialog(context)
             settingDialog?.let { dialog ->
                 with(dialog) {
-                    setContentView(dynamia.com.barcodescanner.R.layout.dialog_validate_s)
+                    setContentView(R.layout.dialog_validate_s)
                     window
                         ?.setLayout(
-                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
                         )
                     cb_check_s_false.setOnClickListener {
                         when (cb_check_s_false.isChecked) {
@@ -162,38 +163,22 @@ class ReceiptDetailFragment : Fragment() {
                     btn_setting_continue.setOnClickListener { // Check Validate S
                         dismiss()
                         val action = receiptImportHeader?.let {
-                            if (cb_check_s_true.isChecked) {
-                                ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
-                                    documentNo = args.documentNo,
-                                    source = args.source,
-                                    poNo = it.purchaseOrderNo,
-                                    validateS = true
-                                )
-                            } else {
-                                ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
-                                    documentNo = args.documentNo,
-                                    source = args.source,
-                                    poNo = it.purchaseOrderNo,
-                                    validateS = false
-                                )
-                            }
+                            ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
+                                documentNo = args.documentNo,
+                                source = args.source,
+                                poNo = it.purchaseOrderNo,
+                                validateS = cb_check_s_true.isChecked,
+                                shipmentNo = it.vendorShipmentNo
+                            )
                         } ?: run {
                             receiptLocalHeader?.let {
-                                if (cb_check_s_true.isChecked) {
-                                    ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
-                                        documentNo = args.documentNo,
-                                        source = args.source,
-                                        poNo = it.no,
-                                        validateS = true
-                                    )
-                                } else {
-                                    ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
-                                        documentNo = args.documentNo,
-                                        source = args.source,
-                                        poNo = it.no,
-                                        validateS = false
-                                    )
-                                }
+                                ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptInputFragment(
+                                    documentNo = args.documentNo,
+                                    source = args.source,
+                                    poNo = it.no,
+                                    validateS = cb_check_s_true.isChecked,
+                                    shipmentNo = null
+                                )
                             }
                         }
                         action?.let { findNavController().navigate(it) }
@@ -203,5 +188,4 @@ class ReceiptDetailFragment : Fragment() {
             }
         }
     }
-
 }

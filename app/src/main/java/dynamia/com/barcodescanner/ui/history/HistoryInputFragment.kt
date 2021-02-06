@@ -48,7 +48,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
         setupListener()
     }
 
-    fun setupRecylerView() {
+    private fun setupRecylerView() {
         with(rv_input_history) {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             adapter = when (args.source) {
@@ -64,7 +64,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
             Constant.PICKING_LIST -> {
                 if (args.showAll) {
                     tv_picking_detail_so.text = getString(R.string.pickinglist_all_history)
-                    viewModel.pickingListRepository.getAllPickingListScanEntries()
+                    viewModel.pickingListRepository.getAllPickingListScanLiveData()
                         .observe(viewLifecycleOwner, Observer {
                             pickingListAdapter.updateData(it.toMutableList())
                         })
@@ -119,7 +119,6 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
 
             }
         }
-
     }
 
     private fun setupListener() {

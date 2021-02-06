@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.model.PickingListLineValue
+import dynamia.com.core.data.model.PickingListScanEntriesValue
 import dynamia.com.core.data.repository.PickingListRepository
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class PickingListInputViewModel(
@@ -53,9 +55,25 @@ class PickingListInputViewModel(
         }
     }
 
+    fun getPickinglistHistory() {
+        viewModelScope.launch {
+            io {
+                pickingListRepository.getAllPickingListScanEntries().collect { data ->
+                    ui {
+                        _pickingInputViewState.value =
+                            PickingInputViewState.SuccessGetHistoryValue(data.toMutableList())
+                    }
+                }
+            }
+        }
+    }
+
 
     sealed class PickingInputViewState {
         class SuccessGetValue(val data: MutableList<PickingListLineValue>) : PickingInputViewState()
+        class SuccessGetHistoryValue(val data: MutableList<PickingListScanEntriesValue>) :
+            PickingInputViewState()
+
         class ErrorGetData(val message: String) : PickingInputViewState()
         class CheckSNResult(val boolean: Boolean) : PickingInputViewState()
     }
