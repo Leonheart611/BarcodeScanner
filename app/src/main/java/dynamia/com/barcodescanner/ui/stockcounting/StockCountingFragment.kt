@@ -3,6 +3,7 @@ package dynamia.com.barcodescanner.ui.stockcounting
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -33,6 +34,7 @@ class StockCountingFragment : Fragment(), StockCountAdapter.OnStockClicklistener
     private val viewModel: StockCountingViewModel by viewModel()
     private var snNoDialog: Dialog? = null
     private val adapterStockCount = StockCountAdapter(mutableListOf(), this)
+    private var mp: MediaPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

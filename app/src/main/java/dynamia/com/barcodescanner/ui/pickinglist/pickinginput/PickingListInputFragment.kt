@@ -3,6 +3,7 @@ package dynamia.com.barcodescanner.ui.pickinglist.pickinginput
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +18,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryInputAdapter
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.InsertHistoryAdapter
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingMultipleLineAdapter
@@ -46,8 +48,9 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     private var poNoDialog: Dialog? = null
     private var historyDialog: Dialog? = null
     private var purchaseNo: String = ""
-    private val DELAY: Long = 2000
     private var pickingListValue: PickingListScanEntriesValue? = null
+    private var mp: MediaPlayer? = null
+    var activity: MainActivity? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +67,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupView()
+        mp = MediaPlayer.create(context, R.raw.error)
     }
 
     override fun onResume() {
@@ -73,6 +77,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity = requireActivity() as MainActivity
         setupListener()
         setupObserverable()
     }
@@ -111,15 +116,20 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                             context?.showLongToast(getString(R.string.error_qty_over_outstanding))
                             et_sn_picking.clearText()
                             et_sn_picking.requestFocus()
+                            mp?.start()
                         }
                     } else {
                         context?.showLongToast(getString(R.string.error_sn_on_same_pickinglistno))
                         et_sn_picking.clearText()
                         et_sn_picking.requestFocus()
+                        mp?.start()
                     }
                 }
                 is PickingListInputViewModel.PickingInputViewState.SuccessGetHistoryValue -> {
                     scanEntriesAdapter.updateData(it.data)
+                }
+                is PickingListInputViewModel.PickingInputViewState.LoadingSearchPickingList -> {
+                    activity?.showLoading(it.status)
                 }
             }
         })
@@ -156,23 +166,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                             pickingListNo = args.pickingListNo
                         )
                     }
-                } /*else {
-                    timer.cancel()
-                    timer = Timer()
-                    timer.schedule(
-                        object : TimerTask() {
-                            override fun run() {
-                                if (et_part_no.getTextLength() > 3) {
-                                    viewModel.getPickingListLineValue(
-                                        partNo = et_part_no.getTextAsString(),
-                                        pickingListNo = args.pickingListNo
-                                    )
-                                }
-                            }
-                        },
-                        DELAY
-                    )
-                }*/
+                }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -213,8 +207,6 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
         et_po_no_picking.addTextWatcher(object : TextWatcher {
-            private var timer = Timer()
-
             override fun afterTextChanged(p0: Editable?) {
                 if (switch_manual_picking.isChecked) {
                     if (purchaseNo.isNotEmpty() && et_po_no_picking.isEmpty().not()) {
@@ -226,26 +218,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                             et_note.requestFocus()
                         }
                     }
-                } /*else {
-                    timer.cancel()
-                    timer = Timer()
-                    timer.schedule(
-                        object : TimerTask() {
-                            override fun run() {
-                                if (purchaseNo.isNotEmpty() && et_po_no_picking.isEmpty().not()) {
-                                    val currentPoNo =
-                                        et_po_no_picking.getTextAsString().checkFirstCharacter("K")
-                                    if (checkPONo(currentPoNo).not()) {
-                                        showErrorPONoDialog(getString(R.string.error_po_no_not_same))
-                                    } else {
-                                        et_note.requestFocus()
-                                    }
-                                }
-                            }
-                        },
-                        DELAY
-                    )
-                }*/
+                }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -292,6 +265,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                     } else {
                         context?.showLongToast("SN Harus di awali dengan S")
                         clearSn()
+                        mp?.start()
                     }
                 }
                 false -> {
@@ -457,6 +431,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                         clearPartNo()
                     }
                     show()
+                    mp?.start()
                 }
             }
         }
@@ -479,6 +454,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                         clearPONo()
                     }
                     show()
+                    mp?.start()
                 }
             }
         }
@@ -533,6 +509,16 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
                 show()
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mp?.release()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mp?.release()
     }
 
 }

@@ -29,6 +29,7 @@ object RetrofitBuilder {
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(90, TimeUnit.SECONDS)
+                .cache(null)
                 .build()
             retrofit = Retrofit.Builder()
                 .baseUrl(serverAddress)

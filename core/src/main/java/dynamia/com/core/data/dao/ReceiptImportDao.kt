@@ -37,8 +37,12 @@ interface ReceiptImportDao {
     @Query("SELECT * FROM ReceiptImportLine WHERE documentNo = :documentNo AND partNo =:partNo")
     fun getDetailImportLine(documentNo: String, partNo: String): List<ReceiptImportLineValue>
 
-    @Query("SELECT * FROM ReceiptImportLine WHERE lineNo = :lineNo AND partNo =:partNo ")
-    fun getDetailImportLineData(lineNo: Int, partNo: String): ReceiptImportLineValue
+    @Query("SELECT * FROM ReceiptImportLine WHERE lineNo = :lineNo AND partNo =:partNo AND documentNo =:documentNo ")
+    fun getDetailImportLineData(
+        lineNo: Int,
+        partNo: String,
+        documentNo: String
+    ): ReceiptImportLineValue
 
     @Update
     fun updateImportLineData(importLineValue: ReceiptImportLineValue)
@@ -60,6 +64,13 @@ interface ReceiptImportDao {
     fun checkSN(
         serialNo: String
     ): List<ReceiptImportScanEntriesValue>
+
+    @Query("SELECT * FROM ReceiptImportScanEntries WHERE documentNo = :documentNo and lineNo = :lineNo and partNo =:partNo")
+    fun getFilteredImportScanEntries(
+        documentNo: String,
+        lineNo: Int,
+        partNo: String
+    ): LiveData<List<ReceiptImportScanEntriesValue>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue)

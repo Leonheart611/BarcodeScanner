@@ -25,18 +25,21 @@ class ReceiptInputViewModel(
     fun getReceiptLocalLine(documentNo: String, partNo: String) {
         viewModelScope.launch {
             try {
+                _receiptInputViewState.value = ReceiptInputViewState.ShowLoading(true)
                 io {
                     val result =
                         receiptLocalRepository.getReceiptLocalLineDetail(documentNo, partNo)
                     ui {
                         _receiptInputViewState.value =
                             ReceiptInputViewState.SuccessGetLocalLine(result.toMutableList())
+                        _receiptInputViewState.value = ReceiptInputViewState.ShowLoading(false)
                     }
                 }
             } catch (e: Exception) {
                 e.localizedMessage?.let {
                     _receiptInputViewState.value = ReceiptInputViewState.ErrorGetReceiptLine(it)
                 }
+                _receiptInputViewState.value = ReceiptInputViewState.ShowLoading(false)
             }
         }
     }
@@ -44,17 +47,20 @@ class ReceiptInputViewModel(
     fun getReceiptImportLine(documentNo: String, partNo: String) {
         viewModelScope.launch {
             try {
+                _receiptInputViewState.value = ReceiptInputViewState.ShowLoading(true)
                 io {
                     val result = receiptImportRepository.getDetailImportLine(documentNo, partNo)
                     ui {
                         _receiptInputViewState.value =
                             ReceiptInputViewState.SuccessGetImportLine(result.toMutableList())
+                        _receiptInputViewState.value = ReceiptInputViewState.ShowLoading(false)
                     }
                 }
             } catch (e: Exception) {
                 e.localizedMessage?.let {
                     _receiptInputViewState.value = ReceiptInputViewState.ErrorGetReceiptLine(it)
                 }
+                _receiptInputViewState.value = ReceiptInputViewState.ShowLoading(false)
 
             }
         }
@@ -74,7 +80,7 @@ class ReceiptInputViewModel(
                 e.localizedMessage?.let {
                     _receiptInputViewState.value = ReceiptInputViewState.ErrorGetReceiptLine(it)
                 }
-
+                _receiptInputViewState.value = ReceiptInputViewState.ShowLoading(false)
             }
         }
     }
@@ -108,5 +114,6 @@ class ReceiptInputViewModel(
         class CheckLocalSNResult(val result: Boolean) : ReceiptInputViewState()
         class CheckImportSNResult(val result: Boolean) : ReceiptInputViewState()
         class ErrorGetReceiptLine(val message: String) : ReceiptInputViewState()
+        class ShowLoading(val loading: Boolean) : ReceiptInputViewState()
     }
 }

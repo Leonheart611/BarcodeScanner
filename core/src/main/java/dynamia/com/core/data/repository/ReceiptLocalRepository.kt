@@ -29,6 +29,12 @@ interface ReceiptLocalRepository {
         limit: Int? = null
     ): LiveData<List<ReceiptLocalScanEntriesValue>>
 
+    fun getFilteredLocalScanEntries(
+        documentNo: String,
+        lineNo: Int,
+        partNo: String
+    ): LiveData<List<ReceiptLocalScanEntriesValue>>
+
     fun insertReceiptLocalScanEntries(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue): Boolean
     fun deleteReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
     fun updateReceiptLocalScanEntry(receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue)
@@ -95,7 +101,8 @@ class ReceiptLocalRepositoryImpl(
             try {
                 val localLineData = dao.getDetailReceiptLocalLineData(
                     receiptLocalScanEntriesValue.lineNo,
-                    receiptLocalScanEntriesValue.partNo
+                    receiptLocalScanEntriesValue.partNo,
+                    receiptLocalScanEntriesValue.documentNo
                 )
                 if (localLineData.alredyScanned < localLineData.outstandingQuantity.toInt()) {
                     localLineData.apply {
@@ -117,7 +124,8 @@ class ReceiptLocalRepositoryImpl(
         scope.launch(Dispatchers.IO) {
             val localLineData = dao.getDetailReceiptLocalLineData(
                 receiptLocalScanEntriesValue.lineNo,
-                receiptLocalScanEntriesValue.partNo
+                receiptLocalScanEntriesValue.partNo,
+                receiptLocalScanEntriesValue.documentNo
             )
             localLineData.apply {
                 this.alredyScanned = --alredyScanned
@@ -150,4 +158,11 @@ class ReceiptLocalRepositoryImpl(
     }
 
     override suspend fun checkSN(serialNo: String): Boolean = dao.checkSN(serialNo).isEmpty()
+
+    override fun getFilteredLocalScanEntries(
+        documentNo: String,
+        lineNo: Int,
+        partNo: String
+    ): LiveData<List<ReceiptLocalScanEntriesValue>> =
+        dao.getFilteredLocalScanEntries(documentNo, lineNo, partNo)
 }

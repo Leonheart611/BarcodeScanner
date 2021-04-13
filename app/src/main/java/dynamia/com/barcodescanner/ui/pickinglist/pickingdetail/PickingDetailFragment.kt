@@ -105,7 +105,7 @@ class PickingDetailFragment : Fragment() {
                 R.id.menu_history -> {
                     val action =
                         PickingDetailFragmentDirections.actionPickingDetailFragmentToHistoryInputFragment(
-                            args.pickingListNo, Constant.PICKING_LIST
+                            args.pickingListNo, Constant.PICKING_LIST, true, null, null
                         )
                     view?.findNavController()?.navigate(action)
                     true
@@ -120,7 +120,9 @@ class PickingDetailFragment : Fragment() {
                     PickingDetailFragmentDirections.actionPickingDetailFragmentToHistoryInputFragment(
                         args.pickingListNo,
                         Constant.PICKING_LIST,
-                        partNo = pickingListLineValue.partNoOriginal
+                        partNo = pickingListLineValue.partNoOriginal,
+                        documentNo = pickingListLineValue.documentNo,
+                        lineNo = pickingListLineValue.lineNo
                     )
                 view?.findNavController()?.navigate(action)
             }

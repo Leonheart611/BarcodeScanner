@@ -60,7 +60,7 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
                 R.id.history_data -> {
                     val action =
                         PickingListFragmentDirections.actionPickingListFragmentToHistoryInputFragment(
-                            "", Constant.PICKING_LIST, true
+                            "", Constant.PICKING_LIST, true, null, null
                         )
                     view?.findNavController()?.navigate(action)
                     true

@@ -86,9 +86,10 @@ interface PickingListDao {
     @Query("SELECT * FROM PickingListScanEntries WHERE sycn_status = 0")
     fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue>
 
-    @Query("SELECT * FROM PickingListScanEntries WHERE pickingListNo = :pickingListNo AND partNo = :partNo ORDER BY id DESC")
+    @Query("SELECT * FROM PickingListScanEntries WHERE pickingListNo = :pickingListNo AND partNo = :partNo AND lineNo = :lineNo ")
     fun getPickingListandPartNo(
         pickingListNo: String,
-        partNo: String
+        partNo: String,
+        lineNo: Int
     ): LiveData<List<PickingListScanEntriesValue>>
 }

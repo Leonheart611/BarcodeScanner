@@ -15,20 +15,25 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptImportLineAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptLocalLineAdapter
 import dynamia.com.core.data.model.ReceiptImportHeaderValue
+import dynamia.com.core.data.model.ReceiptImportLineValue
 import dynamia.com.core.data.model.ReceiptLocalHeaderValue
+import dynamia.com.core.data.model.ReceiptLocalLineValue
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.toNormalDate
 import kotlinx.android.synthetic.main.dialog_validate_s.*
 import kotlinx.android.synthetic.main.receipt_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ReceiptDetailFragment : Fragment() {
+class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImportClicklistener,
+    ReceiptLocalLineAdapter.OnReceiptLocalListener {
 
     private val args: ReceiptDetailFragmentArgs by navArgs()
     private val viewModel: ReceiptDetailViewModel by viewModel()
     private var receiptImportHeader: ReceiptImportHeaderValue? = null
     private var receiptLocalHeader: ReceiptLocalHeaderValue? = null
     private var settingDialog: Dialog? = null
+    private var adapterReceiptLocal = ReceiptLocalLineAdapter(mutableListOf())
+    private var adapterReceiptImport = ReceiptImportLineAdapter(mutableListOf())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +52,12 @@ class ReceiptDetailFragment : Fragment() {
         tv_receipt_detail_po.text = getString(R.string.po_title_header, args.documentNo)
         when (args.source) {
             Constant.RECEIPT_LOCAL -> {
+                with(rv_receipt_line) {
+                    adapter = adapterReceiptLocal
+                    layoutManager =
+                        LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                }
+                adapterReceiptLocal.setonClickListener(this)
                 viewModel.receiptLocalRepository.getReceiptLocalHeader(args.documentNo)
                     .observe(viewLifecycleOwner, {
                         nil_vendor_name.setText(it.buyFromVendorName)
@@ -56,14 +67,16 @@ class ReceiptDetailFragment : Fragment() {
                     })
                 viewModel.receiptLocalRepository.getAllReceiptLocalLine(args.documentNo)
                     .observe(viewLifecycleOwner, { receiptListLines ->
-                        with(rv_receipt_line) {
-                            adapter = ReceiptLocalLineAdapter(receiptListLines.toMutableList())
-                            layoutManager =
-                                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                        }
+                        adapterReceiptLocal.update(receiptListLines.toMutableList())
                     })
             }
             Constant.RECEIPT_IMPORT -> {
+                with(rv_receipt_line) {
+                    adapter = adapterReceiptImport
+                    layoutManager =
+                        LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                }
+                adapterReceiptImport.setonclicklistener(this)
                 viewModel.receiptImportRepository.getReceiptImportHeader(args.documentNo)
                     .observe(viewLifecycleOwner, {
                         nil_vendor_name.setText(it.buyFromVendorName)
@@ -75,12 +88,7 @@ class ReceiptDetailFragment : Fragment() {
                 viewModel.receiptImportRepository.getAllReceiptImportLine(args.documentNo)
                     .observe(viewLifecycleOwner,
                         { receiptImportLines ->
-                            with(rv_receipt_line) {
-                                adapter =
-                                    ReceiptImportLineAdapter(receiptImportLines.toMutableList())
-                                layoutManager =
-                                    LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                            }
+                            adapterReceiptImport.update(receiptImportLines.toMutableList())
                         })
 
             }
@@ -123,7 +131,10 @@ class ReceiptDetailFragment : Fragment() {
                 R.id.menu_history -> {
                     val action =
                         ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToHistoryInputFragment(
-                            args.documentNo, args.source
+                            documentNo = null,
+                            source = args.source,
+                            partNo = null,
+                            pickingListNo = args.documentNo
                         )
                     view?.findNavController()?.navigate(action)
                     true
@@ -187,5 +198,29 @@ class ReceiptDetailFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun clicklistener(pickingListLineValue: ReceiptImportLineValue) {
+        val action =
+            ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToHistoryInputFragment(
+                documentNo = pickingListLineValue.documentNo,
+                source = args.source,
+                partNo = pickingListLineValue.partNo,
+                pickingListNo = args.documentNo,
+                lineNo = pickingListLineValue.lineNo
+            )
+        view?.findNavController()?.navigate(action)
+    }
+
+    override fun onClicklistener(receiptLocalLineValue: ReceiptLocalLineValue) {
+        val action =
+            ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToHistoryInputFragment(
+                documentNo = receiptLocalLineValue.documentNo,
+                source = args.source,
+                partNo = receiptLocalLineValue.partNo,
+                pickingListNo = args.documentNo,
+                lineNo = receiptLocalLineValue.lineNo
+            )
+        view?.findNavController()?.navigate(action)
     }
 }

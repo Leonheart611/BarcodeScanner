@@ -138,8 +138,16 @@
             app:argType="boolean" />
         <argument
             android:name="partNo"
-            android:defaultValue="    "
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="documentNo"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="lineNo"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/receiptDetailFragment"

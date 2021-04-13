@@ -32,6 +32,12 @@ interface ReceiptImportRepository {
         limit: Int? = null
     ): LiveData<List<ReceiptImportScanEntriesValue>>
 
+    fun getFilteredImportScanEntries(
+        documentNo: String,
+        lineNo: Int,
+        partNo: String
+    ): LiveData<List<ReceiptImportScanEntriesValue>>
+
     suspend fun checkSN(serialNo: String): Boolean
     fun insertReceiptImportScanEntries(receiptImportScanEntries: ReceiptImportScanEntriesValue): Boolean
     fun deleteReceiptImportScanEntry(receiptImportScanEntries: ReceiptImportScanEntriesValue)
@@ -97,7 +103,8 @@ class ReceiptImportRepositoryImpl(
             try {
                 val importLineValue = dao.getDetailImportLineData(
                     receiptImportScanEntries.lineNo,
-                    receiptImportScanEntries.partNo
+                    receiptImportScanEntries.partNo,
+                    receiptImportScanEntries.documentNo
                 )
                 if (importLineValue.alreadyScanned < importLineValue.outstandingQuantity.toInt()) {
                     importLineValue.apply {
@@ -119,7 +126,8 @@ class ReceiptImportRepositoryImpl(
             dao.deleteReceiptImportScanEntry(receiptImportScanEntries)
             val importLineValue = dao.getDetailImportLineData(
                 receiptImportScanEntries.lineNo,
-                receiptImportScanEntries.partNo
+                receiptImportScanEntries.partNo,
+                receiptImportScanEntries.documentNo
             )
             importLineValue.apply {
                 this.alreadyScanned = --alreadyScanned
@@ -151,5 +159,14 @@ class ReceiptImportRepositoryImpl(
     }
 
     override suspend fun checkSN(serialNo: String): Boolean = dao.checkSN(serialNo).isEmpty()
+
+
+    override fun getFilteredImportScanEntries(
+        documentNo: String,
+        lineNo: Int,
+        partNo: String
+    ): LiveData<List<ReceiptImportScanEntriesValue>> =
+        dao.getFilteredImportScanEntries(documentNo, lineNo, partNo)
+
 
 }

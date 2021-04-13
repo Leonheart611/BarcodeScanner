@@ -58,7 +58,7 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
                 R.id.history_data -> {
                     val action =
                         ReceiptFragmentDirections.actionReceiptFragmentToHistoryInputFragment(
-                            "", args.source, true
+                            "", args.source, true, null, null
                         )
                     view?.findNavController()?.navigate(action)
                     true

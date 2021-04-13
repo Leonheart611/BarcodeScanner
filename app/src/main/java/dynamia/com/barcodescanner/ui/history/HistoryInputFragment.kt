@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,58 +64,78 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                 if (args.showAll) {
                     tv_picking_detail_so.text = getString(R.string.pickinglist_all_history)
                     viewModel.pickingListRepository.getAllPickingListScanLiveData()
-                        .observe(viewLifecycleOwner, Observer {
+                        .observe(viewLifecycleOwner, {
                             pickingListAdapter.updateData(it.toMutableList())
                         })
                 } else {
                     tv_picking_detail_so.text =
                         getString(R.string.picklistno_title, args.pickingListNo)
-                    if (args.partNo.trim().isEmpty()) {
-                        viewModel.pickingListRepository.getPickingListScanEntries(args.pickingListNo)
-                            .observe(viewLifecycleOwner, Observer {
-                                pickingListAdapter.updateData(it.toMutableList())
-                            })
-                    } else {
+                    args.partNo?.let { partNo ->
                         viewModel.pickingListRepository.getPickingListandPartNo(
                             args.pickingListNo,
-                            args.partNo
-                        ).observe(viewLifecycleOwner, Observer {
+                            partNo, args.lineNo
+                        ).observe(viewLifecycleOwner, {
                             pickingListAdapter.updateData(it.toMutableList())
                         })
+                    } ?: run {
+                        viewModel.pickingListRepository.getPickingListScanEntries(args.pickingListNo)
+                            .observe(viewLifecycleOwner, {
+                                pickingListAdapter.updateData(it.toMutableList())
+                            })
                     }
-
                 }
             }
             Constant.RECEIPT_IMPORT -> {
                 if (args.showAll) {
                     tv_picking_detail_so.text = getString(R.string.import_and_local_all_history)
                     viewModel.receiptImportRepository.getAllReceiptImportScanEntries()
-                        .observe(
-                            viewLifecycleOwner,
-                            Observer { importListAdapter.updateData(it.toMutableList()) })
+                        .observe(viewLifecycleOwner, {
+                            importListAdapter.updateData(it.toMutableList())
+                        })
                 } else {
                     tv_picking_detail_so.text =
                         getString(R.string.receipthistory_title, args.pickingListNo)
-                    viewModel.receiptImportRepository.getReceiptImportScanEntries(args.pickingListNo)
-                        .observe(viewLifecycleOwner,
-                            Observer { importListAdapter.updateData(it.toMutableList()) })
+
+                    args.documentNo?.let {
+                        viewModel.receiptImportRepository.getFilteredImportScanEntries(
+                            it,
+                            args.lineNo, args.partNo ?: ""
+                        ).observe(viewLifecycleOwner, { data ->
+                            importListAdapter.updateData(data.toMutableList())
+                        })
+                    } ?: run {
+                        viewModel.receiptImportRepository.getReceiptImportScanEntries(args.pickingListNo)
+                            .observe(viewLifecycleOwner, { data ->
+                                importListAdapter.updateData(data.toMutableList())
+                            })
+                    }
                 }
             }
             Constant.RECEIPT_LOCAL -> {
                 if (args.showAll) {
                     tv_picking_detail_so.text = getString(R.string.import_and_local_all_history)
                     viewModel.receiptLocalRepository.getAllReceiptLocalScanEntries()
-                        .observe(
-                            viewLifecycleOwner,
-                            Observer { localListAdapter.updateData(it.toMutableList()) })
+                        .observe(viewLifecycleOwner, {
+                            localListAdapter.updateData(it.toMutableList())
+                        })
                 } else {
                     tv_picking_detail_so.text =
                         getString(R.string.receipthistory_title, args.pickingListNo)
-                    viewModel.receiptLocalRepository.getReceiptLocalScanEntries(args.pickingListNo)
-                        .observe(viewLifecycleOwner,
-                            Observer { localListAdapter.updateData(it.toMutableList()) })
-                }
 
+                    args.documentNo?.let {
+                        viewModel.receiptLocalRepository.getFilteredLocalScanEntries(
+                            it,
+                            args.lineNo, args.partNo ?: ""
+                        ).observe(viewLifecycleOwner, { data ->
+                            localListAdapter.updateData(data.toMutableList())
+                        })
+                    } ?: run {
+                        viewModel.receiptLocalRepository.getReceiptLocalScanEntries(args.pickingListNo)
+                            .observe(viewLifecycleOwner, {
+                                localListAdapter.updateData(it.toMutableList())
+                            })
+                    }
+                }
             }
         }
     }

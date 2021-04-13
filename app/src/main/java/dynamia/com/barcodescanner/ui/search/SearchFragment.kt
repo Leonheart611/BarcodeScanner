@@ -109,7 +109,10 @@ class SearchFragment : Fragment() {
             override fun onclicklistener(pickingListLineValue: PickingListLineValue) {
                 val action =
                     SearchFragmentDirections.actionReceiptSearchFragmentToHistoryInputFragment(
-                        arg.PoNo, arg.source, partNo = pickingListLineValue.partNoOriginal
+                        arg.PoNo,
+                        arg.source,
+                        partNo = pickingListLineValue.partNoOriginal,
+                        documentNo = null
                     )
                 view?.findNavController()?.navigate(action)
             }
@@ -119,7 +122,10 @@ class SearchFragment : Fragment() {
             override fun clicklistener(pickingListLineValue: ReceiptImportLineValue) {
                 val action =
                     SearchFragmentDirections.actionReceiptSearchFragmentToHistoryInputFragment(
-                        arg.PoNo, arg.source, partNo = pickingListLineValue.partNo
+                        arg.PoNo,
+                        arg.source,
+                        partNo = pickingListLineValue.partNo,
+                        documentNo = null
                     )
                 view?.findNavController()?.navigate(action)
             }
@@ -129,7 +135,10 @@ class SearchFragment : Fragment() {
             override fun onClicklistener(receiptLocalLineValue: ReceiptLocalLineValue) {
                 val action =
                     SearchFragmentDirections.actionReceiptSearchFragmentToHistoryInputFragment(
-                        arg.PoNo, arg.source, partNo = receiptLocalLineValue.partNo
+                        arg.PoNo,
+                        arg.source,
+                        partNo = receiptLocalLineValue.partNo,
+                        documentNo = null
                     )
                 view?.findNavController()?.navigate(action)
             }

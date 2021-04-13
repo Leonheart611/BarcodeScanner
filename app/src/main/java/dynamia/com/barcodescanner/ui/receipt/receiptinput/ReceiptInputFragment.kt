@@ -1,6 +1,7 @@
 package dynamia.com.barcodescanner.ui.receipt.receiptinput
 
 import android.app.Dialog
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.LocalHistoryAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ImportHistoryAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleImportLineAdapter
@@ -45,6 +47,8 @@ class ReceiptInputFragment : Fragment(),
     private var receiptLocalScanEntriesValue: ReceiptLocalScanEntriesValue? = null
     private var historyImportAdapter = ImportHistoryAdapter(mutableListOf())
     private var historyLocalAdapter = LocalHistoryAdapter(mutableListOf())
+    private var mp: MediaPlayer? = null
+    var activity: MainActivity? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,12 +84,14 @@ class ReceiptInputFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity = requireActivity() as MainActivity
         setupListener()
         setObseverable()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        mp = MediaPlayer.create(context, R.raw.error)
         setupView()
     }
 
@@ -163,11 +169,15 @@ class ReceiptInputFragment : Fragment(),
                                 }
                             } else {
                                 context?.showLongToast(getString(R.string.error_qty_over_outstanding))
+                                mp?.start()
                             }
                         } else {
                             showErroSnDialog(getString(R.string.sn_no_already_inputed))
                         }
                     }
+                }
+                is ReceiptInputViewModel.ReceiptInputViewState.ShowLoading -> {
+                    activity?.showLoading(it.loading)
                 }
             }
         })
@@ -177,7 +187,7 @@ class ReceiptInputFragment : Fragment(),
     private fun setupView() {
         et_packingid.requestFocus()
         tv_receipt_detail_po.text = args.poNo
-        switch_sn_scan_receipt.setOnCheckedChangeListener { compoundButton, b ->
+        switch_sn_scan_receipt.setOnCheckedChangeListener { _, b ->
             if (b)
                 switch_sn_scan_receipt.text = getString(R.string.sn_pn_scan)
             else
@@ -414,6 +424,7 @@ class ReceiptInputFragment : Fragment(),
                             context?.showLongToast(getString(R.string.error_po_no_not_same))
                             et_po_no.clearText()
                             et_po_no.requestFocus()
+                            mp?.start()
                         } else {
                             et_part_receipt_input.requestFocus()
                         }
@@ -477,6 +488,7 @@ class ReceiptInputFragment : Fragment(),
                     context?.showLongToast(getString(R.string.error_po_no_not_same))
                     et_po_no.clearText()
                     et_po_no.requestFocus()
+                    mp?.start()
                 } else {
                     et_part_receipt_input.requestFocus()
                 }
@@ -558,6 +570,7 @@ class ReceiptInputFragment : Fragment(),
                             } else {
                                 context?.showLongToast("SN Harus di awali dengan S")
                                 clearSnAndFocus()
+                                mp?.start()
                             }
                         }
                         false -> {
@@ -574,6 +587,7 @@ class ReceiptInputFragment : Fragment(),
                             } else {
                                 context?.showLongToast("SN Harus di awali dengan S")
                                 clearSnAndFocus()
+                                mp?.start()
                             }
                         }
                         false -> {
@@ -722,6 +736,7 @@ class ReceiptInputFragment : Fragment(),
                         clearPartNo()
                     }
                     show()
+                    mp?.start()
                 }
             }
         }
@@ -744,12 +759,13 @@ class ReceiptInputFragment : Fragment(),
                         clearShipmentId()
                     }
                     show()
+                    mp?.start()
                 }
             }
         }
     }
 
-    fun clearShipmentId() {
+    private fun clearShipmentId() {
         et_trackingid.clearText()
         et_trackingid.requestFocus()
     }
@@ -771,6 +787,7 @@ class ReceiptInputFragment : Fragment(),
                         clearSnAndFocus()
                     }
                     show()
+                    mp?.start()
                 }
             }
         }
@@ -789,6 +806,16 @@ class ReceiptInputFragment : Fragment(),
     private fun clearSnAndFocus() {
         clearSN()
         et_sn_no.requestFocus()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mp?.release()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mp?.release()
     }
 
 }

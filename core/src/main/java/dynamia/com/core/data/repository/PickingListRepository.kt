@@ -42,7 +42,8 @@ interface PickingListRepository {
     fun getAllUnscynPickingListScanEntries(): MutableList<PickingListScanEntriesValue>
     fun getPickingListandPartNo(
         pickingListNo: String,
-        partNo: String
+        partNo: String,
+        lineNo: Int
     ): LiveData<List<PickingListScanEntriesValue>>
 }
 
@@ -176,9 +177,10 @@ class PickingListRepositoryImpl(
 
     override fun getPickingListandPartNo(
         pickingListNo: String,
-        partNo: String
+        partNo: String,
+        lineNo: Int
     ): LiveData<List<PickingListScanEntriesValue>> = runBlocking {
-        pickingListDao.getPickingListandPartNo(pickingListNo, partNo)
+        pickingListDao.getPickingListandPartNo(pickingListNo, partNo, lineNo)
     }
 
     override fun getAllPickingListScanLiveData(): LiveData<List<PickingListScanEntriesValue>> =

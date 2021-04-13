@@ -24,12 +24,15 @@ class PickingListInputViewModel(
     fun getPickingListLineValue(partNo: String, pickingListNo: String) {
         viewModelScope.launch {
             try {
+                _pickingInputViewState.value = PickingInputViewState.LoadingSearchPickingList(true)
                 io {
                     val data =
                         pickingListRepository.getAllPickingListLineFromInsert(partNo, pickingListNo)
                     ui {
                         _pickingInputViewState.value =
                             PickingInputViewState.SuccessGetValue(data.toMutableList())
+                        _pickingInputViewState.value =
+                            PickingInputViewState.LoadingSearchPickingList(false)
                     }
                 }
             } catch (e: Exception) {
@@ -73,6 +76,8 @@ class PickingListInputViewModel(
         class SuccessGetValue(val data: MutableList<PickingListLineValue>) : PickingInputViewState()
         class SuccessGetHistoryValue(val data: MutableList<PickingListScanEntriesValue>) :
             PickingInputViewState()
+
+        class LoadingSearchPickingList(val status: Boolean) : PickingInputViewState()
 
         class ErrorGetData(val message: String) : PickingInputViewState()
         class CheckSNResult(val boolean: Boolean) : PickingInputViewState()
