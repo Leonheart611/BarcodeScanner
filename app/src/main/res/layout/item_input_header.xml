@@ -54,7 +54,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_po_no_picking"
+        app:layout_constraintTop_toTopOf="parent"
         app:title="@string/part_no_title" />
 
     <dynamia.com.core.view.NormalInputLayout
@@ -79,7 +79,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_part_no"
+        app:layout_constraintTop_toBottomOf="@+id/et_po_no_picking"
         app:title="@string/mac_address" />
 
     <dynamia.com.core.view.NormalInputLayout
@@ -116,7 +116,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_part_no"
         app:title="@string/po_no_title">
 
     </dynamia.com.core.view.NormalInputLayout>
