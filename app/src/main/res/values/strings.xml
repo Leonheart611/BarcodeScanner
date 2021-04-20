@@ -95,4 +95,5 @@
     <string name="receipt_import_history_title">Receipt Import History</string>
     <string name="receipt_local_history_title">Receipt Local History</string>
     <string name="shipment_not_match_error">Tracking ID harus sama dengan Shipment no</string>
+    <string name="part_no_history">Part No: %1$s</string>
 </resources>

@@ -71,6 +71,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                     tv_picking_detail_so.text =
                         getString(R.string.picklistno_title, args.pickingListNo)
                     args.partNo?.let { partNo ->
+                        tv_pn_no.text = getString(R.string.part_no_history, partNo)
                         viewModel.pickingListRepository.getPickingListandPartNo(
                             args.pickingListNo,
                             partNo, args.lineNo
@@ -97,6 +98,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                         getString(R.string.receipthistory_title, args.pickingListNo)
 
                     args.documentNo?.let {
+                        tv_pn_no.text = getString(R.string.part_no_history, args.partNo)
                         viewModel.receiptImportRepository.getFilteredImportScanEntries(
                             it,
                             args.lineNo, args.partNo ?: ""
@@ -123,6 +125,7 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                         getString(R.string.receipthistory_title, args.pickingListNo)
 
                     args.documentNo?.let {
+                        tv_pn_no.text = getString(R.string.part_no_history, args.partNo)
                         viewModel.receiptLocalRepository.getFilteredLocalScanEntries(
                             it,
                             args.lineNo, args.partNo ?: ""

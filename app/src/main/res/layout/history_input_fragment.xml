@@ -87,5 +87,14 @@
         app:layout_constraintBottom_toTopOf="@+id/cv_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view9" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_pn_no" />
+
+    <TextView
+        android:id="@+id/tv_pn_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/tv_picking_detail_so"
+        app:layout_constraintTop_toBottomOf="@+id/tv_picking_detail_so" />
 </androidx.constraintlayout.widget.ConstraintLayout>
