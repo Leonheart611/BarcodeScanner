@@ -6,12 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
-import dynamia.com.core.data.model.*
 import dynamia.com.core.util.crossFade
-import dynamia.com.core.util.readJsonAsset
 import kotlinx.android.synthetic.main.bottomsheet_home_data_dialoog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -46,12 +43,12 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     private fun setObserverable() {
         viewModel.homeGetApiViewState.observe(viewLifecycleOwner, {
             when (it) {
-                SuccessGetPickingList -> {
-                    iv_status_picking.crossFade(animateDuration.toLong(), pb_picking_list)
+                SuccessGetShipingData -> {
+                    iv_status_picking.crossFade(animateDuration.toLong(), pb_transferstore)
                 }
-                is FailedGetPickingList -> {
-                    tv_error_pickinglist.text = it.message
-                    iv_status_picking.crossFade(animateDuration.toLong(), pb_picking_list)
+                is FailedGetShippingData -> {
+                    tv_error_transferstore.text = it.message
+                    iv_status_picking.crossFade(animateDuration.toLong(), pb_transferstore)
                     iv_status_picking.setImageDrawable(
                         ResourcesCompat.getDrawable(resources, R.drawable.ic_error_circle, null)
                     )
@@ -89,13 +86,11 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     }
 
     private fun callAllApi() {
-        viewModel.getReceiptImportAPI()
-        viewModel.getPickingListApi()
-        viewModel.getReceiptLocalApi()
+        viewModel.getTransferData()
     }
 
 
-    fun getAllDataFromAssets() {
+  /*  fun getAllDataFromAssets() {
 
         val pickingListheader = Gson().fromJson(
             this.activity?.readJsonAsset("PickingListHeader.json"),
@@ -129,9 +124,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             receiptLocalHeader,
             receiptLocalLine
         )
-
-
-    }
+    }*/
 
     fun setOnClicklistener() {
         btn_dialog_close.setOnClickListener {

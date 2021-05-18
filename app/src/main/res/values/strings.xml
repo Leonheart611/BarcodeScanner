@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dynamia WMS</string>
+    <string name="app_name">Masari Apps</string>
     <string name="so_no_title">SO No.</string>
     <string name="customer_name_title">Customer Name</string>
     <string name="customer_po_no_title">Customer PO No.</string>
@@ -44,9 +44,9 @@
     <string name="item_no_title">Item No</string>
     <string name="description_title">Description</string>
     <string name="view_title">View</string>
-    <string name="server_host_name">http://192.168.18.126:7048/DynamicsNAV90/Odata/Company"('PT.%20Mastersystem%20Infotama')"/</string>
-    <string name="user_name">nav</string>
-    <string name="password">12345</string>
+    <string name="server_host_name">http://192.168.1.5:7048/BC180/OdataV4/Company("\'CRONUS Australia Pty. Ltd.\'")/Android_TransferLine</string>
+    <string name="user_name">DESKTOP-U57JOGD\steve</string>
+    <string name="password">qwerty12345</string>
     <string name="domain">MIKAOCTOFRENTZE</string>
     <string name="employee_name">STEVEN</string>
     <string name="salesperson_text">Salesperson</string>
@@ -96,4 +96,6 @@
     <string name="receipt_local_history_title">Receipt Local History</string>
     <string name="shipment_not_match_error">Tracking ID harus sama dengan Shipment no</string>
     <string name="part_no_history">Part No: %1$s</string>
+    
+    <string name="transfer_store">Transfer Store</string>
 </resources>

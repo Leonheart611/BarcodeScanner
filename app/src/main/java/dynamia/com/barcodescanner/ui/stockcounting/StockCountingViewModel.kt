@@ -8,7 +8,7 @@ import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.model.StockCount
 import dynamia.com.core.data.repository.NetworkRepository
 import dynamia.com.core.data.repository.StockCountRepository
-import dynamia.com.core.domain.ResultWrapper
+import dynamia.com.core.domain.ResultWrapper.*
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
@@ -41,7 +41,7 @@ class StockCountingViewModel(
                         val body = gson.toJson(data)
                         networkRepository.postStockCountEntry(body).collect {
                             when (it) {
-                                is ResultWrapper.Success -> {
+                                is Success -> {
                                     dataPosted++
                                     ui {
                                         _stockCountPostViewState.value =
@@ -52,13 +52,13 @@ class StockCountingViewModel(
                                     }
                                     stockCountRepository.updateStockCount(data)
                                 }
-                                is ResultWrapper.GenericError -> {
+                                is GenericError -> {
                                     ui {
                                         _stockCountPostViewState.value =
                                             StockCountPostViewState.ErrorPostData("${it.code} ${it.error?.odataError?.message?.value}")
                                     }
                                 }
-                                ResultWrapper.NetworkError -> {
+                                is NetworkError -> {
 
                                 }
                             }

@@ -19,8 +19,8 @@ abstract class ViewModelBase(private val userRepository: SharedPreferences) : Vi
         .excludeFieldsWithoutExposeAnnotation()
         .create()
 
-    fun getEmployeeName(): String {
-        return userRepository.getString(Constant.EMPLOYEE_KEY, "") ?: ""
+    fun getCompanyName(): String {
+        return userRepository.getString(Constant.COMPANY_NAME, "") ?: ""
     }
 
     override fun onCleared() {

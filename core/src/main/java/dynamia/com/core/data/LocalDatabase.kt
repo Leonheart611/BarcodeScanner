@@ -4,28 +4,21 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import dynamia.com.core.data.dao.*
-import dynamia.com.core.data.model.*
+import dynamia.com.core.data.dao.TransferShipmentDao
+import dynamia.com.core.data.dao.UserDao
+import dynamia.com.core.data.entinty.TransferShipmentHeader
+import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.model.UserData
 
 @Database(
-    entities = [PickingListHeaderValue::class,
-        PickingListLineValue::class,
-        PickingListScanEntriesValue::class,
-        ReceiptImportHeaderValue::class,
-        ReceiptImportLineValue::class,
-        ReceiptImportScanEntriesValue::class,
-        ReceiptLocalHeaderValue::class,
-        ReceiptLocalLineValue::class,
-        ReceiptLocalScanEntriesValue::class,
-        StockCount::class,
+    entities = [
+        TransferShipmentHeader::class,
+        TransferShipmentLine::class,
         UserData::class
-    ], version = 18, exportSchema = false
+    ], version = 1, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
-    abstract fun pickingListDao(): PickingListDao
-    abstract fun receiptImportDao(): ReceiptImportDao
-    abstract fun receiptLocalHeaderDao(): ReceiptLocalDao
-    abstract fun stockCountDao(): StockCountDao
+    abstract fun transferShipment(): TransferShipmentDao
     abstract fun userDao(): UserDao
 
     companion object {
@@ -39,18 +32,11 @@ abstract class LocalDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     LocalDatabase::class.java,
-                    "barcodeDB.sqlite"
+                    "MasariDB.sqlite"
                 ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }
         }
-
-        fun clearAllTable() {
-            INSTANCE?.clearAllTables()
-        }
-
     }
-
-
 }

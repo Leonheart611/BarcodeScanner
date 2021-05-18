@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/pickingList_header_title"
+        android:text="@string/transfer_store"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,11 +25,12 @@
         android:layout_marginTop="16dp"
         android:text="@string/receipt_local_header"
         android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_error_pickinglist" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_error_transferstore" />
 
     <TextView
-        android:id="@+id/tv_error_pickinglist"
+        android:id="@+id/tv_error_transferstore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -40,12 +41,12 @@
         tools:text="Error when get Picking List" />
 
     <ProgressBar
-        android:id="@+id/pb_picking_list"
+        android:id="@+id/pb_transferstore"
         style="?android:attr/progressBarStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_error_pickinglist"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_error_transferstore"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView15" />
 
@@ -56,6 +57,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:textColor="@color/red"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView19"
         tools:text="Error When Get Receipt Local" />
@@ -66,6 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/tv_error_receipt_local"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView19" />
@@ -78,6 +81,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/receipt_import_header"
         android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_error_receipt_local" />
 
@@ -88,6 +92,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:textColor="@color/red"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView22"
         tools:text="Error When Get Receipt Import" />
@@ -98,6 +103,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/tv_error_receipt_import"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView22" />
@@ -122,7 +128,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="50dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_error_pickinglist"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_error_transferstore"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView15"
         app:srcCompat="@drawable/ic_check_circle" />

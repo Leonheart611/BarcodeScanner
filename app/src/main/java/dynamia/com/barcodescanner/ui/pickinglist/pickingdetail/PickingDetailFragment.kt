@@ -36,7 +36,7 @@ class PickingDetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        et_customer_po_no.setText(viewModel.getEmployeeName())
+        et_customer_po_no.setText(viewModel.getCompanyName())
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -50,7 +50,7 @@ class PickingDetailFragment : Fragment() {
 
     private fun setupView() {
         tv_picking_detail_so.text = getString(R.string.picklistno_title, args.pickingListNo)
-        et_customer_po_no.setText(viewModel.getEmployeeName())
+        et_customer_po_no.setText(viewModel.getCompanyName())
         rv_picking_detail.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         rv_picking_detail.adapter = adapter

@@ -53,7 +53,7 @@ class NetworkRepositoryImpl(
                     }
                 }
             } catch (e: Exception) {
-                emit(ResultWrapper.NetworkError)
+                emit(ResultWrapper.NetworkError(e.localizedMessage))
             }
         }
 

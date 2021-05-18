@@ -45,23 +45,19 @@ class LoginFragment : Fragment() {
             et_server_host.setText(getString(R.string.server_host_name))
             tied_username.setText(getString(R.string.user_name))
             tied_password.setText(getString(R.string.password))
-            et_employee.setText(getString(R.string.employee_name))
+            et_company.setText(getString(R.string.employee_name))
         }
     }
 
     private fun setupListener() {
         btn_login.setOnClickListener {
             if (checkNotEmpty()) {
-                if (et_server_host.text.toString().endsWith("/")) {
-                    viewModel.saveSharedPreferences(
-                        hostname = et_server_host.text.toString(),
-                        username = tied_username.text.toString(),
-                        password = tied_password.text.toString(),
-                        employee = et_employee.text.toString()
-                    )
-                } else {
-                    context?.showLongToast("Host Name Must end with (/)")
-                }
+                viewModel.saveSharedPreferences(
+                    hostname = et_server_host.text.toString(),
+                    username = tied_username.text.toString(),
+                    password = tied_password.text.toString(),
+                    company = et_company.text.toString()
+                )
             } else {
                 context?.showLongToast("Please fill all form")
             }
@@ -79,7 +75,7 @@ class LoginFragment : Fragment() {
         if (et_server_host.text.toString().isEmpty()) {
             result = false
         }
-        if (et_employee.text.toString().isEmpty()) {
+        if (et_company.text.toString().isEmpty()) {
             result = false
         }
         return result

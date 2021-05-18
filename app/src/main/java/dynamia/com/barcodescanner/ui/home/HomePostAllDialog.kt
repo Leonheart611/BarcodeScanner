@@ -41,10 +41,7 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
     }
 
     private fun callAllApi() {
-        viewModel.postPickingDataNew()
-        viewModel.postReceiptImportNew()
-        viewModel.postReceiptLocalNew()
-        viewModel.postStockCountDataNew()
+
     }
 
     private fun setupView() {

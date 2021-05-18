@@ -38,7 +38,7 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
     }
 
     private fun setupView() {
-        tv_employee_name.text = viewModel.getEmployeeName()
+        tv_employee_name.text = viewModel.getCompanyName()
         when (args.source) {
             Constant.RECEIPT_LOCAL -> {
                 tv_title_header.text = getString(R.string.receipt_local_header)
@@ -71,7 +71,7 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
     private fun setRecylerView() {
         when (args.source) {
             Constant.RECEIPT_LOCAL -> {
-                viewModel.receiptLocalRepository.getAllReceiptLocalHeader(viewModel.getEmployeeName())
+                viewModel.receiptLocalRepository.getAllReceiptLocalHeader(viewModel.getCompanyName())
                     .observe(viewLifecycleOwner, { receiptLocalHeaders ->
                         with(rv_receipt_list) {
                             adapter = ReceiptLocalItemAdapter(
@@ -84,7 +84,7 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
                     })
             }
             Constant.RECEIPT_IMPORT -> {
-                viewModel.receiptImportRepository.getAllReceiptImportHeader(viewModel.getEmployeeName())
+                viewModel.receiptImportRepository.getAllReceiptImportHeader(viewModel.getCompanyName())
                     .observe(viewLifecycleOwner, { receiptImportHeaders ->
                         with(rv_receipt_list) {
                             adapter = ReceiptImportItemAdapter(

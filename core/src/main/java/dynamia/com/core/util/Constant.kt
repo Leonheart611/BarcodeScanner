@@ -9,5 +9,5 @@ object Constant {
     const val USERNAME_KEY = "USERNAME"
     const val PASSWORD_KEY = "PASSWORD"
     const val HOST_DOMAIN_KEY = "HOST_DOMAIN"
-    const val EMPLOYEE_KEY = "EMPLOYEE"
+    const val COMPANY_NAME = "COMPANY_NAME"
 }

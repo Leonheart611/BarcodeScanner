@@ -10,6 +10,6 @@ data class UserData(
     @SerializedName("host_name")  val hostName: String,
     @SerializedName("username") val username:String,
     @SerializedName("password")  val password: String,
-    @SerializedName("Employee_COde")val employeeCode:String
+    @SerializedName("companyName")val companyName:String
 
 )

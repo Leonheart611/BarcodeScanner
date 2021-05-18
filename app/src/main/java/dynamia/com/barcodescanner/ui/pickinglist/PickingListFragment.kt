@@ -43,9 +43,9 @@ class PickingListFragment : Fragment(), PickingListAdapter.OnPickinglistListener
     }
 
     private fun initView() {
-        tv_employee_name.text = viewModel.getEmployeeName()
+        tv_employee_name.text = viewModel.getCompanyName()
         tv_title_header.text = getString(R.string.pickingList_header_title)
-        viewModel.pickingListRepository.getAllPickingListHeader(viewModel.getEmployeeName())
+        viewModel.pickingListRepository.getAllPickingListHeader(viewModel.getCompanyName())
             .observe(viewLifecycleOwner, {
                 pickingListAdapter.updateData(it.toMutableList())
             })

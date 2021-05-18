@@ -59,7 +59,7 @@ class StockCountingFragment : Fragment(), StockCountAdapter.OnStockClicklistener
             .observe(viewLifecycleOwner, { data ->
                 adapterStockCount.updateData(data)
             })
-        tv_employee_name.text = viewModel.getEmployeeName()
+        tv_employee_name.text = viewModel.getCompanyName()
         switch_sn_pn_stock.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
                 switch_sn_pn_stock.text = getString(R.string.sn_pn_scan)
@@ -194,7 +194,7 @@ class StockCountingFragment : Fragment(), StockCountAdapter.OnStockClicklistener
                                 Item_No = et_po_stock_count.text.toString(),
                                 time = context?.getCurrentTime() ?: "",
                                 date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
-                                Employee_COde = viewModel.getEmployeeName()
+                                Employee_COde = viewModel.getCompanyName()
                             )
                         )
                         if (switch_sn_pn_stock.isChecked) {

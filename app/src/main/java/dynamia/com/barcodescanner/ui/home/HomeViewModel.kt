@@ -1,30 +1,23 @@
 package dynamia.com.barcodescanner.ui.home
 
-import android.app.Application
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
+import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.FailedGetShippingData
+import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.SuccessGetShipingData
 import dynamia.com.core.base.ViewModelBase
-import dynamia.com.core.data.model.*
-import dynamia.com.core.data.repository.*
+import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.domain.ResultWrapper.*
-import dynamia.com.core.util.Constant
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    val pickingListRepository: PickingListRepository,
-    val receiptImportRepository: ReceiptImportRepository,
-    val receiptLocalRepository: ReceiptLocalRepository,
-    private val stockCountRepository: StockCountRepository,
+    private val transferShipmentRepository: TransferShipmentRepository,
     private val sharedPreferences: SharedPreferences,
-    private val networkRepository: NetworkRepository,
-    val app: Application
 ) : ViewModelBase(sharedPreferences) {
 
     private var _homeViewState = MutableLiveData<HomeViewState>()
@@ -39,11 +32,7 @@ class HomeViewModel(
     fun checkDBNotNull() {
         viewModelScope.launch {
             try {
-                io {
-                    pickingListRepository.getCheckEmptyOrNot().collect { data ->
-                        ui { _homeViewState.value = HomeViewState.DBhasEmpty(data) }
-                    }
-                }
+
             } catch (e: Exception) {
                 _homeViewState.value = HomeViewState.Error(e.localizedMessage)
             }
@@ -53,21 +42,7 @@ class HomeViewModel(
     fun clearAllDB() {
         viewModelScope.launch {
             try {
-                io {
-                    pickingListRepository.clearPickingListHeader()
-                    pickingListRepository.clearPickingListLine()
-                    pickingListRepository.clearPickingListScanEntries()
 
-                    receiptImportRepository.clearReceiptImportHeader()
-                    receiptImportRepository.clearReceiptImportLine()
-                    receiptImportRepository.clearReceiptImportScanEntries()
-
-                    receiptLocalRepository.clearReceiptLocalHeader()
-                    receiptLocalRepository.clearReceiptLocalLine()
-                    receiptLocalRepository.clearReceiptLocalScanEntries()
-
-                    stockCountRepository.clearStockCount()
-                }
             } catch (e: Exception) {
                 _homeViewState.value = HomeViewState.Error(e.localizedMessage)
                 Log.e("clearAllDb", e.localizedMessage)
@@ -85,291 +60,48 @@ class HomeViewModel(
         _homeViewState.value = HomeViewState.HasSuccessLogout
     }
 
-    private fun getUserData(): UserData {
-        return UserData(
-            1,
-            hostName = sharedPreferences.getString(Constant.HOST_DOMAIN_KEY, "") ?: "",
-            username = sharedPreferences.getString(Constant.USERNAME_KEY, "") ?: "",
-            password = sharedPreferences.getString(Constant.PASSWORD_KEY, "") ?: "",
-            employeeCode = sharedPreferences.getString(Constant.EMPLOYEE_KEY, "") ?: ""
-        )
-    }
-
-    fun getPickingListApi() {
+    fun getTransferData() {
         viewModelScope.launch {
             try {
                 io {
-                    networkRepository.getPickingListHeaderAsync().collect { dataHeader ->
-                        when (dataHeader) {
-                            is Success -> dataHeader.value.forEach {
-                                pickingListRepository.insertPickingListHeader(it)
+                    transferShipmentRepository.getTransferShipmentHeaderAsync()
+                        .collect { dataHeader ->
+                            when (dataHeader) {
+                                is Success -> dataHeader.value.forEach {
+                                    transferShipmentRepository.insertTransferHeader(it)
+                                }
+                                is GenericError -> {
+                                    ui {
+                                        _homeGetApiViewState.value =
+                                            FailedGetShippingData("${dataHeader.code} ${dataHeader.error}")
+                                    }
+                                }
+                                is NetworkError -> {
+                                    _homeGetApiViewState.postValue(FailedGetShippingData("Error Network"))
+
+                                }
+                            }
+                        }
+                    transferShipmentRepository.getTransferShipmentLineAsync().collect { data ->
+                        when (data) {
+                            is Success -> data.value.forEach {
+                                transferShipmentRepository.insertTransferLine(it)
                             }
                             is GenericError -> {
                                 ui {
                                     _homeGetApiViewState.value =
-                                        FailedGetPickingList("${dataHeader.code} ${dataHeader.error}")
+                                        FailedGetShippingData("${data.code} ${data.error}")
                                 }
                             }
-                            NetworkError -> {
-
+                            is NetworkError -> {
+                                _homeGetApiViewState.postValue(FailedGetShippingData(data.error))
                             }
                         }
                     }
-                    networkRepository.getPickingListLineAsync().collect { data ->
-                        data.forEach {
-                            pickingListRepository.insertPickingListLine(it)
-                        }
-                    }
                 }
-                ui { _homeGetApiViewState.value = SuccessGetPickingList }
+                ui { _homeGetApiViewState.value = SuccessGetShipingData }
             } catch (e: Exception) {
-                _homeGetApiViewState.value = FailedGetPickingList(e.localizedMessage)
-            }
-        }
-    }
-
-    fun getReceiptImportAPI() {
-        viewModelScope.launch {
-            try {
-                io {
-                    networkRepository.getReceiptImportHeaderAsync().collect { dataHeader ->
-                        dataHeader.forEach {
-                            receiptImportRepository.insertReceiptImportHeader(it)
-                        }
-                    }
-                    networkRepository.getReceiptImportLineAsync().collect { data ->
-                        data.forEach {
-                            receiptImportRepository.insertReceiptImportLine(it)
-                        }
-                    }
-                }
-                ui { _homeGetApiViewState.value = SuccessGetReceiptImport }
-            } catch (e: Exception) {
-                _homeGetApiViewState.value = FailedGetReceiptImport(e.localizedMessage)
-            }
-        }
-    }
-
-    fun getReceiptLocalApi() {
-        viewModelScope.launch {
-            try {
-                io {
-                    networkRepository.getReceiptLocalHeaderAsync().collect { dataHeader ->
-                        dataHeader.forEach {
-                            receiptLocalRepository.insertReceiptLocalHeader(it)
-                        }
-                    }
-                    networkRepository.getReceiptLocalLineAsync().collect { data ->
-                        data.forEach {
-                            receiptLocalRepository.insertReceiptLocalLine(it)
-                        }
-                    }
-                }
-                ui { _homeGetApiViewState.value = SuccessGetReceiptLocal }
-            } catch (e: Exception) {
-                _homeGetApiViewState.value = FailedGetReceiptLocal(e.localizedMessage)
-            }
-        }
-    }
-
-    fun postPickingDataNew() {
-        viewModelScope.launch {
-            try {
-                var dataPosted = 0
-                io {
-                    val pickingListEntries =
-                        pickingListRepository.getAllUnscynPickingListScanEntries()
-                    ui {
-                        _homePostViewState.value =
-                            HomePostViewState.GetUnpostedPicking(
-                                pickingListEntries.size
-                            )
-                        _homePostViewState.value =
-                            HomePostViewState.GetSuccessfullyPicking(
-                                dataPosted
-                            )
-                    }
-                    for (data in pickingListEntries) {
-                        val param = gson.toJson(data)
-                        networkRepository.postPickingListEntry(param).collect {
-                            dataPosted++
-                            ui {
-                                _homePostViewState.value =
-                                    HomePostViewState.GetSuccessfullyPicking(dataPosted)
-                            }
-                            data.apply {
-                                sycn_status = true
-                            }
-                            pickingListRepository.updatePickingScanEntry(data)
-                        }
-                    }
-                    ui { _homePostViewState.value = HomePostViewState.AllDataPostedPicking }
-                }
-            } catch (e: Exception) {
-                _homePostViewState.value =
-                    HomePostViewState.ErrorPostPicking(e.localizedMessage)
-            }
-        }
-    }
-
-    fun postReceiptLocalNew() {
-        viewModelScope.launch {
-            try {
-                var dataPosted = 0
-                io {
-                    val receiptLocalList = receiptLocalRepository.getUnsycnReceiptLocalScanEntry()
-                    ui {
-                        _homePostViewState.value =
-                            HomePostViewState.GetUnpostedLocal(receiptLocalList.size)
-                        _homePostViewState.value =
-                            HomePostViewState.GetSuccessfulLocal(dataPosted)
-                    }
-                    for (data in receiptLocalList) {
-                        val param = gson.toJson(data)
-                        networkRepository.postReceiptLocalEntry(param).collect {
-                            dataPosted++
-                            ui {
-                                _homePostViewState.value =
-                                    HomePostViewState.GetSuccessfulLocal(dataPosted)
-                            }
-                            data.apply {
-                                sycn_status = true
-                            }
-                            receiptLocalRepository.updateReceiptLocalScanEntry(data)
-                        }
-                    }
-                }
-                ui { _homePostViewState.value = HomePostViewState.SuccessPostallLocal }
-            } catch (e: Exception) {
-                _homePostViewState.value =
-                    HomePostViewState.ErrorPostLocal(e.localizedMessage)
-            }
-        }
-    }
-
-    fun postReceiptImportNew() {
-        viewModelScope.launch {
-            try {
-                var dataPosted = 0
-                io {
-                    val receiptImportList = receiptImportRepository.getAllUnsycnImportScanEntry()
-                    ui {
-                        _homePostViewState.value =
-                            HomePostViewState.GetUnpostedImport(
-                                receiptImportList.size
-                            )
-                        _homePostViewState.value =
-                            HomePostViewState.GetSuccessfulImport(
-                                dataPosted
-                            )
-                    }
-                    for (data in receiptImportList) {
-                        val param = gson.toJson(data)
-                        networkRepository.postReceiptImportEntry(param).collect {
-                            dataPosted++
-                            ui {
-                                _homePostViewState.value =
-                                    HomePostViewState.GetSuccessfulImport(
-                                        dataPosted
-                                    )
-                            }
-                            data.apply {
-                                sycn_status = true
-                            }
-                            receiptImportRepository.updateReceiptImportScanEntry(data)
-                        }
-                    }
-                }
-                ui { _homePostViewState.value = HomePostViewState.SuccessPostallImport }
-            } catch (e: Exception) {
-                _homePostViewState.value =
-                    HomePostViewState.ErrorPostImport(e.localizedMessage)
-            }
-        }
-    }
-
-    fun postStockCountDataNew() {
-        viewModelScope.launch {
-            try {
-                var dataPosted = 0
-                io {
-                    val stockCounts = stockCountRepository.getAllUnsycnStockCount()
-                    ui {
-                        _homePostViewState.value =
-                            HomePostViewState.GetUnpostedCount(stockCounts.size)
-                        _homePostViewState.value =
-                            HomePostViewState.GetSuccessfulCount(dataPosted)
-                    }
-                    for (data in stockCounts) {
-                        val body = gson.toJson(data)
-                        networkRepository.postStockCountEntry(body).collect {
-                            dataPosted++
-                            ui {
-                                _homePostViewState.value =
-                                    HomePostViewState.GetSuccessfulCount(dataPosted)
-                            }
-                            data.apply {
-                                sycn_status = true
-                            }
-                            stockCountRepository.updateStockCount(data)
-                        }
-                    }
-                }
-                ui { _homePostViewState.value = HomePostViewState.SuccessPostallCount }
-            } catch (e: Exception) {
-                _homePostViewState.value =
-                    HomePostViewState.ErrorPostCount(e.localizedMessage)
-            }
-        }
-    }
-
-    fun savePickingHeader(
-        pickingListHeader: PickingListHeader,
-        pickingListLine: PickingListLine,
-        receiptImportHeader: ReceiptImportHeader,
-        receiptImportLine: ReceiptImportLine,
-        receiptLocalHeader: ReceiptLocalHeader,
-        receiptLocalLine: ReceiptLocalLine
-    ) {
-        viewModelScope.launch {
-            io {
-                pickingListHeader.value?.let {
-                    it.forEach {
-                        pickingListRepository.insertPickingListHeader(it)
-                    }
-                }
-
-                pickingListLine.value.let {
-                    it.forEach { data ->
-                        pickingListRepository.insertPickingListLine(data)
-                    }
-                    ui { _homeGetApiViewState.value = SuccessGetPickingList }
-                }
-
-                receiptImportHeader.value.let {
-                    it.forEach { data ->
-                        receiptImportRepository.insertReceiptImportHeader(data)
-                    }
-                }
-                receiptImportLine.value.let {
-                    it.forEach { data ->
-                        receiptImportRepository.insertReceiptImportLine(data)
-                    }
-                    ui { _homeGetApiViewState.value = SuccessGetReceiptImport }
-                }
-
-                receiptLocalHeader.value.let {
-                    it.forEach { data ->
-                        receiptLocalRepository.insertReceiptLocalHeader(data)
-                    }
-                }
-                receiptLocalLine.value.let {
-                    it.forEach { data ->
-                        receiptLocalRepository.insertReceiptLocalLine(data)
-                    }
-                    ui { _homeGetApiViewState.value = SuccessGetReceiptLocal }
-                }
-
+                _homeGetApiViewState.value = FailedGetShippingData(e.localizedMessage)
             }
         }
     }
@@ -383,8 +115,8 @@ class HomeViewModel(
     }
 
     sealed class HomeGetApiViewState {
-        object SuccessGetPickingList : HomeGetApiViewState()
-        class FailedGetPickingList(val message: String) : HomeGetApiViewState()
+        object SuccessGetShipingData : HomeGetApiViewState()
+        class FailedGetShippingData(val message: String) : HomeGetApiViewState()
         object SuccessGetReceiptImport : HomeGetApiViewState()
         class FailedGetReceiptImport(val message: String) : HomeGetApiViewState()
         object SuccessGetReceiptLocal : HomeGetApiViewState()

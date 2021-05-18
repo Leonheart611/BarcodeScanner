@@ -285,7 +285,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
             note = et_note.getTextAsString(),
             time = context?.getCurrentTime() ?: "",
             date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
-            employeeCode = viewModel.getEmployeeName(), qtyScan = "1",
+            employeeCode = viewModel.getCompanyName(), qtyScan = "1",
             pickingListNo = args.pickingListNo
         )
     }

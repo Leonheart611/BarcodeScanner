@@ -42,19 +42,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setObservable() {
-        viewModel.pickingListRepository.getCountPickingListHeader(viewModel.getEmployeeName())
-            .observe(viewLifecycleOwner, {
-                tv_picking_list_count.text = it.toString()
-            })
-        viewModel.receiptImportRepository.getCountReceiptImportHeader(viewModel.getEmployeeName())
-            .observe(viewLifecycleOwner, {
-                tv_count_receipt_import.text = it.toString()
-            })
-        viewModel.receiptLocalRepository.getCountReceiptLocalHeader(viewModel.getEmployeeName())
-            .observe(viewLifecycleOwner, {
-                tv_count_receipt_local.text = it.toString()
-            })
-
         viewModel.homeViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is DBhasEmpty -> {
@@ -88,7 +75,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView() {
-        tv_employee_name.text = getString(R.string.employee_title, viewModel.getEmployeeName())
+        toolbar_home.title = getString(R.string.employee_title, viewModel.getCompanyName())
     }
 
     private fun setListener() {

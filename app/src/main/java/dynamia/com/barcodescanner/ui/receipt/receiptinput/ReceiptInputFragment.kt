@@ -667,7 +667,7 @@ class ReceiptInputFragment : Fragment(),
     private fun createLocalScanEntry() {
         receiptLocalScanEntriesValue = ReceiptLocalScanEntriesValue(
             documentNo = args.documentNo,
-            employeeCode = viewModel.getEmployeeName(),
+            employeeCode = viewModel.getCompanyName(),
             macAddress = et_mac_address_receipt_input.getTextAsString().emptySetZero(),
             partNo = et_part_receipt_input.getTextAsString(),
             packingID = et_packingid.getTextAsString(),
@@ -685,7 +685,7 @@ class ReceiptInputFragment : Fragment(),
     private fun createImportScanEntry() {
         receiptImportScanEntriesValue = ReceiptImportScanEntriesValue(
             documentNo = args.documentNo,
-            employeeCode = viewModel.getEmployeeName(),
+            employeeCode = viewModel.getCompanyName(),
             macAddress = et_mac_address_receipt_input.getTextAsString().emptySetZero(),
             partNo = et_part_receipt_input.getTextAsString(),
             packingID = et_packingid.getTextAsString(),

@@ -21,11 +21,8 @@ val injectionModule = module {
     single { App().provideSettingsPreferences(androidApplication()) }
     single { LocalDatabase.getDatabase(androidApplication()) }
 
-    single { get<LocalDatabase>().pickingListDao() }
-    single { get<LocalDatabase>().receiptImportDao() }
-    single { get<LocalDatabase>().receiptLocalHeaderDao() }
-    single { get<LocalDatabase>().stockCountDao() }
     single { get<LocalDatabase>().userDao() }
+    single { get<LocalDatabase>().transferShipment() }
 
     single<PickingListRepository> { PickingListRepositoryImpl(get()) }
     single<ReceiptImportRepository> { ReceiptImportRepositoryImpl(get()) }
@@ -33,9 +30,10 @@ val injectionModule = module {
     single<StockCountRepository> { StockCountRepositoryImpl(get()) }
     single<UserRepository> { UserRepositoryImpl(get()) }
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }
+    single<TransferShipmentRepository> { TransferShipmentImpl(get(), get()) }
 
-    viewModel { LoginViewModel(get(), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { LoginViewModel(get()) }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { PickingListViewModel(get(), get()) }
     viewModel { PickingDetailViewModel(get(), get(), get(), get()) }
     viewModel { PickingListInputViewModel(get(), get()) }
