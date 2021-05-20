@@ -38,7 +38,7 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
     }
 
     private fun setupView() {
-        tv_employee_name.text = viewModel.getCompanyName()
+        //tv_employee_name.text = viewModel.getCompanyName()
         when (args.source) {
             Constant.RECEIPT_LOCAL -> {
                 tv_title_header.text = getString(R.string.receipt_local_header)
@@ -53,7 +53,7 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
         cv_back.setOnClickListener {
             findNavController().popBackStack()
         }
-        tb_posolist.setOnMenuItemClickListener {
+        tb_headerlist.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.history_data -> {
                     val action =

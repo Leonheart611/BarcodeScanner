@@ -1,29 +1,25 @@
-package dynamia.com.barcodescanner.ui.pickinglist.pickingdetail
+package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 
-import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
-import dynamia.com.core.data.model.PickingListHeaderValue
-import dynamia.com.core.data.model.PickingListLineValue
-import dynamia.com.core.data.repository.NetworkRepository
-import dynamia.com.core.data.repository.PickingListRepository
+import dynamia.com.core.data.entinty.TransferShipmentHeader
+import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class PickingDetailViewModel(
-    val pickingListRepository: PickingListRepository,
-    sharedPreferences: SharedPreferences,
-    private val networkRepository: NetworkRepository,
-    val app: Application
+class TransferDetailViewModel(
+    val transferShipmentRepository: TransferShipmentRepository,
+    sharedPreferences: SharedPreferences
 ) : ViewModelBase(sharedPreferences) {
 
-    private val _pickingDetailViewState = MutableLiveData<PickingDetailViewState>()
-    val pickingDetailViewState: LiveData<PickingDetailViewState> by lazy { _pickingDetailViewState }
+    private val _pickingDetailViewState = MutableLiveData<TransferListViewState>()
+    val transferListViewState: LiveData<TransferListViewState> by lazy { _pickingDetailViewState }
 
     private val _pickingPostViewState = MutableLiveData<PickingDetailPostViewState>()
     val pickingPostViewState: LiveData<PickingDetailPostViewState> by lazy { _pickingPostViewState }
@@ -34,17 +30,17 @@ class PickingDetailViewModel(
             try {
                 var dataPosted = 0
                 io {
-                    val pickingListEntries =
-                        pickingListRepository.getAllUnscynPickingListScanEntries()
+                    val listEntries =
+                        transferShipmentRepository.getAllUnsycnTransferInput()
                     ui {
                         _pickingPostViewState.value =
-                            PickingDetailPostViewState.GetUnpostedData(pickingListEntries.size)
+                            PickingDetailPostViewState.GetUnpostedData(listEntries.size)
                         _pickingPostViewState.value =
                             PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
                     }
-                    for (data in pickingListEntries) {
+                    for (data in listEntries) {
                         val param = gson.toJson(data)
-                        networkRepository.postPickingListEntry(param).collect {
+                        transferShipmentRepository.postTransferData(param).collect {
                             dataPosted++
                             ui {
                                 _pickingPostViewState.value =
@@ -53,7 +49,7 @@ class PickingDetailViewModel(
                             data.apply {
                                 sycn_status = true
                             }
-                            pickingListRepository.updatePickingScanEntry(data)
+                            transferShipmentRepository.updateTransferInput(data)
                         }
                     }
                     ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
@@ -66,49 +62,50 @@ class PickingDetailViewModel(
     }
 
 
-    fun getPickingDetail(listNo: String) {
+    fun getTransferDetail(no: String) {
         viewModelScope.launch {
             try {
                 io {
-                    val data = pickingListRepository.getPickingListHeader(listNo)
-                    ui {
-                        _pickingDetailViewState.value =
-                            PickingDetailViewState.SuccessGetLocalData(data)
-                    }
-                }
-            } catch (e: Exception) {
-                _pickingDetailViewState.value =
-                    PickingDetailViewState.ErrorGetLocalData(e.localizedMessage)
-            }
-        }
-
-    }
-
-    fun getPickingListLine(pickingListNo: String) {
-        viewModelScope.launch {
-            try {
-                io {
-                    pickingListRepository.getAllPickingListLine(pickingListNo).collect {
+                    transferShipmentRepository.getTransferHeaderDetail(no).collect { data ->
                         ui {
                             _pickingDetailViewState.value =
-                                PickingDetailViewState.SuccessGetPickingLineData(it.toMutableList())
+                                TransferListViewState.SuccessGetLocalData(data)
                         }
                     }
                 }
             } catch (e: Exception) {
                 _pickingDetailViewState.value =
-                    PickingDetailViewState.ErrorGetLocalData(e.localizedMessage)
+                    TransferListViewState.ErrorGetLocalData(e.localizedMessage)
+            }
+        }
+
+    }
+
+    fun getTransferLine(no: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferShipmentRepository.getLineListFromHeader(no).collect {
+                        ui {
+                            _pickingDetailViewState.value =
+                                TransferListViewState.SuccessGetPickingLineData(it.toMutableList())
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _pickingDetailViewState.value =
+                    TransferListViewState.ErrorGetLocalData(e.localizedMessage)
             }
 
         }
     }
 
-    sealed class PickingDetailViewState {
-        class SuccessGetLocalData(val value: PickingListHeaderValue) : PickingDetailViewState()
-        class SuccessGetPickingLineData(val values: MutableList<PickingListLineValue>) :
-            PickingDetailViewState()
+    sealed class TransferListViewState {
+        class SuccessGetLocalData(val value: TransferShipmentHeader) : TransferListViewState()
+        class SuccessGetPickingLineData(val values: MutableList<TransferShipmentLine>) :
+            TransferListViewState()
 
-        class ErrorGetLocalData(val message: String) : PickingDetailViewState()
+        class ErrorGetLocalData(val message: String) : TransferListViewState()
     }
 
     sealed class PickingDetailPostViewState {

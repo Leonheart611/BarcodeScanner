@@ -49,6 +49,7 @@
     <string name="password">qwerty12345</string>
     <string name="domain">MIKAOCTOFRENTZE</string>
     <string name="employee_name">STEVEN</string>
+    <string name="company_name_login">CRONUS Australia Pty. Ltd.</string>
     <string name="salesperson_text">Salesperson</string>
 
     <string name="error_input_message">Wajib di isi</string>
@@ -98,4 +99,7 @@
     <string name="part_no_history">Part No: %1$s</string>
     
     <string name="transfer_store">Transfer Store</string>
+    <string name="transfer_store_name">Store: %1$s</string>
+    <string name="transfer_store_status">Status: %1$s</string>
+    <string name="transfer_store_no">No: %1$s</string>
 </resources>

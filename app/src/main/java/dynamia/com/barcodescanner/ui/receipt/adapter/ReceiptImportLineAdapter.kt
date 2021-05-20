@@ -68,10 +68,9 @@ class ReceiptImportLineAdapter(private var reciptImportLines: MutableList<Receip
     inner class ReceiptImportLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(pickingListLineValue: ReceiptImportLineValue) {
             with(itemView) {
-                tv_description_2.text = pickingListLineValue.partNo
-                tv_line_no.text = pickingListLineValue.lineNo.toString()
+                tv_item_code.text = pickingListLineValue.lineNo.toString()
                 tv_description.text = pickingListLineValue.description
-                tv_outstanding.text =
+                tv_qty.text =
                     "${pickingListLineValue.alreadyScanned}/${pickingListLineValue.quantity}/${pickingListLineValue.outstandingQuantity}"
                 setOnClickListener {
                     listener?.clicklistener(pickingListLineValue)

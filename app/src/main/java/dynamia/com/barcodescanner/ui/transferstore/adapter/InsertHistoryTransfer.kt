@@ -1,18 +1,17 @@
-package dynamia.com.barcodescanner.ui.pickinglist.adapter
+package dynamia.com.barcodescanner.ui.transferstore.adapter
 
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.core.data.model.PickingListScanEntriesValue
+import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.util.inflate
-import kotlinx.android.synthetic.main.history_input_layout.view.*
 
 
-class InsertHistoryAdapter(var data: MutableList<PickingListScanEntriesValue>) :
-    RecyclerView.Adapter<InsertHistoryAdapter.HolderHistoryItem>() {
+class InsertHistoryTransfer(var data: MutableList<TransferInputData>) :
+    RecyclerView.Adapter<InsertHistoryTransfer.HolderHistoryItem>() {
 
-    fun update(data: MutableList<PickingListScanEntriesValue>) {
+    fun update(data: MutableList<TransferInputData>) {
         this.data.clear()
         this.data.addAll(data)
         notifyDataSetChanged()
@@ -33,9 +32,9 @@ class InsertHistoryAdapter(var data: MutableList<PickingListScanEntriesValue>) :
     }
 
     class HolderHistoryItem(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(data: PickingListScanEntriesValue) {
+        fun bind(data: TransferInputData) {
             with(itemView) {
-                tv_sn_history.text = data.serialNo
+                //tv_sn_history.text = data.serialNo
             }
         }
     }

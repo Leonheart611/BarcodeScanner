@@ -33,10 +33,9 @@ class ReceiptMultipleImportLineAdapter(
     class ReceiptHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(data: ReceiptImportLineValue, listener: OnMultipleImportLineListener) {
             with(itemView) {
-                tv_line_no.text = data.lineNo.toString()
+                tv_item_code.text = data.lineNo.toString()
                 tv_description.text = data.description
-                tv_description_2.text = data.itemNo
-                tv_outstanding.text =
+                tv_qty.text =
                     "${data.alreadyScanned}/${data.quantity}/${data.outstandingQuantity}"
                 setOnClickListener {
                     listener.onMultipleImportLineSelected(data)

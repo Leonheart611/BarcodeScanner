@@ -29,12 +29,12 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.checkDBNotNull()
         return inflater.inflate(R.layout.home_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.checkDBNotNull()
         activity = requireActivity() as MainActivity
         setObservable()
         initView()
@@ -47,13 +47,15 @@ class HomeFragment : Fragment() {
                 is DBhasEmpty -> {
                     if (it.value == 0) {
                         openStatusApi()
+                    } else {
+                        tv_transfer_count.text = it.value.toString()
                     }
                 }
                 is HomeViewModel.HomeViewState.Error -> {
                     context?.showLongToast(it.message)
                 }
                 is HomeViewModel.HomeViewState.ShowLoading -> {
-
+                    activity?.showLoading(it.boolean)
                 }
                 is HomeViewModel.HomeViewState.HasSuccessLogout -> {
                     activity?.showLoading(false)
@@ -88,7 +90,7 @@ class HomeFragment : Fragment() {
         cv_upload.setOnClickListener {
             openPostStatusApi()
         }
-        cv_picking_list.setOnClickListener {
+        cv_transfer_store.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_pickingListFragment)
         }
         cv_receipt_import.setOnClickListener {

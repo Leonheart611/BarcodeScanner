@@ -33,10 +33,9 @@ class ReceiptMultipleLocalLineAdapter(
     class ReceiptHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(data: ReceiptLocalLineValue, listener: OnMultipleLocalLineListener) {
             with(itemView) {
-                tv_line_no.text = data.lineNo.toString()
+                tv_item_code.text = data.lineNo.toString()
                 tv_description.text = data.description
-                tv_description_2.text = data.type
-                tv_outstanding.text =
+                tv_qty.text =
                     "${data.alredyScanned}/${data.quantity}/${data.outstandingQuantity}"
                 setOnClickListener {
                     listener.onMultipleLocalLineSelected(data)

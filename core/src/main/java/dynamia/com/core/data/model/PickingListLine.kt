@@ -6,8 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 
 data class PickingListLine(
-    @SerializedName("value")
-    val value: List<PickingListLineValue>
+    @SerializedName("value") val value: List<PickingListLineValue>
 )
 
 @Entity(tableName = "PickingListLine")

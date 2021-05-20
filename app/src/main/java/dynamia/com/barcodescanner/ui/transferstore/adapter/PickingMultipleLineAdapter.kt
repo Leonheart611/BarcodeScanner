@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui.pickinglist.adapter
+package dynamia.com.barcodescanner.ui.transferstore.adapter
 
 import android.view.View
 import android.view.ViewGroup
@@ -33,10 +33,9 @@ class PickingMultipleLineAdapter(
     class PickingLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(pickingListLineValue: PickingListLineValue, listener: OnMultipleLineSelected) {
             with(itemView) {
-                tv_line_no.text = pickingListLineValue.lineNo.toString()
+                tv_item_code.text = pickingListLineValue.lineNo.toString()
                 tv_description.text = pickingListLineValue.description
-                tv_description_2.text = pickingListLineValue.partNoOriginal
-                tv_outstanding.text =
+                tv_qty.text =
                     "${pickingListLineValue.alreadyPickup}/${pickingListLineValue.qtyToShip}/${pickingListLineValue.outstandingQuantity}"
                 setOnClickListener {
                     listener.onMultiplelineSelected(pickingListLineValue)

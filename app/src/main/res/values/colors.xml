@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimaryDark">#076CBB</color>
     <color name="colorAccent">#076CBB</color>
     <color name="generalBlue">#076CBB</color>
     <color name="posted_true">#6BC503</color>
@@ -9,4 +9,5 @@
     <color name="red">#FF0000</color>
     <color name="green">#4CFF00</color>
     <color name="pick_btn_color">#D81B60</color>
+    <color name="grey_header">#ebebeb</color>
 </resources>

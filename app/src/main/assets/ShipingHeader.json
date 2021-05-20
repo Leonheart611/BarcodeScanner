@@ -1,0 +1,61 @@
+{
+  "@odata.context": "http://192.168.1.5:7048/BC180/OdataV4/$metadata#Company('CRONUS%20Australia%20Pty.%20Ltd.')/Android_TransferShipmentHeader",
+  "value": [
+    {
+      "@odata.etag": "W/\"JzQ0O0pidDZnQm9pclhtOFpac2hPUm9DMnNlT0FEWlJoUU80VHdFeko1RDVZMVU9MTswMDsn\"",
+      "No": "1001",
+      "Status": "Open",
+      "Posting_Date": "2023-01-26",
+      "Transfer_from_Code": "YELLOW",
+      "Transfer_to_Code": "RED"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O2VKUXc1b0JjKzhobXVWTVkrTlpsR2N1b0hEZHRicGdWQ2NaL0xNNDhCT2M9MTswMDsn\"",
+      "No": "1002",
+      "Status": "Released",
+      "Posting_Date": "2022-01-01",
+      "Transfer_from_Code": "BLUE",
+      "Transfer_to_Code": "YELLOW"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O2RySXlpV29LTW9tejIycFBqOUNZYmV2bGp0bG4rZTNqL2diV09MTVlRQXM9MTswMDsn\"",
+      "No": "1004",
+      "Status": "Released",
+      "Posting_Date": "2023-01-26",
+      "Transfer_from_Code": "BLUE",
+      "Transfer_to_Code": "WHITE"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0OzZKTlRnQU9JVjhJYXJuSnkxSFlOcG5kR09GcDYrOEZlWllUeXBwSHNEbEk9MTswMDsn\"",
+      "No": "1005",
+      "Status": "Released",
+      "Posting_Date": "2023-01-26",
+      "Transfer_from_Code": "GREEN",
+      "Transfer_to_Code": "WHITE"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O1pHV0x6NXIybEoyZFp5eEFRNitHb3lmaUg2SWp1REQ1eVB0WnVZdGpGY0U9MTswMDsn\"",
+      "No": "1006",
+      "Status": "Released",
+      "Posting_Date": "2023-01-26",
+      "Transfer_from_Code": "WHITE",
+      "Transfer_to_Code": "RED"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O2dXZ1VOZ3lsRktDaytjL2ZYblVjZ3NPK3FNSmpaR2l3SlNub2drVzUrVHM9MTswMDsn\"",
+      "No": "1007",
+      "Status": "Released",
+      "Posting_Date": "2023-01-26",
+      "Transfer_from_Code": "WHITE",
+      "Transfer_to_Code": "YELLOW"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O2k3dThEMERBZHhOeklPQUJnZVdCMnZXaU9NbklYK09hanlkakRSMHE4eGs9MTswMDsn\"",
+      "No": "1011",
+      "Status": "Open",
+      "Posting_Date": "2023-01-27",
+      "Transfer_from_Code": "BLUE",
+      "Transfer_to_Code": "RED"
+    }
+  ]
+}

@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
-import dynamia.com.barcodescanner.ui.pickinglist.adapter.LocalHistoryAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ImportHistoryAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleImportLineAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleLocalLineAdapter
+import dynamia.com.barcodescanner.ui.transferstore.adapter.LocalHistoryAdapter
 import dynamia.com.core.data.model.ReceiptImportLineValue
 import dynamia.com.core.data.model.ReceiptImportScanEntriesValue
 import dynamia.com.core.data.model.ReceiptLocalLineValue
@@ -28,7 +28,6 @@ import dynamia.com.core.util.*
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
 import kotlinx.android.synthetic.main.item_input_header.*
-import kotlinx.android.synthetic.main.item_input_header.et_item_no
 import kotlinx.android.synthetic.main.receipt_form_item.*
 import kotlinx.android.synthetic.main.receipt_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel

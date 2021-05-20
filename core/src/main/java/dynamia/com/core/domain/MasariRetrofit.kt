@@ -10,6 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
+
 object MasariRetrofit {
     private var retrofit: Retrofit? = null
 
@@ -21,6 +22,7 @@ object MasariRetrofit {
         if (retrofit == null) {
             val logger = HttpLoggingInterceptor()
             logger.level = HttpLoggingInterceptor.Level.BODY
+
 
             val client = OkHttpClient.Builder()
                 .authenticator(NTLMAuthenticator(username, password, ""))
@@ -46,7 +48,7 @@ object MasariRetrofit {
             val url = chain.request().url.newBuilder()
                 .build()
             val request = chain.request().newBuilder()
-                .addHeader("Accept", "application/json")
+                .header("Accept", "application/json")
                 .url(url)
                 .build()
             return chain.proceed(request)

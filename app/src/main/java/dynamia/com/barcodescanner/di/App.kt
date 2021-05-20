@@ -12,6 +12,7 @@ import org.koin.core.context.startKoin
 
 class App : MultiDexApplication() {
     private val PREFERENCES_FILE_KEY = "STRYGWR"
+
     companion object {
         private lateinit var instance: App
 
@@ -31,7 +32,6 @@ class App : MultiDexApplication() {
             androidLogger()
             androidContext(this@App)
             koin.loadModules(listOf(injectionModule))
-            koin.createRootScope()
         }
     }
 

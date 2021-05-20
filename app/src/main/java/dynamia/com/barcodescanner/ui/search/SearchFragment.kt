@@ -11,10 +11,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingDetailAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptImportLineAdapter
 import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptLocalLineAdapter
-import dynamia.com.core.data.model.PickingListLineValue
+import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAdapter
+import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.data.model.ReceiptImportLineValue
 import dynamia.com.core.data.model.ReceiptLocalLineValue
 import dynamia.com.core.util.Constant
@@ -26,7 +26,7 @@ class SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
     private val arg: SearchFragmentArgs by navArgs()
-    private val pickinglistAdapter = PickingDetailAdapter(mutableListOf())
+    private val pickinglistAdapter = TransferDetailLineAdapter(mutableListOf())
     private val receiptImportLineAdapter = ReceiptImportLineAdapter(mutableListOf())
     private val receiptLocalLineAdapter = ReceiptLocalLineAdapter(mutableListOf())
 
@@ -46,33 +46,33 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupView() {
-        tb_search.title = getString(R.string.search_title_toolbar, arg.PoNo)
+       // tb_search.title = getString(R.string.search_title_toolbar, arg.PoNo)
     }
 
     private fun setupObserverable() {
         when (arg.source) {
             Constant.PICKING_LIST -> {
-                viewModel.getPickingLineData(arg.PoNo)
+                //viewModel.getPickingLineData(arg.PoNo)
             }
             Constant.RECEIPT_LOCAL -> {
-                viewModel.receiptLocalRepository.getAllReceiptLocalLine(arg.PoNo)
+               /* viewModel.receiptLocalRepository.getAllReceiptLocalLine(arg.PoNo)
                     .observe(
                         viewLifecycleOwner,
-                        { receiptLocalLineAdapter.update(it.toMutableList()) })
+                        { receiptLocalLineAdapter.update(it.toMutableList()) })*/
             }
             Constant.RECEIPT_IMPORT -> {
-                viewModel.receiptImportRepository.getAllReceiptImportLine(arg.PoNo)
+                /*viewModel.receiptImportRepository.getAllReceiptImportLine(arg.PoNo)
                     .observe(viewLifecycleOwner,
                         {
                             receiptImportLineAdapter.update(it.toMutableList())
-                        })
+                        })*/
             }
         }
 
         viewModel.searchViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is SearchViewModel.SearchViewState.SuccessGetPickingLine -> {
-                    pickinglistAdapter.update(it.data)
+                    //pickinglistAdapter.update(it.data)
                 }
                 is SearchViewModel.SearchViewState.ErrorGetLocalData -> {
                     context?.showLongToast(it.message)
@@ -105,42 +105,42 @@ class SearchFragment : Fragment() {
             }
         }
         pickinglistAdapter.setOnClickListener(object :
-            PickingDetailAdapter.OnPickingListDetailAdapterClicklistener {
-            override fun onclicklistener(pickingListLineValue: PickingListLineValue) {
-                val action =
+            TransferDetailLineAdapter.OnTransferLineCLicklistener {
+            override fun onclicklistener(pickingListLineValue: TransferShipmentLine) {
+               /* val action =
                     SearchFragmentDirections.actionReceiptSearchFragmentToHistoryInputFragment(
                         arg.PoNo,
                         arg.source,
                         partNo = pickingListLineValue.partNoOriginal,
                         documentNo = null
                     )
-                view?.findNavController()?.navigate(action)
+                view?.findNavController()?.navigate(action)*/
             }
         })
         receiptImportLineAdapter.setonclicklistener(object :
             ReceiptImportLineAdapter.OnReceiptImportClicklistener {
             override fun clicklistener(pickingListLineValue: ReceiptImportLineValue) {
-                val action =
+              /*  val action =
                     SearchFragmentDirections.actionReceiptSearchFragmentToHistoryInputFragment(
                         arg.PoNo,
                         arg.source,
                         partNo = pickingListLineValue.partNo,
                         documentNo = null
                     )
-                view?.findNavController()?.navigate(action)
+                view?.findNavController()?.navigate(action)*/
             }
         })
         receiptLocalLineAdapter.setonClickListener(object :
             ReceiptLocalLineAdapter.OnReceiptLocalListener {
             override fun onClicklistener(receiptLocalLineValue: ReceiptLocalLineValue) {
-                val action =
+              /*  val action =
                     SearchFragmentDirections.actionReceiptSearchFragmentToHistoryInputFragment(
                         arg.PoNo,
                         arg.source,
                         partNo = receiptLocalLineValue.partNo,
                         documentNo = null
                     )
-                view?.findNavController()?.navigate(action)
+                view?.findNavController()?.navigate(action)*/
             }
         })
     }

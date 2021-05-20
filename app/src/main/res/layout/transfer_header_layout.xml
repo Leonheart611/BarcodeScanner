@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ebebeb">
+
+        <TextView
+            android:id="@+id/tv_transferdetail_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="No Transfer" />
+
+        <TextView
+            android:id="@+id/tv_transferdetail_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="User : Admin"
+            app:layout_constraintStart_toStartOf="@+id/tv_transferdetail_no"
+            app:layout_constraintTop_toBottomOf="@+id/tv_transferdetail_no"
+            tools:text="User : Admin" />
+
+        <TextView
+            android:id="@+id/tv_transferdetail_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tv_transferdetail_user"
+            app:layout_constraintTop_toBottomOf="@+id/tv_transferdetail_user"
+            tools:text="Store" />
+
+        <TextView
+            android:id="@+id/tv_transferdetail_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Location: Indonesia"
+            app:layout_constraintStart_toEndOf="@+id/tv_transferdetail_user"
+            app:layout_constraintTop_toBottomOf="@+id/tv_transferdetail_no"
+            tools:text="Location" />
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Submit"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_transferdetail_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_transferdetail_store"
+            app:layout_constraintTop_toBottomOf="@+id/tv_transferdetail_location"
+            tools:text="Status" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

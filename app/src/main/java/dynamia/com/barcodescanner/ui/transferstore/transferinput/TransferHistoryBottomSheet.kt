@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui.pickinglist.pickinginput
+package dynamia.com.barcodescanner.ui.transferstore.transferinput
 
 import android.app.Activity
 import android.app.Dialog
@@ -15,8 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.ui.history.HistoryInputViewModel
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryInputAdapter
+import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.core.data.model.PickingListScanEntriesValue
 import kotlinx.android.synthetic.main.bottom_sheet_picking_history_fragment.*
 import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
@@ -24,11 +23,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val ARGS_PICKING_NO = "args_picking_no"
 
-class PickingHistoryBottomSheet : BottomSheetDialogFragment(),
-    HistoryInputAdapter.OnHistorySelected {
-    private val viewModel: HistoryInputViewModel by viewModel()
-    private var scanEntriesAdapter = HistoryInputAdapter(mutableListOf(), this)
-    private val pickingNo by lazy { arguments?.getString(ARGS_PICKING_NO) }
+class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
+    HistoryTransferInputAdapter.OnHistorySelected {
+    private val viewModel: TransferInputViewModel by viewModel()
+    private var scanEntriesAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
+    private val no by lazy { arguments?.getString(ARGS_PICKING_NO) }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -68,15 +67,19 @@ class PickingHistoryBottomSheet : BottomSheetDialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        no?.let { viewModel.getHistoryValue(it) }
         setupView()
         setObseverable()
     }
 
     private fun setObseverable() {
-        viewModel.pickingListRepository.getPickingListScanEntries(pickingNo.toString())
-            .observe(viewLifecycleOwner, {
-                scanEntriesAdapter.updateData(it.toMutableList())
-            })
+        viewModel.transferInputViewState.observe(viewLifecycleOwner, {
+            when (it) {
+                is TransferInputViewModel.TransferInputViewState.SuccessGetHistoryValue -> {
+                    scanEntriesAdapter.updateData(it.data)
+                }
+            }
+        })
     }
 
     fun setupView() {
@@ -101,7 +104,6 @@ class PickingHistoryBottomSheet : BottomSheetDialogFragment(),
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 btn_delete.setOnClickListener {
-                    viewModel.pickingListRepository.deletePickingListScanEntries(value)
                     dismiss()
                     setupView()
                 }
@@ -115,11 +117,11 @@ class PickingHistoryBottomSheet : BottomSheetDialogFragment(),
 
     companion object {
 
-        fun newInstance(pickingId: String): PickingHistoryBottomSheet {
+        fun newInstance(pickingId: String): TransferHistoryBottomSheet {
             val argument = Bundle().apply {
                 putString(ARGS_PICKING_NO, pickingId)
             }
-            return PickingHistoryBottomSheet().apply {
+            return TransferHistoryBottomSheet().apply {
                 arguments = argument
             }
         }

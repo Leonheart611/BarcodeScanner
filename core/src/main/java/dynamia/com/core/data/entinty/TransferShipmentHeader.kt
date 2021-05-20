@@ -1,15 +1,19 @@
 package dynamia.com.core.data.entinty
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "TransferShipmentHeader")
 data class TransferShipmentHeader(
-    @PrimaryKey val id: Int?,
-    @ColumnInfo(name = "No") val no: String,
-    @ColumnInfo(name = "Status") val status: String,
-    @ColumnInfo(name = "Posting_Date") val postingDate: String,
-    @ColumnInfo(name = "Transfer_from_Code") val transferFromCode: String,
-    @ColumnInfo(name = "Transfer_to_Code") val transferToCode: String
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
+    @SerializedName("No") val no: String,
+    @SerializedName("Status") val status: String,
+    @SerializedName("Posting_Date") val postingDate: String,
+    @SerializedName("Transfer_from_Code") val transferFromCode: String,
+    @SerializedName("Transfer_to_Code") val transferToCode: String
+)
+
+data class TransferShipmentHeaderAsset(
+    @SerializedName("value") val value: List<TransferShipmentHeader>?
 )

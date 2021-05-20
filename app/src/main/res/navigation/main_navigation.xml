@@ -6,28 +6,24 @@
     app:startDestination="@id/loginFragment">
 
     <fragment
-        android:id="@+id/receivingFragment"
-        android:name="dynamia.com.barcodescanner.ui.pickinglist.pickinginput.PickingListInputFragment"
-        android:label="receiving_fragment"
-        tools:layout="@layout/receiving_fragment" >
+        android:id="@+id/transferInputFragment"
+        android:name="dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputFragment"
+        android:label="transfer_input_fragment"
+        tools:layout="@layout/transfer_input_fragment">
         <argument
-            android:name="pickingListNo"
+            android:name="transferNo"
             app:argType="string" />
         <action
             android:id="@+id/action_receivingFragment_to_historyInputFragment"
             app:destination="@id/historyInputFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
-        <argument
-            android:name="validateS"
-            android:defaultValue="false"
-            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="dynamia.com.barcodescanner.ui.login.LoginFragment"
         android:label="login_fragment"
-        tools:layout="@layout/login_fragment" >
+        tools:layout="@layout/login_fragment">
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -41,10 +37,10 @@
         android:id="@+id/homeFragment"
         android:name="dynamia.com.barcodescanner.ui.home.HomeFragment"
         android:label="home_fragment"
-        tools:layout="@layout/home_fragment" >
+        tools:layout="@layout/home_fragment">
         <action
             android:id="@+id/action_homeFragment_to_pickingListFragment"
-            app:destination="@id/pickingListFragment"
+            app:destination="@id/transferListFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -67,46 +63,31 @@
             app:destination="@id/stockCountingFragment" />
     </fragment>
     <fragment
-        android:id="@+id/pickingListFragment"
-        android:name="dynamia.com.barcodescanner.ui.pickinglist.PickingListFragment"
-        android:label="pickinglist_fragment"
-        tools:layout="@layout/pickinglist_fragment" >
+        android:id="@+id/transferListFragment"
+        android:name="dynamia.com.barcodescanner.ui.transferstore.TransferListFragment"
+        android:label="transferList_fragment"
+        tools:layout="@layout/transferlist_fragment">
         <action
-            android:id="@+id/action_pickingListFragment_to_pickingDetailFragment"
-            app:destination="@id/pickingDetailFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim" />
-        <action
-            android:id="@+id/action_pickingListFragment_to_historyInputFragment"
-            app:destination="@id/historyInputFragment" />
+            android:id="@+id/action_transferListFragment_to_transferDetailFragment"
+            app:destination="@id/transferDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/pickingDetailFragment"
-        android:name="dynamia.com.barcodescanner.ui.pickinglist.pickingdetail.PickingDetailFragment"
-        android:label="picking_detail_fragment"
-        tools:layout="@layout/picking_detail_fragment" >
+        android:id="@+id/transferDetailFragment"
+        android:name="dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetailFragment"
+        android:label="transfer_detail_fragment"
+        tools:layout="@layout/transfer_detail_fragment">
         <argument
-            android:name="pickingListNo"
+            android:name="transferNo"
             app:argType="string" />
         <action
-            android:id="@+id/action_pickingDetailFragment_to_receivingFragment"
-            app:destination="@id/receivingFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim" />
-        <action
-            android:id="@+id/action_pickingDetailFragment_to_receiptSearchFragment"
-            app:destination="@id/receiptSearchFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim" />
-        <action
-            android:id="@+id/action_pickingDetailFragment_to_historyInputFragment"
-            app:destination="@id/historyInputFragment" />
+            android:id="@+id/action_transferDetailFragment_to_transferInputFragment"
+            app:destination="@id/transferInputFragment" />
     </fragment>
     <fragment
         android:id="@+id/receiptFragment"
         android:name="dynamia.com.barcodescanner.ui.receipt.ReceiptFragment"
         android:label="receipt_fragment"
-        tools:layout="@layout/receipt_fragment" >
+        tools:layout="@layout/receipt_fragment">
         <argument
             android:name="source"
             app:argType="string" />
@@ -125,7 +106,7 @@
         android:id="@+id/historyInputFragment"
         android:name="dynamia.com.barcodescanner.ui.history.HistoryInputFragment"
         android:label="history_input_fragment"
-        tools:layout="@layout/history_input_fragment" >
+        tools:layout="@layout/history_input_fragment">
         <argument
             android:name="pickingListNo"
             app:argType="string" />
@@ -153,7 +134,7 @@
         android:id="@+id/receiptDetailFragment"
         android:name="dynamia.com.barcodescanner.ui.receipt.detail.ReceiptDetailFragment"
         android:label="receipt_detail_fragment"
-        tools:layout="@layout/receipt_detail_fragment" >
+        tools:layout="@layout/receipt_detail_fragment">
         <argument
             android:name="source"
             app:argType="string" />
@@ -178,7 +159,7 @@
         android:id="@+id/receiptInputFragment"
         android:name="dynamia.com.barcodescanner.ui.receipt.receiptinput.ReceiptInputFragment"
         android:label="receipt_input_fragment"
-        tools:layout="@layout/receipt_input_fragment" >
+        tools:layout="@layout/receipt_input_fragment">
         <argument
             android:name="poNo"
             app:argType="string"
@@ -210,8 +191,9 @@
         android:id="@+id/receiptSearchFragment"
         android:name="dynamia.com.barcodescanner.ui.search.SearchFragment"
         android:label="receipt_search_fragment"
-        tools:layout="@layout/receipt_search_fragment" >
-        <argument android:name="PoNo"
+        tools:layout="@layout/receipt_search_fragment">
+        <argument
+            android:name="PoNo"
             app:argType="string" />
         <argument
             android:name="source"

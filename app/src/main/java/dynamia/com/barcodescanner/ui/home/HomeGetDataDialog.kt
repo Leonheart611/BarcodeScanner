@@ -6,9 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
+import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
+import dynamia.com.core.data.entinty.TransferShipmentLineAsset
 import dynamia.com.core.util.crossFade
+import dynamia.com.core.util.readJsonAsset
 import kotlinx.android.synthetic.main.bottomsheet_home_data_dialoog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -90,41 +94,20 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     }
 
 
-  /*  fun getAllDataFromAssets() {
-
-        val pickingListheader = Gson().fromJson(
-            this.activity?.readJsonAsset("PickingListHeader.json"),
-            PickingListHeader::class.java
+    private fun getAllDataFromAssets() {
+        val transferShipmentHeader = Gson().fromJson(
+            this.activity?.readJsonAsset("ShipingHeader.json"),
+            TransferShipmentHeaderAsset::class.java
         )
-        val pickingListLine = Gson().fromJson(
-            activity?.readJsonAsset("PickingListLine.json"),
-            PickingListLine::class.java
+        val transferShipmentLine = Gson().fromJson(
+            activity?.readJsonAsset("ShipingLine.json"),
+            TransferShipmentLineAsset::class.java
         )
-        val receiptImportHeader = Gson().fromJson(
-            activity?.readJsonAsset("ReceiptImportHeader.json"),
-            ReceiptImportHeader::class.java
+        viewModel.saveAssetData(
+            transferShipmentHeader,
+            transferShipmentLine
         )
-        val receiptImportLine = Gson().fromJson(
-            activity?.readJsonAsset("ReceiptImportLine.json"),
-            ReceiptImportLine::class.java
-        )
-        val receiptLocalHeader = Gson().fromJson(
-            activity?.readJsonAsset("ReceiptLocalHeader.json"),
-            ReceiptLocalHeader::class.java
-        )
-        val receiptLocalLine = Gson().fromJson(
-            activity?.readJsonAsset("ReceiptLocalLine.json"),
-            ReceiptLocalLine::class.java
-        )
-        viewModel.savePickingHeader(
-            pickingListheader,
-            pickingListLine,
-            receiptImportHeader,
-            receiptImportLine,
-            receiptLocalHeader,
-            receiptLocalLine
-        )
-    }*/
+    }
 
     fun setOnClicklistener() {
         btn_dialog_close.setOnClickListener {

@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui.pickinglist.adapter
+package dynamia.com.barcodescanner.ui.transferstore.adapter
 
 import android.view.View
 import android.view.ViewGroup

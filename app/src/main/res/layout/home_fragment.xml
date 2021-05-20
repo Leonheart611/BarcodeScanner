@@ -30,14 +30,14 @@
         android:id="@+id/toolbar_home"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/ic_launcher_background"
+        android:background="@color/colorAccent"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/company_name"
-        app:titleTextColor="@android:color/black" />
+        app:titleTextColor="@android:color/white" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_refresh"

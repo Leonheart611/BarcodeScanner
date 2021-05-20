@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui.pickinglist.pickingdetail
+package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +13,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PickingPostDialog : BottomSheetDialogFragment() {
 
-    val viewModel: PickingDetailViewModel by viewModel()
+    val viewModel: TransferDetailViewModel by viewModel()
     private var animateDuration: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,13 +34,13 @@ class PickingPostDialog : BottomSheetDialogFragment() {
     fun setObseverable() {
         viewModel.pickingPostViewState.observe(viewLifecycleOwner, {
             when (it) {
-                is PickingDetailViewModel.PickingDetailPostViewState.GetUnpostedData -> {
+                is TransferDetailViewModel.PickingDetailPostViewState.GetUnpostedData -> {
                     tv_picking_total_post.text = it.data.toString()
                 }
-                is PickingDetailViewModel.PickingDetailPostViewState.GetSuccessfullyPostedData -> {
+                is TransferDetailViewModel.PickingDetailPostViewState.GetSuccessfullyPostedData -> {
                     tv_picking_posted_count.text = it.data.toString()
                 }
-                is PickingDetailViewModel.PickingDetailPostViewState.ErrorPostData -> {
+                is TransferDetailViewModel.PickingDetailPostViewState.ErrorPostData -> {
                     iv_status_post_picking.crossFade(
                         animateDuration.toLong(),
                         pb_picking_post_dialog
@@ -55,7 +55,7 @@ class PickingPostDialog : BottomSheetDialogFragment() {
                     tv_error_picking_post.text = it.message
                     btn_dismis_picking_post.isEnabled = true
                 }
-                PickingDetailViewModel.PickingDetailPostViewState.AllDataPosted -> {
+                TransferDetailViewModel.PickingDetailPostViewState.AllDataPosted -> {
                     iv_status_post_picking.crossFade(
                         animateDuration.toLong(),
                         pb_picking_post_dialog

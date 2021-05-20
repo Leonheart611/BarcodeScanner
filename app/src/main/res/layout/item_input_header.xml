@@ -6,119 +6,122 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <dynamia.com.core.view.DoneInputLayout
-        android:id="@+id/et_sn_picking"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_mac_address_picking"
-        app:title_text="@string/sn_hint" />
-
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_item_no"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"
-        app:etenabled="false"
-        app:etfocusable="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_part_no"
-        app:title="@string/item_no_title" />
-
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_description_picking"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"
-        app:etenabled="false"
-        app:etfocusable="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_item_no"
-        app:title="@string/description_title" />
-
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_part_no"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/part_no_title" />
-
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_so"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_transferinput_barcode"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:visibility="gone"
-        app:etenabled="false"
-        app:etfocusable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_description_picking"
-        app:title="@string/so_hint" />
+        app:layout_constraintTop_toBottomOf="@+id/cardView">
 
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_mac_address_picking"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_transferinput_barcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Barcode" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_transferinput_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_po_no_picking"
-        app:title="@string/mac_address" />
+        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_barcode">
 
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_pl_no"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"
-        app:etenabled="false"
-        app:etfocusable="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_so"
-        app:title="@string/pl_dor_hint" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_transferinput_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Item Name"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_note"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_transferinput_qty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_po_no_picking"
-        app:title="@string/note_hint" />
+        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_name">
 
-    <dynamia.com.core.view.NormalInputLayout
-        android:id="@+id/et_po_no_picking"
-        android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_tranferinput_qty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/qty_title"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_reset"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#F16900"
+        android:text="Reset"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_qty"/>
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#5CF100"
+        android:text="@string/save_only"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_qty"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_part_no"
-        app:title="@string/po_no_title">
+        app:layout_constraintTop_toTopOf="parent">
 
-    </dynamia.com.core.view.NormalInputLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/grey_header">
 
+            <TextView
+                android:id="@+id/tv_transfer_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Item Name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_transfer_qty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/qty_title"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transfer_item_name" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

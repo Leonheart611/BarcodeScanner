@@ -13,9 +13,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryInputAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryInputImportAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryInputLocalAdapter
+import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.core.data.model.PickingListScanEntriesValue
 import dynamia.com.core.data.model.ReceiptImportScanEntriesValue
 import dynamia.com.core.data.model.ReceiptLocalScanEntriesValue
@@ -24,12 +24,12 @@ import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
 import kotlinx.android.synthetic.main.history_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
+class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySelected,
     HistoryInputLocalAdapter.OnLocalClicklistener, HistoryInputImportAdapter.OnImportClicklistener {
 
     private val viewModel: HistoryInputViewModel by viewModel()
     private val args: HistoryInputFragmentArgs by navArgs()
-    private val pickingListAdapter = HistoryInputAdapter(mutableListOf(), this)
+    private val pickingListAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
     private val importListAdapter = HistoryInputImportAdapter(mutableListOf(), this)
     private val localListAdapter = HistoryInputLocalAdapter(mutableListOf(), this)
 
@@ -62,13 +62,13 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
         when (args.source) {
             Constant.PICKING_LIST -> {
                 if (args.showAll) {
-                    tv_picking_detail_so.text = getString(R.string.pickinglist_all_history)
+                    tv_transfer_input.text = getString(R.string.pickinglist_all_history)
                     viewModel.pickingListRepository.getAllPickingListScanLiveData()
                         .observe(viewLifecycleOwner, {
-                            pickingListAdapter.updateData(it.toMutableList())
+                            //pickingListAdapter.updateData(it.toMutableList())
                         })
                 } else {
-                    tv_picking_detail_so.text =
+                    tv_transfer_input.text =
                         getString(R.string.picklistno_title, args.pickingListNo)
                     args.partNo?.let { partNo ->
                         tv_pn_no.text = getString(R.string.part_no_history, partNo)
@@ -76,25 +76,25 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
                             args.pickingListNo,
                             partNo, args.lineNo
                         ).observe(viewLifecycleOwner, {
-                            pickingListAdapter.updateData(it.toMutableList())
+                            //pickingListAdapter.updateData(it.toMutableList())
                         })
                     } ?: run {
                         viewModel.pickingListRepository.getPickingListScanEntries(args.pickingListNo)
                             .observe(viewLifecycleOwner, {
-                                pickingListAdapter.updateData(it.toMutableList())
+                                //pickingListAdapter.updateData(it.toMutableList())
                             })
                     }
                 }
             }
             Constant.RECEIPT_IMPORT -> {
                 if (args.showAll) {
-                    tv_picking_detail_so.text = getString(R.string.import_and_local_all_history)
+                    tv_transfer_input.text = getString(R.string.import_and_local_all_history)
                     viewModel.receiptImportRepository.getAllReceiptImportScanEntries()
                         .observe(viewLifecycleOwner, {
                             importListAdapter.updateData(it.toMutableList())
                         })
                 } else {
-                    tv_picking_detail_so.text =
+                    tv_transfer_input.text =
                         getString(R.string.receipthistory_title, args.pickingListNo)
 
                     args.documentNo?.let {
@@ -115,13 +115,13 @@ class HistoryInputFragment : Fragment(), HistoryInputAdapter.OnHistorySelected,
             }
             Constant.RECEIPT_LOCAL -> {
                 if (args.showAll) {
-                    tv_picking_detail_so.text = getString(R.string.import_and_local_all_history)
+                    tv_transfer_input.text = getString(R.string.import_and_local_all_history)
                     viewModel.receiptLocalRepository.getAllReceiptLocalScanEntries()
                         .observe(viewLifecycleOwner, {
                             localListAdapter.updateData(it.toMutableList())
                         })
                 } else {
-                    tv_picking_detail_so.text =
+                    tv_transfer_input.text =
                         getString(R.string.receipthistory_title, args.pickingListNo)
 
                     args.documentNo?.let {

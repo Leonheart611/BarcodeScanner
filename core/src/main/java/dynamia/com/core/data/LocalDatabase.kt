@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import dynamia.com.core.data.dao.TransferShipmentDao
 import dynamia.com.core.data.dao.UserDao
+import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.data.model.UserData
@@ -14,8 +15,9 @@ import dynamia.com.core.data.model.UserData
     entities = [
         TransferShipmentHeader::class,
         TransferShipmentLine::class,
-        UserData::class
-    ], version = 1, exportSchema = false
+        UserData::class,
+        TransferInputData::class
+    ], version = 3, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferShipment(): TransferShipmentDao

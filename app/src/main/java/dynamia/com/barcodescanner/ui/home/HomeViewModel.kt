@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.FailedGetShippingData
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.SuccessGetShipingData
 import dynamia.com.core.base.ViewModelBase
+import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
+import dynamia.com.core.data.entinty.TransferShipmentLineAsset
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.domain.ResultWrapper.*
 import dynamia.com.core.util.io
@@ -32,7 +34,11 @@ class HomeViewModel(
     fun checkDBNotNull() {
         viewModelScope.launch {
             try {
-
+                io {
+                    transferShipmentRepository.getCheckEmptyOrNot().collect {
+                        ui { _homeViewState.value = HomeViewState.DBhasEmpty(it) }
+                    }
+                }
             } catch (e: Exception) {
                 _homeViewState.value = HomeViewState.Error(e.localizedMessage)
             }
@@ -42,7 +48,10 @@ class HomeViewModel(
     fun clearAllDB() {
         viewModelScope.launch {
             try {
-
+                io {
+                    transferShipmentRepository.deleteAllTransferHeader()
+                    transferShipmentRepository.deleteAllTransferLine()
+                }
             } catch (e: Exception) {
                 _homeViewState.value = HomeViewState.Error(e.localizedMessage)
                 Log.e("clearAllDb", e.localizedMessage)
@@ -106,7 +115,6 @@ class HomeViewModel(
         }
     }
 
-
     sealed class HomeViewState {
         class Error(val message: String) : HomeViewState()
         class ShowLoading(val boolean: Boolean) : HomeViewState()
@@ -143,6 +151,38 @@ class HomeViewModel(
         class GetSuccessfulCount(val data: Int) : HomePostViewState()
         class ErrorPostCount(val message: String) : HomePostViewState()
         object SuccessPostallCount : HomePostViewState()
+    }
+
+
+    /**
+     * For Get Data From Assets
+     */
+
+    fun saveAssetData(
+        transferShipmentHeader: TransferShipmentHeaderAsset,
+        transferShipmentLine: TransferShipmentLineAsset
+    ) {
+        try {
+
+            viewModelScope.launch {
+                io {
+                    transferShipmentHeader.value?.let {
+                        it.forEach { data ->
+                            transferShipmentRepository.insertTransferHeader(data)
+                        }
+                    }
+
+                    transferShipmentLine.value?.let {
+                        it.forEach { data ->
+                            transferShipmentRepository.insertTransferLine(data)
+                        }
+                        ui { _homeGetApiViewState.value = SuccessGetShipingData }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+
+        }
     }
 }
 

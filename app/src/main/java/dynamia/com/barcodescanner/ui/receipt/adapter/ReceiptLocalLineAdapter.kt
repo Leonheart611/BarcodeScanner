@@ -69,10 +69,9 @@ class ReceiptLocalLineAdapter(private var receiptLocalLines: MutableList<Receipt
     inner class ReceiptLocalLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(pickingListLineValue: ReceiptLocalLineValue) {
             with(itemView) {
-                tv_description_2.text = pickingListLineValue.partNo
-                tv_line_no.text = pickingListLineValue.lineNo.toString()
+                tv_item_code.text = pickingListLineValue.lineNo.toString()
                 tv_description.text = pickingListLineValue.description
-                tv_outstanding.text =
+                tv_qty.text =
                     "${pickingListLineValue.alredyScanned}/${pickingListLineValue.quantity}/${pickingListLineValue.outstandingQuantity}"
                 setOnClickListener {
                     listener?.onClicklistener(pickingListLineValue)

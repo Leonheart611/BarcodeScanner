@@ -57,7 +57,7 @@
         app:title="@string/company_name" />
 
     <TextView
-        android:id="@+id/tv_picking_detail_so"
+        android:id="@+id/tv_transfer_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -74,9 +74,9 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@android:color/black"
-        app:layout_constraintEnd_toEndOf="@+id/tv_picking_detail_so"
-        app:layout_constraintStart_toStartOf="@+id/tv_picking_detail_so"
-        app:layout_constraintTop_toBottomOf="@+id/tv_picking_detail_so" />
+        app:layout_constraintEnd_toEndOf="@+id/tv_transfer_input"
+        app:layout_constraintStart_toStartOf="@+id/tv_transfer_input"
+        app:layout_constraintTop_toBottomOf="@+id/tv_transfer_input" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_input_history"
@@ -95,6 +95,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="TextView"
-        app:layout_constraintStart_toStartOf="@+id/tv_picking_detail_so"
-        app:layout_constraintTop_toBottomOf="@+id/tv_picking_detail_so" />
+        app:layout_constraintStart_toStartOf="@+id/tv_transfer_input"
+        app:layout_constraintTop_toBottomOf="@+id/tv_transfer_input" />
 </androidx.constraintlayout.widget.ConstraintLayout>
