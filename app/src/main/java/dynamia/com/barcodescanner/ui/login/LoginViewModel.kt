@@ -21,28 +21,31 @@ class LoginViewModel(
     val modelState: LiveData<LoginState> by lazy { _modelState }
 
     fun saveSharedPreferences(
-        hostname: String,
+        baseUrl: String,
         username: String,
         password: String,
-        company: String
+        domain: String,
+        companyName: String
     ) {
         viewModelScope.launch {
             val userData = UserData(
-                hostName = hostname,
+                hostName = baseUrl,
                 username = username,
                 password = password,
-                companyName = company
+                companyName = companyName,
+                domainName = domain
             )
             try {
                 io {
                     val editor = sharedPreferences.edit()
                     editor.putString(Constant.USERNAME_KEY, username)
-                    editor.putString(Constant.COMPANY_NAME, company)
-                    editor.putString(Constant.HOST_DOMAIN_KEY, hostname)
+                    editor.putString(Constant.DOMAIN_KEY, domain)
+                    editor.putString(Constant.BASEURL_KEY, baseUrl)
                     editor.putString(Constant.PASSWORD_KEY, password)
                     editor.apply()
                     userRepository.insertUserData(userData)
-                    ui { _modelState.value = LoginState.Success("Success Save Data") }
+                    if (editor.commit())
+                        ui { _modelState.value = LoginState.Success("Success Save Data") }
                 }
             } catch (e: Exception) {
                 ui { _modelState.value = LoginState.Error(e.localizedMessage) }
@@ -54,7 +57,7 @@ class LoginViewModel(
     }
 
     fun checkSharedPreferences() {
-        val name = sharedPreferences.getString(Constant.COMPANY_NAME, "")
+        val name = sharedPreferences.getString(Constant.USERNAME_KEY, "")
         if (name.isNullOrEmpty().not())
             _modelState.value = LoginState.UserhasLogin(null)
     }

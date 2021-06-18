@@ -13,6 +13,7 @@ import dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetail
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputViewModel
 import dynamia.com.core.data.LocalDatabase
 import dynamia.com.core.data.repository.*
+import dynamia.com.core.domain.MasariRetrofit
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module

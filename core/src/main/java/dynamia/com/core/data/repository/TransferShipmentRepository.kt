@@ -53,19 +53,14 @@ interface TransferShipmentRepository {
     suspend fun getTransferShipmentHeaderAsync(): Flow<ResultWrapper<MutableList<TransferShipmentHeader>>>
     suspend fun getTransferShipmentLineAsync(): Flow<ResultWrapper<MutableList<TransferShipmentLine>>>
     suspend fun postTransferData(value: String): Flow<TransferInputData>
+    suspend fun getUser(): Flow<String>
 }
 
 class TransferShipmentImpl(
     val dao: TransferShipmentDao,
     private val sharedPreferences: SharedPreferences
 ) : TransferShipmentRepository {
-    private val retrofitService by lazy {
-        MasariRetrofit.getClient(
-            serverAddress = sharedPreferences.getString(Constant.HOST_DOMAIN_KEY, "") ?: "",
-            password = sharedPreferences.getString(Constant.PASSWORD_KEY, "") ?: "",
-            username = sharedPreferences.getString(Constant.USERNAME_KEY, "") ?: ""
-        )
-    }
+    private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
 
     /**
      * Local Implementation
@@ -196,6 +191,11 @@ class TransferShipmentImpl(
 
     override suspend fun postTransferData(value: String): Flow<TransferInputData> = flow {
         emit(retrofitService.postTransferData(value))
+    }
+
+    override suspend fun getUser(): Flow<String> = flow {
+        val result = retrofitService.getCustomer()
+        emit(result.raw().toString())
     }
 }
 

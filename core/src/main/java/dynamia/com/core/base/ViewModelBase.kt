@@ -21,7 +21,7 @@ abstract class ViewModelBase(private val userRepository: SharedPreferences) : Vi
         .create()
 
     fun getCompanyName(): String {
-        return userRepository.getString(Constant.COMPANY_NAME, "") ?: ""
+        return userRepository.getString(Constant.USERNAME_KEY, "") ?: ""
     }
 
     override fun onCleared() {

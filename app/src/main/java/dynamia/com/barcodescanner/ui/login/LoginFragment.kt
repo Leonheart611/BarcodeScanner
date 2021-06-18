@@ -32,8 +32,8 @@ class LoginFragment : Fragment() {
         return inflater.inflate(R.layout.login_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         activity = requireActivity() as MainActivity
         initview()
         setupListener()
@@ -45,7 +45,8 @@ class LoginFragment : Fragment() {
             et_server_host.setText(getString(R.string.server_host_name))
             tied_username.setText(getString(R.string.user_name))
             tied_password.setText(getString(R.string.password))
-            et_company.setText(getString(R.string.company_name_login))
+            et_domainname.setText(getString(R.string.domain))
+            et_company_name.setText(getString(R.string.company_name))
         }
     }
 
@@ -54,10 +55,11 @@ class LoginFragment : Fragment() {
             if (checkNotEmpty()) {
                 if (et_server_host.text.toString().endsWith("/")) {
                     viewModel.saveSharedPreferences(
-                        hostname = et_server_host.text.toString(),
+                        baseUrl = et_server_host.text.toString(),
                         username = tied_username.text.toString(),
                         password = tied_password.text.toString(),
-                        company = et_company.text.toString()
+                        domain = et_domainname.text.toString(),
+                        companyName = et_company_name.text.toString()
                     )
                 } else {
                     context?.showLongToast("Host Name Must end with (/)")
@@ -79,7 +81,7 @@ class LoginFragment : Fragment() {
         if (et_server_host.text.toString().isEmpty()) {
             result = false
         }
-        if (et_company.text.toString().isEmpty()) {
+        if (et_domainname.text.toString().isEmpty()) {
             result = false
         }
         return result

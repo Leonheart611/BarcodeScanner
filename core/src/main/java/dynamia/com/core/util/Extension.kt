@@ -3,6 +3,7 @@ package dynamia.com.core.util
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -90,4 +91,20 @@ fun View.crossFade(animationDuration: Long, hide: View) {
 
 fun View.gone() {
     this.visibility = View.GONE
+}
+
+fun SharedPreferences.getUserName(): String {
+    return this.getString(Constant.USERNAME_KEY, "") ?: ""
+}
+
+fun SharedPreferences.getPassword(): String {
+    return this.getString(Constant.PASSWORD_KEY, "") ?: ""
+}
+
+fun SharedPreferences.getDomain(): String {
+    return this.getString(Constant.DOMAIN_KEY, "") ?: ""
+}
+
+fun SharedPreferences.getBaseUrl(): String {
+    return this.getString(Constant.BASEURL_KEY, "") ?: ""
 }

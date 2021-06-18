@@ -56,9 +56,7 @@ class HomeViewModel(
                 _homeViewState.value = HomeViewState.Error(e.localizedMessage)
                 Log.e("clearAllDb", e.localizedMessage)
             }
-
         }
-
     }
 
     fun logOutSharedPreferences() {
@@ -183,6 +181,23 @@ class HomeViewModel(
         } catch (e: Exception) {
 
         }
+    }
+
+    fun getUser() {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferShipmentRepository.getUser()
+                        .collect { dataHeader ->
+                            ui { _homeGetApiViewState.value = FailedGetShippingData(dataHeader) }
+                        }
+                }
+                ui { _homeGetApiViewState.value = SuccessGetShipingData }
+            } catch (e: Exception) {
+                _homeGetApiViewState.value = FailedGetShippingData(e.localizedMessage)
+            }
+        }
+
     }
 }
 

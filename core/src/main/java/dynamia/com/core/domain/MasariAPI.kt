@@ -23,6 +23,9 @@ interface MasariAPI {
     @Headers("Content-Type: application/json")
     @POST("Android_Transaction")
     suspend fun postTransferData(@Body value: String): TransferInputData
+
+    @GET("Chart_of_Accounts")
+    suspend fun getCustomer(): Response<String>
 }
 
 data class BaseResponse<T>(

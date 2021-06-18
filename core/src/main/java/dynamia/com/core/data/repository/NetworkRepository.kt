@@ -28,7 +28,7 @@ class NetworkRepositoryImpl(
 ) : NetworkRepository {
     private val retrofitService by lazy {
         RetrofitBuilder.getClient(
-            serverAddress = sharedPreferences.getString(Constant.HOST_DOMAIN_KEY, "") ?: "",
+            serverAddress = sharedPreferences.getString(Constant.DOMAIN_KEY, "") ?: "",
             password = sharedPreferences.getString(Constant.PASSWORD_KEY, "") ?: "",
             username = sharedPreferences.getString(Constant.USERNAME_KEY, "") ?: ""
         )
