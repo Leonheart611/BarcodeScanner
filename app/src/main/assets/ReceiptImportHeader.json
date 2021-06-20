@@ -7,7 +7,8 @@
       "Buy_from_Vendor_Name": "MICROSOFT",
       "Employee_Code": "STEVEN",
       "Posting_Date": "2019-08-23T00:00:00",
-      "ETag": "48;bBYAAAJ7/1QATwAvADIAMAAxADkALwAwADcAOQA1AAAAAAA=9;9588161280;"
+      "ETag": "48;bBYAAAJ7/1QATwAvADIAMAAxADkALwAwADcAOQA1AAAAAAA=9;9588161280;",
+      "Vendor_Shipment_No": "Cyber Connect2"
     }
   ]
 }

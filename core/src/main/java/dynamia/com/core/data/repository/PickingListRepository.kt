@@ -118,7 +118,7 @@ class PickingListRepositoryImpl(
                     partNo = pickingListScanEntriesValue.partNo,
                     pickingListNo = pickingListScanEntriesValue.pickingListNo
                 )
-                if (pickingListData.alreadyPickup < pickingListData.outstandingQuantity.toInt()) {
+                if (pickingListData.alreadyPickup < pickingListData.qtyToShip.toInt()) {
                     pickingListData.apply {
                         this.alreadyPickup = ++alreadyPickup
                     }

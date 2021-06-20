@@ -53,7 +53,7 @@ class PickingListInputViewModel(
                 }
             } catch (e: Exception) {
                 _pickingInputViewState.value =
-                    PickingInputViewState.ErrorGetData(e.localizedMessage)
+                    PickingInputViewState.ErrorGetData(e.message ?: "")
             }
         }
     }
