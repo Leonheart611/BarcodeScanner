@@ -68,8 +68,10 @@ class TransferDetailLineAdapter(private var values: MutableList<TransferShipment
     inner class PickingDetailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(transferShipmentLine: TransferShipmentLine) {
             with(itemView) {
-                tv_item_code.text = transferShipmentLine.lineNo.toString()
+                tv_item_code.text = transferShipmentLine.no
                 tv_description.text = transferShipmentLine.description
+                tv_qty.text =
+                    "${transferShipmentLine.alredyScanned} / ${transferShipmentLine.quantity}"
                 setOnClickListener {
                     listener?.onclicklistener(transferShipmentLine)
                 }

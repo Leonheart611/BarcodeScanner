@@ -25,9 +25,6 @@ import kotlinx.android.synthetic.main.bottom_sheet_picking_history_fragment.*
 import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val ARGS_RECEIPT_NO = "args_receipt_no"
-const val ARGS_RECEIPT_TYPE = "args_receipt_type"
-
 class ReceiptHistoryBottomSheet : BottomSheetDialogFragment(),
     HistoryInputImportAdapter.OnImportClicklistener, HistoryInputLocalAdapter.OnLocalClicklistener {
 
@@ -69,7 +66,7 @@ class ReceiptHistoryBottomSheet : BottomSheetDialogFragment(),
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.bottom_sheet_picking_history_fragment, container, false)
     }
@@ -170,6 +167,8 @@ class ReceiptHistoryBottomSheet : BottomSheetDialogFragment(),
     }
 
     companion object {
+        const val ARGS_RECEIPT_NO = "args_receipt_no"
+        const val ARGS_RECEIPT_TYPE = "args_receipt_type"
         fun newInstance(receiptId: String, receiptType: String): ReceiptHistoryBottomSheet {
             val argument = Bundle().apply {
                 putString(ARGS_RECEIPT_NO, receiptId)

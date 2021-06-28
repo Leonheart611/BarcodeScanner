@@ -36,6 +36,9 @@ class TransferListViewModel(
                                 _viewState.postValue(TransferListViewState.Error(it.error))
                             }
                             is ResultWrapper.Success -> {
+                                it.value.forEach { data ->
+                                    transferShipmentRepository.insertTransferHeader(data)
+                                }
                                 _viewState.postValue(TransferListViewState.SuccessUpdateData)
                             }
                         }

@@ -192,8 +192,8 @@ class StockCountingFragment : Fragment(), StockCountAdapter.OnStockClicklistener
                                 Part_No = et_count_part_no.text.toString(),
                                 Serial_No = et_count_serial_no.text.toString(),
                                 Item_No = et_po_stock_count.text.toString(),
-                                time = context?.getCurrentTime() ?: "",
-                                date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
+                                time = getCurrentTime(),
+                                date = "${getCurrentDate()}T${getCurrentTime()}",
                                 Employee_COde = viewModel.getCompanyName()
                             )
                         )

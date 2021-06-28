@@ -21,5 +21,7 @@ data class TransferInputData(
     @SerializedName("Bin_Code") @Expose(serialize = true) val binCode: String = "",
     @SerializedName("New_Bin_Code") @Expose(serialize = true) val newBinCode: String = "",
     @SerializedName("Sync_to_BC") @Expose(serialize = true) val syncToBC: Int = 2,
+    @SerializedName("User_Name") @Expose(serialize = true) val userName: String,
+    @SerializedName("Insert_DateTime") @Expose(serialize = true) val insertDateTime: String,
     @Expose(serialize = false, deserialize = false) var sycn_status: Boolean = false
 )

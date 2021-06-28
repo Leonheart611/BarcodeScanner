@@ -24,7 +24,7 @@ interface TransferShipmentDao {
     fun deleteAllTransferHeader()
 
     @Query("SELECT count(*) from TransferShipmentHeader")
-    fun getCheckEmptyOrNot(): Int
+    fun getCheckEmptyOrNot(): LiveData<Int>
 
     /**
      * TransferShipmentLine
@@ -41,10 +41,13 @@ interface TransferShipmentDao {
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no")
     fun getLineListFromHeader(no: String): List<TransferShipmentLine>
 
+    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no")
+    fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>>
+
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND lineNo = :lineNo")
     fun getLineDetail(no: String, lineNo: Int): TransferShipmentLine
 
-    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND itemIdentifier = :identifier")
+    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND `no` = :identifier")
     fun getLineDetailFromBarcode(no: String, identifier: String): TransferShipmentLine
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = TransferShipmentLine::class)

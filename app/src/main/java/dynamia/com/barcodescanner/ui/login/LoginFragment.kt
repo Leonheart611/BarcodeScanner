@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
+import dynamia.com.core.data.model.UserData
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,13 +41,13 @@ class LoginFragment : Fragment() {
     }
 
     private fun initview() {
-        if (BuildConfig.BUILD_TYPE == "debug") {
+        /*if (BuildConfig.BUILD_TYPE == "debug") {
             et_server_host.setText(getString(R.string.server_host_name))
             tied_username.setText(getString(R.string.user_name))
             tied_password.setText(getString(R.string.password))
             et_domainname.setText(getString(R.string.domain))
             et_company_name.setText(getString(R.string.company_name))
-        }
+        }*/
     }
 
     private fun setupListener() {
@@ -87,6 +87,16 @@ class LoginFragment : Fragment() {
         return result
     }
 
+    private fun setView(userdata: UserData) {
+        with(userdata) {
+            et_server_host.setText(hostName)
+            tied_username.setText(username)
+            tied_password.setText(password)
+            et_domainname.setText(domainName)
+            et_company_name.setText(companyName)
+        }
+    }
+
     private fun setObservable() {
         viewModel.modelState.observe(viewLifecycleOwner, {
             when (it) {
@@ -103,6 +113,7 @@ class LoginFragment : Fragment() {
                 is UserhasLogin -> {
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 }
+                is UserHaveData -> setView(it.userData)
             }
         })
     }

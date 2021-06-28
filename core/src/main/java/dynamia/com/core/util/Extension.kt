@@ -40,12 +40,12 @@ fun String.toNormalDate(): String {
     return formatter.format(parser.parse(this))
 }
 
-fun Context.getCurrentTime(): String {
+fun getCurrentTime(): String {
     val sdf = SimpleDateFormat("HH:mm:ss")
     return sdf.format(Date())
 }
 
-fun Context.getCurrentDate(): String {
+fun getCurrentDate(): String {
     val sdf = SimpleDateFormat("yyyy-MM-dd")
     return sdf.format(Date())
 }

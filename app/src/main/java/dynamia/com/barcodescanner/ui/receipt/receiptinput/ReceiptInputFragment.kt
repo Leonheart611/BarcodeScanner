@@ -673,8 +673,8 @@ class ReceiptInputFragment : Fragment(),
             shipset = "-",
             serialNo = et_sn_no.getTextAsString(),
             lineNo = lineNo,
-            date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
-            time = "${context?.getCurrentTime()}",
+            date = "${getCurrentDate()}T${getCurrentTime()}",
+            time = "${getCurrentTime()}",
             trackingID = et_trackingid.getTextAsString(),
             pONo = et_po_no.getTextAsString()
         )
@@ -691,8 +691,8 @@ class ReceiptInputFragment : Fragment(),
             shipset = "-",
             serialNo = et_sn_no.getTextAsString(),
             lineNo = lineNo,
-            date = "${context?.getCurrentDate()}T${context?.getCurrentTime()}",
-            time = "${context?.getCurrentTime()}",
+            date = "${getCurrentDate()}T${getCurrentTime()}",
+            time = "${getCurrentTime()}",
             trackingID = et_trackingid.getTextAsString(),
             pONo = et_po_no.getTextAsString()
         )

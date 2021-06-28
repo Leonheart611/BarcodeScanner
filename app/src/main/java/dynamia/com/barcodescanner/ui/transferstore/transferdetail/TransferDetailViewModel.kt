@@ -5,17 +5,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
+import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.data.repository.TransferShipmentRepository
-import dynamia.com.core.util.io
-import dynamia.com.core.util.ui
+import dynamia.com.core.util.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class TransferDetailViewModel(
     val transferShipmentRepository: TransferShipmentRepository,
-    sharedPreferences: SharedPreferences
+    val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
     private val _pickingDetailViewState = MutableLiveData<TransferListViewState>()
@@ -23,6 +23,76 @@ class TransferDetailViewModel(
 
     private val _pickingPostViewState = MutableLiveData<PickingDetailPostViewState>()
     val pickingPostViewState: LiveData<PickingDetailPostViewState> by lazy { _pickingPostViewState }
+
+    private val _transferInputViewState =
+        MutableLiveData<TransferDetailInputViewState>()
+    val transferInputViewState: LiveData<TransferDetailInputViewState> by lazy { _transferInputViewState }
+
+    private var transferLineData: TransferShipmentLine? = null
+    private var transferHeaderData: TransferShipmentHeader? = null
+
+
+    fun getPickingListLineValue(no: String, identifier: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferShipmentRepository.getTransferHeaderDetail(no).collect {
+                        transferHeaderData = it
+                    }
+                    transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
+                        .collect { data ->
+                            ui {
+                                transferLineData = data
+                                insertTransferInput("1", "${getCurrentDate()}T${getCurrentTime()}")
+                            }
+                        }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun insertTransferInput(qty: String, timeStamp: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferHeaderData?.let { header ->
+                        transferLineData?.let { line ->
+                            val value = transferShipmentRepository.insertTransferInput(
+                                TransferInputData(
+                                    documentNo = line.documentNo,
+                                    quantity = qty.toInt(),
+                                    lineNo = line.lineNo,
+                                    itemNo = line.no,
+                                    transferFromBinCode = header.transferFromCode,
+                                    transferToBinCode = header.transferToCode,
+                                    userName = sharedPreferences.getUserName(),
+                                    insertDateTime = timeStamp
+                                )
+                            )
+                            ui {
+                                if (value) {
+                                    _transferInputViewState.value =
+                                        TransferDetailInputViewState.SuccessSaveData
+                                } else {
+                                    _transferInputViewState.value =
+                                        TransferDetailInputViewState.ErrorSaveData("Error Save Data")
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+            }
+
+        }
+    }
 
 
     fun postPickingDataNew() {
@@ -113,6 +183,12 @@ class TransferDetailViewModel(
         class GetSuccessfullyPostedData(val data: Int) : PickingDetailPostViewState()
         class ErrorPostData(val message: String) : PickingDetailPostViewState()
         object AllDataPosted : PickingDetailPostViewState()
+    }
+
+    sealed class TransferDetailInputViewState {
+        object SuccessSaveData : TransferDetailInputViewState()
+        class ErrorSaveData(val message: String) : TransferDetailInputViewState()
+        class ErrorGetData(val message: String) : TransferDetailInputViewState()
     }
 
 

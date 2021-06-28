@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAdapter
 import dynamia.com.core.data.entinty.TransferShipmentHeader
+import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.dialog_validate_s.*
 import kotlinx.android.synthetic.main.transfer_detail_fragment.*
 import kotlinx.android.synthetic.main.transfer_header_layout.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TransferDetailFragment : Fragment() {
+class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferLineCLicklistener {
     private val viewModel: TransferDetailViewModel by viewModel()
     private val args: TransferDetailFragmentArgs by navArgs()
     val adapter = TransferDetailLineAdapter(mutableListOf())
@@ -27,7 +28,7 @@ class TransferDetailFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.transfer_detail_fragment, container, false)
     }
@@ -35,7 +36,7 @@ class TransferDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getTransferDetail(args.transferNo)
-        viewModel.getTransferLine(args.transferNo)
+        //viewModel.getTransferLine(args.transferNo)
         setupView()
         setupListener()
         setObseverable()
@@ -49,6 +50,7 @@ class TransferDetailFragment : Fragment() {
         rv_picking_detail.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         rv_picking_detail.adapter = adapter
+        adapter.setOnClickListener(this)
     }
 
     private fun setObseverable() {
@@ -65,6 +67,10 @@ class TransferDetailFragment : Fragment() {
                 }
             }
         })
+        viewModel.transferShipmentRepository.getLineListFromHeaderLiveData(args.transferNo)
+            .observe(viewLifecycleOwner, {
+                adapter.update(it.toMutableList())
+            })
     }
 
     private fun setupMainView(value: TransferShipmentHeader) {
@@ -78,10 +84,13 @@ class TransferDetailFragment : Fragment() {
             view?.findNavController()?.popBackStack()
         }
         fab_input_transfer.setOnClickListener {
+            val bottomSheetFragment = ScanInputTransferDialog.newInstance(args.transferNo)
+            bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+        }
+        fab_manual_input_transfer.setOnClickListener {
             val action =
                 TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                    args.transferNo
-                )
+                    args.transferNo, null)
             view?.findNavController()?.navigate(action)
         }
         btn_submit.setOnClickListener {
@@ -123,22 +132,17 @@ class TransferDetailFragment : Fragment() {
 
                     btn_setting_continue.setOnClickListener {
                         dismiss()
-                        /* val action = if (cb_check_s_true.isChecked) {
-                             PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(
-                                 args.pickingListNo,
-                                 true
-                             )
-                         } else {
-                             PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(
-                                 args.pickingListNo,
-                                 false
-                             )
-                         }
-                         view?.findNavController()?.navigate(action)*/
                     }
                     show()
                 }
             }
         }
+    }
+
+    override fun onclicklistener(pickingListLineValue: TransferShipmentLine) {
+        val action =
+            TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
+                args.transferNo, pickingListLineValue.no)
+        view?.findNavController()?.navigate(action)
     }
 }

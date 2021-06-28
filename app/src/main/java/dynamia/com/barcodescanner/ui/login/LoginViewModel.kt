@@ -10,6 +10,7 @@ import dynamia.com.core.data.repository.UserRepository
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
@@ -60,6 +61,18 @@ class LoginViewModel(
         val name = sharedPreferences.getString(Constant.USERNAME_KEY, "")
         if (name.isNullOrEmpty().not())
             _modelState.value = LoginState.UserhasLogin(null)
+
+        viewModelScope.launch {
+            try {
+                io {
+                    userRepository.getUserData().collect {
+                        ui { _modelState.value = it?.let { data -> LoginState.UserHaveData(data) } }
+                    }
+                }
+            } catch (e: Exception) {
+                _modelState.value = LoginState.UserhasLogin(null)
+            }
+        }
     }
 
     sealed class LoginState {
@@ -67,6 +80,7 @@ class LoginViewModel(
         class Error(val message: String) : LoginState()
         class ShowLoading(val boolean: Boolean) : LoginState()
         class UserhasLogin(val userData: UserData?) : LoginState()
+        class UserHaveData(val userData: UserData) : LoginState()
     }
 
 

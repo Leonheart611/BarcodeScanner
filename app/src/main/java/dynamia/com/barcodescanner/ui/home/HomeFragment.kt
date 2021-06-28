@@ -34,7 +34,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.checkDBNotNull()
         activity = requireActivity() as MainActivity
         setObservable()
         initView()
@@ -45,11 +44,7 @@ class HomeFragment : Fragment() {
         viewModel.homeViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is DBhasEmpty -> {
-                    if (it.value == 0) {
-                        openStatusApi()
-                    } else {
-                        tv_transfer_count.text = it.value.toString()
-                    }
+
                 }
                 is HomeViewModel.HomeViewState.Error -> {
                     context?.showLongToast(it.message)
@@ -62,6 +57,13 @@ class HomeFragment : Fragment() {
                     context?.showLongToast("Log Out")
                     findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
                 }
+            }
+        })
+        viewModel.transferShipmentRepository.getCheckEmptyOrNot().observe(viewLifecycleOwner, {
+            if (it == 0) {
+                openStatusApi()
+            } else {
+                tv_transfer_count.text = it.toString()
             }
         })
     }

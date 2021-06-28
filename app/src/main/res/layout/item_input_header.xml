@@ -15,13 +15,15 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView">
+        app:layout_constraintTop_toBottomOf="@+id/cv_transfer_input_detail">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_transferinput_barcode"
+            android:id="@+id/et_transfer_input_barcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Barcode" />
+            android:hint="Barcode"
+            android:imeOptions="actionNext"
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -39,8 +41,10 @@
             android:id="@+id/et_transferinput_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"
             android:hint="Item Name"
-            android:inputType="none" />
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -70,9 +74,9 @@
         android:layout_marginTop="16dp"
         android:backgroundTint="#F16900"
         android:text="Reset"
-        app:layout_constraintStart_toStartOf="parent"
         android:textAllCaps="false"
-        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_qty"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_qty" />
 
     <Button
         android:id="@+id/btn_save"
@@ -84,12 +88,12 @@
         android:backgroundTint="#5CF100"
         android:text="@string/save_only"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_qty"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_qty" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
+        android:id="@+id/cv_transfer_input_detail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

@@ -4,10 +4,11 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.doAfterTextChanged
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -43,7 +44,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.transfer_input_fragment, container, false)
     }
@@ -74,6 +75,9 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                 TransferInputViewModel.TransferInputViewState.SuccessSaveData -> {
                     context?.showLongToast("Success Save Data")
                 }
+                is TransferInputViewModel.TransferInputViewState.SuccessGetHistoryValue -> {
+
+                }
             }
         })
         viewModel.inputValidation.observe(viewLifecycleOwner, {
@@ -99,8 +103,25 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
 
     private fun setupView() {
         toolbar_picking_list_input.title = viewModel.getCompanyName()
-        et_transferinput_barcode.doAfterTextChanged {
-            viewModel.getPickingListLineValue(args.transferNo, it.toString())
+        args.barcodeNo?.let {
+            et_transfer_input_barcode.setText(it)
+            et_transfer_input_barcode.isEnabled = false
+            viewModel.getPickingListLineValue(
+                args.transferNo,
+                it
+            )
+        }
+        et_transfer_input_barcode.setOnEditorActionListener { _, keyCode, event ->
+            if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
+                || keyCode == EditorInfo.IME_ACTION_NEXT
+            ) {
+                viewModel.getPickingListLineValue(
+                    args.transferNo,
+                    et_transfer_input_barcode.text.toString()
+                )
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
         }
     }
 
@@ -109,7 +130,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         btn_reset.setOnClickListener { clearData() }
         btn_save.setOnClickListener {
             viewModel.checkUserInputValidation(
-                et_transferinput_barcode.text.toString(),
+                et_transfer_input_barcode.text.toString(),
                 et_tranferinput_qty.text.toString()
             )
         }
@@ -126,7 +147,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
     }
 
     private fun clearData() {
-        et_transferinput_barcode.text?.clear()
+        et_transfer_input_barcode.text?.clear()
         et_transferinput_name.text?.clear()
         et_tranferinput_qty.text?.clear()
     }

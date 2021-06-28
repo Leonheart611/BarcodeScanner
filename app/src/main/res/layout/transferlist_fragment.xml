@@ -73,6 +73,7 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:clickable="true"
+        android:visibility="gone"
         app:backgroundTintMode="src_over"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"

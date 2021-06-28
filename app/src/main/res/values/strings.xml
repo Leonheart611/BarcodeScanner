@@ -44,13 +44,14 @@
     <string name="item_no_title">Item No</string>
     <string name="description_title">Description</string>
     <string name="view_title">View</string>
-    <string name="server_host_name">http://192.168.1.10:7048/BC180/OdataV4/Company("\'CRONUS Australia Pty. Ltd.\'")/</string>
+    <string name="server_host_name">http://192.168.1.12:7048/BC180/OdataV4/Company("\'CRONUS Australia Pty. Ltd.\'")/</string>
     <string name="user_name">BC1</string>
     <string name="password">qwerty</string>
     <string name="domain">DESKTOP-U57JOGD\</string>
     <string name="employee_name">STEVEN</string>
     <string name="company_name_login">CRONUS Australia Pty. Ltd.</string>
     <string name="salesperson_text">Salesperson</string>
+    <string name="qty_alreadyscan_qty_fromline"></string>
 
     <string name="error_input_message">Wajib di isi</string>
     <string name="posted_status_true">Post Status :  True</string>

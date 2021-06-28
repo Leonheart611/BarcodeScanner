@@ -10,7 +10,6 @@ import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.domain.ResultWrapper
-import dynamia.com.core.util.Constant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,7 +23,7 @@ interface TransferShipmentRepository {
     suspend fun getTransferHeaderDetail(no: String): Flow<TransferShipmentHeader>
     suspend fun insertTransferHeader(data: TransferShipmentHeader)
     suspend fun deleteAllTransferHeader()
-    suspend fun getCheckEmptyOrNot(): Flow<Int>
+    fun getCheckEmptyOrNot(): LiveData<Int>
 
     /**
      * Local Transfer Line
@@ -33,6 +32,7 @@ interface TransferShipmentRepository {
     suspend fun insertTransferLine(data: TransferShipmentLine)
     suspend fun deleteAllTransferLine()
     suspend fun getLineListFromHeader(no: String): Flow<List<TransferShipmentLine>>
+    fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>>
     suspend fun getLineDetailFromBarcode(no: String, identifier: String): Flow<TransferShipmentLine>
 
     /**
@@ -58,7 +58,7 @@ interface TransferShipmentRepository {
 
 class TransferShipmentImpl(
     val dao: TransferShipmentDao,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
 ) : TransferShipmentRepository {
     private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
 
@@ -91,10 +91,11 @@ class TransferShipmentImpl(
             emit(dao.getLineListFromHeader(no))
         }
 
+    override fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>> =
+        dao.getLineListFromHeaderLiveData(no)
 
-    override suspend fun getCheckEmptyOrNot(): Flow<Int> = flow {
-        emit(dao.getCheckEmptyOrNot())
-    }
+    override fun getCheckEmptyOrNot(): LiveData<Int> = dao.getCheckEmptyOrNot()
+
 
     override fun getAllTransferInput(): LiveData<List<TransferInputData>> =
         dao.getAllTransferInput()
@@ -104,7 +105,7 @@ class TransferShipmentImpl(
     ) {
         try {
             val lineData = dao.getLineDetail(data.documentNo, data.lineNo)
-            if (lineData.alredyScanned < lineData.quantity) {
+            if (lineData.alredyScanned < lineData.quantity!!) {
                 lineData.apply {
                     this.alredyScanned = ++alredyScanned
                 }
@@ -121,7 +122,7 @@ class TransferShipmentImpl(
 
     override suspend fun getLineDetailFromBarcode(
         no: String,
-        identifier: String
+        identifier: String,
     ): Flow<TransferShipmentLine> = flow { emit(dao.getLineDetailFromBarcode(no, identifier)) }
 
     override suspend fun updateTransferInput(data: TransferInputData) {

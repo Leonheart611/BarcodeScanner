@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.flow
 interface UserRepository {
     suspend fun getUserData(): Flow<UserData?>
     suspend fun insertUserData(data: UserData)
+    suspend fun updateUserData(data: UserData)
     suspend fun clearUserData()
-
 }
 
 
@@ -19,7 +19,12 @@ class UserRepositoryImpl(val dao: UserDao) : UserRepository {
     }
 
     override suspend fun insertUserData(data: UserData) {
+        dao.clearUserData()
         dao.insertUserData(data)
+    }
+
+    override suspend fun updateUserData(data: UserData) {
+        dao.updateUserData(data)
     }
 
     override suspend fun clearUserData() {

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val transferShipmentRepository: TransferShipmentRepository,
+    val transferShipmentRepository: TransferShipmentRepository,
     private val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -30,7 +30,7 @@ class HomeViewModel(
 
     private var _homePostViewState = MutableLiveData<HomePostViewState>()
     val homePostViewState: LiveData<HomePostViewState> by lazy { _homePostViewState }
-
+/*
     fun checkDBNotNull() {
         viewModelScope.launch {
             try {
@@ -43,7 +43,7 @@ class HomeViewModel(
                 _homeViewState.value = HomeViewState.Error(e.localizedMessage)
             }
         }
-    }
+    }*/
 
     fun clearAllDB() {
         viewModelScope.launch {

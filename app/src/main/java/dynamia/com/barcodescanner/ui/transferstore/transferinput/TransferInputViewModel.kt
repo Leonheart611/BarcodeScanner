@@ -9,14 +9,13 @@ import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.data.repository.TransferShipmentRepository
-import dynamia.com.core.util.io
-import dynamia.com.core.util.ui
+import dynamia.com.core.util.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class TransferInputViewModel(
     private val transferShipmentRepository: TransferShipmentRepository,
-    sharedPreferences: SharedPreferences
+    val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
     private val _transferInputViewState = MutableLiveData<TransferInputViewState>()
@@ -72,7 +71,7 @@ class TransferInputViewModel(
         }
     }
 
-    fun insertTransferInput(qty: String) {
+    private fun insertTransferInput(qty: String, timeStamp: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -85,7 +84,9 @@ class TransferInputViewModel(
                                     lineNo = line.lineNo,
                                     itemNo = line.no,
                                     transferFromBinCode = header.transferFromCode,
-                                    transferToBinCode = header.transferToCode
+                                    transferToBinCode = header.transferToCode,
+                                    userName = sharedPreferences.getUserName(),
+                                    insertDateTime = timeStamp
                                 )
                             )
                             ui {
@@ -101,6 +102,7 @@ class TransferInputViewModel(
                     }
                 }
             } catch (e: Exception) {
+                e.stackTrace
                 _transferInputViewState.value =
                     TransferInputViewState.ErrorGetData(e.localizedMessage)
             }
@@ -120,7 +122,7 @@ class TransferInputViewModel(
         }
         if (barcode.isNotEmpty() && qty.isNotEmpty()) {
             _inputValidaton.value = InputValidation.AllValidationCorrect
-            insertTransferInput(qty)
+            insertTransferInput(qty, "${getCurrentDate()}T${getCurrentTime()}")
         }
     }
 

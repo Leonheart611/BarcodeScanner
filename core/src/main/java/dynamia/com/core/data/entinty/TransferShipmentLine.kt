@@ -14,11 +14,12 @@ data class TransferShipmentLine(
     @SerializedName("Quantity") val quantity: Int,
     @SerializedName("Unit_of_Measure") val unitOfMeasure: String,
     @SerializedName("ItemIdentifier") val itemIdentifier: String,
+    @SerializedName("Qty_in_Transit") val qtyInTransit: Int? = 0,
     @SerializedName("Transfer_From_Bin_Code") val transferFromBinCode: String,
     @SerializedName("Transfer_To_Bin_Code") val transferToBinCode: String,
-    @SerializedName("Already_scaned") var alredyScanned: Int = 0
+    @SerializedName("Already_scaned") var alredyScanned: Int = 0,
 )
 
 data class TransferShipmentLineAsset(
-    @SerializedName("value") val value: List<TransferShipmentLine>?
+    @SerializedName("value") val value: List<TransferShipmentLine>?,
 )
