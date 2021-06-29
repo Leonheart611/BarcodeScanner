@@ -30,20 +30,6 @@ class HomeViewModel(
 
     private var _homePostViewState = MutableLiveData<HomePostViewState>()
     val homePostViewState: LiveData<HomePostViewState> by lazy { _homePostViewState }
-/*
-    fun checkDBNotNull() {
-        viewModelScope.launch {
-            try {
-                io {
-                    transferShipmentRepository.getCheckEmptyOrNot().collect {
-                        ui { _homeViewState.value = HomeViewState.DBhasEmpty(it) }
-                    }
-                }
-            } catch (e: Exception) {
-                _homeViewState.value = HomeViewState.Error(e.localizedMessage)
-            }
-        }
-    }*/
 
     fun clearAllDB() {
         viewModelScope.launch {
@@ -51,6 +37,7 @@ class HomeViewModel(
                 io {
                     transferShipmentRepository.deleteAllTransferHeader()
                     transferShipmentRepository.deleteAllTransferLine()
+                    transferShipmentRepository.deleteAllTransferInput()
                 }
             } catch (e: Exception) {
                 _homeViewState.value = HomeViewState.Error(e.localizedMessage)
@@ -74,8 +61,11 @@ class HomeViewModel(
                     transferShipmentRepository.getTransferShipmentHeaderAsync()
                         .collect { dataHeader ->
                             when (dataHeader) {
-                                is Success -> dataHeader.value.forEach {
-                                    transferShipmentRepository.insertTransferHeader(it)
+                                is Success -> {
+                                    transferShipmentRepository.deleteAllTransferHeader()
+                                    dataHeader.value.forEach {
+                                        transferShipmentRepository.insertTransferHeader(it)
+                                    }
                                 }
                                 is GenericError -> {
                                     ui {
@@ -91,8 +81,11 @@ class HomeViewModel(
                         }
                     transferShipmentRepository.getTransferShipmentLineAsync().collect { data ->
                         when (data) {
-                            is Success -> data.value.forEach {
-                                transferShipmentRepository.insertTransferLine(it)
+                            is Success -> {
+                                transferShipmentRepository.deleteAllTransferLine()
+                                data.value.forEach {
+                                    transferShipmentRepository.insertTransferLine(it)
+                                }
                             }
                             is GenericError -> {
                                 ui {
@@ -158,7 +151,7 @@ class HomeViewModel(
 
     fun saveAssetData(
         transferShipmentHeader: TransferShipmentHeaderAsset,
-        transferShipmentLine: TransferShipmentLineAsset
+        transferShipmentLine: TransferShipmentLineAsset,
     ) {
         try {
 

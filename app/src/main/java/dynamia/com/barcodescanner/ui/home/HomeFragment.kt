@@ -125,7 +125,6 @@ class HomeFragment : Fragment() {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 btn_refresh_yes.setOnClickListener {
-                    viewModel.clearAllDB()
                     openStatusApi()
                     dismiss()
                 }

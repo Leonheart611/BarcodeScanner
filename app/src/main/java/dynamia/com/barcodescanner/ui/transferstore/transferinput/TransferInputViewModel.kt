@@ -95,7 +95,7 @@ class TransferInputViewModel(
                                         TransferInputViewState.SuccessSaveData
                                 } else {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.ErrorSaveData("Error Save Data")
+                                        TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan")
                                 }
                             }
                         }

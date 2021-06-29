@@ -105,9 +105,9 @@ class TransferShipmentImpl(
     ) {
         try {
             val lineData = dao.getLineDetail(data.documentNo, data.lineNo)
-            if (lineData.alredyScanned < lineData.quantity!!) {
+            if ((lineData.alredyScanned + data.quantity) < lineData.quantity) {
                 lineData.apply {
-                    this.alredyScanned = ++alredyScanned
+                    this.alredyScanned += data.quantity
                 }
                 dao.insertTransferInput(data)
                 dao.updateTransferLine(lineData)
