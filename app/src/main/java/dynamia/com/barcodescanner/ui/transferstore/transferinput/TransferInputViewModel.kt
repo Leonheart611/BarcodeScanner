@@ -26,17 +26,16 @@ class TransferInputViewModel(
     private var transferLineData: TransferShipmentLine? = null
     private var transferHeaderData: TransferShipmentHeader? = null
 
-    fun getHistoryValue(no: String) {
+    fun getHistoryValueDetail(no: String) {
         viewModelScope.launch {
             io {
                 transferShipmentRepository.getTransferInputHistory(no).collect {
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessGetHistoryValue(it.toMutableList())
+                            TransferInputViewState.SuccessGetHistoryValue(it)
                     }
                 }
             }
-
         }
     }
 
@@ -106,7 +105,6 @@ class TransferInputViewModel(
                 _transferInputViewState.value =
                     TransferInputViewState.ErrorGetData(e.localizedMessage)
             }
-
         }
     }
 
@@ -126,15 +124,63 @@ class TransferInputViewModel(
         }
     }
 
+    fun deleteTransferEntry(id: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferShipmentRepository.deleteTransferInput(id)
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessDeleteData
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun updateTransferEntry(id: Int, newQty: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferShipmentRepository.updateTransferInputQty(id, newQty)
+                        .collect { result ->
+                            ui {
+                                if (result) {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.SuccessUpdateData
+                                } else {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.ErrorUpdateData("Qty has Reach maximum allowed, please change")
+                                }
+                            }
+                        }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+            }
+        }
+    }
+
 
     sealed class TransferInputViewState {
         class SuccessGetValue(val data: TransferShipmentLine) : TransferInputViewState()
-        class SuccessGetHistoryValue(val data: MutableList<TransferInputData>) :
-            TransferInputViewState()
+        class SuccessGetHistoryValue(val data: TransferInputData) : TransferInputViewState()
 
         object SuccessSaveData : TransferInputViewState()
         class ErrorSaveData(val message: String) : TransferInputViewState()
         class LoadingSearchPickingList(val status: Boolean) : TransferInputViewState()
+
+        object SuccessDeleteData : TransferInputViewState()
+        class ErrorDeleteData(val message: String) : TransferInputViewState()
+
+        object SuccessUpdateData : TransferInputViewState()
+        class ErrorUpdateData(val message: String) : TransferInputViewState()
 
         class ErrorGetData(val message: String) : TransferInputViewState()
     }

@@ -10,24 +10,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
-import dynamia.com.core.data.model.PickingListScanEntriesValue
+import dynamia.com.core.data.entinty.TransferInputData
+import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.bottom_sheet_picking_history_fragment.*
 import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
+import kotlinx.android.synthetic.main.item_input_header.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val ARGS_PICKING_NO = "args_picking_no"
+const val ARGS_TRANSFER_ID = "id_input_transfer"
 
 class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     HistoryTransferInputAdapter.OnHistorySelected {
     private val viewModel: TransferInputViewModel by viewModel()
-    private var scanEntriesAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
-    private val no by lazy { arguments?.getString(ARGS_PICKING_NO) }
+    private val no by lazy { arguments?.getInt(ARGS_TRANSFER_ID) }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -48,7 +49,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
             layoutParams.height = windowHeight
         }
         bottomSheet.layoutParams = layoutParams
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
     }
 
     private fun getWindowHeight(): Int {
@@ -60,14 +61,14 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.bottom_sheet_picking_history_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        no?.let { viewModel.getHistoryValue(it) }
+        no?.let { viewModel.getHistoryValueDetail(it.toString()) }
         setupView()
         setObseverable()
     }
@@ -76,23 +77,57 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
         viewModel.transferInputViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferInputViewModel.TransferInputViewState.SuccessGetHistoryValue -> {
-                    scanEntriesAdapter.updateData(it.data)
+                    with(it.data) {
+                        et_transferinput_name.apply {
+                            setText(this@with.itemNo)
+                            isEnabled = false
+                        }
+                        et_tranferinput_qty.setText(this.quantity.toString())
+                    }
+
+                }
+                is TransferInputViewModel.TransferInputViewState.ErrorDeleteData -> {
+                    context?.showLongToast(it.message)
+                }
+                TransferInputViewModel.TransferInputViewState.SuccessDeleteData -> {
+                    context?.showLongToast("Data Deleted")
+                    dismiss()
+                }
+                is TransferInputViewModel.TransferInputViewState.ErrorUpdateData -> {
+                    context?.showLongToast(it.message)
+                }
+                TransferInputViewModel.TransferInputViewState.SuccessUpdateData -> {
+                    context?.showLongToast("Data Updated")
+                    dismiss()
                 }
             }
         })
     }
 
     fun setupView() {
-        with(rv_picking_history) {
-            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
-            adapter = scanEntriesAdapter
+        til_transferinput_barcode.isVisible = false
+        cv_transfer_input_detail.isVisible = false
+        btn_reset.apply {
+            text = "Delete"
+            setOnClickListener {
+                no?.let { no -> viewModel.deleteTransferEntry(no) }
+            }
+        }
+        btn_save.apply {
+            text = "Update"
+            setOnClickListener {
+                no?.let { no ->
+                    viewModel.updateTransferEntry(no,
+                        et_tranferinput_qty.text.toString().toInt())
+                }
+            }
         }
         iv_picking_history_close.setOnClickListener {
             dismiss()
         }
     }
 
-    override fun onHistorySelectDelete(value: PickingListScanEntriesValue) {
+    override fun onHistorySelectDelete(value: TransferInputData) {
         context?.let { context ->
             val dialog = Dialog(context)
             with(dialog) {
@@ -117,9 +152,9 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
 
     companion object {
 
-        fun newInstance(pickingId: String): TransferHistoryBottomSheet {
+        fun newInstance(id: Int): TransferHistoryBottomSheet {
             val argument = Bundle().apply {
-                putString(ARGS_PICKING_NO, pickingId)
+                putInt(ARGS_TRANSFER_ID, id)
             }
             return TransferHistoryBottomSheet().apply {
                 arguments = argument

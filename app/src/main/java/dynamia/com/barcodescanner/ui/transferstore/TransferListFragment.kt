@@ -63,7 +63,7 @@ class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClick
                     activity?.showLoading(it.boolean)
                 }
                 TransferListViewModel.TransferListViewState.SuccessUpdateData -> {
-                    context?.showLongToast("Success Update Transfer Data")
+                    context?.showLongToast(getString(R.string.qty_alreadyscan_qty_fromline_error_mssg))
                 }
             }
         })

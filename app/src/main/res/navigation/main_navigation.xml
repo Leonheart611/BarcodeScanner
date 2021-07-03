@@ -112,19 +112,12 @@
         android:label="history_input_fragment"
         tools:layout="@layout/history_input_fragment">
         <argument
-            android:name="pickingListNo"
-            app:argType="string" />
-        <argument
             android:name="source"
             app:argType="string" />
         <argument
             android:name="showAll"
             android:defaultValue="false"
             app:argType="boolean" />
-        <argument
-            android:name="partNo"
-            app:argType="string"
-            app:nullable="true" />
         <argument
             android:name="documentNo"
             app:argType="string"

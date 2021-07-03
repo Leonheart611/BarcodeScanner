@@ -2,6 +2,7 @@ package dynamia.com.core.domain
 
 import com.google.gson.annotations.SerializedName
 import dynamia.com.core.data.entinty.TransferInputData
+import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import retrofit2.Response
@@ -17,6 +18,9 @@ interface MasariAPI {
     @GET("Android_TransferShipmentHeader")
     suspend fun getTransferShipmentHeader(): Response<BaseResponse<TransferShipmentHeader>>
 
+    @GET("Android_TransferReceiptHeader")
+    suspend fun getTransferReceiptHeader(): Response<BaseResponse<TransferReceiptHeader>>
+
     @GET("Android_TransferLine")
     suspend fun getTransferShipmentLine(): Response<BaseResponse<TransferShipmentLine>>
 
@@ -29,5 +33,5 @@ interface MasariAPI {
 }
 
 data class BaseResponse<T>(
-    @SerializedName("value") val value: List<T>?
+    @SerializedName("value") val value: List<T>?,
 )

@@ -12,7 +12,7 @@ data class TransferInputData(
     @SerializedName("Document_No") @Expose(serialize = true) val documentNo: String,
     @SerializedName("Line_No") @Expose(serialize = true) val lineNo: Int,
     @SerializedName("Item_No") @Expose(serialize = true) val itemNo: String,
-    @SerializedName("Quantity") @Expose(serialize = true) val quantity: Int,
+    @SerializedName("Quantity") @Expose(serialize = true) var quantity: Int,
     @SerializedName("Location_Code") @Expose(serialize = true) val locationCode: String = "",
     @SerializedName("Location_from_Code") @Expose(serialize = true) val locationFromCode: String = "",
     @SerializedName("Location_to_Code") @Expose(serialize = true) val locationToCode: String = "",

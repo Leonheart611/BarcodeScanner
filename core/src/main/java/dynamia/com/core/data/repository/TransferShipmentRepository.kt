@@ -41,8 +41,11 @@ interface TransferShipmentRepository {
     fun getAllTransferInput(): LiveData<List<TransferInputData>>
     suspend fun insertTransferInput(data: TransferInputData): Boolean
     suspend fun updateTransferInput(data: TransferInputData)
+    suspend fun updateTransferInputQty(id: Int, newQty: Int): Flow<Boolean>
+    suspend fun deleteTransferInput(id: Int)
     fun getAllUnsycnTransferInput(status: Boolean = false): List<TransferInputData>
-    suspend fun getTransferInputHistory(no: String): Flow<List<TransferInputData>>
+    suspend fun getTransferInputHistory(no: String): Flow<TransferInputData>
+    fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferInputData>>
 
     suspend fun deleteAllTransferInput()
 
@@ -100,25 +103,27 @@ class TransferShipmentImpl(
     override fun getAllTransferInput(): LiveData<List<TransferInputData>> =
         dao.getAllTransferInput()
 
-    override suspend fun insertTransferInput(data: TransferInputData): Boolean = runBlocking(
-        Dispatchers.IO
-    ) {
-        try {
-            val lineData = dao.getLineDetail(data.documentNo, data.lineNo)
-            if ((lineData.alredyScanned + data.quantity) < lineData.quantity) {
-                lineData.apply {
-                    this.alredyScanned += data.quantity
+    override fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferInputData>> =
+        dao.getTransferInputHistoryLiveData(no)
+
+    override suspend fun insertTransferInput(data: TransferInputData): Boolean =
+        runBlocking(Dispatchers.IO) {
+            try {
+                val lineData = dao.getLineDetail(data.documentNo, data.lineNo)
+                if ((lineData.alredyScanned + data.quantity) <= lineData.quantity) {
+                    lineData.apply {
+                        this.alredyScanned += data.quantity
+                    }
+                    dao.insertTransferInput(data)
+                    dao.updateTransferLine(lineData)
+                    true
+                } else {
+                    false
                 }
-                dao.insertTransferInput(data)
-                dao.updateTransferLine(lineData)
-                true
-            } else {
+            } catch (e: Exception) {
                 false
             }
-        } catch (e: Exception) {
-            false
         }
-    }
 
     override suspend fun getLineDetailFromBarcode(
         no: String,
@@ -129,15 +134,48 @@ class TransferShipmentImpl(
         dao.updateTransferInput(data)
     }
 
+    override suspend fun updateTransferInputQty(
+        id: Int,
+        newQty: Int,
+    ): Flow<Boolean> =
+        flow {
+            val transferInput = dao.getTransferInputDetail(id)
+            val lineData = dao.getLineDetail(transferInput.documentNo, transferInput.lineNo)
+            val totalQty = lineData.alredyScanned - transferInput.quantity + newQty
+            if (totalQty <= lineData.quantity) {
+                lineData.apply {
+                    alredyScanned = totalQty
+                }
+                transferInput.apply {
+                    quantity = newQty
+                }
+                dao.updateTransferInput(transferInput)
+                dao.updateTransferLine(lineData)
+                emit(true)
+            } else {
+                emit(false)
+            }
+        }
+
+    override suspend fun deleteTransferInput(id: Int) {
+        val transferInput = dao.getTransferInputDetail(id)
+        val lineData = dao.getLineDetail(transferInput.documentNo, transferInput.lineNo)
+        lineData.apply {
+            alredyScanned -= transferInput.quantity
+        }
+        dao.deleteTransferInput(id)
+        dao.updateTransferLine(lineData)
+    }
+
     override fun getAllUnsycnTransferInput(status: Boolean): List<TransferInputData> =
         dao.getAllUnsycnTransferInput(status)
 
     override suspend fun deleteAllTransferInput() {
-        dao.deleteAllTransferInput()
+        dao.clearAllInputData()
     }
 
-    override suspend fun getTransferInputHistory(no: String): Flow<List<TransferInputData>> = flow {
-        emit(dao.getTransferInputHistory(no))
+    override suspend fun getTransferInputHistory(no: String): Flow<TransferInputData> = flow {
+        emit(dao.getTransferInputHistory(no.toInt()))
     }
 
     /**

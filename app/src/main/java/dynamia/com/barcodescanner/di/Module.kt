@@ -39,7 +39,7 @@ val injectionModule = module {
     viewModel { TransferDetailViewModel(get(), get()) }
     viewModel { TransferInputViewModel(get(), get()) }
     viewModel { ReceiptViewModel(get(), get(), get()) }
-    viewModel { HistoryInputViewModel(get(), get(), get(), get()) }
+    viewModel { HistoryInputViewModel(get(), get()) }
     viewModel { ReceiptDetailViewModel(get(), get(), get(), get()) }
     viewModel { ReceiptInputViewModel(get(), get(), get()) }
     viewModel { StockCountingViewModel(get(), get(), get()) }

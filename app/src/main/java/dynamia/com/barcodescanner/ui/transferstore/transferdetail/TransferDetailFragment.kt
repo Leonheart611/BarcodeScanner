@@ -142,7 +142,7 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
     override fun onclicklistener(pickingListLineValue: TransferShipmentLine) {
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                args.transferNo, pickingListLineValue.no)
+                args.transferNo, pickingListLineValue.itemIdentifier)
         view?.findNavController()?.navigate(action)
     }
 }

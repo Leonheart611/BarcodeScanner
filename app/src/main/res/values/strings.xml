@@ -51,7 +51,8 @@
     <string name="employee_name">STEVEN</string>
     <string name="company_name_login">CRONUS Australia Pty. Ltd.</string>
     <string name="salesperson_text">Salesperson</string>
-    <string name="qty_alreadyscan_qty_fromline"></string>
+    <string name="qty_alreadyscan_qty_fromline_error_mssg">Success Update Transfer Data</string>
+    <string name="logout_warning">Semua data akan dihapus anda yakin ingin Logout?</string>
 
     <string name="error_input_message">Wajib di isi</string>
     <string name="posted_status_true">Post Status :  True</string>
@@ -98,9 +99,11 @@
     <string name="receipt_local_history_title">Receipt Local History</string>
     <string name="shipment_not_match_error">Tracking ID harus sama dengan Shipment no</string>
     <string name="part_no_history">Part No: %1$s</string>
-    
-    <string name="transfer_store">Transfer Store</string>
+    <string name="refresh_and_logout_warning_unposted_data">%1$s data yang belum di Upload</string>
+
+    <string name="transfer_store">Transfer Shipment</string>
     <string name="transfer_store_name">Store: %1$s</string>
     <string name="transfer_store_status">Status: %1$s</string>
     <string name="transfer_store_no">No: %1$s</string>
+    <string name="transfer_shipment_history_title">Transfer Shipment History</string>
 </resources>

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.R
@@ -14,6 +15,7 @@ import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeViewState.DBhasEmpty
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
+import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.home_fragment.*
 import kotlinx.android.synthetic.main.home_item_detail.*
@@ -27,7 +29,7 @@ class HomeFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.home_fragment, container, false)
     }
@@ -41,7 +43,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setObservable() {
-        viewModel.homeViewState.observe(viewLifecycleOwner, {
+        viewModel.homeViewState.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 is DBhasEmpty -> {
 
@@ -56,6 +58,17 @@ class HomeFragment : Fragment() {
                     activity?.showLoading(false)
                     context?.showLongToast("Log Out")
                     findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+                }
+                is HomeViewModel.HomeViewState.GetUnpostedDataLogout -> {
+                    showDialog(if (it.unpostedCount.isEmpty()) null else it.unpostedCount,
+                        getString(R.string.logout_warning)) {
+                        viewModel.logOutSharedPreferences()
+                    }
+                }
+                is HomeViewModel.HomeViewState.GetUnpostedDataRefresh -> {
+                    showDialog(if (it.unpostedCount.isEmpty()) null else it.unpostedCount) {
+                        openStatusApi()
+                    }
                 }
             }
         })
@@ -84,10 +97,10 @@ class HomeFragment : Fragment() {
 
     private fun setListener() {
         cv_log_out.setOnClickListener {
-            viewModel.logOutSharedPreferences()
+            viewModel.checkUnpostedData(HomeViewModel.FunctionDialog.LOGOUT)
         }
         cv_refresh.setOnClickListener {
-            showDialog()
+            viewModel.checkUnpostedData(HomeViewModel.FunctionDialog.REFRESH)
         }
         cv_upload.setOnClickListener {
             openPostStatusApi()
@@ -113,7 +126,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun showDialog() {
+    private fun showDialog(
+        unpostedCount: String?,
+        warningMessage: String? = null,
+        call: () -> Unit,
+    ) {
         context?.let { context ->
             val dialog = Dialog(context)
             with(dialog) {
@@ -124,8 +141,16 @@ class HomeFragment : Fragment() {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
+                warningMessage?.let { message ->
+                    tv_warning_logout_refresh.text = message
+                }
+                unpostedCount?.let {
+                    tv_unpost_data.text =
+                        getString(R.string.refresh_and_logout_warning_unposted_data, it)
+                    tv_unpost_data.isVisible = true
+                }
                 btn_refresh_yes.setOnClickListener {
-                    openStatusApi()
+                    call()
                     dismiss()
                 }
                 btn_refresh_no.setOnClickListener {

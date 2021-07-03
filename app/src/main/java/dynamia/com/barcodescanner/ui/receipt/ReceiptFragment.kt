@@ -56,11 +56,11 @@ class ReceiptFragment : Fragment(), ReceiptImportItemAdapter.ReceiptImportListen
         tb_headerlist.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.history_data -> {
-                    val action =
+                /*    val action =
                         ReceiptFragmentDirections.actionReceiptFragmentToHistoryInputFragment(
-                            "", args.source, true, null, null
+                            "", args.source, true, null
                         )
-                    view?.findNavController()?.navigate(action)
+                    view?.findNavController()?.navigate(action)*/
                     true
                 }
                 else -> false

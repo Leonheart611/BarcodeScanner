@@ -120,23 +120,23 @@ class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImpo
         tb_receipt_detail.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_search -> {
-                    val action =
+              /*      val action =
                         ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToReceiptSearchFragment(
                             PoNo = args.documentNo,
                             source = args.source
                         )
-                    view?.findNavController()?.navigate(action)
+                    view?.findNavController()?.navigate(action)*/
                     true
                 }
                 R.id.menu_history -> {
-                    val action =
+                  /*  val action =
                         ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToHistoryInputFragment(
                             documentNo = null,
                             source = args.source,
                             partNo = null,
                             pickingListNo = args.documentNo
                         )
-                    view?.findNavController()?.navigate(action)
+                    view?.findNavController()?.navigate(action)*/
                     true
                 }
                 else -> false
@@ -201,7 +201,7 @@ class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImpo
     }
 
     override fun clicklistener(pickingListLineValue: ReceiptImportLineValue) {
-        val action =
+     /*   val action =
             ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToHistoryInputFragment(
                 documentNo = pickingListLineValue.documentNo,
                 source = args.source,
@@ -209,11 +209,11 @@ class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImpo
                 pickingListNo = args.documentNo,
                 lineNo = pickingListLineValue.lineNo
             )
-        view?.findNavController()?.navigate(action)
+        view?.findNavController()?.navigate(action)*/
     }
 
     override fun onClicklistener(receiptLocalLineValue: ReceiptLocalLineValue) {
-        val action =
+       /* val action =
             ReceiptDetailFragmentDirections.actionReceiptDetailFragmentToHistoryInputFragment(
                 documentNo = receiptLocalLineValue.documentNo,
                 source = args.source,
@@ -221,6 +221,6 @@ class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImpo
                 pickingListNo = args.documentNo,
                 lineNo = receiptLocalLineValue.lineNo
             )
-        view?.findNavController()?.navigate(action)
+        view?.findNavController()?.navigate(action)*/
     }
 }

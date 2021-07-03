@@ -39,6 +39,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
         til_transferinput_name.isVisible = false
         et_tranferinput_qty.setText("1")
         et_tranferinput_qty.isEnabled = false
+        et_transfer_input_barcode.requestFocus()
 
         et_transfer_input_barcode.doAfterTextChanged {
             documentNo?.let { data -> viewModel.getPickingListLineValue(data, it.toString()) }
@@ -51,11 +52,14 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                 is TransferDetailViewModel.TransferDetailInputViewState.ErrorGetData -> {
                     context?.showLongToast(it.message)
                 }
-                is TransferDetailViewModel.TransferDetailInputViewState.ErrorSaveData -> {
-                    context?.showLongToast(it.message)
+                TransferDetailViewModel.TransferDetailInputViewState.ErrorSaveData -> {
+                    context?.showLongToast(getString(R.string.qty_alreadyscan_qty_fromline_error_mssg))
                 }
                 TransferDetailViewModel.TransferDetailInputViewState.SuccessSaveData -> {
-                    et_transfer_input_barcode.text?.clear()
+                    et_transfer_input_barcode.apply {
+                        text?.clear()
+                        requestFocus()
+                    }
                     context?.showLongToast("Success Save Data")
                 }
             }

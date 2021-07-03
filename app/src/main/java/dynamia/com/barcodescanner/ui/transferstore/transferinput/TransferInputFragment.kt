@@ -18,6 +18,8 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.barcodescanner.ui.transferstore.adapter.PickingMultipleLineAdapter
+import dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetailFragmentDirections
+import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.data.model.PickingListScanEntriesValue
@@ -33,13 +35,11 @@ import kotlinx.android.synthetic.main.transfer_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleLineSelected,
-    HistoryTransferInputAdapter.OnHistorySelected {
+class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleLineSelected {
     private val viewModel: TransferInputViewModel by viewModel()
     private val args: TransferInputFragmentArgs by navArgs()
     private var dialog: Dialog? = null
     private var poNoDialog: Dialog? = null
-    private var purchaseNo: String = ""
     var activity: MainActivity? = null
 
     override fun onCreateView(
@@ -75,9 +75,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                 TransferInputViewModel.TransferInputViewState.SuccessSaveData -> {
                     context?.showLongToast("Success Save Data")
                 }
-                is TransferInputViewModel.TransferInputViewState.SuccessGetHistoryValue -> {
-
-                }
             }
         })
         viewModel.inputValidation.observe(viewLifecycleOwner, {
@@ -103,6 +100,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
 
     private fun setupView() {
         toolbar_picking_list_input.title = viewModel.getCompanyName()
+        et_transfer_input_barcode.requestFocus()
         args.barcodeNo?.let {
             et_transfer_input_barcode.setText(it)
             et_transfer_input_barcode.isEnabled = false
@@ -110,6 +108,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                 args.transferNo,
                 it
             )
+            et_tranferinput_qty.requestFocus()
         }
         et_transfer_input_barcode.setOnEditorActionListener { _, keyCode, event ->
             if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
@@ -119,6 +118,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                     args.transferNo,
                     et_transfer_input_barcode.text.toString()
                 )
+                et_tranferinput_qty.requestFocus()
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
@@ -137,8 +137,12 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         toolbar_picking_list_input.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.history_data -> {
-                    val dialog = TransferHistoryBottomSheet.newInstance(args.transferNo)
-                    dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+                    val action =
+                        TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
+                            documentNo = args.transferNo,
+                            source = Constant.TRANSFER_SHIPMENT
+                        )
+                    view?.findNavController()?.navigate(action)
                     true
                 }
                 else -> false
@@ -150,11 +154,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         et_transfer_input_barcode.text?.clear()
         et_transferinput_name.text?.clear()
         et_tranferinput_qty.text?.clear()
-    }
-
-
-    private fun checkPONo(poNO: String): Boolean {
-        return (purchaseNo.isNotEmpty() && purchaseNo == poNO)
     }
 
     private fun showMultipleDataDialog(data: List<PickingListLineValue>) {
@@ -197,7 +196,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                         dismiss()
                     }
                     show()
-
                 }
             }
         }
@@ -226,36 +224,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
     }
 
     override fun onMultiplelineSelected(data: PickingListLineValue) {
-
         dialog?.dismiss()
-    }
-
-    private fun openHistoryDialog() {
-
-    }
-
-    override fun onHistorySelectDelete(value: PickingListScanEntriesValue) {
-        context?.let { context ->
-            val dialog = Dialog(context)
-            with(dialog) {
-                setContentView(R.layout.delete_confirmation_dialog)
-                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                window
-                    ?.setLayout(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                btn_delete.setOnClickListener {
-
-                    dismiss()
-                    setupView()
-                }
-                btn_cancel.setOnClickListener {
-                    dismiss()
-                }
-                show()
-            }
-        }
     }
 
 }

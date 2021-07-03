@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.*
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.FailedGetShippingData
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.SuccessGetShipingData
 import dynamia.com.core.base.ViewModelBase
@@ -12,6 +13,7 @@ import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
 import dynamia.com.core.data.entinty.TransferShipmentLineAsset
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.domain.ResultWrapper.*
+import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
@@ -22,8 +24,8 @@ class HomeViewModel(
     private val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
-    private var _homeViewState = MutableLiveData<HomeViewState>()
-    val homeViewState: LiveData<HomeViewState> by lazy { _homeViewState }
+    private var _homeViewState = MutableLiveData<Event<HomeViewState>>()
+    val homeViewState: LiveData<Event<HomeViewState>> by lazy { _homeViewState }
 
     private var _homeGetApiViewState = MutableLiveData<HomeGetApiViewState>()
     val homeGetApiViewState: LiveData<HomeGetApiViewState> by lazy { _homeGetApiViewState }
@@ -31,7 +33,7 @@ class HomeViewModel(
     private var _homePostViewState = MutableLiveData<HomePostViewState>()
     val homePostViewState: LiveData<HomePostViewState> by lazy { _homePostViewState }
 
-    fun clearAllDB() {
+    private fun clearAllDB() {
         viewModelScope.launch {
             try {
                 io {
@@ -40,7 +42,7 @@ class HomeViewModel(
                     transferShipmentRepository.deleteAllTransferInput()
                 }
             } catch (e: Exception) {
-                _homeViewState.value = HomeViewState.Error(e.localizedMessage)
+                _homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
                 Log.e("clearAllDb", e.localizedMessage)
             }
         }
@@ -51,18 +53,21 @@ class HomeViewModel(
         val editor = sharedPreferences.edit()
         editor.clear()
         editor.apply()
-        _homeViewState.value = HomeViewState.HasSuccessLogout
+        _homeViewState.value = Event(HomeViewState.HasSuccessLogout)
     }
 
     fun getTransferData() {
         viewModelScope.launch {
             try {
                 io {
+                    transferShipmentRepository.deleteAllTransferHeader()
+                    transferShipmentRepository.deleteAllTransferLine()
+                    transferShipmentRepository.deleteAllTransferInput()
+
                     transferShipmentRepository.getTransferShipmentHeaderAsync()
                         .collect { dataHeader ->
                             when (dataHeader) {
                                 is Success -> {
-                                    transferShipmentRepository.deleteAllTransferHeader()
                                     dataHeader.value.forEach {
                                         transferShipmentRepository.insertTransferHeader(it)
                                     }
@@ -82,7 +87,6 @@ class HomeViewModel(
                     transferShipmentRepository.getTransferShipmentLineAsync().collect { data ->
                         when (data) {
                             is Success -> {
-                                transferShipmentRepository.deleteAllTransferLine()
                                 data.value.forEach {
                                     transferShipmentRepository.insertTransferLine(it)
                                 }
@@ -106,11 +110,31 @@ class HomeViewModel(
         }
     }
 
+    fun checkUnpostedData(param: FunctionDialog) {
+        viewModelScope.launch {
+            io {
+                val listEntries =
+                    transferShipmentRepository.getAllUnsycnTransferInput()
+                ui {
+                    when (param) {
+                        REFRESH -> _homeViewState.value =
+                            Event(HomeViewState.GetUnpostedDataRefresh(listEntries.size.toString()))
+                        LOGOUT -> _homeViewState.value =
+                            Event(HomeViewState.GetUnpostedDataLogout(listEntries.size.toString()))
+                    }
+                }
+            }
+        }
+
+    }
+
     sealed class HomeViewState {
         class Error(val message: String) : HomeViewState()
         class ShowLoading(val boolean: Boolean) : HomeViewState()
         class DBhasEmpty(val value: Int) : HomeViewState()
         object HasSuccessLogout : HomeViewState()
+        class GetUnpostedDataRefresh(val unpostedCount: String) : HomeViewState()
+        class GetUnpostedDataLogout(val unpostedCount: String) : HomeViewState()
     }
 
     sealed class HomeGetApiViewState {
@@ -157,12 +181,15 @@ class HomeViewModel(
 
             viewModelScope.launch {
                 io {
+                    transferShipmentRepository.deleteAllTransferHeader()
+                    transferShipmentRepository.deleteAllTransferLine()
+                    transferShipmentRepository.deleteAllTransferInput()
+
                     transferShipmentHeader.value?.let {
                         it.forEach { data ->
                             transferShipmentRepository.insertTransferHeader(data)
                         }
                     }
-
                     transferShipmentLine.value?.let {
                         it.forEach { data ->
                             transferShipmentRepository.insertTransferLine(data)
@@ -190,7 +217,10 @@ class HomeViewModel(
                 _homeGetApiViewState.value = FailedGetShippingData(e.localizedMessage)
             }
         }
+    }
 
+    enum class FunctionDialog {
+        REFRESH, LOGOUT
     }
 }
 

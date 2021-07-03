@@ -79,7 +79,7 @@ class TransferDetailViewModel(
                                         TransferDetailInputViewState.SuccessSaveData
                                 } else {
                                     _transferInputViewState.value =
-                                        TransferDetailInputViewState.ErrorSaveData("Error Save Data")
+                                        TransferDetailInputViewState.ErrorSaveData
                                 }
                             }
                         }
@@ -187,7 +187,7 @@ class TransferDetailViewModel(
 
     sealed class TransferDetailInputViewState {
         object SuccessSaveData : TransferDetailInputViewState()
-        class ErrorSaveData(val message: String) : TransferDetailInputViewState()
+        object ErrorSaveData : TransferDetailInputViewState()
         class ErrorGetData(val message: String) : TransferDetailInputViewState()
     }
 

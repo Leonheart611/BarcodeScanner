@@ -22,7 +22,7 @@ class HistoryTransferInputAdapter(
     }
 
     interface OnHistorySelected {
-        fun onHistorySelectDelete(value: PickingListScanEntriesValue)
+        fun onHistorySelectDelete(value: TransferInputData)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryInputHolder {
@@ -48,7 +48,7 @@ class HistoryTransferInputAdapter(
                 tv_transfer_itemno.text = "Item No: ${value.itemNo}"
                 value.id?.let { id ->
                     setOnClickListener {
-                        // listener.onHistorySelectDelete(value)
+                        listener.onHistorySelectDelete(value)
                     }
                 }
                 if (value.sycn_status) {

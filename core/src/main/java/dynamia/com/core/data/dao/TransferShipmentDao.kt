@@ -69,11 +69,18 @@ interface TransferShipmentDao {
     @Query("SELECT * FROM TransferInputData WHERE sycn_status = :status")
     fun getAllUnsycnTransferInput(status: Boolean): List<TransferInputData>
 
+    @Query("SELECT * FROM TransferInputData WHERE id = :id ORDER BY id DESC  ")
+    fun getTransferInputHistory(id: Int): TransferInputData
+
     @Query("SELECT * FROM TransferInputData WHERE documentNo = :no ORDER BY id DESC  ")
-    fun getTransferInputHistory(no: String): List<TransferInputData>
+    fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferInputData>>
+
+    @Query("SELECT * FROM TransferInputData WHERE id = :id")
+    fun getTransferInputDetail(id: Int): TransferInputData
+
+    @Query("DELETE FROM TransferInputData where id =:id")
+    fun deleteTransferInput(id: Int)
 
     @Query("DELETE FROM TransferInputData")
-    fun deleteAllTransferInput()
-
-
+    fun clearAllInputData()
 }

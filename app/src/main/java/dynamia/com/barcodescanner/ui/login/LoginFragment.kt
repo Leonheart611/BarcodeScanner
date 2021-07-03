@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
@@ -41,13 +42,13 @@ class LoginFragment : Fragment() {
     }
 
     private fun initview() {
-        /*if (BuildConfig.BUILD_TYPE == "debug") {
+        if (BuildConfig.BUILD_TYPE == "debug") {
             et_server_host.setText(getString(R.string.server_host_name))
             tied_username.setText(getString(R.string.user_name))
             tied_password.setText(getString(R.string.password))
             et_domainname.setText(getString(R.string.domain))
             et_company_name.setText(getString(R.string.company_name))
-        }*/
+        }
     }
 
     private fun setupListener() {
@@ -102,7 +103,7 @@ class LoginFragment : Fragment() {
             when (it) {
                 is Success -> {
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                    context?.showLongToast("Success Save data")
+                    context?.showLongToast("Success Login")
                 }
                 is Error -> {
                     context?.showLongToast(it.message)

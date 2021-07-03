@@ -544,18 +544,12 @@ class ReceiptInputFragment : Fragment(),
         tb_receipt_history.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.history_data -> {
-                    openHistoryBottomSheet()
+                    //openHistoryBottomSheet()
                     true
                 }
                 else -> false
             }
         }
-    }
-
-    private fun openHistoryBottomSheet() {
-        val bottomSheetFragment =
-            ReceiptHistoryBottomSheet.newInstance(args.documentNo, args.source)
-        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
     }
 
     private fun saveData() {
