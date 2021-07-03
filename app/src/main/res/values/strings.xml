@@ -106,4 +106,5 @@
     <string name="transfer_store_status">Status: %1$s</string>
     <string name="transfer_store_no">No: %1$s</string>
     <string name="transfer_shipment_history_title">Transfer Shipment History</string>
+    <string name="transfer_receipt_title">Transfer Receipt</string>
 </resources>

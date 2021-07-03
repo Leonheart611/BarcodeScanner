@@ -13,7 +13,6 @@ import dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetail
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputViewModel
 import dynamia.com.core.data.LocalDatabase
 import dynamia.com.core.data.repository.*
-import dynamia.com.core.domain.MasariRetrofit
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -24,6 +23,7 @@ val injectionModule = module {
 
     single { get<LocalDatabase>().userDao() }
     single { get<LocalDatabase>().transferShipment() }
+    single { get<LocalDatabase>().transferReceipt() }
 
     single<PickingListRepository> { PickingListRepositoryImpl(get()) }
     single<ReceiptImportRepository> { ReceiptImportRepositoryImpl(get()) }
@@ -32,12 +32,13 @@ val injectionModule = module {
     single<UserRepository> { UserRepositoryImpl(get()) }
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }
     single<TransferShipmentRepository> { TransferShipmentImpl(get(), get()) }
+    single<TransferReceiptRepository> { TransferReceiptRepositoryImpl(get(), get()) }
 
     viewModel { LoginViewModel(get(), get()) }
-    viewModel { HomeViewModel(get(), get()) }
-    viewModel { TransferListViewModel(get(), get()) }
-    viewModel { TransferDetailViewModel(get(), get()) }
-    viewModel { TransferInputViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get()) }
+    viewModel { TransferListViewModel(get(), get(), get()) }
+    viewModel { TransferDetailViewModel(get(), get(), get()) }
+    viewModel { TransferInputViewModel(get(), get(), get()) }
     viewModel { ReceiptViewModel(get(), get(), get()) }
     viewModel { HistoryInputViewModel(get(), get()) }
     viewModel { ReceiptDetailViewModel(get(), get(), get(), get()) }

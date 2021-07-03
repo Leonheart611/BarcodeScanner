@@ -4,10 +4,15 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import dynamia.com.barcodescanner.ui.transferstore.TransferType
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.TransferInputData
+import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.util.*
 import kotlinx.coroutines.flow.collect
@@ -15,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class TransferInputViewModel(
     private val transferShipmentRepository: TransferShipmentRepository,
+    private val transferReceiptRepository: TransferReceiptRepository,
     val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -25,6 +31,7 @@ class TransferInputViewModel(
 
     private var transferLineData: TransferShipmentLine? = null
     private var transferHeaderData: TransferShipmentHeader? = null
+    private var transferReceiptHeader: TransferReceiptHeader? = null
 
     fun getHistoryValueDetail(no: String) {
         viewModelScope.launch {
@@ -39,7 +46,7 @@ class TransferInputViewModel(
         }
     }
 
-    fun getPickingListLineValue(no: String, identifier: String) {
+    fun getShipmentListLineValue(no: String, identifier: String) {
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
@@ -70,7 +77,77 @@ class TransferInputViewModel(
         }
     }
 
-    private fun insertTransferInput(qty: String, timeStamp: String) {
+    fun getReceiptListLineValue(no: String, identifier: String) {
+        viewModelScope.launch {
+            try {
+                _transferInputViewState.value =
+                    TransferInputViewState.LoadingSearchPickingList(true)
+                io {
+                    transferReceiptRepository.getTransferHeaderDetail(no).collect {
+                        transferReceiptHeader = it
+                    }
+                    transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
+                        .collect { data ->
+                            ui {
+                                transferLineData = data
+                                _transferInputViewState.value =
+                                    TransferInputViewState.SuccessGetValue(data)
+                                _transferInputViewState.value =
+                                    TransferInputViewState.LoadingSearchPickingList(false)
+                            }
+                        }
+
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.LoadingSearchPickingList(false)
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+
+    private fun insertTransferShipmentInput(qty: String, timeStamp: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferHeaderData?.let { header ->
+                        transferLineData?.let { line ->
+                            val value = transferShipmentRepository.insertTransferInput(
+                                TransferInputData(
+                                    documentNo = line.documentNo,
+                                    quantity = qty.toInt(),
+                                    lineNo = line.lineNo,
+                                    itemNo = line.no,
+                                    transferFromBinCode = header.transferFromCode,
+                                    transferToBinCode = header.transferToCode,
+                                    userName = sharedPreferences.getUserName(),
+                                    insertDateTime = timeStamp
+                                )
+                            )
+                            ui {
+                                if (value) {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.SuccessSaveData
+                                } else {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan")
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun insertTransferReceiptInput(qty: String, timeStamp: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -111,6 +188,7 @@ class TransferInputViewModel(
     fun checkUserInputValidation(
         barcode: String,
         qty: String,
+        typesInput: TransferType,
     ) {
         if (barcode.isEmpty()) {
             _inputValidaton.value = InputValidation.BarcodeEmpty
@@ -119,8 +197,13 @@ class TransferInputViewModel(
             _inputValidaton.value = InputValidation.QtyEmpty
         }
         if (barcode.isNotEmpty() && qty.isNotEmpty()) {
-            _inputValidaton.value = InputValidation.AllValidationCorrect
-            insertTransferInput(qty, "${getCurrentDate()}T${getCurrentTime()}")
+            when (typesInput) {
+                SHIPMENT -> insertTransferShipmentInput(qty,
+                    "${getCurrentDate()}T${getCurrentTime()}")
+                RECEIPT -> TODO()
+            }
+
+
         }
     }
 
@@ -188,6 +271,5 @@ class TransferInputViewModel(
     sealed class InputValidation {
         object BarcodeEmpty : InputValidation()
         object QtyEmpty : InputValidation()
-        object AllValidationCorrect : InputValidation()
     }
 }

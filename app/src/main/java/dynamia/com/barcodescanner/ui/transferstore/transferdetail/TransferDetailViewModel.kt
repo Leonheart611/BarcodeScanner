@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.TransferInputData
+import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.util.*
 import kotlinx.coroutines.flow.collect
@@ -15,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class TransferDetailViewModel(
     val transferShipmentRepository: TransferShipmentRepository,
+    val transferReceiptRepository: TransferReceiptRepository,
     val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -132,7 +135,7 @@ class TransferDetailViewModel(
     }
 
 
-    fun getTransferDetail(no: String) {
+    fun getTransferShipingDetail(no: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -148,7 +151,24 @@ class TransferDetailViewModel(
                     TransferListViewState.ErrorGetLocalData(e.localizedMessage)
             }
         }
+    }
 
+    fun getTransferReceiptDetail(no: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferReceiptRepository.getTransferHeaderDetail(no).collect { data ->
+                        ui {
+                            _pickingDetailViewState.value =
+                                TransferListViewState.SuccessGetReceiptLocalData(data)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _pickingDetailViewState.value =
+                    TransferListViewState.ErrorGetLocalData(e.localizedMessage)
+            }
+        }
     }
 
     fun getTransferLine(no: String) {
@@ -172,6 +192,9 @@ class TransferDetailViewModel(
 
     sealed class TransferListViewState {
         class SuccessGetLocalData(val value: TransferShipmentHeader) : TransferListViewState()
+        class SuccessGetReceiptLocalData(val values: TransferReceiptHeader) :
+            TransferListViewState()
+
         class SuccessGetPickingLineData(val values: MutableList<TransferShipmentLine>) :
             TransferListViewState()
 

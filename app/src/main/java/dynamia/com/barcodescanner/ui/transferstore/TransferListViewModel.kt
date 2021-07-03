@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
+import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.domain.ResultWrapper
 import dynamia.com.core.util.io
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 
 class TransferListViewModel(
     val transferShipmentRepository: TransferShipmentRepository,
-    sharedPreferences: SharedPreferences
+    val transferReceiptRepository: TransferReceiptRepository,
+    sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
     private var _viewState = MutableLiveData<TransferListViewState>()

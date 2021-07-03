@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "TransferInputData")
-data class TransferInputData(
+@Entity(tableName = "TransferReceiptInput")
+class TransferReceiptInput(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     @SerializedName("Table_ID") @Expose(serialize = true) val tableID: Int = 2,
     @SerializedName("Document_No") @Expose(serialize = true) val documentNo: String,
@@ -25,7 +25,8 @@ data class TransferInputData(
     @SerializedName("Insert_DateTime") @Expose(serialize = true) val insertDateTime: String,
     @Expose(serialize = false, deserialize = false) var sycn_status: Boolean = false,
 ) {
-    fun postSuccess() {
+    fun postDataSuccess() {
         sycn_status = true
     }
+
 }

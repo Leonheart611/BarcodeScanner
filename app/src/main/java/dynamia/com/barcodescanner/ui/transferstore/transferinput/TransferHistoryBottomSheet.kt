@@ -23,8 +23,6 @@ import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
 import kotlinx.android.synthetic.main.item_input_header.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val ARGS_TRANSFER_ID = "id_input_transfer"
-
 class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     HistoryTransferInputAdapter.OnHistorySelected {
     private val viewModel: TransferInputViewModel by viewModel()
@@ -151,7 +149,6 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     }
 
     companion object {
-
         fun newInstance(id: Int): TransferHistoryBottomSheet {
             val argument = Bundle().apply {
                 putInt(ARGS_TRANSFER_ID, id)
@@ -160,6 +157,8 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                 arguments = argument
             }
         }
+
+        const val ARGS_TRANSFER_ID = "id_input_transfer"
     }
 
 

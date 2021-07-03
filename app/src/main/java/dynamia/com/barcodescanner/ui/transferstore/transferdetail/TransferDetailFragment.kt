@@ -11,7 +11,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
 import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAdapter
+import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.util.showLongToast
@@ -35,14 +38,16 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getTransferDetail(args.transferNo)
-        //viewModel.getTransferLine(args.transferNo)
         setupView()
         setupListener()
         setObseverable()
     }
 
     private fun setupView() {
+        when (args.transferType) {
+            SHIPMENT -> viewModel.getTransferShipingDetail(args.transferNo)
+            RECEIPT -> viewModel.getTransferReceiptDetail(args.transferNo)
+        }
         tv_transferdetail_store.text =
             getString(R.string.transfer_store_name, viewModel.getCompanyName())
         toolbar_transfer_detail.title = viewModel.getCompanyName()
@@ -57,13 +62,16 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
         viewModel.transferListViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.TransferListViewState.SuccessGetLocalData -> {
-                    setupMainView(it.value)
+                    setupMainViewShipment(it.value)
                 }
                 is TransferDetailViewModel.TransferListViewState.ErrorGetLocalData -> {
                     context?.showLongToast(it.message)
                 }
                 is TransferDetailViewModel.TransferListViewState.SuccessGetPickingLineData -> {
                     adapter.update(it.values)
+                }
+                is TransferDetailViewModel.TransferListViewState.SuccessGetReceiptLocalData -> {
+                    setupViewReceipt(it.values)
                 }
             }
         })
@@ -73,7 +81,13 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
             })
     }
 
-    private fun setupMainView(value: TransferShipmentHeader) {
+    private fun setupMainViewShipment(value: TransferShipmentHeader) {
+        with(value) {
+            tv_transferdetail_status.text = getString(R.string.transfer_store_status, status)
+        }
+    }
+
+    private fun setupViewReceipt(value: TransferReceiptHeader) {
         with(value) {
             tv_transferdetail_status.text = getString(R.string.transfer_store_status, status)
         }
@@ -90,7 +104,7 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
         fab_manual_input_transfer.setOnClickListener {
             val action =
                 TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                    args.transferNo, null)
+                    args.transferNo, null, args.transferType)
             view?.findNavController()?.navigate(action)
         }
         btn_submit.setOnClickListener {
@@ -142,7 +156,7 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
     override fun onclicklistener(pickingListLineValue: TransferShipmentLine) {
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                args.transferNo, pickingListLineValue.itemIdentifier)
+                args.transferNo, pickingListLineValue.itemIdentifier, args.transferType)
         view?.findNavController()?.navigate(action)
     }
 }

@@ -9,6 +9,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
+import dynamia.com.core.data.entinty.TransferReceiptHeaderAssets
 import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
 import dynamia.com.core.data.entinty.TransferShipmentLineAsset
 import dynamia.com.core.util.crossFade
@@ -30,7 +31,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         return inflater.inflate(R.layout.bottomsheet_home_data_dialoog, container, false)
@@ -39,8 +40,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        callAllApi()
-        //getAllDataFromAssets()
+        //callAllApi()
+        getAllDataFromAssets()
         setOnClicklistener()
     }
 
@@ -99,13 +100,18 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             this.activity?.readJsonAsset("ShipingHeader.json"),
             TransferShipmentHeaderAsset::class.java
         )
+        val transferReceiptHeader = Gson().fromJson(
+            this.activity?.readJsonAsset("TransferReceiptHeader.json"),
+            TransferReceiptHeaderAssets::class.java
+        )
         val transferShipmentLine = Gson().fromJson(
             activity?.readJsonAsset("ShipingLine.json"),
             TransferShipmentLineAsset::class.java
         )
         viewModel.saveAssetData(
             transferShipmentHeader,
-            transferShipmentLine
+            transferShipmentLine,
+            transferReceiptHeader
         )
     }
 

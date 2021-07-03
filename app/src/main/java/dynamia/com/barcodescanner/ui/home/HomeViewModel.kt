@@ -5,12 +5,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.*
+import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.LOGOUT
+import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.REFRESH
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.FailedGetShippingData
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.SuccessGetShipingData
 import dynamia.com.core.base.ViewModelBase
+import dynamia.com.core.data.entinty.TransferReceiptHeaderAssets
 import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
 import dynamia.com.core.data.entinty.TransferShipmentLineAsset
+import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.domain.ResultWrapper.*
 import dynamia.com.core.util.Event
@@ -21,6 +24,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     val transferShipmentRepository: TransferShipmentRepository,
+    val transferReceiptRepository: TransferReceiptRepository,
     private val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -176,6 +180,7 @@ class HomeViewModel(
     fun saveAssetData(
         transferShipmentHeader: TransferShipmentHeaderAsset,
         transferShipmentLine: TransferShipmentLineAsset,
+        transferReceiptHeader: TransferReceiptHeaderAssets,
     ) {
         try {
 
@@ -188,6 +193,12 @@ class HomeViewModel(
                     transferShipmentHeader.value?.let {
                         it.forEach { data ->
                             transferShipmentRepository.insertTransferHeader(data)
+                        }
+                    }
+                    transferReceiptHeader.value?.let {
+                        it.forEach { transferReceiptHeader ->
+                            transferReceiptRepository.insertTransferReceiptHeader(
+                                transferReceiptHeader)
                         }
                     }
                     transferShipmentLine.value?.let {

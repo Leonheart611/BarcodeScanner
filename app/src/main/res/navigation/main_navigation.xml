@@ -22,6 +22,9 @@
             android:name="barcodeNo"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="transferType"
+            app:argType="dynamia.com.barcodescanner.ui.transferstore.TransferType" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -74,6 +77,9 @@
         <action
             android:id="@+id/action_transferListFragment_to_transferDetailFragment"
             app:destination="@id/transferDetailFragment" />
+        <argument
+            android:name="transferType"
+            app:argType="dynamia.com.barcodescanner.ui.transferstore.TransferType" />
     </fragment>
     <fragment
         android:id="@+id/transferDetailFragment"
@@ -86,6 +92,9 @@
         <action
             android:id="@+id/action_transferDetailFragment_to_transferInputFragment"
             app:destination="@id/transferInputFragment" />
+        <argument
+            android:name="transferType"
+            app:argType="dynamia.com.barcodescanner.ui.transferstore.TransferType" />
     </fragment>
     <fragment
         android:id="@+id/receiptFragment"

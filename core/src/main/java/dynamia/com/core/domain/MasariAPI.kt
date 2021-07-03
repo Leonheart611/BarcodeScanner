@@ -1,10 +1,7 @@
 package dynamia.com.core.domain
 
 import com.google.gson.annotations.SerializedName
-import dynamia.com.core.data.entinty.TransferInputData
-import dynamia.com.core.data.entinty.TransferReceiptHeader
-import dynamia.com.core.data.entinty.TransferShipmentHeader
-import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.entinty.*
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -26,7 +23,11 @@ interface MasariAPI {
 
     @Headers("Content-Type: application/json")
     @POST("Android_Transaction")
-    suspend fun postTransferData(@Body value: String): TransferInputData
+    suspend fun postTransferShipment(@Body value: String): TransferInputData
+
+    @Headers("Content-Type: application/json")
+    @POST("Android_Transaction")
+    suspend fun postTransferReceipt(@Body value: String): TransferReceiptInput
 
     @GET("Chart_of_Accounts")
     suspend fun getCustomer(): Response<String>

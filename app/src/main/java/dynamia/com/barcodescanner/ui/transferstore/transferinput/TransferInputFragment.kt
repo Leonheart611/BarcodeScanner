@@ -1,8 +1,6 @@
 package dynamia.com.barcodescanner.ui.transferstore.transferinput
 
 import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -16,13 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.barcodescanner.ui.transferstore.adapter.PickingMultipleLineAdapter
-import dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetailFragmentDirections
-import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.data.model.PickingListLineValue
-import dynamia.com.core.data.model.PickingListScanEntriesValue
 import dynamia.com.core.util.*
 import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
@@ -79,9 +74,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         })
         viewModel.inputValidation.observe(viewLifecycleOwner, {
             when (it) {
-                TransferInputViewModel.InputValidation.AllValidationCorrect -> {
-
-                }
                 TransferInputViewModel.InputValidation.BarcodeEmpty -> {
                     til_transferinput_barcode.error = "Must Fill this Field"
                 }
@@ -104,24 +96,27 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         args.barcodeNo?.let {
             et_transfer_input_barcode.setText(it)
             et_transfer_input_barcode.isEnabled = false
-            viewModel.getPickingListLineValue(
-                args.transferNo,
-                it
-            )
+            getPickingListLineData(it)
             et_tranferinput_qty.requestFocus()
+            btn_reset.isEnabled = false
         }
         et_transfer_input_barcode.setOnEditorActionListener { _, keyCode, event ->
             if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
                 || keyCode == EditorInfo.IME_ACTION_NEXT
             ) {
-                viewModel.getPickingListLineValue(
-                    args.transferNo,
-                    et_transfer_input_barcode.text.toString()
-                )
+                getPickingListLineData(et_transfer_input_barcode.text.toString())
                 et_tranferinput_qty.requestFocus()
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
+        }
+    }
+
+
+    private fun getPickingListLineData(barcode: String) {
+        when (args.transferType) {
+            SHIPMENT -> viewModel.getShipmentListLineValue(args.transferNo, barcode)
+            RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode)
         }
     }
 
@@ -131,7 +126,8 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         btn_save.setOnClickListener {
             viewModel.checkUserInputValidation(
                 et_transfer_input_barcode.text.toString(),
-                et_tranferinput_qty.text.toString()
+                et_tranferinput_qty.text.toString(),
+                args.transferType
             )
         }
         toolbar_picking_list_input.setOnMenuItemClickListener {
@@ -154,6 +150,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         et_transfer_input_barcode.text?.clear()
         et_transferinput_name.text?.clear()
         et_tranferinput_qty.text?.clear()
+        et_transfer_input_barcode.requestFocus()
     }
 
     private fun showMultipleDataDialog(data: List<PickingListLineValue>) {

@@ -1,0 +1,45 @@
+{
+  "@odata.context": "http://192.168.1.12:7048/BC180/OdataV4/$metadata#Company('CRONUS%20Australia%20Pty.%20Ltd.')/Android_TransferReceiptHeader",
+  "value": [
+    {
+      "@odata.etag": "W/\"JzQ0O2VKUXc1b0JjKzhobXVWTVkrTlpsR2N1b0hEZHRicGdWQ2NaL0xNNDhCT2M9MTswMDsn\"",
+      "No": "1002",
+      "Status": "Released",
+      "Posting_Date": "2022-01-01",
+      "Transfer_from_Code": "BLUE",
+      "Transfer_to_Code": "YELLOW"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O2xYVUtqL1N1Qnd3bUJ0YnlTOG9YNS81eW10NzVUejNSU2d5Q0kxUG51UlU9MTswMDsn\"",
+      "No": "1008",
+      "Status": "Released",
+      "Posting_Date": "2023-01-26",
+      "Transfer_from_Code": "GREEN",
+      "Transfer_to_Code": "YELLOW"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O3VEMlRYZjJCRkhIYS9hcTI1TEJySlJjOXYxR3NaNmlaUVBFalM3UU9kQWM9MTswMDsn\"",
+      "No": "1009",
+      "Status": "Released",
+      "Posting_Date": "2023-01-26",
+      "Transfer_from_Code": "GREEN",
+      "Transfer_to_Code": "RED"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O0xjdkJuRHNnVWlyYmNOdk9oNHRCSW83VjhWMUtrQkVXdHFUR1NZVXZTbFk9MTswMDsn\"",
+      "No": "1010",
+      "Status": "Released",
+      "Posting_Date": "2023-01-26",
+      "Transfer_from_Code": "RED",
+      "Transfer_to_Code": "BLUE"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O1RpVlJGNFJDdjJwRnBuR3pEY0pSZ2VDbEtJeHZJRUJwNHJaT2UxRzY4dm89MTswMDsn\"",
+      "No": "1011",
+      "Status": "Released",
+      "Posting_Date": "2023-01-27",
+      "Transfer_from_Code": "BLUE",
+      "Transfer_to_Code": "RED"
+    }
+  ]
+}

@@ -229,7 +229,7 @@ class TransferShipmentImpl(
         }
 
     override suspend fun postTransferData(value: String): Flow<TransferInputData> = flow {
-        emit(retrofitService.postTransferData(value))
+        emit(retrofitService.postTransferShipment(value))
     }
 
     override suspend fun getUser(): Flow<String> = flow {

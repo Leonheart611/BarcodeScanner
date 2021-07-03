@@ -4,11 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import dynamia.com.core.data.dao.TransferReceiptDao
 import dynamia.com.core.data.dao.TransferShipmentDao
 import dynamia.com.core.data.dao.UserDao
-import dynamia.com.core.data.entinty.TransferInputData
-import dynamia.com.core.data.entinty.TransferShipmentHeader
-import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.model.UserData
 
 @Database(
@@ -16,19 +15,22 @@ import dynamia.com.core.data.model.UserData
         TransferShipmentHeader::class,
         TransferShipmentLine::class,
         UserData::class,
-        TransferInputData::class
-    ], version = 7, exportSchema = false
+        TransferInputData::class,
+        TransferReceiptHeader::class,
+        TransferReceiptInput::class
+    ], version = 8, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferShipment(): TransferShipmentDao
     abstract fun userDao(): UserDao
+    abstract fun transferReceipt(): TransferReceiptDao
 
     companion object {
         @Volatile
         private var INSTANCE: LocalDatabase? = null
 
         fun getDatabase(
-            context: Context
+            context: Context,
         ): LocalDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(

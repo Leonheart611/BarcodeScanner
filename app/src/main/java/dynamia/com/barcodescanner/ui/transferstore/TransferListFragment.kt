@@ -6,25 +6,34 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
 import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferListAdapter
+import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferReceiptListAdapter
+import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.header_layout.*
 import kotlinx.android.synthetic.main.transferlist_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClicklistener {
+class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClicklistener,
+    TransferReceiptListAdapter.OnTransferReceiptListCLicklistener {
 
     private val viewModel: TransferListViewModel by viewModel()
     private val transferListAdapter = TransferListAdapter(mutableListOf(), this)
+    private val transferReceiptListAdapter = TransferReceiptListAdapter(mutableListOf(), this)
+    private val args: TransferListFragmentArgs by navArgs()
     private var activity: MainActivity? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.transferlist_fragment, container, false)
     }
@@ -34,7 +43,6 @@ class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClick
         activity = requireActivity() as MainActivity
         setupRecylerView()
         setOnclicklistener()
-        initView()
         setupListener()
     }
 
@@ -46,6 +54,28 @@ class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClick
     }
 
     private fun setupRecylerView() {
+        tb_headerlist.title = viewModel.getCompanyName()
+        when (args.transferType) {
+            SHIPMENT -> setShipmentView()
+            RECEIPT -> setReceiptView()
+        }
+    }
+
+    private fun setReceiptView() {
+        tv_title_header.text = getString(R.string.transfer_receipt_title)
+        with(rv_pickinglist) {
+            layoutManager =
+                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = transferReceiptListAdapter
+        }
+        viewModel.transferReceiptRepository.getAllTransferReceiptHeader()
+            .observe(viewLifecycleOwner, {
+                transferReceiptListAdapter.updateData(it.toMutableList())
+            })
+    }
+
+    private fun setShipmentView() {
+        tv_title_header.text = getString(R.string.transfer_store)
         with(rv_pickinglist) {
             layoutManager =
                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -69,39 +99,28 @@ class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClick
         })
     }
 
-    private fun initView() {
-        tb_headerlist.title = viewModel.getCompanyName()
-        tv_title_header.text = getString(R.string.transfer_store)
-    }
-
     private fun setupListener() {
         cv_back.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
-        tb_headerlist.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.history_data -> {
-                    /*val action =
-                        PickingListFragmentDirections.actionPickingListFragmentToHistoryInputFragment(
-                            "", Constant.PICKING_LIST, true, null, null
-                        )
-                    view?.findNavController()?.navigate(action)*/
-                    true
-                }
-                else -> false
-            }
-        }
     }
-
 
     override fun clickListener(data: TransferShipmentHeader) {
         val action =
-            TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(data.no)
+            TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(data.no,
+                SHIPMENT)
         view?.findNavController()?.navigate(action)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         rv_pickinglist?.adapter = null
+    }
+
+    override fun clickListener(data: TransferReceiptHeader) {
+        val action =
+            TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(data.no,
+                RECEIPT)
+        view?.findNavController()?.navigate(action)
     }
 }
