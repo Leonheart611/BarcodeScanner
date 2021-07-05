@@ -31,6 +31,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        viewModel.checkEmptyData()
         return inflater.inflate(R.layout.home_fragment, container, false)
     }
 
@@ -43,46 +44,45 @@ class HomeFragment : Fragment() {
     }
 
     private fun setObservable() {
-        viewModel.homeViewState.observe(viewLifecycleOwner, EventObserver {
-            when (it) {
-                is DBhasEmpty -> {
-
-                }
-                is HomeViewModel.HomeViewState.Error -> {
-                    context?.showLongToast(it.message)
-                }
-                is HomeViewModel.HomeViewState.ShowLoading -> {
-                    activity?.showLoading(it.boolean)
-                }
-                is HomeViewModel.HomeViewState.HasSuccessLogout -> {
-                    activity?.showLoading(false)
-                    context?.showLongToast("Log Out")
-                    findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
-                }
-                is HomeViewModel.HomeViewState.GetUnpostedDataLogout -> {
-                    showDialog(if (it.unpostedCount.isEmpty()) null else it.unpostedCount,
-                        getString(R.string.logout_warning)) {
-                        viewModel.logOutSharedPreferences()
+        with(viewModel) {
+            homeViewState.observe(viewLifecycleOwner, EventObserver {
+                when (it) {
+                    is DBhasEmpty -> {
+                        if (it.value == 0) openStatusApi()
+                    }
+                    is HomeViewModel.HomeViewState.Error -> {
+                        context?.showLongToast(it.message)
+                    }
+                    is HomeViewModel.HomeViewState.ShowLoading -> {
+                        activity?.showLoading(it.boolean)
+                    }
+                    is HomeViewModel.HomeViewState.HasSuccessLogout -> {
+                        activity?.showLoading(false)
+                        context?.showLongToast("Log Out")
+                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+                    }
+                    is HomeViewModel.HomeViewState.GetUnpostedDataLogout -> {
+                        showDialog(if (it.unpostedCount.isEmpty()) null else it.unpostedCount,
+                            getString(R.string.logout_warning)) {
+                            viewModel.logOutSharedPreferences()
+                        }
+                    }
+                    is HomeViewModel.HomeViewState.GetUnpostedDataRefresh -> {
+                        showDialog(if (it.unpostedCount.isEmpty()) null else it.unpostedCount) {
+                            openStatusApi()
+                        }
                     }
                 }
-                is HomeViewModel.HomeViewState.GetUnpostedDataRefresh -> {
-                    showDialog(if (it.unpostedCount.isEmpty()) null else it.unpostedCount) {
-                        openStatusApi()
-                    }
-                }
-            }
-        })
-        viewModel.transferShipmentRepository.getCheckEmptyOrNot().observe(viewLifecycleOwner, {
-            if (it == 0) {
-                openStatusApi()
-            } else {
-                tv_transfer_count.text = it.toString()
-            }
-        })
-        viewModel.transferReceiptRepository.getAllTransferReceiptHeader()
-            .observe(viewLifecycleOwner, {
-                tv_count_receipt.text = it.size.toString()
             })
+
+            transferReceiptRepository.getAllTransferReceiptHeader()
+                .observe(viewLifecycleOwner, {
+                    tv_count_receipt.text = it.size.toString()
+                })
+            transferShipmentRepository.getAllTransferHeader().observe(viewLifecycleOwner, {
+                tv_transfer_count.text = it.size.toString()
+            })
+        }
     }
 
     private fun openStatusApi() {

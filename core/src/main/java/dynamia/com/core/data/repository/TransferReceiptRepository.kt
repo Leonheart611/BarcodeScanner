@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.TransferReceiptDao
+import dynamia.com.core.data.dao.TransferShipmentDao
 import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferReceiptInput
 import dynamia.com.core.domain.ErrorResponse
@@ -22,12 +23,13 @@ interface TransferReceiptRepository {
     suspend fun deleteAllTransferReceiptHeader()
 
     fun getAllTransferReceiptInput(): LiveData<List<TransferReceiptInput>>
-    suspend fun insertTransferReceiptInput(data: TransferReceiptInput)
+    suspend fun insertTransferReceiptInput(data: TransferReceiptInput): Boolean
     suspend fun updateTransferReceiptInput(data: TransferReceiptInput)
+    suspend fun updateTransferReceiptInputQty(id: Int, newQty: Int): Flow<Boolean>
     fun getAllUnsycnTransferReceiptInput(status: Boolean = false): List<TransferReceiptInput>
     fun getTransferReceiptInputHistory(id: Int): TransferReceiptInput
     fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferReceiptInput>>
-    suspend fun getTransferInputDetail(id: Int): TransferReceiptInput
+    suspend fun getTransferInputDetail(id: Int): Flow<TransferReceiptInput>
     suspend fun deleteTransferInput(id: Int)
     suspend fun clearAllInputData()
 
@@ -35,7 +37,7 @@ interface TransferReceiptRepository {
      * Remote Transfer Receipt
      */
 
-    suspend fun getTransferReceiptHeader(): Flow<ResultWrapper<MutableList<TransferReceiptHeader>>>
+    suspend fun getTransferReceiptHeaderAsync(): Flow<ResultWrapper<MutableList<TransferReceiptHeader>>>
     suspend fun postTransferReceiptInput(value: String): Flow<TransferReceiptInput>
 
 
@@ -44,6 +46,7 @@ interface TransferReceiptRepository {
 class TransferReceiptRepositoryImpl(
     val dao: TransferReceiptDao,
     private val sharedPreferences: SharedPreferences,
+    val lineDao: TransferShipmentDao,
 ) : TransferReceiptRepository {
     private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
 
@@ -65,12 +68,46 @@ class TransferReceiptRepositoryImpl(
     override fun getAllTransferReceiptInput(): LiveData<List<TransferReceiptInput>> =
         dao.getAllTransferReceiptInput()
 
-    override suspend fun insertTransferReceiptInput(data: TransferReceiptInput) {
-        dao.insertTransferReceiptInput(data)
+    override suspend fun insertTransferReceiptInput(data: TransferReceiptInput): Boolean {
+        return try {
+            val lineData = lineDao.getLineDetail(data.documentNo, data.lineNo)
+            if ((lineData.alredyScanned + data.quantity) <= lineData.qtyInTransit!!) {
+                lineData.apply {
+                    this.alredyScanned += data.quantity
+                }
+                dao.insertTransferReceiptInput(data)
+                lineDao.updateTransferLine(lineData)
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            e.stackTrace
+            false
+        }
     }
 
     override suspend fun updateTransferReceiptInput(data: TransferReceiptInput) {
         dao.updateTransferReceiptInput(data)
+    }
+
+    override suspend fun updateTransferReceiptInputQty(id: Int, newQty: Int): Flow<Boolean> = flow {
+        val transferInput = dao.getTransferInputDetail(id)
+        val lineData = lineDao.getLineDetail(transferInput.documentNo, transferInput.lineNo)
+        val totalQty = lineData.alredyScanned - transferInput.quantity + newQty
+        if (totalQty <= lineData.qtyInTransit!!) {
+            lineData.apply {
+                alredyScanned = totalQty
+            }
+            transferInput.apply {
+                quantity = newQty
+            }
+            dao.updateTransferReceiptInput(transferInput)
+            lineDao.updateTransferLine(lineData)
+            emit(true)
+        } else {
+            emit(false)
+        }
     }
 
     override fun getAllUnsycnTransferReceiptInput(status: Boolean): List<TransferReceiptInput> =
@@ -82,11 +119,18 @@ class TransferReceiptRepositoryImpl(
     override fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferReceiptInput>> =
         dao.getTransferInputHistoryLiveData(no)
 
-    override suspend fun getTransferInputDetail(id: Int): TransferReceiptInput =
-        dao.getTransferInputDetail(id)
+    override suspend fun getTransferInputDetail(id: Int): Flow<TransferReceiptInput> = flow {
+        emit(dao.getTransferInputDetail(id))
+    }
 
     override suspend fun deleteTransferInput(id: Int) {
+        val transferInput = dao.getTransferInputDetail(id)
+        val lineData = lineDao.getLineDetail(transferInput.documentNo, transferInput.lineNo)
+        lineData.apply {
+            alredyScanned -= transferInput.quantity
+        }
         dao.deleteTransferInput(id)
+        lineDao.updateTransferLine(lineData)
     }
 
     override suspend fun clearAllInputData() {
@@ -97,7 +141,7 @@ class TransferReceiptRepositoryImpl(
      * Remote Impl
      */
 
-    override suspend fun getTransferReceiptHeader(): Flow<ResultWrapper<MutableList<TransferReceiptHeader>>> =
+    override suspend fun getTransferReceiptHeaderAsync(): Flow<ResultWrapper<MutableList<TransferReceiptHeader>>> =
         flow {
             try {
                 val result = retrofitService.getTransferReceiptHeader()

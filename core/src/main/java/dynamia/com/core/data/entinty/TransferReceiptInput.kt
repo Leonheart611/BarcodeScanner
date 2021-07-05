@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 @Entity(tableName = "TransferReceiptInput")
 class TransferReceiptInput(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
-    @SerializedName("Table_ID") @Expose(serialize = true) val tableID: Int = 2,
+    @SerializedName("Table_ID") @Expose(serialize = true) val tableID: Int = 3,
     @SerializedName("Document_No") @Expose(serialize = true) val documentNo: String,
     @SerializedName("Line_No") @Expose(serialize = true) val lineNo: Int,
     @SerializedName("Item_No") @Expose(serialize = true) val itemNo: String,

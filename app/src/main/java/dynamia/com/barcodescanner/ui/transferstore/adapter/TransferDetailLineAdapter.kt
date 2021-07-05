@@ -7,18 +7,28 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.transferstore.TransferType
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.util.inflate
 import kotlinx.android.synthetic.main.picking_detail_line_item.view.*
 import java.util.*
 
-class TransferDetailLineAdapter(private var values: MutableList<TransferShipmentLine>) :
-    RecyclerView.Adapter<TransferDetailLineAdapter.PickingDetailHolder>(), Filterable {
+class TransferDetailLineAdapter(
+    private var values: MutableList<TransferShipmentLine>,
+) : RecyclerView.Adapter<TransferDetailLineAdapter.PickingDetailHolder>(), Filterable {
+
+    private lateinit var transferType: TransferType
 
     var listener: OnTransferLineCLicklistener? = null
 
     fun setOnClickListener(clicklistener: OnTransferLineCLicklistener) {
         listener = clicklistener
+    }
+
+    fun setTransferType(type: TransferType) {
+        transferType = type
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickingDetailHolder {
@@ -32,7 +42,10 @@ class TransferDetailLineAdapter(private var values: MutableList<TransferShipment
 
     override fun onBindViewHolder(holder: PickingDetailHolder, position: Int) {
         values[position].let {
-            holder.bind(it)
+            when (transferType) {
+                SHIPMENT -> holder.bindShipment(it)
+                RECEIPT -> holder.bindReceipt(it)
+            }
         }
     }
 
@@ -66,7 +79,7 @@ class TransferDetailLineAdapter(private var values: MutableList<TransferShipment
     }
 
     inner class PickingDetailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(transferShipmentLine: TransferShipmentLine) {
+        fun bindShipment(transferShipmentLine: TransferShipmentLine) {
             with(itemView) {
                 tv_item_code.text = transferShipmentLine.itemIdentifier
                 tv_description.text = transferShipmentLine.description
@@ -77,11 +90,23 @@ class TransferDetailLineAdapter(private var values: MutableList<TransferShipment
                 }
             }
         }
+
+        fun bindReceipt(transferShipmentLine: TransferShipmentLine) {
+            with(itemView) {
+                tv_item_code.text = transferShipmentLine.itemIdentifier
+                tv_description.text = transferShipmentLine.description
+                tv_qty.text =
+                    "${transferShipmentLine.alredyScanned} / ${transferShipmentLine.qtyInTransit}"
+                setOnClickListener {
+                    listener?.onclicklistener(transferShipmentLine)
+                }
+            }
+        }
     }
+
 
     interface OnTransferLineCLicklistener {
         fun onclicklistener(pickingListLineValue: TransferShipmentLine)
     }
-
 
 }

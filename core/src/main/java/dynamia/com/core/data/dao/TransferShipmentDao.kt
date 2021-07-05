@@ -24,7 +24,7 @@ interface TransferShipmentDao {
     fun deleteAllTransferHeader()
 
     @Query("SELECT count(*) from TransferShipmentHeader")
-    fun getCheckEmptyOrNot(): LiveData<Int>
+    fun getCheckEmptyOrNot(): Int
 
     /**
      * TransferShipmentLine

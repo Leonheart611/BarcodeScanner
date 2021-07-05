@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
+import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.barcodescanner.ui.transferstore.adapter.PickingMultipleLineAdapter
 import dynamia.com.core.data.entinty.TransferShipmentLine
@@ -24,7 +25,6 @@ import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
 import kotlinx.android.synthetic.main.dialog_part_no_not_found.tv_error_message
 import kotlinx.android.synthetic.main.header_layout.*
-import kotlinx.android.synthetic.main.history_input_fragment.*
 import kotlinx.android.synthetic.main.item_input_header.*
 import kotlinx.android.synthetic.main.transfer_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,41 +53,48 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
     }
 
     private fun setupObserverable() {
-        viewModel.transferInputViewState.observe(viewLifecycleOwner, {
-            when (it) {
-                is TransferInputViewModel.TransferInputViewState.ErrorGetData -> {
-                    context?.showLongToast(it.message)
+        with(viewModel) {
+            transferInputViewState.observe(viewLifecycleOwner, {
+                when (it) {
+                    is TransferInputViewModel.TransferInputViewState.ErrorGetData -> {
+                        context?.showLongToast(it.message)
+                    }
+                    is TransferInputViewModel.TransferInputViewState.LoadingSearchPickingList -> {
+                        activity?.showLoading(it.status)
+                    }
+                    is TransferInputViewModel.TransferInputViewState.SuccessGetValue -> {
+                        showSuccessfulData(it.data)
+                    }
+                    is TransferInputViewModel.TransferInputViewState.ErrorSaveData -> {
+                        context?.showLongToast(it.message)
+                    }
+                    TransferInputViewModel.TransferInputViewState.SuccessSaveData -> {
+                        context?.showLongToast("Success Save Data")
+                        args.barcodeNo?.let { et_tranferinput_qty.text?.clear() }
+                            ?: kotlin.run { clearData() }
+                    }
                 }
-                is TransferInputViewModel.TransferInputViewState.LoadingSearchPickingList -> {
-                    activity?.showLoading(it.status)
+            })
+            inputValidation.observe(viewLifecycleOwner, {
+                when (it) {
+                    TransferInputViewModel.InputValidation.BarcodeEmpty -> {
+                        til_transferinput_barcode.error = "Must Fill this Field"
+                    }
+                    TransferInputViewModel.InputValidation.QtyEmpty -> {
+                        til_transferinput_qty.error = "Must Fill this Field"
+                    }
                 }
-                is TransferInputViewModel.TransferInputViewState.SuccessGetValue -> {
-                    showSuccessfulData(it.data)
-                }
-                is TransferInputViewModel.TransferInputViewState.ErrorSaveData -> {
-                    context?.showLongToast(it.message)
-                }
-                TransferInputViewModel.TransferInputViewState.SuccessSaveData -> {
-                    context?.showLongToast("Success Save Data")
-                }
-            }
-        })
-        viewModel.inputValidation.observe(viewLifecycleOwner, {
-            when (it) {
-                TransferInputViewModel.InputValidation.BarcodeEmpty -> {
-                    til_transferinput_barcode.error = "Must Fill this Field"
-                }
-                TransferInputViewModel.InputValidation.QtyEmpty -> {
-                    til_transferinput_qty.error = "Must Fill this Field"
-                }
-            }
-        })
+            })
+        }
     }
 
     private fun showSuccessfulData(data: TransferShipmentLine) {
         tv_transfer_item_name.text = data.description
-        tv_transfer_qty.text = data.quantity.toString()
         til_transferinput_name.editText?.setText(data.no)
+        when (args.transferType) {
+            SHIPMENT -> tv_transfer_qty.text = data.quantity.toString()
+            RECEIPT -> tv_transfer_qty.text = data.qtyInTransit.toString()
+        }
     }
 
     private fun setupView() {
@@ -98,7 +105,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
             et_transfer_input_barcode.isEnabled = false
             getPickingListLineData(it)
             et_tranferinput_qty.requestFocus()
-            btn_reset.isEnabled = false
         }
         et_transfer_input_barcode.setOnEditorActionListener { _, keyCode, event ->
             if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
@@ -109,6 +115,11 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
+        }
+
+        tv_transfer_input_title.text = when (args.transferType) {
+            SHIPMENT -> getString(R.string.transfer_store)
+            RECEIPT -> getString(R.string.transfer_receipt_title)
         }
     }
 
@@ -122,7 +133,10 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
 
     private fun setupListener() {
         toolbar_picking_list_input.setOnClickListener { view?.findNavController()?.popBackStack() }
-        btn_reset.setOnClickListener { clearData() }
+        btn_reset.setOnClickListener {
+            args.barcodeNo?.let { et_tranferinput_qty.text?.clear() }
+                ?: kotlin.run { clearData() }
+        }
         btn_save.setOnClickListener {
             viewModel.checkUserInputValidation(
                 et_transfer_input_barcode.text.toString(),
@@ -136,7 +150,10 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                     val action =
                         TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
                             documentNo = args.transferNo,
-                            source = Constant.TRANSFER_SHIPMENT
+                            historyType = when (args.transferType) {
+                                SHIPMENT -> HistoryType.SHIPMENT
+                                RECEIPT -> HistoryType.RECEIPT
+                            }
                         )
                     view?.findNavController()?.navigate(action)
                     true

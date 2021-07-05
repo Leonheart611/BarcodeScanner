@@ -40,8 +40,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        //callAllApi()
-        getAllDataFromAssets()
+        callAllApi()
+        //getAllDataFromAssets()
         setOnClicklistener()
     }
 
@@ -72,12 +72,12 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                         )
                     )
                 }
-                SuccessGetReceiptLocal -> {
-                    iv_status_receipt_local.crossFade(animateDuration.toLong(), pb_receipt_local)
+                SuccessGetReceipt -> {
+                    iv_status_receipt_local.crossFade(animateDuration.toLong(), pb_receipt)
                 }
-                is FailedGetReceiptLocal -> {
-                    tv_error_receipt_local.text = it.message
-                    iv_status_receipt_local.crossFade(animateDuration.toLong(), pb_receipt_local)
+                is FailedGetReceipt -> {
+                    tv_error_receipt.text = it.message
+                    iv_status_receipt_local.crossFade(animateDuration.toLong(), pb_receipt)
                     iv_status_receipt_local.setImageDrawable(
                         ResourcesCompat.getDrawable(
                             resources,
@@ -92,6 +92,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
 
     private fun callAllApi() {
         viewModel.getTransferData()
+        viewModel.getReceiptDataAsync()
     }
 
 

@@ -32,7 +32,7 @@ val injectionModule = module {
     single<UserRepository> { UserRepositoryImpl(get()) }
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }
     single<TransferShipmentRepository> { TransferShipmentImpl(get(), get()) }
-    single<TransferReceiptRepository> { TransferReceiptRepositoryImpl(get(), get()) }
+    single<TransferReceiptRepository> { TransferReceiptRepositoryImpl(get(), get(), get()) }
 
     viewModel { LoginViewModel(get(), get()) }
     viewModel { HomeViewModel(get(), get(), get()) }
@@ -40,7 +40,7 @@ val injectionModule = module {
     viewModel { TransferDetailViewModel(get(), get(), get()) }
     viewModel { TransferInputViewModel(get(), get(), get()) }
     viewModel { ReceiptViewModel(get(), get(), get()) }
-    viewModel { HistoryInputViewModel(get(), get()) }
+    viewModel { HistoryInputViewModel(get(), get(), get()) }
     viewModel { ReceiptDetailViewModel(get(), get(), get(), get()) }
     viewModel { ReceiptInputViewModel(get(), get(), get()) }
     viewModel { StockCountingViewModel(get(), get(), get()) }

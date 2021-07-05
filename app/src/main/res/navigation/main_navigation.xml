@@ -121,9 +121,6 @@
         android:label="history_input_fragment"
         tools:layout="@layout/history_input_fragment">
         <argument
-            android:name="source"
-            app:argType="string" />
-        <argument
             android:name="showAll"
             android:defaultValue="false"
             app:argType="boolean" />
@@ -135,6 +132,9 @@
             android:name="lineNo"
             android:defaultValue="0"
             app:argType="integer" />
+        <argument
+            android:name="historyType"
+            app:argType="dynamia.com.barcodescanner.ui.history.HistoryType" />
     </fragment>
     <fragment
         android:id="@+id/receiptDetailFragment"

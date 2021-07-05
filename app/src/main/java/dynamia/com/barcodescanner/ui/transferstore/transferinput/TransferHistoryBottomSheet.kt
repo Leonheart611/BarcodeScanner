@@ -15,6 +15,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.history.HistoryType
+import dynamia.com.barcodescanner.ui.history.HistoryType.*
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.util.showLongToast
@@ -27,6 +29,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     HistoryTransferInputAdapter.OnHistorySelected {
     private val viewModel: TransferInputViewModel by viewModel()
     private val no by lazy { arguments?.getInt(ARGS_TRANSFER_ID) }
+    private val historyType by lazy { arguments?.getSerializable(ARGS_HISTORY_TYPE) as HistoryType }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -66,7 +69,10 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        no?.let { viewModel.getHistoryValueDetail(it.toString()) }
+        when (historyType) {
+            SHIPMENT -> no?.let { viewModel.getHistoryValueDetail(it) }
+            RECEIPT -> no?.let { viewModel.getHistoryReceiptDetail(it) }
+        }
         setupView()
         setObseverable()
     }
@@ -82,7 +88,6 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                         }
                         et_tranferinput_qty.setText(this.quantity.toString())
                     }
-
                 }
                 is TransferInputViewModel.TransferInputViewState.ErrorDeleteData -> {
                     context?.showLongToast(it.message)
@@ -98,6 +103,15 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                     context?.showLongToast("Data Updated")
                     dismiss()
                 }
+                is TransferInputViewModel.TransferInputViewState.SuccessGetReceiptHistoryValue -> {
+                    with(it.data) {
+                        et_transferinput_name.apply {
+                            setText(this@with.itemNo)
+                            isEnabled = false
+                        }
+                        et_tranferinput_qty.setText(this.quantity.toString())
+                    }
+                }
             }
         })
     }
@@ -108,15 +122,25 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
         btn_reset.apply {
             text = "Delete"
             setOnClickListener {
-                no?.let { no -> viewModel.deleteTransferEntry(no) }
+                when (historyType) {
+                    SHIPMENT -> no?.let { no -> viewModel.deleteTransferShipmentEntry(no) }
+                    RECEIPT -> no?.let { no -> viewModel.deleteTransferReceiptEntry(no) }
+                }
+
             }
         }
         btn_save.apply {
             text = "Update"
             setOnClickListener {
-                no?.let { no ->
-                    viewModel.updateTransferEntry(no,
-                        et_tranferinput_qty.text.toString().toInt())
+                when (historyType) {
+                    SHIPMENT -> no?.let { no ->
+                        viewModel.updateTransferShipmentEntry(no,
+                            et_tranferinput_qty.text.toString().toInt())
+                    }
+                    RECEIPT -> no?.let { no ->
+                        viewModel.updateTransferReceiptEntry(no,
+                            et_tranferinput_qty.text.toString().toInt())
+                    }
                 }
             }
         }
@@ -149,9 +173,10 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     }
 
     companion object {
-        fun newInstance(id: Int): TransferHistoryBottomSheet {
+        fun newInstance(id: Int, historyType: HistoryType): TransferHistoryBottomSheet {
             val argument = Bundle().apply {
                 putInt(ARGS_TRANSFER_ID, id)
+                putSerializable(ARGS_HISTORY_TYPE, historyType)
             }
             return TransferHistoryBottomSheet().apply {
                 arguments = argument
@@ -159,6 +184,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
         }
 
         const val ARGS_TRANSFER_ID = "id_input_transfer"
+        const val ARGS_HISTORY_TYPE = "history_type"
     }
 
 

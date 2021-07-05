@@ -8,10 +8,7 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
 import dynamia.com.core.base.ViewModelBase
-import dynamia.com.core.data.entinty.TransferInputData
-import dynamia.com.core.data.entinty.TransferReceiptHeader
-import dynamia.com.core.data.entinty.TransferShipmentHeader
-import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.util.*
@@ -33,13 +30,26 @@ class TransferInputViewModel(
     private var transferHeaderData: TransferShipmentHeader? = null
     private var transferReceiptHeader: TransferReceiptHeader? = null
 
-    fun getHistoryValueDetail(no: String) {
+    fun getHistoryValueDetail(no: Int) {
         viewModelScope.launch {
             io {
                 transferShipmentRepository.getTransferInputHistory(no).collect {
                     ui {
                         _transferInputViewState.value =
                             TransferInputViewState.SuccessGetHistoryValue(it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getHistoryReceiptDetail(no: Int) {
+        viewModelScope.launch {
+            io {
+                transferReceiptRepository.getTransferInputDetail(no).collect {
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessGetReceiptHistoryValue(it)
                     }
                 }
             }
@@ -109,7 +119,7 @@ class TransferInputViewModel(
     }
 
 
-    private fun insertTransferShipmentInput(qty: String, timeStamp: String) {
+    private fun insertTransferShipmentInput(qty: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -124,7 +134,7 @@ class TransferInputViewModel(
                                     transferFromBinCode = header.transferFromCode,
                                     transferToBinCode = header.transferToCode,
                                     userName = sharedPreferences.getUserName(),
-                                    insertDateTime = timeStamp
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
                                 )
                             )
                             ui {
@@ -147,14 +157,14 @@ class TransferInputViewModel(
         }
     }
 
-    private fun insertTransferReceiptInput(qty: String, timeStamp: String) {
+    private fun insertTransferReceiptInput(qty: String) {
         viewModelScope.launch {
             try {
                 io {
-                    transferHeaderData?.let { header ->
+                    transferReceiptHeader?.let { header ->
                         transferLineData?.let { line ->
-                            val value = transferShipmentRepository.insertTransferInput(
-                                TransferInputData(
+                            val value = transferReceiptRepository.insertTransferReceiptInput(
+                                TransferReceiptInput(
                                     documentNo = line.documentNo,
                                     quantity = qty.toInt(),
                                     lineNo = line.lineNo,
@@ -162,7 +172,7 @@ class TransferInputViewModel(
                                     transferFromBinCode = header.transferFromCode,
                                     transferToBinCode = header.transferToCode,
                                     userName = sharedPreferences.getUserName(),
-                                    insertDateTime = timeStamp
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
                                 )
                             )
                             ui {
@@ -198,16 +208,13 @@ class TransferInputViewModel(
         }
         if (barcode.isNotEmpty() && qty.isNotEmpty()) {
             when (typesInput) {
-                SHIPMENT -> insertTransferShipmentInput(qty,
-                    "${getCurrentDate()}T${getCurrentTime()}")
-                RECEIPT -> TODO()
+                SHIPMENT -> insertTransferShipmentInput(qty)
+                RECEIPT -> insertTransferReceiptInput(qty)
             }
-
-
         }
     }
 
-    fun deleteTransferEntry(id: Int) {
+    fun deleteTransferShipmentEntry(id: Int) {
         viewModelScope.launch {
             try {
                 io {
@@ -225,11 +232,54 @@ class TransferInputViewModel(
         }
     }
 
-    fun updateTransferEntry(id: Int, newQty: Int) {
+    fun deleteTransferReceiptEntry(id: Int) {
         viewModelScope.launch {
             try {
                 io {
-                    transferShipmentRepository.updateTransferInputQty(id, newQty)
+                    transferReceiptRepository.deleteTransferInput(id)
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessDeleteData
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun updateTransferShipmentEntry(id: Int, newQty: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferShipmentRepository.updateTransferShipmentInputQty(id, newQty)
+                        .collect { result ->
+                            ui {
+                                if (result) {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.SuccessUpdateData
+                                } else {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.ErrorUpdateData("Qty has Reach maximum allowed, please change")
+                                }
+                            }
+                        }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun updateTransferReceiptEntry(id: Int, newQty: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferReceiptRepository.updateTransferReceiptInputQty(id, newQty)
                         .collect { result ->
                             ui {
                                 if (result) {
@@ -254,6 +304,8 @@ class TransferInputViewModel(
     sealed class TransferInputViewState {
         class SuccessGetValue(val data: TransferShipmentLine) : TransferInputViewState()
         class SuccessGetHistoryValue(val data: TransferInputData) : TransferInputViewState()
+        class SuccessGetReceiptHistoryValue(val data: TransferReceiptInput) :
+            TransferInputViewState()
 
         object SuccessSaveData : TransferInputViewState()
         class ErrorSaveData(val message: String) : TransferInputViewState()

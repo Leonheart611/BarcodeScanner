@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class TransferDetailViewModel(
     val transferShipmentRepository: TransferShipmentRepository,
-    val transferReceiptRepository: TransferReceiptRepository,
+    private val transferReceiptRepository: TransferReceiptRepository,
     val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -98,7 +98,7 @@ class TransferDetailViewModel(
     }
 
 
-    fun postPickingDataNew() {
+    fun postShipmentData() {
         viewModelScope.launch {
             try {
                 var dataPosted = 0
@@ -123,6 +123,42 @@ class TransferDetailViewModel(
                                 sycn_status = true
                             }
                             transferShipmentRepository.updateTransferInput(data)
+                        }
+                    }
+                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
+                }
+            } catch (e: Exception) {
+                _pickingPostViewState.value =
+                    PickingDetailPostViewState.ErrorPostData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun postReceiptData() {
+        viewModelScope.launch {
+            try {
+                var dataPosted = 0
+                io {
+                    val listEntries =
+                        transferReceiptRepository.getAllUnsycnTransferReceiptInput()
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.GetUnpostedData(listEntries.size)
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                    }
+                    for (data in listEntries) {
+                        val param = gson.toJson(data)
+                        transferReceiptRepository.postTransferReceiptInput(param).collect {
+                            dataPosted++
+                            ui {
+                                _pickingPostViewState.value =
+                                    PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                            }
+                            data.apply {
+                                sycn_status = true
+                            }
+                            transferReceiptRepository.updateTransferReceiptInput(data)
                         }
                     }
                     ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
@@ -168,25 +204,6 @@ class TransferDetailViewModel(
                 _pickingDetailViewState.value =
                     TransferListViewState.ErrorGetLocalData(e.localizedMessage)
             }
-        }
-    }
-
-    fun getTransferLine(no: String) {
-        viewModelScope.launch {
-            try {
-                io {
-                    transferShipmentRepository.getLineListFromHeader(no).collect {
-                        ui {
-                            _pickingDetailViewState.value =
-                                TransferListViewState.SuccessGetPickingLineData(it.toMutableList())
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                _pickingDetailViewState.value =
-                    TransferListViewState.ErrorGetLocalData(e.localizedMessage)
-            }
-
         }
     }
 

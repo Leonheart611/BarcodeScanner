@@ -11,17 +11,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
+import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferReceiptInputAdapter
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferHistoryBottomSheet
 import dynamia.com.core.data.entinty.TransferInputData
-import dynamia.com.core.util.Constant
+import dynamia.com.core.data.entinty.TransferReceiptInput
 import kotlinx.android.synthetic.main.history_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySelected {
+class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySelected,
+    HistoryTransferReceiptInputAdapter.OnHistorySelected {
 
     private val viewModel: HistoryInputViewModel by viewModel()
     private val args: HistoryInputFragmentArgs by navArgs()
     private var scanEntriesAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
+    private var scanTransferReceiptAdapter =
+        HistoryTransferReceiptInputAdapter(mutableListOf(), this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,20 +44,30 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
     private fun setupRecylerView() {
         with(rv_input_history) {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            adapter = when (args.source) {
-                else -> scanEntriesAdapter
+            adapter = when (args.historyType) {
+                HistoryType.SHIPMENT -> scanEntriesAdapter
+                HistoryType.RECEIPT -> scanTransferReceiptAdapter
             }
         }
     }
 
     private fun setupView() {
-        when (args.source) {
-            Constant.TRANSFER_SHIPMENT -> {
+        when (args.historyType) {
+            HistoryType.SHIPMENT -> {
                 tv_transfer_input.text = getString(R.string.transfer_shipment_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.transferShipmentRepository.getTransferInputHistoryLiveData(documentNo)
                         .observe(viewLifecycleOwner, {
                             scanEntriesAdapter.updateData(it.toMutableList())
+                        })
+                }
+            }
+            HistoryType.RECEIPT -> {
+                tv_transfer_input.text = getString(R.string.transfer_receipt_history_title)
+                args.documentNo?.let { documentNo ->
+                    viewModel.transferReceiptRepository.getTransferInputHistoryLiveData(documentNo)
+                        .observe(viewLifecycleOwner, {
+                            scanTransferReceiptAdapter.updateData(it.toMutableList())
                         })
                 }
             }
@@ -69,7 +83,14 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
 
     override fun onHistorySelectDelete(value: TransferInputData) {
         value.id?.let {
-            val dialog = TransferHistoryBottomSheet.newInstance(it)
+            val dialog = TransferHistoryBottomSheet.newInstance(it, HistoryType.SHIPMENT)
+            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+        }
+    }
+
+    override fun receiptHistoryCLicklistener(value: TransferReceiptInput) {
+        value.id?.let {
+            val dialog = TransferHistoryBottomSheet.newInstance(it, HistoryType.RECEIPT)
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
         }
     }

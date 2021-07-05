@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/total_data_need_posted"
+        android:text="@string/total_data_posted"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_picking_post_title" />
 
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="@string/total_data_posted"
+        android:text="@string/total_data_need_posted"
         app:layout_constraintStart_toEndOf="@+id/textView28"
         app:layout_constraintTop_toBottomOf="@+id/tv_picking_post_title" />
 

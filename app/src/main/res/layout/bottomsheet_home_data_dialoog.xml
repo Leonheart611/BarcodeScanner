@@ -23,9 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/receipt_local_header"
+        android:text="@string/transfer_receipt_title"
         android:textSize="18sp"
-        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_error_transferstore" />
 
@@ -53,25 +52,25 @@
         app:layout_constraintTop_toTopOf="@+id/textView15" />
 
     <TextView
-        android:id="@+id/tv_error_receipt_local"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_error_receipt"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:textColor="@color/red"
-        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/pb_receipt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView19"
         tools:text="Error When Get Receipt Local" />
 
     <ProgressBar
-        android:id="@+id/pb_receipt_local"
+        android:id="@+id/pb_receipt"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_error_receipt_local"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_error_receipt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView19" />
 
@@ -85,7 +84,7 @@
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_error_receipt_local" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_error_receipt" />
 
     <TextView
         android:id="@+id/tv_error_receipt_import"
@@ -141,7 +140,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="50dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_error_receipt_local"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_error_receipt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView19"
         app:srcCompat="@drawable/ic_check_circle" />

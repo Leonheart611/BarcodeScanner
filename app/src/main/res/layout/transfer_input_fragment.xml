@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_transfer_input">
+        app:layout_constraintTop_toBottomOf="@+id/tv_transfer_input_title">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -73,7 +73,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <TextView
-        android:id="@+id/tv_transfer_input"
+        android:id="@+id/tv_transfer_input_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -91,8 +91,8 @@
         android:layout_height="1dp"
         android:layout_marginEnd="8dp"
         android:background="@android:color/black"
-        app:layout_constraintEnd_toEndOf="@+id/tv_transfer_input"
-        app:layout_constraintStart_toStartOf="@+id/tv_transfer_input"
-        app:layout_constraintTop_toBottomOf="@+id/tv_transfer_input" />
+        app:layout_constraintEnd_toEndOf="@+id/tv_transfer_input_title"
+        app:layout_constraintStart_toStartOf="@+id/tv_transfer_input_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_transfer_input_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

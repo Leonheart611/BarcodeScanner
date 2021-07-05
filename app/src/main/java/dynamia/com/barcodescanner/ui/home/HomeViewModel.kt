@@ -7,8 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.LOGOUT
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.REFRESH
-import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.FailedGetShippingData
-import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.SuccessGetShipingData
+import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.TransferReceiptHeaderAssets
 import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
@@ -44,6 +43,8 @@ class HomeViewModel(
                     transferShipmentRepository.deleteAllTransferHeader()
                     transferShipmentRepository.deleteAllTransferLine()
                     transferShipmentRepository.deleteAllTransferInput()
+                    transferReceiptRepository.deleteAllTransferReceiptHeader()
+                    transferReceiptRepository.clearAllInputData()
                 }
             } catch (e: Exception) {
                 _homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
@@ -114,6 +115,51 @@ class HomeViewModel(
         }
     }
 
+    fun checkEmptyData() {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferShipmentRepository.getCheckEmptyOrNot().collect {
+                        ui { _homeViewState.value = Event(HomeViewState.DBhasEmpty(it)) }
+                    }
+                }
+            } catch (e: Exception) {
+                _homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
+            }
+        }
+    }
+
+    fun getReceiptDataAsync() {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferReceiptRepository.deleteAllTransferReceiptHeader()
+                    transferReceiptRepository.clearAllInputData()
+
+                    transferReceiptRepository.getTransferReceiptHeaderAsync().collect { value ->
+                        when (value) {
+                            is GenericError -> ui {
+                                _homeGetApiViewState.value =
+                                    FailedGetReceipt("${value.code} ${value.error}")
+                            }
+                            is NetworkError -> _homeGetApiViewState.postValue(FailedGetReceipt(
+                                value.error))
+                            is Success -> {
+                                value.value.forEach {
+                                    transferReceiptRepository.insertTransferReceiptHeader(it)
+                                }
+                                ui { _homeGetApiViewState.value = SuccessGetReceipt }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _homeGetApiViewState.value =
+                    FailedGetReceipt(e.localizedMessage)
+            }
+        }
+    }
+
     fun checkUnpostedData(param: FunctionDialog) {
         viewModelScope.launch {
             io {
@@ -146,8 +192,8 @@ class HomeViewModel(
         class FailedGetShippingData(val message: String) : HomeGetApiViewState()
         object SuccessGetReceiptImport : HomeGetApiViewState()
         class FailedGetReceiptImport(val message: String) : HomeGetApiViewState()
-        object SuccessGetReceiptLocal : HomeGetApiViewState()
-        class FailedGetReceiptLocal(val message: String) : HomeGetApiViewState()
+        object SuccessGetReceipt : HomeGetApiViewState()
+        class FailedGetReceipt(val message: String) : HomeGetApiViewState()
     }
 
     sealed class HomePostViewState {
@@ -189,6 +235,8 @@ class HomeViewModel(
                     transferShipmentRepository.deleteAllTransferHeader()
                     transferShipmentRepository.deleteAllTransferLine()
                     transferShipmentRepository.deleteAllTransferInput()
+                    transferReceiptRepository.deleteAllTransferReceiptHeader()
+                    transferReceiptRepository.clearAllInputData()
 
                     transferShipmentHeader.value?.let {
                         it.forEach { data ->
@@ -205,7 +253,10 @@ class HomeViewModel(
                         it.forEach { data ->
                             transferShipmentRepository.insertTransferLine(data)
                         }
-                        ui { _homeGetApiViewState.value = SuccessGetShipingData }
+                        ui {
+                            _homeGetApiViewState.value = SuccessGetShipingData
+                            _homeGetApiViewState.value = SuccessGetReceipt
+                        }
                     }
                 }
             }

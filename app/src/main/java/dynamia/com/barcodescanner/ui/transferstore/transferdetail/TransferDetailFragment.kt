@@ -44,6 +44,7 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
     }
 
     private fun setupView() {
+        adapter.setTransferType(args.transferType)
         when (args.transferType) {
             SHIPMENT -> viewModel.getTransferShipingDetail(args.transferNo)
             RECEIPT -> viewModel.getTransferReceiptDetail(args.transferNo)
@@ -113,7 +114,7 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
     }
 
     private fun showPostDialog() {
-        val dialog = PickingPostDialog()
+        val dialog = PickingPostDialog.newInstance(args.transferType)
         dialog.show(requireActivity().supportFragmentManager, dialog.tag)
     }
 

@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.transferstore.TransferType
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
 import dynamia.com.core.util.crossFade
 import kotlinx.android.synthetic.main.picking_post_bottom_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -14,11 +17,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class PickingPostDialog : BottomSheetDialogFragment() {
 
     val viewModel: TransferDetailViewModel by viewModel()
+    private val postType by lazy { arguments?.getSerializable(POST_TYPE) as TransferType }
+
     private var animateDuration: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         return inflater.inflate(R.layout.picking_post_bottom_dialog, container, false)
@@ -26,12 +31,15 @@ class PickingPostDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.postPickingDataNew()
+        when (postType) {
+            SHIPMENT -> viewModel.postShipmentData()
+            RECEIPT -> viewModel.postReceiptData()
+        }
         setObseverable()
         setClicklistener()
     }
 
-    fun setObseverable() {
+    private fun setObseverable() {
         viewModel.pickingPostViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.PickingDetailPostViewState.GetUnpostedData -> {
@@ -66,11 +74,24 @@ class PickingPostDialog : BottomSheetDialogFragment() {
         })
     }
 
-    fun setClicklistener() {
+    private fun setClicklistener() {
         btn_dismis_picking_post.isEnabled = false
         btn_dismis_picking_post.setOnClickListener {
             dismissAllowingStateLoss()
         }
+    }
+
+    companion object {
+        fun newInstance(type: TransferType): PickingPostDialog {
+            val argument = Bundle().apply {
+                putSerializable(POST_TYPE, type)
+            }
+            return PickingPostDialog().apply {
+                arguments = argument
+            }
+        }
+
+        const val POST_TYPE = "post_type"
     }
 
 }
