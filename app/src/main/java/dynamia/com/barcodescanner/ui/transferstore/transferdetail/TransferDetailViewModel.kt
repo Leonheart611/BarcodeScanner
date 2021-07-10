@@ -4,11 +4,11 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import dynamia.com.barcodescanner.ui.transferstore.TransferType
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.core.base.ViewModelBase
-import dynamia.com.core.data.entinty.TransferInputData
-import dynamia.com.core.data.entinty.TransferReceiptHeader
-import dynamia.com.core.data.entinty.TransferShipmentHeader
-import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.entinty.*
+import dynamia.com.core.data.repository.PurchaseOrderRepository
 import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.util.*
@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 class TransferDetailViewModel(
     val transferShipmentRepository: TransferShipmentRepository,
     private val transferReceiptRepository: TransferReceiptRepository,
+    val purchaseOrderRepository: PurchaseOrderRepository,
     val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -33,22 +34,51 @@ class TransferDetailViewModel(
 
     private var transferLineData: TransferShipmentLine? = null
     private var transferHeaderData: TransferShipmentHeader? = null
+    private var transferReceiptHeader: TransferReceiptHeader? = null
+
+    private var purchaseLineData: PurchaseOrderLine? = null
 
 
-    fun getPickingListLineValue(no: String, identifier: String) {
+    fun insertDataValue(no: String, identifier: String, transferType: TransferType) {
         viewModelScope.launch {
             try {
                 io {
-                    transferShipmentRepository.getTransferHeaderDetail(no).collect {
-                        transferHeaderData = it
-                    }
-                    transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
-                        .collect { data ->
-                            ui {
-                                transferLineData = data
-                                insertTransferInput("1", "${getCurrentDate()}T${getCurrentTime()}")
+                    when (transferType) {
+                        SHIPMENT -> {
+                            transferShipmentRepository.getTransferHeaderDetail(no).collect {
+                                transferHeaderData = it
                             }
+                            transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
+                                .collect { data ->
+                                    ui {
+                                        transferLineData = data
+                                        insertTransferInput("1")
+                                    }
+                                }
                         }
+                        RECEIPT -> {
+                            transferReceiptRepository.getTransferHeaderDetail(no).collect {
+                                transferReceiptHeader = it
+                            }
+                            transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
+                                .collect { data ->
+                                    ui {
+                                        transferLineData = data
+                                        insertTransferReceiptInput("1")
+                                    }
+                                }
+                        }
+                        PURCHASE -> {
+                            purchaseOrderRepository.getPurchaseOrderLineByBarcode(no, identifier)
+                                .collect { data ->
+                                    ui {
+                                        purchaseLineData = data
+                                        insertPurchaseInput("1")
+                                    }
+                                }
+                        }
+                    }
+
                 }
             } catch (e: Exception) {
                 e.stackTrace
@@ -58,7 +88,7 @@ class TransferDetailViewModel(
         }
     }
 
-    private fun insertTransferInput(qty: String, timeStamp: String) {
+    private fun insertTransferInput(qty: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -73,7 +103,7 @@ class TransferDetailViewModel(
                                     transferFromBinCode = header.transferFromCode,
                                     transferToBinCode = header.transferToCode,
                                     userName = sharedPreferences.getUserName(),
-                                    insertDateTime = timeStamp
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
                                 )
                             )
                             ui {
@@ -120,7 +150,7 @@ class TransferDetailViewModel(
                                     PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
                             }
                             data.apply {
-                                sycn_status = true
+                                sync_status = true
                             }
                             transferShipmentRepository.updateTransferInput(data)
                         }
@@ -156,7 +186,7 @@ class TransferDetailViewModel(
                                     PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
                             }
                             data.apply {
-                                sycn_status = true
+                                sync_status = true
                             }
                             transferReceiptRepository.updateTransferReceiptInput(data)
                         }
@@ -207,6 +237,99 @@ class TransferDetailViewModel(
         }
     }
 
+    fun getPurchaseOrderDetail(no: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    purchaseOrderRepository.getPurchaseOrderDetail(no).collect {
+                        ui {
+                            _pickingDetailViewState.value =
+                                TransferListViewState.SuccessGetPurchaseData(it)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _pickingDetailViewState.value =
+                    TransferListViewState.ErrorGetLocalData(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun insertTransferReceiptInput(qty: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    transferReceiptHeader?.let { header ->
+                        transferLineData?.let { line ->
+                            val value = transferReceiptRepository.insertTransferReceiptInput(
+                                TransferReceiptInput(
+                                    documentNo = line.documentNo,
+                                    quantity = qty.toInt(),
+                                    lineNo = line.lineNo,
+                                    itemNo = line.no,
+                                    transferFromBinCode = header.transferFromCode,
+                                    transferToBinCode = header.transferToCode,
+                                    userName = sharedPreferences.getUserName(),
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                )
+                            )
+                            ui {
+                                if (value) {
+                                    _transferInputViewState.value =
+                                        TransferDetailInputViewState.SuccessSaveData
+                                } else {
+                                    _transferInputViewState.value =
+                                        TransferDetailInputViewState.ErrorSaveData
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun insertPurchaseInput(qty: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    purchaseLineData?.let { line ->
+                        val value = purchaseOrderRepository.insertPurchaseOrderData(
+                            PurchaseInputData(
+                                documentNo = line.documentNo,
+                                quantity = qty.toInt(),
+                                lineNo = line.lineNo,
+                                itemNo = line.no,
+                                transferFromBinCode = "",
+                                transferToBinCode = "",
+                                userName = sharedPreferences.getUserName(),
+                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                            )
+                        )
+                        ui {
+                            if (value) {
+                                _transferInputViewState.value =
+                                    TransferDetailInputViewState.SuccessSaveData
+                            } else {
+                                _transferInputViewState.value =
+                                    TransferDetailInputViewState.ErrorSaveData
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+
     sealed class TransferListViewState {
         class SuccessGetLocalData(val value: TransferShipmentHeader) : TransferListViewState()
         class SuccessGetReceiptLocalData(val values: TransferReceiptHeader) :
@@ -216,6 +339,7 @@ class TransferDetailViewModel(
             TransferListViewState()
 
         class ErrorGetLocalData(val message: String) : TransferListViewState()
+        class SuccessGetPurchaseData(val value: PurchaseOrderHeader) : TransferListViewState()
     }
 
     sealed class PickingDetailPostViewState {

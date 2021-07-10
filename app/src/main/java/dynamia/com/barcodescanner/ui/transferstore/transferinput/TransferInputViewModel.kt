@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
-import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
-import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.*
+import dynamia.com.core.data.repository.PurchaseOrderRepository
 import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.util.*
@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 class TransferInputViewModel(
     private val transferShipmentRepository: TransferShipmentRepository,
     private val transferReceiptRepository: TransferReceiptRepository,
+    private val purchaseOrderRepository: PurchaseOrderRepository,
     val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -30,6 +31,9 @@ class TransferInputViewModel(
     private var transferHeaderData: TransferShipmentHeader? = null
     private var transferReceiptHeader: TransferReceiptHeader? = null
 
+    private var purchaseHeader: PurchaseOrderHeader? = null
+    private var purchaseLineData: PurchaseOrderLine? = null
+
     fun getHistoryValueDetail(no: Int) {
         viewModelScope.launch {
             io {
@@ -37,6 +41,19 @@ class TransferInputViewModel(
                     ui {
                         _transferInputViewState.value =
                             TransferInputViewState.SuccessGetHistoryValue(it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getPurchaseHistoryDetail(no: Int) {
+        viewModelScope.launch {
+            io {
+                purchaseOrderRepository.getPurchaseInputDetail(no).collect {
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessGetPurchaseHistory(it)
                     }
                 }
             }
@@ -112,6 +129,75 @@ class TransferInputViewModel(
                 e.stackTrace
                 _transferInputViewState.value =
                     TransferInputViewState.LoadingSearchPickingList(false)
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun getPurchaseLineValue(no: String, identifier: String) {
+        viewModelScope.launch {
+            try {
+                _transferInputViewState.value =
+                    TransferInputViewState.LoadingSearchPickingList(true)
+                io {
+                    with(purchaseOrderRepository) {
+                        getPurchaseOrderDetail(no).collect {
+                            purchaseHeader = it
+                        }
+                        getPurchaseOrderLineByBarcode(no, identifier).collect { data ->
+                            ui {
+                                purchaseLineData = data
+                                _transferInputViewState.value =
+                                    TransferInputViewState.SuccessGetPurchaseValue(data)
+                                _transferInputViewState.value =
+                                    TransferInputViewState.LoadingSearchPickingList(false)
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.LoadingSearchPickingList(false)
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun insertPurchaseInput(qty: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    purchaseHeader?.let {
+                        purchaseLineData?.let { line ->
+                            val value = purchaseOrderRepository.insertPurchaseOrderData(
+                                PurchaseInputData(
+                                    documentNo = line.documentNo,
+                                    quantity = qty.toInt(),
+                                    lineNo = line.lineNo,
+                                    itemNo = line.no,
+                                    transferFromBinCode = "",
+                                    transferToBinCode = "",
+                                    userName = sharedPreferences.getUserName(),
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                )
+                            )
+                            ui {
+                                if (value) {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.SuccessSaveData
+                                } else {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan")
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
                 _transferInputViewState.value =
                     TransferInputViewState.ErrorGetData(e.localizedMessage)
             }
@@ -210,6 +296,7 @@ class TransferInputViewModel(
             when (typesInput) {
                 SHIPMENT -> insertTransferShipmentInput(qty)
                 RECEIPT -> insertTransferReceiptInput(qty)
+                PURCHASE -> insertPurchaseInput(qty)
             }
         }
     }
@@ -219,6 +306,41 @@ class TransferInputViewModel(
             try {
                 io {
                     transferShipmentRepository.deleteTransferInput(id)
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessDeleteData
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun updatePurchaseInputData(id: Int, newQty: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    purchaseOrderRepository.updatePurchaseInputData(id, newQty)
+                    ui {
+                        _transferInputViewState.value = TransferInputViewState.SuccessUpdateData
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun deletePurchaseOrderEntry(id: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    purchaseOrderRepository.deletePurchaseInputData(id)
                     ui {
                         _transferInputViewState.value =
                             TransferInputViewState.SuccessDeleteData
@@ -306,6 +428,10 @@ class TransferInputViewModel(
         class SuccessGetHistoryValue(val data: TransferInputData) : TransferInputViewState()
         class SuccessGetReceiptHistoryValue(val data: TransferReceiptInput) :
             TransferInputViewState()
+
+        class SuccessGetPurchaseHistory(val data: PurchaseInputData) : TransferInputViewState()
+
+        class SuccessGetPurchaseValue(val data: PurchaseOrderLine) : TransferInputViewState()
 
         object SuccessSaveData : TransferInputViewState()
         class ErrorSaveData(val message: String) : TransferInputViewState()

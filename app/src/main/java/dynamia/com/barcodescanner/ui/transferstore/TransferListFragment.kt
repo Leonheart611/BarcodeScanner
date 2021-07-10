@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
-import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
-import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
+import dynamia.com.barcodescanner.ui.transferstore.adapter.PurchaseHeaderListAdapter
 import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferListAdapter
 import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferReceiptListAdapter
+import dynamia.com.core.data.entinty.PurchaseOrderHeader
 import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.util.showLongToast
@@ -23,11 +24,13 @@ import kotlinx.android.synthetic.main.transferlist_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClicklistener,
-    TransferReceiptListAdapter.OnTransferReceiptListCLicklistener {
+    TransferReceiptListAdapter.OnTransferReceiptListCLicklistener,
+    PurchaseHeaderListAdapter.OnPurchaseHeaderClicklistener {
 
     private val viewModel: TransferListViewModel by viewModel()
     private val transferListAdapter = TransferListAdapter(mutableListOf(), this)
     private val transferReceiptListAdapter = TransferReceiptListAdapter(mutableListOf(), this)
+    private val purchaseOrderAdapter = PurchaseHeaderListAdapter(mutableListOf(), this)
     private val args: TransferListFragmentArgs by navArgs()
     private var activity: MainActivity? = null
 
@@ -58,7 +61,21 @@ class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClick
         when (args.transferType) {
             SHIPMENT -> setShipmentView()
             RECEIPT -> setReceiptView()
+            PURCHASE -> setPurchaseView()
         }
+    }
+
+    private fun setPurchaseView() {
+        tv_title_header.text = getString(R.string.purchase_order_title)
+        with(rv_pickinglist) {
+            layoutManager =
+                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = purchaseOrderAdapter
+        }
+        viewModel.purchaseOrderRepository.getAllPurchaseOrderHeader()
+            .observe(viewLifecycleOwner, {
+                purchaseOrderAdapter.updateData(it.toMutableList())
+            })
     }
 
     private fun setReceiptView() {
@@ -121,6 +138,13 @@ class TransferListFragment : Fragment(), TransferListAdapter.OnTransferListClick
         val action =
             TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(data.no,
                 RECEIPT)
+        view?.findNavController()?.navigate(action)
+    }
+
+    override fun clickListener(data: PurchaseOrderHeader) {
+        val action =
+            TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(data.no,
+                PURCHASE)
         view?.findNavController()?.navigate(action)
     }
 }

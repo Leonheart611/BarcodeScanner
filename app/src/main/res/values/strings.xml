@@ -108,4 +108,6 @@
     <string name="transfer_shipment_history_title">Transfer Shipment History</string>
     <string name="transfer_receipt_title">Transfer Receipt</string>
     <string name="transfer_receipt_history_title">Transfer Receipt History</string>
+    <string name="purchase_order_title">Purchase Order</string>
+    <string name="purchase_order_history_title">Purchase Order History</string>
 </resources>

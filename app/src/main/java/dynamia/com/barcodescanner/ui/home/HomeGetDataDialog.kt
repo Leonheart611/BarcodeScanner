@@ -9,9 +9,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
-import dynamia.com.core.data.entinty.TransferReceiptHeaderAssets
-import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
-import dynamia.com.core.data.entinty.TransferShipmentLineAsset
+import dynamia.com.core.data.entinty.*
 import dynamia.com.core.util.crossFade
 import dynamia.com.core.util.readJsonAsset
 import kotlinx.android.synthetic.main.bottomsheet_home_data_dialoog.*
@@ -40,8 +38,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        callAllApi()
-        //getAllDataFromAssets()
+        //callAllApi()
+        getAllDataFromAssets()
         setOnClicklistener()
     }
 
@@ -58,13 +56,13 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                         ResourcesCompat.getDrawable(resources, R.drawable.ic_error_circle, null)
                     )
                 }
-                SuccessGetReceiptImport -> {
-                    iv_status_receipt_import.crossFade(animateDuration.toLong(), pb_receipt_import)
+                SuccessGetPurchaseData -> {
+                    iv_status_purchase_order.crossFade(animateDuration.toLong(), pb_purchase_order)
                 }
-                is FailedGetReceiptImport -> {
-                    tv_error_receipt_import.text = it.message
-                    iv_status_receipt_import.crossFade(animateDuration.toLong(), pb_receipt_import)
-                    iv_status_receipt_import.setImageDrawable(
+                is FailedGetPurchase -> {
+                    tv_error_purchase_order.text = it.message
+                    iv_status_purchase_order.crossFade(animateDuration.toLong(), pb_purchase_order)
+                    iv_status_purchase_order.setImageDrawable(
                         ResourcesCompat.getDrawable(
                             resources,
                             R.drawable.ic_error_circle,
@@ -93,6 +91,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     private fun callAllApi() {
         viewModel.getTransferData()
         viewModel.getReceiptDataAsync()
+        viewModel.getPurchaseDataAsync()
     }
 
 
@@ -109,10 +108,20 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             activity?.readJsonAsset("ShipingLine.json"),
             TransferShipmentLineAsset::class.java
         )
+        val purchaseOrderHeader = Gson().fromJson(
+            activity?.readJsonAsset("PurchaseOrderHeader.json"),
+            PurchaseOrderHeaderAssets::class.java
+        )
+        val purchaseOrderLine = Gson().fromJson(
+            activity?.readJsonAsset("PurchaseOrderLine.json"),
+            PurchaseOrderLineAsset::class.java
+        )
         viewModel.saveAssetData(
             transferShipmentHeader,
             transferShipmentLine,
-            transferReceiptHeader
+            transferReceiptHeader,
+            purchaseOrderHeader,
+            purchaseOrderLine
         )
     }
 

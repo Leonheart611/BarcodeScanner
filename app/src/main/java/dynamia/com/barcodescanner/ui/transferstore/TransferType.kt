@@ -1,5 +1,5 @@
 package dynamia.com.barcodescanner.ui.transferstore
 
 enum class TransferType {
-    SHIPMENT, RECEIPT
+    SHIPMENT, RECEIPT, PURCHASE
 }

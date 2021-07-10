@@ -21,6 +21,12 @@ interface MasariAPI {
     @GET("Android_TransferLine")
     suspend fun getTransferShipmentLine(): Response<BaseResponse<TransferShipmentLine>>
 
+    @GET("Android_PurchaseOrderHeader")
+    suspend fun getPurchaseOrderHeader(): Response<BaseResponse<PurchaseOrderHeader>>
+
+    @GET("Android_PurchaseOrderLine")
+    suspend fun getPurchaseOrderLine(): Response<BaseResponse<PurchaseOrderLine>>
+
     @Headers("Content-Type: application/json")
     @POST("Android_Transaction")
     suspend fun postTransferShipment(@Body value: String): TransferInputData
@@ -28,6 +34,10 @@ interface MasariAPI {
     @Headers("Content-Type: application/json")
     @POST("Android_Transaction")
     suspend fun postTransferReceipt(@Body value: String): TransferReceiptInput
+
+    @Headers("Content-Type: application/json")
+    @POST("Android_Transaction")
+    suspend fun postPurchaseOrderData(@Body value: String): PurchaseInputData
 
     @GET("Chart_of_Accounts")
     suspend fun getCustomer(): Response<String>

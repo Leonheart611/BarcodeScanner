@@ -9,9 +9,8 @@ import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.LOGOUT
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.REFRESH
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.base.ViewModelBase
-import dynamia.com.core.data.entinty.TransferReceiptHeaderAssets
-import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
-import dynamia.com.core.data.entinty.TransferShipmentLineAsset
+import dynamia.com.core.data.entinty.*
+import dynamia.com.core.data.repository.PurchaseOrderRepository
 import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.domain.ResultWrapper.*
@@ -24,6 +23,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     val transferShipmentRepository: TransferShipmentRepository,
     val transferReceiptRepository: TransferReceiptRepository,
+    val purchaseOrderRepository: PurchaseOrderRepository,
     private val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -129,6 +129,53 @@ class HomeViewModel(
         }
     }
 
+    fun getPurchaseDataAsync() {
+        viewModelScope.launch {
+            try {
+                io {
+                    with(purchaseOrderRepository) {
+                        deleteAllPurchaseOrderLine()
+                        deleteAllPurchaseOrderHeader()
+                        deleteAllPurchaseInputData()
+
+                        getPurchaseOrderHeaderAsync().collect { value ->
+                            when (value) {
+                                is GenericError -> ui {
+                                    _homeGetApiViewState.value =
+                                        FailedGetPurchase("${value.code} ${value.error}")
+                                }
+                                is NetworkError -> _homeGetApiViewState.postValue(FailedGetPurchase(
+                                    value.error))
+                                is Success -> {
+                                    value.value.forEach {
+                                        insertPurchaseOrderHeader(it)
+                                    }
+                                }
+                            }
+                        }
+                        getPurchaseOrderLineAsync().collect { value ->
+                            when (value) {
+                                is GenericError -> _homeGetApiViewState.postValue(FailedGetPurchase(
+                                    "${value.code} ${value.error}"))
+                                is NetworkError -> _homeGetApiViewState.postValue(FailedGetPurchase(
+                                    value.error))
+                                is Success -> {
+                                    value.value.forEach {
+                                        insertPurchaseOrderLine(it)
+                                    }
+                                    ui { _homeGetApiViewState.value = SuccessGetPurchaseData }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _homeGetApiViewState.value =
+                    FailedGetPurchase(e.localizedMessage)
+            }
+        }
+    }
+
     fun getReceiptDataAsync() {
         viewModelScope.launch {
             try {
@@ -163,14 +210,16 @@ class HomeViewModel(
     fun checkUnpostedData(param: FunctionDialog) {
         viewModelScope.launch {
             io {
-                val listEntries =
-                    transferShipmentRepository.getAllUnsycnTransferInput()
+                val listEntries = transferShipmentRepository.getAllUnsycnTransferInput()
+                val receiptEntris = transferReceiptRepository.getAllUnsycnTransferReceiptInput()
+                val purchaseEntries = purchaseOrderRepository.getAllUnSyncPurchaseInput()
+                val total = listEntries.size + receiptEntris.size + purchaseEntries.size
                 ui {
                     when (param) {
                         REFRESH -> _homeViewState.value =
-                            Event(HomeViewState.GetUnpostedDataRefresh(listEntries.size.toString()))
+                            Event(HomeViewState.GetUnpostedDataRefresh(total.toString()))
                         LOGOUT -> _homeViewState.value =
-                            Event(HomeViewState.GetUnpostedDataLogout(listEntries.size.toString()))
+                            Event(HomeViewState.GetUnpostedDataLogout(total.toString()))
                     }
                 }
             }
@@ -190,10 +239,10 @@ class HomeViewModel(
     sealed class HomeGetApiViewState {
         object SuccessGetShipingData : HomeGetApiViewState()
         class FailedGetShippingData(val message: String) : HomeGetApiViewState()
-        object SuccessGetReceiptImport : HomeGetApiViewState()
-        class FailedGetReceiptImport(val message: String) : HomeGetApiViewState()
         object SuccessGetReceipt : HomeGetApiViewState()
         class FailedGetReceipt(val message: String) : HomeGetApiViewState()
+        object SuccessGetPurchaseData : HomeGetApiViewState()
+        class FailedGetPurchase(val message: String) : HomeGetApiViewState()
     }
 
     sealed class HomePostViewState {
@@ -227,6 +276,8 @@ class HomeViewModel(
         transferShipmentHeader: TransferShipmentHeaderAsset,
         transferShipmentLine: TransferShipmentLineAsset,
         transferReceiptHeader: TransferReceiptHeaderAssets,
+        purchaseOrderHeaderAssets: PurchaseOrderHeaderAssets,
+        purchaseOrderLineAsset: PurchaseOrderLineAsset,
     ) {
         try {
 
@@ -237,6 +288,11 @@ class HomeViewModel(
                     transferShipmentRepository.deleteAllTransferInput()
                     transferReceiptRepository.deleteAllTransferReceiptHeader()
                     transferReceiptRepository.clearAllInputData()
+                    with(purchaseOrderRepository) {
+                        deleteAllPurchaseInputData()
+                        deleteAllPurchaseOrderHeader()
+                        deleteAllPurchaseOrderLine()
+                    }
 
                     transferShipmentHeader.value?.let {
                         it.forEach { data ->
@@ -253,10 +309,21 @@ class HomeViewModel(
                         it.forEach { data ->
                             transferShipmentRepository.insertTransferLine(data)
                         }
-                        ui {
-                            _homeGetApiViewState.value = SuccessGetShipingData
-                            _homeGetApiViewState.value = SuccessGetReceipt
+                    }
+                    purchaseOrderHeaderAssets.value?.let {
+                        it.forEach { data ->
+                            purchaseOrderRepository.insertPurchaseOrderHeader(data)
                         }
+                    }
+                    purchaseOrderLineAsset.value?.let {
+                        it.forEach { data ->
+                            purchaseOrderRepository.insertPurchaseOrderLine(data)
+                        }
+                    }
+                    ui {
+                        _homeGetApiViewState.value = SuccessGetShipingData
+                        _homeGetApiViewState.value = SuccessGetReceipt
+                        _homeGetApiViewState.value = SuccessGetPurchaseData
                     }
                 }
             }

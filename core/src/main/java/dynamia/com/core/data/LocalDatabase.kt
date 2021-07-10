@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import dynamia.com.core.data.dao.PurchaseOrderDao
 import dynamia.com.core.data.dao.TransferReceiptDao
 import dynamia.com.core.data.dao.TransferShipmentDao
 import dynamia.com.core.data.dao.UserDao
@@ -17,13 +18,17 @@ import dynamia.com.core.data.model.UserData
         UserData::class,
         TransferInputData::class,
         TransferReceiptHeader::class,
-        TransferReceiptInput::class
-    ], version = 9, exportSchema = false
+        TransferReceiptInput::class,
+        PurchaseOrderHeader::class,
+        PurchaseOrderLine::class,
+        PurchaseInputData::class
+    ], version = 11, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferShipment(): TransferShipmentDao
     abstract fun userDao(): UserDao
     abstract fun transferReceipt(): TransferReceiptDao
+    abstract fun purchaseOrder(): PurchaseOrderDao
 
     companion object {
         @Volatile

@@ -50,7 +50,7 @@ class HistoryTransferReceiptInputAdapter(
                         listener.receiptHistoryCLicklistener(value)
                     }
                 }
-                if (value.sycn_status) {
+                if (value.sync_status) {
                     tv_transferhistory_status.setText(R.string.posted_status_true)
                     tv_transferhistory_status.setTextColor(
                         ContextCompat.getColor(

@@ -14,7 +14,6 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeViewState.DBhasEmpty
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
-import dynamia.com.core.util.Constant.RECEIPT_LOCAL
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.home_fragment.*
@@ -82,6 +81,9 @@ class HomeFragment : Fragment() {
             transferShipmentRepository.getAllTransferHeader().observe(viewLifecycleOwner, {
                 tv_transfer_count.text = it.size.toString()
             })
+            purchaseOrderRepository.getAllPurchaseOrderHeader().observe(viewLifecycleOwner, {
+                tv_count_purchase_order.text = it.size.toString()
+            })
         }
     }
 
@@ -121,9 +123,9 @@ class HomeFragment : Fragment() {
             )
             findNavController().navigate(action)
         }
-        cv_receipt_local.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToReceiptFragment(
-                RECEIPT_LOCAL
+        cv_purchase_order.setOnClickListener {
+            val action = HomeFragmentDirections.actionHomeFragmentToPickingListFragment(
+                TransferType.PURCHASE
             )
             findNavController().navigate(action)
         }

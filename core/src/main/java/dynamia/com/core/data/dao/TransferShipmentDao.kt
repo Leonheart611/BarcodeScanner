@@ -66,7 +66,7 @@ interface TransferShipmentDao {
     @Update(onConflict = OnConflictStrategy.ABORT, entity = TransferInputData::class)
     fun updateTransferInput(data: TransferInputData)
 
-    @Query("SELECT * FROM TransferInputData WHERE sycn_status = :status")
+    @Query("SELECT * FROM TransferInputData WHERE sync_status = :status")
     fun getAllUnsycnTransferInput(status: Boolean): List<TransferInputData>
 
     @Query("SELECT * FROM TransferInputData WHERE id = :id ORDER BY id DESC  ")

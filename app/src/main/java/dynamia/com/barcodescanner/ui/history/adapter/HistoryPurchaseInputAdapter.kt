@@ -5,23 +5,23 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.core.data.entinty.TransferInputData
+import dynamia.com.core.data.entinty.PurchaseInputData
 import dynamia.com.core.util.inflate
 import kotlinx.android.synthetic.main.item_transfer_input_history.view.*
 
-class HistoryTransferInputAdapter(
-    private val pickingListScanEntriesValues: MutableList<TransferInputData>,
-    private val listener: OnHistorySelected
-) : RecyclerView.Adapter<HistoryTransferInputAdapter.HistoryInputHolder>() {
+class HistoryPurchaseInputAdapter(
+    private val pickingListScanEntriesValues: MutableList<PurchaseInputData>,
+    private val listener: OnPurchaseHistoryClicklistener,
+) : RecyclerView.Adapter<HistoryPurchaseInputAdapter.HistoryInputHolder>() {
 
-    fun updateData(data: MutableList<TransferInputData>) {
+    fun updateData(data: MutableList<PurchaseInputData>) {
         pickingListScanEntriesValues.clear()
         pickingListScanEntriesValues.addAll(data)
         notifyDataSetChanged()
     }
 
-    interface OnHistorySelected {
-        fun onHistorySelectDelete(value: TransferInputData)
+    interface OnPurchaseHistoryClicklistener {
+        fun historyCLicklistener(value: PurchaseInputData)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryInputHolder {
@@ -39,7 +39,7 @@ class HistoryTransferInputAdapter(
     }
 
     class HistoryInputHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(value: TransferInputData, listener: OnHistorySelected) {
+        fun bind(value: PurchaseInputData, listener: OnPurchaseHistoryClicklistener) {
             with(itemView) {
                 tv_transfer_docno.text = "Document No: ${value.documentNo}"
                 tv_transferhistory_qty.text = "Qty: ${value.quantity}"
@@ -47,7 +47,7 @@ class HistoryTransferInputAdapter(
                 tv_transfer_itemno.text = "Item No: ${value.itemNo}"
                 value.id?.let { id ->
                     setOnClickListener {
-                        listener.onHistorySelectDelete(value)
+                        listener.historyCLicklistener(value)
                     }
                 }
                 if (value.sync_status) {

@@ -11,22 +11,22 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
-import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
+import dynamia.com.barcodescanner.ui.transferstore.adapter.PurchaseDetailLineAdapter
 import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAdapter
-import dynamia.com.core.data.entinty.TransferReceiptHeader
-import dynamia.com.core.data.entinty.TransferShipmentHeader
-import dynamia.com.core.data.entinty.TransferShipmentLine
+import dynamia.com.core.data.entinty.*
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.dialog_validate_s.*
 import kotlinx.android.synthetic.main.transfer_detail_fragment.*
 import kotlinx.android.synthetic.main.transfer_header_layout.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferLineCLicklistener {
+class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferLineCLicklistener,
+    PurchaseDetailLineAdapter.OnPurchaseLineClicklistener {
     private val viewModel: TransferDetailViewModel by viewModel()
     private val args: TransferDetailFragmentArgs by navArgs()
-    val adapter = TransferDetailLineAdapter(mutableListOf())
+    private val transferReceiptAdapter = TransferDetailLineAdapter(mutableListOf())
+    private val purchaseDetailLineAdapter = PurchaseDetailLineAdapter(mutableListOf())
     private var settingDialog: Dialog? = null
 
     override fun onCreateView(
@@ -38,28 +38,55 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupView()
-        setupListener()
-        setObseverable()
-    }
 
-    private fun setupView() {
-        adapter.setTransferType(args.transferType)
-        when (args.transferType) {
-            SHIPMENT -> viewModel.getTransferShipingDetail(args.transferNo)
-            RECEIPT -> viewModel.getTransferReceiptDetail(args.transferNo)
-        }
         tv_transferdetail_store.text =
             getString(R.string.transfer_store_name, viewModel.getCompanyName())
         toolbar_transfer_detail.title = viewModel.getCompanyName()
         tv_transferdetail_no.text = getString(R.string.transfer_store_no, args.transferNo)
         rv_picking_detail.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        rv_picking_detail.adapter = adapter
-        adapter.setOnClickListener(this)
+        when (args.transferType) {
+            SHIPMENT -> setupShipmentView()
+            RECEIPT -> setupReceiptView()
+            PURCHASE -> setupPurchaseView()
+        }
+        setupListener()
+        setObseverable()
+    }
+
+    private fun setupShipmentView() {
+        viewModel.getTransferShipingDetail(args.transferNo)
+        transferReceiptAdapter.setTransferType(args.transferType)
+        rv_picking_detail.adapter = transferReceiptAdapter
+        transferReceiptAdapter.setOnClickListener(this)
+    }
+
+    private fun setupReceiptView() {
+        viewModel.getTransferReceiptDetail(args.transferNo)
+        rv_picking_detail.adapter = transferReceiptAdapter
+        transferReceiptAdapter.setOnClickListener(this)
+    }
+
+    private fun setupPurchaseView() {
+        viewModel.getPurchaseOrderDetail(args.transferNo)
+        rv_picking_detail.adapter = purchaseDetailLineAdapter
+        purchaseDetailLineAdapter.setOnClickListener(this)
     }
 
     private fun setObseverable() {
+        when (args.transferType) {
+            SHIPMENT, RECEIPT -> viewModel.transferShipmentRepository.getLineListFromHeaderLiveData(
+                args.transferNo)
+                .observe(viewLifecycleOwner, {
+                    transferReceiptAdapter.update(it.toMutableList())
+                })
+            PURCHASE -> {
+                viewModel.purchaseOrderRepository.getPurchaseOrderLineByNo(args.transferNo)
+                    .observe(viewLifecycleOwner, {
+                        purchaseDetailLineAdapter.update(it.toMutableList())
+                    })
+            }
+        }
         viewModel.transferListViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.TransferListViewState.SuccessGetLocalData -> {
@@ -69,17 +96,22 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
                     context?.showLongToast(it.message)
                 }
                 is TransferDetailViewModel.TransferListViewState.SuccessGetPickingLineData -> {
-                    adapter.update(it.values)
+                    transferReceiptAdapter.update(it.values)
                 }
                 is TransferDetailViewModel.TransferListViewState.SuccessGetReceiptLocalData -> {
                     setupViewReceipt(it.values)
                 }
+                is TransferDetailViewModel.TransferListViewState.SuccessGetPurchaseData -> {
+                    setupMainViewPurchase(it.value)
+                }
             }
         })
-        viewModel.transferShipmentRepository.getLineListFromHeaderLiveData(args.transferNo)
-            .observe(viewLifecycleOwner, {
-                adapter.update(it.toMutableList())
-            })
+    }
+
+    private fun setupMainViewPurchase(value: PurchaseOrderHeader) {
+        with(value) {
+            tv_transferdetail_status.text = getString(R.string.transfer_store_status, status)
+        }
     }
 
     private fun setupMainViewShipment(value: TransferShipmentHeader) {
@@ -99,7 +131,8 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
             view?.findNavController()?.popBackStack()
         }
         fab_input_transfer.setOnClickListener {
-            val bottomSheetFragment = ScanInputTransferDialog.newInstance(args.transferNo)
+            val bottomSheetFragment =
+                ScanInputTransferDialog.newInstance(args.transferNo, args.transferType)
             bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
         }
         fab_manual_input_transfer.setOnClickListener {
@@ -158,6 +191,13 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
                 args.transferNo, pickingListLineValue.itemIdentifier, args.transferType)
+        view?.findNavController()?.navigate(action)
+    }
+
+    override fun onclicklistener(value: PurchaseOrderLine) {
+        val action =
+            TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
+                args.transferNo, value.itemIdentifier, args.transferType)
         view?.findNavController()?.navigate(action)
     }
 }

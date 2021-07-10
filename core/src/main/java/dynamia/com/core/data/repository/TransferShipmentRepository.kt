@@ -61,7 +61,7 @@ interface TransferShipmentRepository {
 
 class TransferShipmentImpl(
     val dao: TransferShipmentDao,
-    private val sharedPreferences: SharedPreferences,
+    private val sharedPreferences: SharedPreferences
 ) : TransferShipmentRepository {
     private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
 

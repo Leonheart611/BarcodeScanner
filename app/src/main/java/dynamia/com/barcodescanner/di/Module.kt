@@ -24,8 +24,8 @@ val injectionModule = module {
     single { get<LocalDatabase>().userDao() }
     single { get<LocalDatabase>().transferShipment() }
     single { get<LocalDatabase>().transferReceipt() }
+    single { get<LocalDatabase>().purchaseOrder() }
 
-    single<PickingListRepository> { PickingListRepositoryImpl(get()) }
     single<ReceiptImportRepository> { ReceiptImportRepositoryImpl(get()) }
     single<ReceiptLocalRepository> { ReceiptLocalRepositoryImpl(get()) }
     single<StockCountRepository> { StockCountRepositoryImpl(get()) }
@@ -33,16 +33,17 @@ val injectionModule = module {
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }
     single<TransferShipmentRepository> { TransferShipmentImpl(get(), get()) }
     single<TransferReceiptRepository> { TransferReceiptRepositoryImpl(get(), get(), get()) }
+    single<PurchaseOrderRepository> { PurchaseOrderRepositoryImpl(get(), get()) }
 
     viewModel { LoginViewModel(get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { TransferListViewModel(get(), get(), get()) }
-    viewModel { TransferDetailViewModel(get(), get(), get()) }
-    viewModel { TransferInputViewModel(get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
+    viewModel { TransferListViewModel(get(), get(), get(), get()) }
+    viewModel { TransferDetailViewModel(get(), get(), get(), get()) }
+    viewModel { TransferInputViewModel(get(), get(), get(), get()) }
     viewModel { ReceiptViewModel(get(), get(), get()) }
-    viewModel { HistoryInputViewModel(get(), get(), get()) }
+    viewModel { HistoryInputViewModel(get(), get(), get(), get()) }
     viewModel { ReceiptDetailViewModel(get(), get(), get(), get()) }
     viewModel { ReceiptInputViewModel(get(), get(), get()) }
     viewModel { StockCountingViewModel(get(), get(), get()) }
-    viewModel { SearchViewModel(get(), get(), get()) }
+    viewModel { SearchViewModel() }
 }

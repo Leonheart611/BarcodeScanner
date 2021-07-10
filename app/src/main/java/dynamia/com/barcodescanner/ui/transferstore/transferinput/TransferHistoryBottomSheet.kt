@@ -72,6 +72,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
         when (historyType) {
             SHIPMENT -> no?.let { viewModel.getHistoryValueDetail(it) }
             RECEIPT -> no?.let { viewModel.getHistoryReceiptDetail(it) }
+            PURCHASE -> no?.let { viewModel.getPurchaseHistoryDetail(it) }
         }
         setupView()
         setObseverable()
@@ -112,6 +113,15 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                         et_tranferinput_qty.setText(this.quantity.toString())
                     }
                 }
+                is TransferInputViewModel.TransferInputViewState.SuccessGetPurchaseHistory -> {
+                    with(it.data) {
+                        et_transferinput_name.apply {
+                            setText(this@with.itemNo)
+                            isEnabled = false
+                        }
+                        et_tranferinput_qty.setText(this.quantity.toString())
+                    }
+                }
             }
         })
     }
@@ -125,6 +135,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                 when (historyType) {
                     SHIPMENT -> no?.let { no -> viewModel.deleteTransferShipmentEntry(no) }
                     RECEIPT -> no?.let { no -> viewModel.deleteTransferReceiptEntry(no) }
+                    PURCHASE -> no?.let { no -> viewModel.deletePurchaseOrderEntry(no) }
                 }
 
             }
@@ -140,6 +151,12 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                     RECEIPT -> no?.let { no ->
                         viewModel.updateTransferReceiptEntry(no,
                             et_tranferinput_qty.text.toString().toInt())
+                    }
+                    PURCHASE -> {
+                        no?.let { no ->
+                            viewModel.updatePurchaseInputData(no,
+                                et_tranferinput_qty.text.toString().toInt())
+                        }
                     }
                 }
             }

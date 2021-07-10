@@ -17,6 +17,7 @@ import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.barcodescanner.ui.transferstore.adapter.PickingMultipleLineAdapter
+import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.util.*
@@ -73,6 +74,9 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                         args.barcodeNo?.let { et_tranferinput_qty.text?.clear() }
                             ?: kotlin.run { clearData() }
                     }
+                    is TransferInputViewModel.TransferInputViewState.SuccessGetPurchaseValue -> {
+                        showSuccessPurchaseData(it.data)
+                    }
                 }
             })
             inputValidation.observe(viewLifecycleOwner, {
@@ -95,6 +99,12 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
             SHIPMENT -> tv_transfer_qty.text = data.quantity.toString()
             RECEIPT -> tv_transfer_qty.text = data.qtyInTransit.toString()
         }
+    }
+
+    private fun showSuccessPurchaseData(data: PurchaseOrderLine) {
+        tv_transfer_item_name.text = data.description
+        til_transferinput_name.editText?.setText(data.no)
+        tv_transfer_qty.text = data.quantity.toString()
     }
 
     private fun setupView() {
@@ -120,6 +130,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         tv_transfer_input_title.text = when (args.transferType) {
             SHIPMENT -> getString(R.string.transfer_store)
             RECEIPT -> getString(R.string.transfer_receipt_title)
+            PURCHASE -> getString(R.string.purchase_order_title)
         }
     }
 
@@ -128,6 +139,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         when (args.transferType) {
             SHIPMENT -> viewModel.getShipmentListLineValue(args.transferNo, barcode)
             RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode)
+            PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode)
         }
     }
 
@@ -153,6 +165,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                             historyType = when (args.transferType) {
                                 SHIPMENT -> HistoryType.SHIPMENT
                                 RECEIPT -> HistoryType.RECEIPT
+                                PURCHASE -> HistoryType.PURCHASE
                             }
                         )
                     view?.findNavController()?.navigate(action)
@@ -231,7 +244,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                         dismiss()
                     }
                     show()
-
                 }
             }
         }

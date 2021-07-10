@@ -35,7 +35,7 @@ interface TransferReceiptDao {
     @Update(onConflict = OnConflictStrategy.ABORT, entity = TransferReceiptInput::class)
     fun updateTransferReceiptInput(data: TransferReceiptInput)
 
-    @Query("SELECT * FROM TransferReceiptInput WHERE sycn_status = :status")
+    @Query("SELECT * FROM TransferReceiptInput WHERE sync_status = :status")
     fun getAllUnsycnTransferReceiptInput(status: Boolean): List<TransferReceiptInput>
 
     @Query("SELECT * FROM TransferReceiptInput WHERE id = :id ORDER BY id DESC  ")

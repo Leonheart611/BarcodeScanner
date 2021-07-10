@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.item_input_header.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -16,7 +17,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
     val viewModel: TransferDetailViewModel by viewModel()
 
     private val documentNo by lazy { arguments?.getString(ARGS_DOCUMENT_NO) }
-
+    private val inputType by lazy { arguments?.getSerializable(ARGS_INPUT_TYPE) as TransferType }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +43,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
         et_transfer_input_barcode.requestFocus()
 
         et_transfer_input_barcode.doAfterTextChanged {
-            documentNo?.let { data -> viewModel.getPickingListLineValue(data, it.toString()) }
+            documentNo?.let { data -> viewModel.insertDataValue(data, it.toString(), inputType) }
         }
     }
 
@@ -69,9 +70,11 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
 
     companion object {
         private const val ARGS_DOCUMENT_NO = "args_document_no"
-        fun newInstance(documentNo: String): ScanInputTransferDialog {
+        private const val ARGS_INPUT_TYPE = "args_input_type"
+        fun newInstance(documentNo: String, transferType: TransferType): ScanInputTransferDialog {
             val argument = Bundle().apply {
                 putString(ARGS_DOCUMENT_NO, documentNo)
+                putSerializable(ARGS_INPUT_TYPE, transferType)
             }
             return ScanInputTransferDialog().apply {
                 arguments = argument

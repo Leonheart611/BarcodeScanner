@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "TransferInputData")
-data class TransferInputData(
+@Entity(tableName = "PurchaseInputData")
+class PurchaseInputData(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
-    @SerializedName("Table_ID") @Expose(serialize = true) val tableID: Int = 2,
+    @SerializedName("Table_ID") @Expose(serialize = true) val tableID: Int = 1,
     @SerializedName("Document_No") @Expose(serialize = true) val documentNo: String,
     @SerializedName("Line_No") @Expose(serialize = true) val lineNo: Int,
     @SerializedName("Item_No") @Expose(serialize = true) val itemNo: String,

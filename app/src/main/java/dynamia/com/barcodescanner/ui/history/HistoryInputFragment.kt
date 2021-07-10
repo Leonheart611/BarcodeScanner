@@ -10,22 +10,27 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.history.HistoryType.*
+import dynamia.com.barcodescanner.ui.history.adapter.HistoryPurchaseInputAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferReceiptInputAdapter
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferHistoryBottomSheet
+import dynamia.com.core.data.entinty.PurchaseInputData
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferReceiptInput
 import kotlinx.android.synthetic.main.history_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySelected,
-    HistoryTransferReceiptInputAdapter.OnHistorySelected {
+    HistoryTransferReceiptInputAdapter.OnHistorySelected,
+    HistoryPurchaseInputAdapter.OnPurchaseHistoryClicklistener {
 
     private val viewModel: HistoryInputViewModel by viewModel()
     private val args: HistoryInputFragmentArgs by navArgs()
     private var scanEntriesAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
     private var scanTransferReceiptAdapter =
         HistoryTransferReceiptInputAdapter(mutableListOf(), this)
+    private var scanInputPurchaseAdapter = HistoryPurchaseInputAdapter(mutableListOf(), this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,15 +50,16 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
         with(rv_input_history) {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             adapter = when (args.historyType) {
-                HistoryType.SHIPMENT -> scanEntriesAdapter
-                HistoryType.RECEIPT -> scanTransferReceiptAdapter
+                SHIPMENT -> scanEntriesAdapter
+                RECEIPT -> scanTransferReceiptAdapter
+                PURCHASE -> scanInputPurchaseAdapter
             }
         }
     }
 
     private fun setupView() {
         when (args.historyType) {
-            HistoryType.SHIPMENT -> {
+            SHIPMENT -> {
                 tv_transfer_input.text = getString(R.string.transfer_shipment_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.transferShipmentRepository.getTransferInputHistoryLiveData(documentNo)
@@ -62,12 +68,21 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
                         })
                 }
             }
-            HistoryType.RECEIPT -> {
+            RECEIPT -> {
                 tv_transfer_input.text = getString(R.string.transfer_receipt_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.transferReceiptRepository.getTransferInputHistoryLiveData(documentNo)
                         .observe(viewLifecycleOwner, {
                             scanTransferReceiptAdapter.updateData(it.toMutableList())
+                        })
+                }
+            }
+            PURCHASE -> {
+                tv_transfer_input.text = getString(R.string.purchase_order_history_title)
+                args.documentNo?.let { documentNo ->
+                    viewModel.purchaseOrderRepository.getAllPurchaseInputByNo(documentNo)
+                        .observe(viewLifecycleOwner, {
+                            scanInputPurchaseAdapter.updateData(it.toMutableList())
                         })
                 }
             }
@@ -83,14 +98,21 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
 
     override fun onHistorySelectDelete(value: TransferInputData) {
         value.id?.let {
-            val dialog = TransferHistoryBottomSheet.newInstance(it, HistoryType.SHIPMENT)
+            val dialog = TransferHistoryBottomSheet.newInstance(it, SHIPMENT)
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
         }
     }
 
     override fun receiptHistoryCLicklistener(value: TransferReceiptInput) {
         value.id?.let {
-            val dialog = TransferHistoryBottomSheet.newInstance(it, HistoryType.RECEIPT)
+            val dialog = TransferHistoryBottomSheet.newInstance(it, RECEIPT)
+            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+        }
+    }
+
+    override fun historyCLicklistener(value: PurchaseInputData) {
+        value.id?.let {
+            val dialog = TransferHistoryBottomSheet.newInstance(it, PURCHASE)
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
         }
     }
