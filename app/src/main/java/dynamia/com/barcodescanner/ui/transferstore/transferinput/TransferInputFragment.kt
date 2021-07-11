@@ -18,6 +18,7 @@ import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.barcodescanner.ui.transferstore.adapter.PickingMultipleLineAdapter
 import dynamia.com.core.data.entinty.PurchaseOrderLine
+import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.util.*
@@ -77,6 +78,9 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                     is TransferInputViewModel.TransferInputViewState.SuccessGetPurchaseValue -> {
                         showSuccessPurchaseData(it.data)
                     }
+                    is TransferInputViewModel.TransferInputViewState.SuccessGetStockOpnameValue -> {
+                        showSuccessStockOpname(it.data)
+                    }
                 }
             })
             inputValidation.observe(viewLifecycleOwner, {
@@ -107,6 +111,12 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         tv_transfer_qty.text = data.quantity.toString()
     }
 
+    private fun showSuccessStockOpname(data: StockOpnameData) {
+        tv_transfer_item_name.text = data.itemName
+        til_transferinput_name.editText?.setText(data.itemCode)
+        tv_transfer_qty.text = ""
+    }
+
     private fun setupView() {
         toolbar_picking_list_input.title = viewModel.getCompanyName()
         et_transfer_input_barcode.requestFocus()
@@ -131,6 +141,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
             SHIPMENT -> getString(R.string.transfer_store)
             RECEIPT -> getString(R.string.transfer_receipt_title)
             PURCHASE -> getString(R.string.purchase_order_title)
+            STOCKOPNAME -> getString(R.string.stock_opname_title)
         }
     }
 
@@ -140,6 +151,8 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
             SHIPMENT -> viewModel.getShipmentListLineValue(args.transferNo, barcode)
             RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode)
             PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode)
+            STOCKOPNAME -> viewModel.getStockOpnameValue(barcode)
+
         }
     }
 
@@ -166,6 +179,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
                                 SHIPMENT -> HistoryType.SHIPMENT
                                 RECEIPT -> HistoryType.RECEIPT
                                 PURCHASE -> HistoryType.PURCHASE
+                                STOCKOPNAME -> HistoryType.STOCKOPNAME
                             }
                         )
                     view?.findNavController()?.navigate(action)

@@ -84,6 +84,9 @@ class HomeFragment : Fragment() {
             purchaseOrderRepository.getAllPurchaseOrderHeader().observe(viewLifecycleOwner, {
                 tv_count_purchase_order.text = it.size.toString()
             })
+            stockOpnameDataRepository.getALlStockOpname().observe(viewLifecycleOwner, {
+                tv_count_stock_opname.text = it.size.toString()
+            })
         }
     }
 
@@ -129,9 +132,12 @@ class HomeFragment : Fragment() {
             )
             findNavController().navigate(action)
         }
-        cv_stock_count.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToStockCountingFragment()
+        cv_stock_opname.setOnClickListener {
+            val action = HomeFragmentDirections.actionHomeFragmentToStockOpnameFragment()
             findNavController().navigate(action)
+        }
+        cv_check_stock.setOnClickListener {
+            context?.showLongToast("Under Development")
         }
     }
 

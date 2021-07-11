@@ -9,6 +9,7 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.PurchaseOrderRepository
+import dynamia.com.core.data.repository.StockOpnameRepository
 import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.util.*
@@ -19,6 +20,7 @@ class TransferInputViewModel(
     private val transferShipmentRepository: TransferShipmentRepository,
     private val transferReceiptRepository: TransferReceiptRepository,
     private val purchaseOrderRepository: PurchaseOrderRepository,
+    private val stockOpnameRepository: StockOpnameRepository,
     val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -33,6 +35,8 @@ class TransferInputViewModel(
 
     private var purchaseHeader: PurchaseOrderHeader? = null
     private var purchaseLineData: PurchaseOrderLine? = null
+
+    private var stockOpnameData: StockOpnameData? = null
 
     fun getHistoryValueDetail(no: Int) {
         viewModelScope.launch {
@@ -69,6 +73,34 @@ class TransferInputViewModel(
                             TransferInputViewState.SuccessGetReceiptHistoryValue(it)
                     }
                 }
+            }
+        }
+    }
+
+    fun getStockOpnameValue(identifier: String) {
+        viewModelScope.launch {
+            try {
+                _transferInputViewState.value =
+                    TransferInputViewState.LoadingSearchPickingList(true)
+                io {
+                    stockOpnameRepository.getStockOpnameDetailByBarcode(identifier)
+                        .collect { data ->
+                            ui {
+                                stockOpnameData = data
+                                _transferInputViewState.value =
+                                    TransferInputViewState.SuccessGetStockOpnameValue(data)
+                                _transferInputViewState.value =
+                                    TransferInputViewState.LoadingSearchPickingList(false)
+                            }
+                        }
+
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.LoadingSearchPickingList(false)
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorGetData(e.localizedMessage)
             }
         }
     }
@@ -166,6 +198,34 @@ class TransferInputViewModel(
         }
     }
 
+    private fun insertStockOpnameData(qty: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    stockOpnameData?.let { data ->
+                        stockOpnameRepository.insertInputStockOpname(
+                            StockOpnameInputData(
+                                documentNo = data.docNo,
+                                quantity = qty.toInt(),
+                                lineNo = data.lineNo.toInt(),
+                                itemNo = data.itemCode,
+                                userName = sharedPreferences.getUserName(),
+                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                            )
+                        )
+                        ui {
+                            _transferInputViewState.value = TransferInputViewState.SuccessSaveData
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
     private fun insertPurchaseInput(qty: String) {
         viewModelScope.launch {
             try {
@@ -178,8 +238,6 @@ class TransferInputViewModel(
                                     quantity = qty.toInt(),
                                     lineNo = line.lineNo,
                                     itemNo = line.no,
-                                    transferFromBinCode = "",
-                                    transferToBinCode = "",
                                     userName = sharedPreferences.getUserName(),
                                     insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
                                 )
@@ -297,6 +355,7 @@ class TransferInputViewModel(
                 SHIPMENT -> insertTransferShipmentInput(qty)
                 RECEIPT -> insertTransferReceiptInput(qty)
                 PURCHASE -> insertPurchaseInput(qty)
+                STOCKOPNAME -> insertStockOpnameData(qty)
             }
         }
     }
@@ -323,7 +382,7 @@ class TransferInputViewModel(
         viewModelScope.launch {
             try {
                 io {
-                    purchaseOrderRepository.updatePurchaseInputData(id, newQty)
+                    purchaseOrderRepository.updatePurchaseInputDataQty(id, newQty)
                     ui {
                         _transferInputViewState.value = TransferInputViewState.SuccessUpdateData
                     }
@@ -422,16 +481,70 @@ class TransferInputViewModel(
         }
     }
 
+    fun getStockOpnameHistoryDetail(id: Int) {
+        viewModelScope.launch {
+            io {
+                stockOpnameRepository.getInputStockOpnameDetail(id).collect {
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessGetStockInputHistory(it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateStockOpnameInputData(no: Int, newQty: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    stockOpnameRepository.updateInputStockOpnameQty(no, newQty)
+                    ui {
+                        _transferInputViewState.value = TransferInputViewState.SuccessUpdateData
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun deleteStockOpnameInputData(no: Int){
+        viewModelScope.launch {
+            try {
+                io {
+                    stockOpnameRepository.deleteInputStockOpname(no)
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessDeleteData
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+            }
+        }
+    }
+
 
     sealed class TransferInputViewState {
+        /**
+         * History Success Value
+         */
         class SuccessGetValue(val data: TransferShipmentLine) : TransferInputViewState()
         class SuccessGetHistoryValue(val data: TransferInputData) : TransferInputViewState()
         class SuccessGetReceiptHistoryValue(val data: TransferReceiptInput) :
             TransferInputViewState()
 
+        class SuccessGetStockInputHistory(val data: StockOpnameInputData) : TransferInputViewState()
+
         class SuccessGetPurchaseHistory(val data: PurchaseInputData) : TransferInputViewState()
 
         class SuccessGetPurchaseValue(val data: PurchaseOrderLine) : TransferInputViewState()
+        class SuccessGetStockOpnameValue(val data: StockOpnameData) : TransferInputViewState()
 
         object SuccessSaveData : TransferInputViewState()
         class ErrorSaveData(val message: String) : TransferInputViewState()

@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
+import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputViewModel
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.PurchaseOrderRepository
+import dynamia.com.core.data.repository.StockOpnameRepository
 import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.util.*
@@ -20,6 +22,7 @@ class TransferDetailViewModel(
     private val transferReceiptRepository: TransferReceiptRepository,
     val purchaseOrderRepository: PurchaseOrderRepository,
     val sharedPreferences: SharedPreferences,
+    private val stockOpnameRepository: StockOpnameRepository,
 ) : ViewModelBase(sharedPreferences) {
 
     private val _pickingDetailViewState = MutableLiveData<TransferListViewState>()
@@ -37,6 +40,7 @@ class TransferDetailViewModel(
     private var transferReceiptHeader: TransferReceiptHeader? = null
 
     private var purchaseLineData: PurchaseOrderLine? = null
+    private var stockOpnameData: StockOpnameData? = null
 
 
     fun insertDataValue(no: String, identifier: String, transferType: TransferType) {
@@ -77,8 +81,46 @@ class TransferDetailViewModel(
                                     }
                                 }
                         }
+                        STOCKOPNAME -> {
+                            stockOpnameRepository.getStockOpnameDetailByBarcode(identifier)
+                                .collect { data ->
+                                    ui {
+                                        stockOpnameData = data
+                                        insertStockOpnameData("1")
+                                    }
+                                }
+                        }
                     }
 
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun insertStockOpnameData(qty: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    stockOpnameData?.let { data ->
+                        stockOpnameRepository.insertInputStockOpname(
+                            StockOpnameInputData(
+                                documentNo = data.docNo,
+                                quantity = qty.toInt(),
+                                lineNo = data.lineNo.toInt(),
+                                itemNo = data.itemCode,
+                                userName = sharedPreferences.getUserName(),
+                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                            )
+                        )
+                        ui {
+                            _transferInputViewState.value =
+                                TransferDetailInputViewState.SuccessSaveData
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 e.stackTrace
@@ -189,6 +231,40 @@ class TransferDetailViewModel(
                                 sync_status = true
                             }
                             transferReceiptRepository.updateTransferReceiptInput(data)
+                        }
+                    }
+                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
+                }
+            } catch (e: Exception) {
+                _pickingPostViewState.value =
+                    PickingDetailPostViewState.ErrorPostData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun postPurchaseData() {
+        viewModelScope.launch {
+            try {
+                var dataPosted = 0
+                io {
+                    val listEntries =
+                        purchaseOrderRepository.getAllUnSyncPurchaseInput()
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.GetUnpostedData(listEntries.size)
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                    }
+                    for (data in listEntries) {
+                        val param = gson.toJson(data)
+                        purchaseOrderRepository.postPurchaseOrderData(param).collect {
+                            dataPosted++
+                            ui {
+                                _pickingPostViewState.value =
+                                    PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                            }
+                            data.postSuccess()
+                            purchaseOrderRepository.updatePurchaseInputData(data)
                         }
                     }
                     ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }

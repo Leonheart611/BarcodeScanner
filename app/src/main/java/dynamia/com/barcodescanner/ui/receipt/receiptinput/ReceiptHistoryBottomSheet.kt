@@ -13,8 +13,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.history.HistoryInputViewModel
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryInputImportAdapter
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryInputLocalAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReceiptHistoryBottomSheet : BottomSheetDialogFragment() {

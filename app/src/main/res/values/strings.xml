@@ -110,4 +110,9 @@
     <string name="transfer_receipt_history_title">Transfer Receipt History</string>
     <string name="purchase_order_title">Purchase Order</string>
     <string name="purchase_order_history_title">Purchase Order History</string>
+    <string name="stock_opname_title">Stock Opname</string>
+    <string name="stock_opname_history_title">Stock Opname History</string>
+    <string name="check_stock_title">Check Stock</string>
+
+
 </resources>

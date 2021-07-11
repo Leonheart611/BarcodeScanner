@@ -1,4 +1,4 @@
-package dynamia.com.barcodescanner.ui.transferstore.transferdetail
+package dynamia.com.barcodescanner.ui.stockopname
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,10 +13,9 @@ import dynamia.com.core.util.crossFade
 import kotlinx.android.synthetic.main.picking_post_bottom_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PickingPostDialog : BottomSheetDialogFragment() {
+class StockOpnamePostDialog : BottomSheetDialogFragment() {
 
-    val viewModel: TransferDetailViewModel by viewModel()
-    private val postType by lazy { arguments?.getSerializable(POST_TYPE) as TransferType }
+    val viewModel: StockOpnameViewModel by viewModel()
 
     private var animateDuration: Int = 0
     override fun onCreateView(
@@ -30,25 +29,27 @@ class PickingPostDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        when (postType) {
-            SHIPMENT -> viewModel.postShipmentData()
-            RECEIPT -> viewModel.postReceiptData()
-            PURCHASE -> viewModel.postPurchaseData()
-        }
+        setupView()
         setObseverable()
         setClicklistener()
+        viewModel.postStockOpnameData()
+    }
+
+    private fun setupView() {
+        tv_picking_post_title.text = "Stock Opname Data"
     }
 
     private fun setObseverable() {
-        viewModel.pickingPostViewState.observe(viewLifecycleOwner, {
+        viewModel.stockOpnameViewState.observe(viewLifecycleOwner, {
             when (it) {
-                is TransferDetailViewModel.PickingDetailPostViewState.GetUnpostedData -> {
-                    tv_picking_total_post.text = it.data.toString()
+                StockOpnameViewModel.StockOpnameViewState.AllDataPosted -> {
+                    iv_status_post_picking.crossFade(
+                        animateDuration.toLong(),
+                        pb_picking_post_dialog
+                    )
+                    btn_dismis_picking_post.isEnabled = true
                 }
-                is TransferDetailViewModel.PickingDetailPostViewState.GetSuccessfullyPostedData -> {
-                    tv_picking_posted_count.text = it.data.toString()
-                }
-                is TransferDetailViewModel.PickingDetailPostViewState.ErrorPostData -> {
+                is StockOpnameViewModel.StockOpnameViewState.ErrorPostData -> {
                     iv_status_post_picking.crossFade(
                         animateDuration.toLong(),
                         pb_picking_post_dialog
@@ -63,12 +64,11 @@ class PickingPostDialog : BottomSheetDialogFragment() {
                     tv_error_picking_post.text = it.message
                     btn_dismis_picking_post.isEnabled = true
                 }
-                TransferDetailViewModel.PickingDetailPostViewState.AllDataPosted -> {
-                    iv_status_post_picking.crossFade(
-                        animateDuration.toLong(),
-                        pb_picking_post_dialog
-                    )
-                    btn_dismis_picking_post.isEnabled = true
+                is StockOpnameViewModel.StockOpnameViewState.GetSuccessfullyPostedData -> {
+                    tv_picking_posted_count.text = it.data.toString()
+                }
+                is StockOpnameViewModel.StockOpnameViewState.GetUnpostedData -> {
+                    tv_picking_total_post.text = it.data.toString()
                 }
             }
         })
@@ -80,17 +80,4 @@ class PickingPostDialog : BottomSheetDialogFragment() {
             dismissAllowingStateLoss()
         }
     }
-
-    companion object {
-        fun newInstance(type: TransferType): PickingPostDialog {
-            val argument = Bundle().apply {
-                putSerializable(POST_TYPE, type)
-            }
-            return PickingPostDialog().apply {
-                arguments = argument
-            }
-        }
-        const val POST_TYPE = "post_type"
-    }
-
 }

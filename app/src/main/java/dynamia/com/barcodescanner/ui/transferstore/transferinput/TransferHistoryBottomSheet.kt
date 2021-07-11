@@ -73,6 +73,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
             SHIPMENT -> no?.let { viewModel.getHistoryValueDetail(it) }
             RECEIPT -> no?.let { viewModel.getHistoryReceiptDetail(it) }
             PURCHASE -> no?.let { viewModel.getPurchaseHistoryDetail(it) }
+            STOCKOPNAME -> no?.let { viewModel.getStockOpnameHistoryDetail(it) }
         }
         setupView()
         setObseverable()
@@ -122,6 +123,15 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                         et_tranferinput_qty.setText(this.quantity.toString())
                     }
                 }
+                is TransferInputViewModel.TransferInputViewState.SuccessGetStockInputHistory -> {
+                    with(it.data) {
+                        et_transferinput_name.apply {
+                            setText(this@with.itemNo)
+                            isEnabled = false
+                        }
+                        et_tranferinput_qty.setText(this.quantity.toString())
+                    }
+                }
             }
         })
     }
@@ -136,6 +146,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                     SHIPMENT -> no?.let { no -> viewModel.deleteTransferShipmentEntry(no) }
                     RECEIPT -> no?.let { no -> viewModel.deleteTransferReceiptEntry(no) }
                     PURCHASE -> no?.let { no -> viewModel.deletePurchaseOrderEntry(no) }
+                    STOCKOPNAME -> no?.let { no -> viewModel.deleteStockOpnameInputData(no) }
                 }
 
             }
@@ -155,6 +166,12 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                     PURCHASE -> {
                         no?.let { no ->
                             viewModel.updatePurchaseInputData(no,
+                                et_tranferinput_qty.text.toString().toInt())
+                        }
+                    }
+                    STOCKOPNAME -> {
+                        no?.let { no ->
+                            viewModel.updateStockOpnameInputData(no,
                                 et_tranferinput_qty.text.toString().toInt())
                         }
                     }

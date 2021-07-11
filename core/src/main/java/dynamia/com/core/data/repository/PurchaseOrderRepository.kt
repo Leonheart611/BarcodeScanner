@@ -44,7 +44,8 @@ interface PurchaseOrderRepository {
     fun getAllUnSyncPurchaseInput(status: Boolean = false): List<PurchaseInputData>
     suspend fun getPurchaseInputDetail(id: Int): Flow<PurchaseInputData>
     suspend fun insertPurchaseOrderData(value: PurchaseInputData): Boolean
-    suspend fun updatePurchaseInputData(id: Int, newQty: Int)
+    suspend fun updatePurchaseInputDataQty(id: Int, newQty: Int)
+    suspend fun updatePurchaseInputData(value: PurchaseInputData)
     suspend fun deletePurchaseInputData(id: Int)
     suspend fun deleteAllPurchaseInputData()
 
@@ -130,7 +131,11 @@ class PurchaseOrderRepositoryImpl(
             }
         }
 
-    override suspend fun updatePurchaseInputData(id: Int, newQty: Int) {
+    override suspend fun updatePurchaseInputData(value: PurchaseInputData) {
+        dao.updatePurchaseInputData(value)
+    }
+
+    override suspend fun updatePurchaseInputDataQty(id: Int, newQty: Int) {
         val purchaseInput = dao.getPurchaseInputDataDetail(id)
         val lineData =
             dao.getPurchaseOrderLineByLineno(purchaseInput.documentNo, purchaseInput.lineNo)

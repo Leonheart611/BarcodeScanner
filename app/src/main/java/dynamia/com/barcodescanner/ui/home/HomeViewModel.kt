@@ -11,6 +11,7 @@ import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.PurchaseOrderRepository
+import dynamia.com.core.data.repository.StockOpnameRepository
 import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.domain.ResultWrapper.*
@@ -24,6 +25,7 @@ class HomeViewModel(
     val transferShipmentRepository: TransferShipmentRepository,
     val transferReceiptRepository: TransferReceiptRepository,
     val purchaseOrderRepository: PurchaseOrderRepository,
+    val stockOpnameDataRepository: StockOpnameRepository,
     private val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -207,6 +209,39 @@ class HomeViewModel(
         }
     }
 
+    fun getStockOpname() {
+        viewModelScope.launch {
+            try {
+                io {
+                    with(stockOpnameDataRepository) {
+                        deleteAllInputStockOpname()
+                        deleteAllStockOpname()
+
+                        getStockOpnameAsync().collect { value ->
+                            when (value) {
+                                is GenericError -> ui {
+                                    _homeGetApiViewState.value =
+                                        FailedGetStockOpname("${value.code} ${value.error}")
+                                }
+                                is NetworkError -> _homeGetApiViewState.postValue(
+                                    FailedGetStockOpname(value.error))
+                                is Success -> {
+                                    value.value.forEach {
+                                        insertStockOpnameData(it)
+                                    }
+                                    ui { _homeGetApiViewState.value = SuccessGetStockOpname }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _homeGetApiViewState.value =
+                    FailedGetStockOpname(e.localizedMessage)
+            }
+        }
+    }
+
     fun checkUnpostedData(param: FunctionDialog) {
         viewModelScope.launch {
             io {
@@ -243,6 +278,8 @@ class HomeViewModel(
         class FailedGetReceipt(val message: String) : HomeGetApiViewState()
         object SuccessGetPurchaseData : HomeGetApiViewState()
         class FailedGetPurchase(val message: String) : HomeGetApiViewState()
+        object SuccessGetStockOpname : HomeGetApiViewState()
+        class FailedGetStockOpname(val message: String) : HomeGetApiViewState()
     }
 
     sealed class HomePostViewState {
@@ -278,6 +315,7 @@ class HomeViewModel(
         transferReceiptHeader: TransferReceiptHeaderAssets,
         purchaseOrderHeaderAssets: PurchaseOrderHeaderAssets,
         purchaseOrderLineAsset: PurchaseOrderLineAsset,
+        stockOpnameDataAssets: StockOpnameDataAssets,
     ) {
         try {
 
@@ -320,7 +358,13 @@ class HomeViewModel(
                             purchaseOrderRepository.insertPurchaseOrderLine(data)
                         }
                     }
+                    stockOpnameDataAssets.value.let {
+                        it.forEach { data ->
+                            stockOpnameDataRepository.insertStockOpnameData(data)
+                        }
+                    }
                     ui {
+                        _homeGetApiViewState.value = SuccessGetStockOpname
                         _homeGetApiViewState.value = SuccessGetShipingData
                         _homeGetApiViewState.value = SuccessGetReceipt
                         _homeGetApiViewState.value = SuccessGetPurchaseData
@@ -329,22 +373,6 @@ class HomeViewModel(
             }
         } catch (e: Exception) {
 
-        }
-    }
-
-    fun getUser() {
-        viewModelScope.launch {
-            try {
-                io {
-                    transferShipmentRepository.getUser()
-                        .collect { dataHeader ->
-                            ui { _homeGetApiViewState.value = FailedGetShippingData(dataHeader) }
-                        }
-                }
-                ui { _homeGetApiViewState.value = SuccessGetShipingData }
-            } catch (e: Exception) {
-                _homeGetApiViewState.value = FailedGetShippingData(e.localizedMessage)
-            }
         }
     }
 

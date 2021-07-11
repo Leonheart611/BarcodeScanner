@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.history.HistoryType.*
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryPurchaseInputAdapter
+import dynamia.com.barcodescanner.ui.history.adapter.HistoryStockOpnameInputAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferReceiptInputAdapter
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferHistoryBottomSheet
 import dynamia.com.core.data.entinty.PurchaseInputData
+import dynamia.com.core.data.entinty.StockOpnameInputData
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferReceiptInput
 import kotlinx.android.synthetic.main.history_input_fragment.*
@@ -23,7 +25,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySelected,
     HistoryTransferReceiptInputAdapter.OnHistorySelected,
-    HistoryPurchaseInputAdapter.OnPurchaseHistoryClicklistener {
+    HistoryPurchaseInputAdapter.OnPurchaseHistoryClicklistener,
+    HistoryStockOpnameInputAdapter.OnHistorySelected {
 
     private val viewModel: HistoryInputViewModel by viewModel()
     private val args: HistoryInputFragmentArgs by navArgs()
@@ -31,6 +34,7 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
     private var scanTransferReceiptAdapter =
         HistoryTransferReceiptInputAdapter(mutableListOf(), this)
     private var scanInputPurchaseAdapter = HistoryPurchaseInputAdapter(mutableListOf(), this)
+    private var scanStockInputAdapter = HistoryStockOpnameInputAdapter(mutableListOf(), this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +57,7 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
                 SHIPMENT -> scanEntriesAdapter
                 RECEIPT -> scanTransferReceiptAdapter
                 PURCHASE -> scanInputPurchaseAdapter
+                STOCKOPNAME -> scanStockInputAdapter
             }
         }
     }
@@ -86,6 +91,20 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
                         })
                 }
             }
+            STOCKOPNAME -> {
+                tv_transfer_input.text = getString(R.string.stock_opname_history_title)
+                args.documentNo?.let { documentNo ->
+                    viewModel.stockOpnameRepository.getAllInputStockOpnameByDocumentNo(documentNo)
+                        .observe(viewLifecycleOwner, {
+                            scanStockInputAdapter.updateData(it.toMutableList())
+                        })
+                } ?: kotlin.run {
+                    viewModel.stockOpnameRepository.getAllInputStockOpname()
+                        .observe(viewLifecycleOwner, {
+                            scanStockInputAdapter.updateData(it.toMutableList())
+                        })
+                }
+            }
         }
     }
 
@@ -113,6 +132,13 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
     override fun historyCLicklistener(value: PurchaseInputData) {
         value.id?.let {
             val dialog = TransferHistoryBottomSheet.newInstance(it, PURCHASE)
+            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+        }
+    }
+
+    override fun onStockOpnameCLicklistener(value: StockOpnameInputData) {
+        value.id?.let {
+            val dialog = TransferHistoryBottomSheet.newInstance(it, STOCKOPNAME)
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
         }
     }

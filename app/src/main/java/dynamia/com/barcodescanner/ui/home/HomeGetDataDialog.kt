@@ -38,8 +38,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        //callAllApi()
-        getAllDataFromAssets()
+        callAllApi()
+        //getAllDataFromAssets()
         setOnClicklistener()
     }
 
@@ -84,6 +84,20 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                         )
                     )
                 }
+                is FailedGetStockOpname -> {
+                    tv_error_stock_opname.text = it.message
+                    iv_status_stock_opname.crossFade(animateDuration.toLong(), pb_stock_opname)
+                    iv_status_stock_opname.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_error_circle,
+                            null
+                        )
+                    )
+                }
+                SuccessGetStockOpname -> {
+                    iv_status_stock_opname.crossFade(animateDuration.toLong(), pb_stock_opname)
+                }
             }
         })
     }
@@ -92,6 +106,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
         viewModel.getTransferData()
         viewModel.getReceiptDataAsync()
         viewModel.getPurchaseDataAsync()
+        viewModel.getStockOpname()
     }
 
 
@@ -116,12 +131,17 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             activity?.readJsonAsset("PurchaseOrderLine.json"),
             PurchaseOrderLineAsset::class.java
         )
+        val stockOpnameList = Gson().fromJson(
+            activity?.readJsonAsset("StockOpnameData.json"),
+            StockOpnameDataAssets::class.java
+        )
         viewModel.saveAssetData(
             transferShipmentHeader,
             transferShipmentLine,
             transferReceiptHeader,
             purchaseOrderHeader,
-            purchaseOrderLine
+            purchaseOrderLine,
+            stockOpnameList
         )
     }
 
