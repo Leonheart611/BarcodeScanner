@@ -1,9 +1,11 @@
 package dynamia.com.core.data.repository
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.StockOpnameDao
+import dynamia.com.core.data.entinty.StockCheckingData
 import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.StockOpnameInputData
 import dynamia.com.core.domain.ErrorResponse
@@ -43,6 +45,8 @@ interface StockOpnameRepository {
 
     suspend fun getStockOpnameAsync(): Flow<ResultWrapper<MutableList<StockOpnameData>>>
     suspend fun postStockOpnameData(value: String): Flow<StockOpnameInputData>
+
+    suspend fun getStockCheck(value: String): Flow<ResultWrapper<MutableList<StockCheckingData>>>
 
 }
 
@@ -157,4 +161,27 @@ class StockOpnameRepositoryImpl(val dao: StockOpnameDao, val sharedPreferences: 
 
     override suspend fun postStockOpnameData(value: String): Flow<StockOpnameInputData> =
         flow { emit(retrofitService.postStockOpnameInput(value)) }
+
+    override suspend fun getStockCheck(value: String): Flow<ResultWrapper<MutableList<StockCheckingData>>> =
+        flow {
+            try {
+                val result = retrofitService.getCheckStock(value)
+                when (result.isSuccessful) {
+                    true -> {
+                        result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
+                    }
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError(e.localizedMessage))
+            }
+        }
 }

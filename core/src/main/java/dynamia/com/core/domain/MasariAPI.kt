@@ -3,10 +3,7 @@ package dynamia.com.core.domain
 import com.google.gson.annotations.SerializedName
 import dynamia.com.core.data.entinty.*
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface MasariAPI {
     /**
@@ -28,7 +25,10 @@ interface MasariAPI {
     suspend fun getPurchaseOrderLine(): Response<BaseResponse<PurchaseOrderLine>>
 
     @GET("Android_StockCounting")
-    suspend fun getStockOpname(): Response<BaseResponse<StockOpnameData>>
+    suspend fun getStockOpname(@Query("\$filter") filter: String = "Journal_Template_Name eq 'PHYS. INVE'"): Response<BaseResponse<StockOpnameData>>
+
+    @GET("Android_StockCheck")
+    suspend fun getCheckStock(@Query("\$filter") filter: String): Response<BaseResponse<StockCheckingData>>
 
     @Headers("Content-Type: application/json")
     @POST("Android_Transaction")

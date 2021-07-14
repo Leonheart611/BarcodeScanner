@@ -71,6 +71,9 @@
         <action
             android:id="@+id/action_homeFragment_to_stockOpnameFragment"
             app:destination="@id/stockOpnameFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_checkStockFragment"
+            app:destination="@id/checkStockFragment" />
     </fragment>
     <fragment
         android:id="@+id/transferListFragment"
@@ -223,4 +226,9 @@
             android:id="@+id/action_stockOpnameFragment_to_historyInputFragment"
             app:destination="@id/historyInputFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/checkStockFragment"
+        android:name="dynamia.com.barcodescanner.ui.checkstock.CheckStockFragment"
+        android:label="check_stock_fragment"
+        tools:layout="@layout/check_stock_fragment" />
 </navigation>

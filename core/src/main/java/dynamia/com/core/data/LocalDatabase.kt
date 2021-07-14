@@ -21,7 +21,7 @@ import dynamia.com.core.data.model.UserData
         PurchaseInputData::class,
         StockOpnameData::class,
         StockOpnameInputData::class
-    ], version = 12, exportSchema = false
+    ], version = 13, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferShipment(): TransferShipmentDao

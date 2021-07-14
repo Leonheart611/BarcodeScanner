@@ -137,7 +137,7 @@ class HomeFragment : Fragment() {
             findNavController().navigate(action)
         }
         cv_check_stock.setOnClickListener {
-            context?.showLongToast("Under Development")
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCheckStockFragment())
         }
     }
 

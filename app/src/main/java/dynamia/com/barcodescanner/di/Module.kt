@@ -1,5 +1,6 @@
 package dynamia.com.barcodescanner.di
 
+import dynamia.com.barcodescanner.ui.checkstock.CheckStockViewModel
 import dynamia.com.barcodescanner.ui.history.HistoryInputViewModel
 import dynamia.com.barcodescanner.ui.home.HomeViewModel
 import dynamia.com.barcodescanner.ui.login.LoginViewModel
@@ -50,4 +51,5 @@ val injectionModule = module {
     viewModel { StockCountingViewModel(get(), get(), get()) }
     viewModel { SearchViewModel() }
     viewModel { StockOpnameViewModel(get(), get()) }
+    viewModel { CheckStockViewModel(get(), get()) }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -96,7 +97,7 @@ class StockOpnameFragment : Fragment(), StockOpnameAdapter.OnStockClicklistener 
         val action =
             StockOpnameFragmentDirections.actionStockOpnameFragmentToTransferInputFragment(
                 transferNo = "",
-                barcodeNo = data.barcode,
+                barcodeNo = data.itemIdentifier,
                 TransferType.STOCKOPNAME)
         view?.findNavController()?.navigate(action)
     }

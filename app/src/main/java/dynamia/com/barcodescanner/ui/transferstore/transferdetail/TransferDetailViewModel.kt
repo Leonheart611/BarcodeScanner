@@ -108,10 +108,11 @@ class TransferDetailViewModel(
                     stockOpnameData?.let { data ->
                         stockOpnameRepository.insertInputStockOpname(
                             StockOpnameInputData(
-                                documentNo = data.docNo,
+                                documentNo = data.documentNo,
                                 quantity = qty.toInt(),
-                                lineNo = data.lineNo.toInt(),
-                                itemNo = data.itemCode,
+                                lineNo = data.lineNo,
+                                itemNo = data.itemNo,
+                                binCode = data.binCode,
                                 userName = sharedPreferences.getUserName(),
                                 insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
                             )

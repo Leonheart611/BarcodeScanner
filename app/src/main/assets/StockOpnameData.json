@@ -2,44 +2,56 @@
   "odata.metadata": "http://192.168.18.126:7048/DynamicsNAV90/OData/$metadata#ReceiptLocalHeader",
   "value": [
     {
-      "Item_Code": "25466666",
-      "Item_Name": "Item Name 1",
-      "Barcode": "barcode1",
-      "Doc_No": "512000",
-      "Line_No": "20000",
-      "Journal_Template_Name": "tempalte name",
-      "Location_Code": "red_bin",
-      "Bin_Code": "zero"
+      "@odata.etag": "W/\"JzQ0OytEYjdFbnZVV055QVJNTTBKd1lJRmQzWldnOXRVQVM3T25CVkFXNWNrWnc9MTswMDsn\"",
+      "Journal_Template_Name": "PHYS. INVE",
+      "Journal_Batch_Name": "DEFAULT",
+      "Line_No": 10000,
+      "Document_No": "TEST07122021",
+      "Item_No": "1000001-001-LG",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Qty_Calculated": 0,
+      "ItemIdentifier": "SCM1700000004",
+      "Location_Code": "PRESS",
+      "Bin_Code": ""
     },
     {
-      "Item_Code": "123456789",
-      "Item_Name": "Item Name 2",
-      "Barcode": "barcode2",
-      "Doc_No": "512000",
-      "Line_No": "40000",
-      "Journal_Template_Name": "tempalte name",
-      "Location_Code": "red_bin",
-      "Bin_Code": "zero"
+      "@odata.etag": "W/\"JzQ0OzRvZ0hSL0YxMTNkSkRlMzFiMUw3OElTMHY1V1RXdTc3YXpiaTVEWTFRRUE9MTswMDsn\"",
+      "Journal_Template_Name": "TRANSFER",
+      "Journal_Batch_Name": "DEFAULT",
+      "Line_No": 10000,
+      "Document_No": "111",
+      "Item_No": "1000001-001-LG",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Qty_Calculated": 0,
+      "ItemIdentifier": "SCM1700000004",
+      "Location_Code": "PRO-CGK",
+      "Bin_Code": "TESTBINCGK"
     },
     {
-      "Item_Code": "15687943",
-      "Item_Name": "Item Name 3",
-      "Barcode": "barcode3",
-      "Doc_No": "512000",
-      "Line_No": "10000",
-      "Journal_Template_Name": "tempalte name",
-      "Location_Code": "red_bin",
-      "Bin_Code": "zero"
+      "@odata.etag": "W/\"JzQ0O1BLaURRQ1BKOHhHdGFSVHdtYWlYY3ZQR3doSHYxc1VqWmNzT1hQa2x6TWs9MTswMDsn\"",
+      "Journal_Template_Name": "TRANSFER",
+      "Journal_Batch_Name": "DEFAULT",
+      "Line_No": 20000,
+      "Document_No": "23072021063020",
+      "Item_No": "1000001-001-LG",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Qty_Calculated": 0,
+      "ItemIdentifier": "SCM1700000004",
+      "Location_Code": "",
+      "Bin_Code": ""
     },
     {
-      "Item_Code": "789456123",
-      "Item_Name": "Item Name 4",
-      "Barcode": "barcode4",
-      "Doc_No": "512000",
-      "Line_No": "60000",
-      "Journal_Template_Name": "tempalte name",
-      "Location_Code": "red_bin",
-      "Bin_Code": "zero"
+      "@odata.etag": "W/\"JzQ0O0VHWUwzcy9aeUlyZ1htUTJZSGlKWW9zR05wOFY4dnFDUGpGVjd2RFdGc0k9MTswMDsn\"",
+      "Journal_Template_Name": "TRANSFER",
+      "Journal_Batch_Name": "DEFAULT",
+      "Line_No": 30000,
+      "Document_No": "23072021063020",
+      "Item_No": "1000001-001-LG",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Qty_Calculated": 0,
+      "ItemIdentifier": "SCM1700000004",
+      "Location_Code": "",
+      "Bin_Code": ""
     }
   ]
 }

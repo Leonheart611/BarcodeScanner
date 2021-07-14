@@ -112,8 +112,8 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
     }
 
     private fun showSuccessStockOpname(data: StockOpnameData) {
-        tv_transfer_item_name.text = data.itemName
-        til_transferinput_name.editText?.setText(data.itemCode)
+        tv_transfer_item_name.text = data.itemIdentifier
+        til_transferinput_name.editText?.setText(data.itemNo)
         tv_transfer_qty.text = ""
     }
 

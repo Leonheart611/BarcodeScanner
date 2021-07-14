@@ -17,10 +17,10 @@ interface StockOpnameDao {
     @Query("SELECT * FROM StockOpnameData WHERE id=:id")
     fun getStockOpnameDetail(id: Int): StockOpnameData
 
-    @Query("SELECT * FROM StockOpnameData WHERE barcode=:barcode")
+    @Query("SELECT * FROM StockOpnameData WHERE itemIdentifier=:barcode")
     fun getStockOpnameDetail(barcode: String): StockOpnameData
 
-    @Query("SELECT * FROM StockOpnameData WHERE docNo = :documentNo AND itemCode =:itemCode")
+    @Query("SELECT * FROM StockOpnameData WHERE documentNo = :documentNo AND itemNo =:itemCode")
     fun getStockOpnameDetail(documentNo: String, itemCode: String): StockOpnameData
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = StockOpnameData::class)

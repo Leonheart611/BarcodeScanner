@@ -113,6 +113,9 @@
     <string name="stock_opname_title">Stock Opname</string>
     <string name="stock_opname_history_title">Stock Opname History</string>
     <string name="check_stock_title">Check Stock</string>
-
-
+    <string name="stock_opname_search_title">Journal Template Name</string>
+    <string name="stock_checking_title">Stock Checking</string>
+    <string name="stock_checking_hint">Search</string>
+    <string name="stock_checking_button_item_identifier">Search by Item Identifier</string>
+    <string name="stock_checking_button_item_no">Search by Item No</string>
 </resources>

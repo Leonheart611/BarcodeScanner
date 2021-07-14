@@ -37,8 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tb_stock_opname"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/tb_stock_opname" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tb_stock_opname"
@@ -53,8 +52,7 @@
         app:menu="@menu/history_menu"
         app:navigationIcon="?attr/homeAsUpIndicator"
         app:title="@string/company_name"
-        app:titleTextColor="@android:color/white"
-        />
+        app:titleTextColor="@android:color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_upload_stock"
@@ -66,4 +64,5 @@
         app:srcCompat="@drawable/ic_upload"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fab_manual_input_stock_opname" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,22 @@
+{
+  "@odata.context": "http://desktop-o4ehsb8:7048/BC180/ODataV4/$metadata#Company('HITAMARGA%20TIRTA')/Android_StockCheck",
+  "value": [
+    {
+      "@odata.etag": "W/\"JzQ0O2NvV1J4UTIvaTE5azNFeVlQbW82Vm8rRUNyZjFhNFZ6NHpGNWdMN2FYUVE9MTswMDsn\"",
+      "Location_Code": "CEN-GI",
+      "Item_No": "1000001-001-LG",
+      "Variant_Code": "",
+      "Item_Identifiers": "SCM1700000004",
+      "Replenishment_System": "Purchase",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Inventory": 0,
+      "Reorder_Point": 0,
+      "Reorder_Quantity": 0,
+      "Maximum_Inventory": 0,
+      "Assembly_Policy": "Assemble-to-Stock",
+      "Global_Dimension_1_Filter": "",
+      "Global_Dimension_2_Filter": "",
+      "Drop_Shipment_Filter": ""
+    }
+  ]
+}
