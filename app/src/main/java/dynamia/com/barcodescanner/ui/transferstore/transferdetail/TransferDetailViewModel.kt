@@ -9,10 +9,7 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputViewModel
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.*
-import dynamia.com.core.data.repository.PurchaseOrderRepository
-import dynamia.com.core.data.repository.StockOpnameRepository
-import dynamia.com.core.data.repository.TransferReceiptRepository
-import dynamia.com.core.data.repository.TransferShipmentRepository
+import dynamia.com.core.data.repository.*
 import dynamia.com.core.util.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -23,6 +20,7 @@ class TransferDetailViewModel(
     val purchaseOrderRepository: PurchaseOrderRepository,
     val sharedPreferences: SharedPreferences,
     private val stockOpnameRepository: StockOpnameRepository,
+    private val binreclassRepository: BinreclassRepository,
 ) : ViewModelBase(sharedPreferences) {
 
     private val _pickingDetailViewState = MutableLiveData<TransferListViewState>()
@@ -402,6 +400,51 @@ class TransferDetailViewModel(
                 e.stackTrace
                 _transferInputViewState.value =
                     TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun postBinReclassData() {
+        viewModelScope.launch {
+            try {
+                var dataPosted = 0
+                io {
+                    val listEntries =
+                        binreclassRepository.getAllUnSyncBinreclassnput()
+                    val headerEntries = binreclassRepository.getAllUnsycnHeaderData()
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.GetUnpostedData(listEntries.size)
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                    }
+                    for (header in headerEntries) {
+                        val listUnpostedData =
+                            binreclassRepository.getAllUnSyncBinreclassnputByHeaderId(headerId = header.id!!)
+
+                        for (data in listUnpostedData) {
+                            val param = gson.toJson(data)
+                            binreclassRepository.postDataBinreclass(param).collect {
+                                dataPosted++
+                                ui {
+                                    _pickingPostViewState.value =
+                                        PickingDetailPostViewState.GetSuccessfullyPostedData(
+                                            dataPosted)
+                                }
+                                data.postSuccess()
+                                binreclassRepository.updateAllBinReclassBin(data)
+                            }
+                        }
+                        header.apply {
+                            sync_status = true
+                        }
+                        binreclassRepository.updateBinReclassHeader(header)
+                    }
+                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
+                }
+            } catch (e: Exception) {
+                _pickingPostViewState.value =
+                    PickingDetailPostViewState.ErrorPostData(e.localizedMessage)
             }
         }
     }

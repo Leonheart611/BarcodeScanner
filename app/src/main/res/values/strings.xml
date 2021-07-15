@@ -118,4 +118,19 @@
     <string name="stock_checking_hint">Search</string>
     <string name="stock_checking_button_item_identifier">Search by Item Identifier</string>
     <string name="stock_checking_button_item_no">Search by Item No</string>
+    <string name="bin_reclass_title">Bin Reclass</string>
+    <string name="bin_reclass_input_title">Bin Reclass Input</string>
+    <string name="bin_reclass_from_hint">Bin From</string>
+    <string name="bin_reclass_to_hint">Bin To</string>
+    <string name="bin_reclass_create_button">Create</string>
+    <string name="bin_reclass_cancel_button">Cancel</string>
+    <string name="bin_reclass_detail_from_code">Bin Code From: %1$s</string>
+    <string name="bin_reclass_detail_to_code">Bin Code To: %1$s</string>
+    <string name="bin_reclass_detail_date">Date: %1$s</string>
+    <string name="bin_reclass_detail_user">User: %1$s</string>
+    <string-array name="filter_bin_reclass">
+        <item>Show All</item>
+        <item>Show Posted Status = False</item>
+        <item>Show Posted Status = True</item>
+    </string-array>
 </resources>

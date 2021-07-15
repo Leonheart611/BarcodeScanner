@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dynamia.com.core.util.Constant
+import dynamia.com.core.util.getUserName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -13,7 +14,7 @@ import org.koin.core.component.KoinComponent
 
 abstract class ViewModelBase(private val userRepository: SharedPreferences) : ViewModel(),
     KoinComponent {
-    val coroutineJob = Job()
+    private val coroutineJob = Job()
     val coroutineContext = Dispatchers.IO + coroutineJob
     val uiScope = CoroutineScope(coroutineContext)
     var gson: Gson = GsonBuilder()
@@ -23,6 +24,8 @@ abstract class ViewModelBase(private val userRepository: SharedPreferences) : Vi
     fun getCompanyName(): String {
         return userRepository.getString(Constant.USERNAME_KEY, "") ?: ""
     }
+
+    fun getUserName() = userRepository.getUserName()
 
     override fun onCleared() {
         super.onCleared()

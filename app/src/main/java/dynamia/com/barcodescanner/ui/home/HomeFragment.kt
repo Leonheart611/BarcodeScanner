@@ -139,6 +139,9 @@ class HomeFragment : Fragment() {
         cv_check_stock.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCheckStockFragment())
         }
+        cv_bin_reclass.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBinReclassFragment())
+        }
     }
 
     private fun showDialog(

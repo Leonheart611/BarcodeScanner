@@ -1,30 +1,26 @@
 package dynamia.com.barcodescanner.ui.checkstock
 
 import android.app.Dialog
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
-import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleImportLineAdapter
-import dynamia.com.barcodescanner.ui.receipt.adapter.ReceiptMultipleLocalLineAdapter
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.check_stock_fragment.*
-import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.scan_stock_search_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CheckStockFragment : Fragment() {
 
     companion object {
-        const val SEARCH_ITEM_IDENTIFIERS = "Item_Identifiers eq"
-        const val SEARCH_ITEM_NO = "Item_No eq"
+        const val SEARCH_ITEM_IDENTIFIERS = "contains(Item_Identifiers,"
+        const val SEARCH_ITEM_NO = "contains(Item_No,"
     }
 
     private var stockAdapter = StockCheckAdapter(mutableListOf())
@@ -84,11 +80,11 @@ class CheckStockFragment : Fragment() {
                             ViewGroup.LayoutParams.WRAP_CONTENT
                         )
                     btn_search_item_identifier.setOnClickListener {
-                        viewModel.getStockCheck("$SEARCH_ITEM_IDENTIFIERS '${et_query_search.text}'")
+                        viewModel.getStockCheck("$SEARCH_ITEM_IDENTIFIERS '${et_query_search.text}')")
                         dismiss()
                     }
                     btn_search_item_no.setOnClickListener {
-                        viewModel.getStockCheck("$SEARCH_ITEM_NO '${et_query_search.text}'")
+                        viewModel.getStockCheck("$SEARCH_ITEM_NO '${et_query_search.text}')")
                         dismiss()
                     }
                     show()

@@ -46,6 +46,10 @@ interface MasariAPI {
     @POST("Android_Transaction")
     suspend fun postStockOpnameInput(@Body value: String): StockOpnameInputData
 
+    @Headers("Content-Type: application/json")
+    @POST("Android_Transaction")
+    suspend fun postBinreclassInput(@Body value: String): BinreclassInputData
+
     @GET("Chart_of_Accounts")
     suspend fun getCustomer(): Response<String>
 }

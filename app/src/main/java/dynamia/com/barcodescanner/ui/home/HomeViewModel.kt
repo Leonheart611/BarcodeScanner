@@ -10,10 +10,7 @@ import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.REFRESH
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.entinty.*
-import dynamia.com.core.data.repository.PurchaseOrderRepository
-import dynamia.com.core.data.repository.StockOpnameRepository
-import dynamia.com.core.data.repository.TransferReceiptRepository
-import dynamia.com.core.data.repository.TransferShipmentRepository
+import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.ResultWrapper.*
 import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
@@ -26,6 +23,7 @@ class HomeViewModel(
     val transferReceiptRepository: TransferReceiptRepository,
     val purchaseOrderRepository: PurchaseOrderRepository,
     val stockOpnameDataRepository: StockOpnameRepository,
+    val binreclassRepository: BinreclassRepository,
     private val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -248,7 +246,9 @@ class HomeViewModel(
                 val listEntries = transferShipmentRepository.getAllUnsycnTransferInput()
                 val receiptEntris = transferReceiptRepository.getAllUnsycnTransferReceiptInput()
                 val purchaseEntries = purchaseOrderRepository.getAllUnSyncPurchaseInput()
-                val total = listEntries.size + receiptEntris.size + purchaseEntries.size
+                val rebinClassEntry = binreclassRepository.getAllUnSyncBinreclassnput()
+                val total =
+                    listEntries.size + receiptEntris.size + purchaseEntries.size + rebinClassEntry.size
                 ui {
                     when (param) {
                         REFRESH -> _homeViewState.value =

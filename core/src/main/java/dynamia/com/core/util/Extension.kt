@@ -45,6 +45,17 @@ fun getCurrentTime(): String {
     return sdf.format(Date())
 }
 
+fun getDocumentCode(): String {
+    val time = SimpleDateFormat("HHmmss")
+    val date = SimpleDateFormat("ddMMyyyy")
+    return "${date.format(Date())}${time.format(Date())}"
+}
+
+fun getNormalDate():String{
+    val sdf = SimpleDateFormat("dd-MM-yyyy")
+    return sdf.format(Date())
+}
+
 fun getCurrentDate(): String {
     val sdf = SimpleDateFormat("yyyy-MM-dd")
     return sdf.format(Date())

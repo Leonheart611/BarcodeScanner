@@ -20,8 +20,10 @@ import dynamia.com.core.data.model.UserData
         PurchaseOrderLine::class,
         PurchaseInputData::class,
         StockOpnameData::class,
-        StockOpnameInputData::class
-    ], version = 13, exportSchema = false
+        StockOpnameInputData::class,
+        BinreclassHeader::class,
+        BinreclassInputData::class
+    ], version = 15, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferShipment(): TransferShipmentDao
@@ -29,6 +31,7 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferReceipt(): TransferReceiptDao
     abstract fun purchaseOrder(): PurchaseOrderDao
     abstract fun stockOpnameDao(): StockOpnameDao
+    abstract fun binreclassDao(): BinreclassDao
 
     companion object {
         @Volatile
