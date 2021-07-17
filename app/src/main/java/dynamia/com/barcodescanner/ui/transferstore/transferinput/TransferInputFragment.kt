@@ -151,8 +151,7 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
             SHIPMENT -> viewModel.getShipmentListLineValue(args.transferNo, barcode)
             RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode)
             PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode)
-            STOCKOPNAME -> viewModel.getStockOpnameValue(barcode)
-
+            STOCKOPNAME -> viewModel.getStockOpnameValue(barcode,args.stockId)
         }
     }
 

@@ -21,6 +21,7 @@ interface StockOpnameRepository {
     fun getALlStockOpname(): LiveData<List<StockOpnameData>>
     fun getStockOpnameDetail(id: Int): StockOpnameData
     fun getStockOpnameDetailByBarcode(barcode: String): Flow<StockOpnameData>
+    fun getStockOpnameDetailByBarcode(barcode: String, id: Int): Flow<StockOpnameData>
     suspend fun insertStockOpnameData(data: StockOpnameData)
     fun deleteAllStockOpname()
 
@@ -62,6 +63,12 @@ class StockOpnameRepositoryImpl(val dao: StockOpnameDao, val sharedPreferences: 
         emit(dao.getStockOpnameDetail(barcode))
     }
 
+    override fun getStockOpnameDetailByBarcode(barcode: String, id: Int): Flow<StockOpnameData> =
+        flow {
+            emit(dao.getStockOpnameDetail(barcode, id))
+        }
+
+
     override suspend fun insertStockOpnameData(data: StockOpnameData) {
         dao.insertStockOpnameData(data)
     }
@@ -91,7 +98,7 @@ class StockOpnameRepositoryImpl(val dao: StockOpnameDao, val sharedPreferences: 
     }
 
     override suspend fun insertInputStockOpname(data: StockOpnameInputData) {
-        val dataOpname = dao.getStockOpnameDetail(data.documentNo, data.itemNo)
+        val dataOpname = dao.getStockOpnameDetail(id = data.headerId)
         dataOpname.apply {
             this.alredyScanned += data.quantity
         }
@@ -102,7 +109,7 @@ class StockOpnameRepositoryImpl(val dao: StockOpnameDao, val sharedPreferences: 
     override suspend fun updateInputStockOpnameQty(id: Int, newQty: Int) {
         val stockOpnameInputData = dao.getStockOpnameInputDetail(id)
         val stockOpnameData =
-            dao.getStockOpnameDetail(stockOpnameInputData.documentNo, stockOpnameInputData.itemNo)
+            dao.getStockOpnameDetail(stockOpnameInputData.headerId)
         val totalQty = stockOpnameData.alredyScanned - stockOpnameInputData.quantity + newQty
         stockOpnameData.apply {
             alredyScanned = totalQty

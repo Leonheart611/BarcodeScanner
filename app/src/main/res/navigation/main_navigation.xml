@@ -25,6 +25,10 @@
         <argument
             android:name="transferType"
             app:argType="dynamia.com.barcodescanner.ui.transferstore.TransferType" />
+        <argument
+            android:name="stockId"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"

@@ -6,11 +6,13 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
-import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.data.entinty.StockOpnameData
-import dynamia.com.core.data.model.StockCount
 import dynamia.com.core.util.inflate
 import kotlinx.android.synthetic.main.picking_detail_line_item.view.*
+import kotlinx.android.synthetic.main.picking_detail_line_item.view.tv_description
+import kotlinx.android.synthetic.main.picking_detail_line_item.view.tv_item_code
+import kotlinx.android.synthetic.main.picking_detail_line_item.view.tv_qty
+import kotlinx.android.synthetic.main.stock_opname_list_item.view.*
 import java.util.*
 
 class StockOpnameAdapter(
@@ -27,7 +29,7 @@ class StockOpnameAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockOpnameHolder {
-        return StockOpnameHolder(parent.inflate(R.layout.picking_detail_line_item))
+        return StockOpnameHolder(parent.inflate(R.layout.stock_opname_list_item))
     }
 
     override fun onBindViewHolder(holder: StockOpnameHolder, position: Int) {
@@ -65,6 +67,7 @@ class StockOpnameAdapter(
                 tv_description.text = data.description
                 tv_qty.text =
                     "${data.alredyScanned}"
+                tv_stock_opname_bin.text = data.binCode
                 setOnClickListener {
                     listener.onStockClicklistener(data)
                 }

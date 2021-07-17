@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
 import dynamia.com.core.data.repository.BinreclassRepository
+import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
@@ -16,8 +17,8 @@ class BinReclassViewModel(
     val binreclassRepository: BinreclassRepository,
     sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
-    private val _viewState = MutableLiveData<BinReclassInputState>()
-    val viewState: LiveData<BinReclassInputState> by lazy { _viewState }
+    private val _viewState = MutableLiveData<Event<BinReclassInputState>>()
+    val viewState: LiveData<Event<BinReclassInputState>> by lazy { _viewState }
 
     fun insertBinReclass(binFrom: String, binTo: String) {
         viewModelScope.launch {
@@ -27,19 +28,19 @@ class BinReclassViewModel(
                         if (it) {
                             ui {
                                 _viewState.value =
-                                    BinReclassInputState.OnSuccessSave(binFrom, binTo)
+                                    Event(BinReclassInputState.OnSuccessSave(binFrom, binTo))
                             }
                         } else {
                             ui {
                                 _viewState.value =
-                                    BinReclassInputState.OnFailedSave("Bin To and From Code Sudah ada")
+                                    Event(BinReclassInputState.OnFailedSave("Bin To and From Code Sudah ada"))
                             }
                         }
                     }
 
                 }
             } catch (e: Exception) {
-                _viewState.value = BinReclassInputState.OnFailedSave(e.localizedMessage)
+                _viewState.value = Event(BinReclassInputState.OnFailedSave(e.localizedMessage))
             }
         }
     }

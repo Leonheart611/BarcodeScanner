@@ -128,9 +128,9 @@ class BinreclassDetailViewModel(
                         insertDataBin(BinreclassInputData(
                             documentNo = it.documentNo,
                             lineNo = 0,
-                            itemNo = barcode,
-                            transferFromBinCode = it.transferFromBinCode,
-                            transferToBinCode = it.transferToBinCode,
+                            itemIdentifier = barcode,
+                            binCode = it.transferFromBinCode,
+                            newBinCode = it.transferToBinCode,
                             userName = getUserName(),
                             insertDateTime = getCurrentDate(),
                             quantity = qty.toInt(),

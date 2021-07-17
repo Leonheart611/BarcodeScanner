@@ -6,25 +6,25 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/iv_post_status_import"
+        android:id="@+id/iv_post_status_purchase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:contentDescription="TODO"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_receipt_import_count"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_purhcase_unposted_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView32"
         app:srcCompat="@drawable/ic_check_circle"
         tools:visibility="visible" />
 
     <ProgressBar
-        android:id="@+id/pb_post_import"
+        android:id="@+id/pb_post_purchase"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_receipt_import_count"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_purhcase_unposted_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView32" />
 
@@ -40,7 +40,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_error_post_import" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_error_post_purchase" />
 
     <TextView
         android:id="@+id/tv_receipt_import_title_text"
@@ -56,7 +56,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_import_post_posted"
+        android:id="@+id/tv_purchase_posted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -95,7 +95,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView31" />
 
     <TextView
-        android:id="@+id/tv_receipt_import_count"
+        android:id="@+id/tv_purhcase_unposted_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -106,7 +106,7 @@
         tools:text="20" />
 
     <TextView
-        android:id="@+id/tv_error_post_import"
+        android:id="@+id/tv_error_post_purchase"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -115,6 +115,6 @@
         android:textColor="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_receipt_import_count"
+        app:layout_constraintTop_toBottomOf="@+id/tv_purhcase_unposted_count"
         tools:text="Error When Post Stock Count" />
 </androidx.constraintlayout.widget.ConstraintLayout>

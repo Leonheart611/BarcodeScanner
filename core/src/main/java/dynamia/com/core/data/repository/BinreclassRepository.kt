@@ -130,8 +130,8 @@ class BinreclassRepositoryImpl(val dao: BinreclassDao, val sharedPreferences: Sh
     override fun updateAllBinReclassBin(headerId: Int, newBinTo: String, newFromBin: String) {
         dao.getBinreclassInputDataDetailByHeaderId(headerId).forEach {
             it.apply {
-                transferFromBinCode = newFromBin
-                transferToBinCode = newBinTo
+                binCode = newFromBin
+                newBinCode = newBinTo
             }
             dao.updateBinReclassInput(it)
         }
@@ -147,7 +147,7 @@ class BinreclassRepositoryImpl(val dao: BinreclassDao, val sharedPreferences: Sh
     override fun insertBinReclassInputData(data: BinreclassInputData) {
         val getExisting = dao.getBinreclassInputDataDetail(data.transferFromBinCode,
             data.transferToBinCode,
-            data.itemNo)
+            data.itemIdentifier)
         getExisting?.let {
             it.apply {
                 quantity += data.quantity

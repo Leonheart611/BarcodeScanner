@@ -98,7 +98,7 @@ class StockOpnameFragment : Fragment(), StockOpnameAdapter.OnStockClicklistener 
             StockOpnameFragmentDirections.actionStockOpnameFragmentToTransferInputFragment(
                 transferNo = "",
                 barcodeNo = data.itemIdentifier,
-                TransferType.STOCKOPNAME)
+                TransferType.STOCKOPNAME, stockId = data.id!!)
         view?.findNavController()?.navigate(action)
     }
 

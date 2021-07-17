@@ -25,6 +25,7 @@ data class StockOpnameInputData(
     @SerializedName("User_Name") @Expose(serialize = true) val userName: String,
     @SerializedName("Insert_DateTime") @Expose(serialize = true) val insertDateTime: String,
     @Expose(serialize = false, deserialize = false) var sync_status: Boolean = false,
+    @Expose(serialize = false, deserialize = false) var headerId: Int,
 ) {
     fun postSuccess() {
         sync_status = true

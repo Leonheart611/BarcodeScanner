@@ -34,6 +34,7 @@ class StockCheckAdapter(val values: MutableList<StockCheckingData>) :
                 tv_item_location.text = data.locationCode
                 tv_item_no.text = data.itemNo
                 tv_item_desc.text = data.description
+                tv_item_qty.text = "QTY: ${data.inventory}"
             }
         }
     }

@@ -112,7 +112,8 @@ class TransferDetailViewModel(
                                 itemNo = data.itemNo,
                                 binCode = data.binCode,
                                 userName = sharedPreferences.getUserName(),
-                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                headerId = data.id!!
                             )
                         )
                         ui {

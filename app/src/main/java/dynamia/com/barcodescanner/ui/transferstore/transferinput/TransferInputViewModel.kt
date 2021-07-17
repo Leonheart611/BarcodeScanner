@@ -77,22 +77,36 @@ class TransferInputViewModel(
         }
     }
 
-    fun getStockOpnameValue(identifier: String) {
+    fun getStockOpnameValue(identifier: String, id: Int) {
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
                     TransferInputViewState.LoadingSearchPickingList(true)
                 io {
-                    stockOpnameRepository.getStockOpnameDetailByBarcode(identifier)
-                        .collect { data ->
-                            ui {
-                                stockOpnameData = data
-                                _transferInputViewState.value =
-                                    TransferInputViewState.SuccessGetStockOpnameValue(data)
-                                _transferInputViewState.value =
-                                    TransferInputViewState.LoadingSearchPickingList(false)
+                    if (id == 0) {
+                        stockOpnameRepository.getStockOpnameDetailByBarcode(identifier)
+                            .collect { data ->
+                                ui {
+                                    stockOpnameData = data
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.SuccessGetStockOpnameValue(data)
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                }
                             }
-                        }
+                    } else {
+                        stockOpnameRepository.getStockOpnameDetailByBarcode(identifier, id)
+                            .collect { data ->
+                                ui {
+                                    stockOpnameData = data
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.SuccessGetStockOpnameValue(data)
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                }
+                            }
+                    }
+
 
                 }
             } catch (e: Exception) {
@@ -211,7 +225,9 @@ class TransferInputViewModel(
                                 itemNo = data.itemNo,
                                 binCode = data.binCode,
                                 userName = sharedPreferences.getUserName(),
-                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                locationCode = data.locationCode,
+                                headerId = data.id!!
                             )
                         )
                         ui {
@@ -512,7 +528,7 @@ class TransferInputViewModel(
         }
     }
 
-    fun deleteStockOpnameInputData(no: Int){
+    fun deleteStockOpnameInputData(no: Int) {
         viewModelScope.launch {
             try {
                 io {

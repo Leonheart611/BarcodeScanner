@@ -43,30 +43,30 @@ class PickingPostDialog : BottomSheetDialogFragment() {
         viewModel.pickingPostViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.PickingDetailPostViewState.GetUnpostedData -> {
-                    tv_picking_total_post.text = it.data.toString()
+                    tv_transfer_total_unposted.text = it.data.toString()
                 }
                 is TransferDetailViewModel.PickingDetailPostViewState.GetSuccessfullyPostedData -> {
-                    tv_picking_posted_count.text = it.data.toString()
+                    tv_transfer_shipment_posted_count.text = it.data.toString()
                 }
                 is TransferDetailViewModel.PickingDetailPostViewState.ErrorPostData -> {
-                    iv_status_post_picking.crossFade(
+                    iv_status_post_transfer_shipment.crossFade(
                         animateDuration.toLong(),
-                        pb_picking_post_dialog
+                        pb_transfer_shipment_post_dialog
                     )
-                    iv_status_post_picking.setImageDrawable(
+                    iv_status_post_transfer_shipment.setImageDrawable(
                         ResourcesCompat.getDrawable(
                             resources,
                             R.drawable.ic_error_circle,
                             null
                         )
                     )
-                    tv_error_picking_post.text = it.message
+                    tv_error_transfer_shipment_post.text = it.message
                     btn_dismis_picking_post.isEnabled = true
                 }
                 TransferDetailViewModel.PickingDetailPostViewState.AllDataPosted -> {
-                    iv_status_post_picking.crossFade(
+                    iv_status_post_transfer_shipment.crossFade(
                         animateDuration.toLong(),
-                        pb_picking_post_dialog
+                        pb_transfer_shipment_post_dialog
                     )
                     btn_dismis_picking_post.isEnabled = true
                 }

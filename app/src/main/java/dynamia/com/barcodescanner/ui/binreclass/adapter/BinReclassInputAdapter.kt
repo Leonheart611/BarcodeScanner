@@ -22,7 +22,7 @@ class BinReclassInputAdapter(
     }
 
     override fun onBindViewHolder(holder: BinreclassInputHolder, position: Int) {
-        values[position].let {holder.bind(it) }
+        values[position].let { holder.bind(it) }
     }
 
     fun addData(data: MutableList<BinreclassInputData>) {
@@ -34,7 +34,7 @@ class BinReclassInputAdapter(
     inner class BinreclassInputHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(data: BinreclassInputData) {
             with(itemView) {
-                tv_item_code.text = data.itemNo
+                tv_item_code.text = data.itemIdentifier
                 tv_qty.text =
                     "QTY: ${data.quantity}"
                 setOnClickListener {

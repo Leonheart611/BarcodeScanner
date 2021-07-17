@@ -2,74 +2,78 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clipToPadding="false">
 
     <TextView
-        android:id="@+id/tv_picking_post_title"
+        android:id="@+id/tv_bin_reclass_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Transfer List Post Data"
+        android:layout_marginEnd="8dp"
+        android:text="@string/bin_reclass_posted"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_transfer_shipment_posted_count"
+        android:id="@+id/tv_bin_reclass_post_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="@color/green"
-        app:layout_constraintEnd_toEndOf="@+id/textView26"
-        app:layout_constraintStart_toStartOf="@+id/textView26"
-        app:layout_constraintTop_toBottomOf="@+id/textView26"
+        app:layout_constraintEnd_toEndOf="@+id/textView23"
+        app:layout_constraintStart_toStartOf="@+id/textView23"
+        app:layout_constraintTop_toBottomOf="@+id/textView23"
         tools:text="10" />
 
     <TextView
-        android:id="@+id/textView26"
+        android:id="@+id/textView23"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/total_data_posted"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_picking_post_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_bin_reclass_title" />
 
     <TextView
-        android:id="@+id/textView27"
+        android:id="@+id/textView24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/total_data_need_posted"
-        app:layout_constraintStart_toEndOf="@+id/textView28"
-        app:layout_constraintTop_toBottomOf="@+id/tv_picking_post_title" />
+        app:layout_constraintStart_toEndOf="@+id/textView25"
+        app:layout_constraintTop_toBottomOf="@+id/tv_bin_reclass_title" />
 
     <TextView
-        android:id="@+id/textView28"
+        android:id="@+id/textView25"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:text="/"
-        app:layout_constraintStart_toEndOf="@+id/textView26"
-        app:layout_constraintTop_toTopOf="@+id/textView26" />
+        app:layout_constraintBottom_toBottomOf="@+id/textView23"
+        app:layout_constraintStart_toEndOf="@+id/textView23"
+        app:layout_constraintTop_toTopOf="@+id/textView23" />
 
     <TextView
-        android:id="@+id/tv_transfer_total_unposted"
+        android:id="@+id/tv_bin_reclass_unposted_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="@color/red"
-        app:layout_constraintEnd_toEndOf="@+id/textView27"
-        app:layout_constraintStart_toEndOf="@+id/textView28"
-        app:layout_constraintTop_toBottomOf="@+id/textView27"
+        app:layout_constraintEnd_toEndOf="@+id/textView24"
+        app:layout_constraintStart_toStartOf="@+id/textView24"
+        app:layout_constraintTop_toBottomOf="@+id/textView24"
         tools:text="20" />
 
     <TextView
-        android:id="@+id/tv_error_transfer_shipment_post"
+        android:id="@+id/tv_error_message_bin_reclass"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -78,16 +82,14 @@
         android:textColor="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_transfer_total_unposted"
+        app:layout_constraintTop_toBottomOf="@+id/tv_bin_reclass_post_count"
         tools:text="Error When Post Stock Count" />
 
     <Button
-        android:id="@+id/btn_dismis_picking_post"
+        android:id="@+id/btn_dismis_bin_reclass_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/generalBlue"
         android:text="Close"
@@ -95,28 +97,27 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_error_transfer_shipment_post" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_error_message_bin_reclass" />
 
     <ImageView
-        android:id="@+id/iv_status_post_transfer_shipment"
+        android:id="@+id/iv_bin_reclass_status_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:contentDescription="TODO"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_transfer_total_unposted"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_bin_reclass_unposted_count"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_picking_post_title"
-        app:srcCompat="@drawable/ic_check_circle"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="@+id/textView24"
+        app:srcCompat="@drawable/ic_check_circle" />
 
     <ProgressBar
-        android:id="@+id/pb_transfer_shipment_post_dialog"
+        android:id="@+id/pb_bin_reclass_post"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_transfer_total_unposted"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_bin_reclass_unposted_count"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView27" />
+        app:layout_constraintTop_toTopOf="@+id/textView24" />
 </androidx.constraintlayout.widget.ConstraintLayout>

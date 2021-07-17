@@ -16,6 +16,7 @@ import dynamia.com.barcodescanner.ui.binreclass.adapter.BinReclassAdapter
 import dynamia.com.barcodescanner.ui.home.HomeFragmentDirections
 import dynamia.com.barcodescanner.ui.transferstore.transferdetail.PickingPostDialog
 import dynamia.com.core.data.entinty.BinreclassHeader
+import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.bin_reclass_fragment.*
 import kotlinx.android.synthetic.main.bin_relass_header_dialog.*
@@ -44,7 +45,7 @@ class BinReclassFragment : Fragment(), BinReclassAdapter.BinreclassOnclicklisten
 
     private fun setObseverable() {
         spn_binreclass_filter.onItemSelectedListener = spinerFilterSelectListener
-        viewModel.viewState.observe(viewLifecycleOwner, {
+        viewModel.viewState.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 is BinReclassViewModel.BinReclassInputState.OnFailedSave -> {
                     context?.showLongToast(it.message)

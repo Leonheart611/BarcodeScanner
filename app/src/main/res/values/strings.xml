@@ -75,12 +75,12 @@
     <string name="import_and_local_all_history">History All Receipt</string>
     <string name="part_no_error_message">Part No yang Anda Scan tidak di temukan Harap Scan Ulang</string>
     <string name="sn_no_already_inputed">No SN yang di masukan sudah ada</string>
-    <string name="stock_count_post">Stock Count Post Data</string>
+    <string name="stock_count_post">Stock Opname Post Data</string>
     <string name="total_data_posted">Data Posted</string>
     <string name="total_data_need_posted">Total Data to Post</string>
     <string name="picking_list_post">Picking List Post Data</string>
-    <string name="receipt_local_post">Receipt Local Post Data</string>
-    <string name="receipt_import_post">Receipt Import Post Data</string>
+    <string name="receipt_local_post">Transfer Receipt Post Data</string>
+    <string name="receipt_import_post">Purchase Order Post Data</string>
     <string name="input_settings">Input Settings</string>
     <string name="valide_s_title">Validate S</string>
     <string name="yes_text">Yes</string>
@@ -133,4 +133,5 @@
         <item>Show Posted Status = False</item>
         <item>Show Posted Status = True</item>
     </string-array>
+    <string name="bin_reclass_posted">Bin Reclass Post Data</string>
 </resources>

@@ -9,6 +9,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
 import dynamia.com.core.util.crossFade
 import dynamia.com.core.util.gone
+import kotlinx.android.synthetic.main.fragment_post_bin_reclass_dialog.*
 import kotlinx.android.synthetic.main.fragment_post_stock_count_dialog.*
 import kotlinx.android.synthetic.main.home_post_all_dialog.*
 import kotlinx.android.synthetic.main.picking_post_bottom_dialog.*
@@ -23,7 +24,7 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         return inflater.inflate(R.layout.home_post_all_dialog, container, false)
@@ -41,7 +42,13 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
     }
 
     private fun callAllApi() {
-
+        with(viewModel) {
+            postReceiptData()
+            postShipmentData()
+            postPurchaseData()
+            postStockOpnameData()
+            postBinReclassData()
+        }
     }
 
     private fun setupView() {
@@ -49,46 +56,47 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
         btn_dismis_receipt_post.gone()
         btn_dismis_receipt_import.gone()
         btn_dismis_stock_count.gone()
+        btn_dismis_bin_reclass_post.gone()
     }
 
     private fun setObseverable() {
         viewModel.homePostViewState.observe(viewLifecycleOwner, {
             when (it) {
-                is HomeViewModel.HomePostViewState.GetUnpostedPicking -> {
-                    tv_picking_total_post.text = it.data.toString()
+                is HomeViewModel.HomePostViewState.GetUnpostedTransferShipment -> {
+                    tv_transfer_total_unposted.text = it.data.toString()
                 }
-                is HomeViewModel.HomePostViewState.GetSuccessfullyPicking -> {
-                    tv_picking_posted_count.text = it.data.toString()
+                is HomeViewModel.HomePostViewState.GetSuccessTransferShipment -> {
+                    tv_transfer_shipment_posted_count.text = it.data.toString()
                 }
-                is HomeViewModel.HomePostViewState.ErrorPostPicking -> {
-                    iv_status_post_picking.crossFade(
+                is HomeViewModel.HomePostViewState.ErrorPostTransferShipment -> {
+                    iv_status_post_transfer_shipment.crossFade(
                         animateDuration.toLong(),
-                        pb_picking_post_dialog
+                        pb_transfer_shipment_post_dialog
                     )
-                    iv_status_post_picking.setImageDrawable(
+                    iv_status_post_transfer_shipment.setImageDrawable(
                         ResourcesCompat.getDrawable(
                             resources,
                             R.drawable.ic_error_circle,
                             null
                         )
                     )
-                    tv_error_picking_post.text = it.message
+                    tv_error_transfer_shipment_post.text = it.message
                 }
-                HomeViewModel.HomePostViewState.AllDataPostedPicking -> {
-                    iv_status_post_picking.crossFade(
+                HomeViewModel.HomePostViewState.AllDataPostedTransferShipment -> {
+                    iv_status_post_transfer_shipment.crossFade(
                         animateDuration.toLong(),
-                        pb_picking_post_dialog
+                        pb_transfer_shipment_post_dialog
                     )
                 }
 
 
-                is HomeViewModel.HomePostViewState.GetUnpostedLocal -> {
+                is HomeViewModel.HomePostViewState.GetUnpostedTransferReceipt -> {
                     tv_receipt_total_post.text = it.data.toString()
                 }
-                is HomeViewModel.HomePostViewState.GetSuccessfulLocal -> {
+                is HomeViewModel.HomePostViewState.GetSuccessfulTransferReceipt -> {
                     tv_receipt_posted_count.text = it.data.toString()
                 }
-                is HomeViewModel.HomePostViewState.ErrorPostLocal -> {
+                is HomeViewModel.HomePostViewState.ErrorPostTransferReceipt -> {
                     iv_status_post_receipt.crossFade(
                         animateDuration.toLong(),
                         pb_receipt_post_dialog
@@ -102,7 +110,7 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                     )
                     tv_error_receipt_post.text = it.message
                 }
-                HomeViewModel.HomePostViewState.SuccessPostallLocal -> {
+                HomeViewModel.HomePostViewState.SuccessPostallTransferReceipt -> {
                     iv_status_post_receipt.crossFade(
                         animateDuration.toLong(),
                         pb_receipt_post_dialog
@@ -110,41 +118,41 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                 }
 
 
-                is HomeViewModel.HomePostViewState.GetUnpostedImport -> {
-                    tv_receipt_import_count.text = it.data.toString()
+                is HomeViewModel.HomePostViewState.GetUnpostedPurchase -> {
+                    tv_purhcase_unposted_count.text = it.data.toString()
                 }
-                is HomeViewModel.HomePostViewState.GetSuccessfulImport -> {
-                    tv_import_post_posted.text = it.data.toString()
+                is HomeViewModel.HomePostViewState.GetSuccessfulPurchase -> {
+                    tv_purchase_posted.text = it.data.toString()
                 }
-                is HomeViewModel.HomePostViewState.ErrorPostImport -> {
-                    iv_post_status_import.crossFade(
+                is HomeViewModel.HomePostViewState.ErrorPostPurchase -> {
+                    iv_post_status_purchase.crossFade(
                         animateDuration.toLong(),
-                        pb_post_import
+                        pb_post_purchase
                     )
-                    iv_post_status_import.setImageDrawable(
+                    iv_post_status_purchase.setImageDrawable(
                         ResourcesCompat.getDrawable(
                             resources,
                             R.drawable.ic_error_circle,
                             null
                         )
                     )
-                    tv_error_post_import.text = it.message
+                    tv_error_post_purchase.text = it.message
                 }
-                HomeViewModel.HomePostViewState.SuccessPostallImport -> {
-                    iv_post_status_import.crossFade(
+                HomeViewModel.HomePostViewState.SuccessPostallPurchase -> {
+                    iv_post_status_purchase.crossFade(
                         animateDuration.toLong(),
-                        pb_post_import
+                        pb_post_purchase
                     )
                 }
 
 
-                is HomeViewModel.HomePostViewState.GetUnpostedCount -> {
+                is HomeViewModel.HomePostViewState.GetUnpostedStock -> {
                     tv_stock_total_post.text = it.data.toString()
                 }
-                is HomeViewModel.HomePostViewState.GetSuccessfulCount -> {
+                is HomeViewModel.HomePostViewState.GetSuccessfulStock -> {
                     tv_stock_posted_count.text = it.data.toString()
                 }
-                is HomeViewModel.HomePostViewState.ErrorPostCount -> {
+                is HomeViewModel.HomePostViewState.ErrorPostStock -> {
                     iv_status_post_stock_count.crossFade(
                         animateDuration.toLong(),
                         pb_post_stock_count
@@ -158,10 +166,38 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                     )
                     tv_error_stock_count_post.text = it.message
                 }
-                HomeViewModel.HomePostViewState.SuccessPostallCount -> {
+                HomeViewModel.HomePostViewState.SuccessPostallStock -> {
                     iv_status_post_stock_count.crossFade(
                         animateDuration.toLong(),
                         pb_post_stock_count
+                    )
+                }
+
+                is HomeViewModel.HomePostViewState.ErrorPostBinReclass -> {
+                    iv_bin_reclass_status_post.crossFade(
+                        animateDuration.toLong(),
+                        pb_bin_reclass_post
+                    )
+                    iv_bin_reclass_status_post.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_error_circle,
+                            null
+                        )
+                    )
+                    tv_error_message_bin_reclass.text = it.message
+                }
+                is HomeViewModel.HomePostViewState.GetSuccessfulBinReclass -> {
+                    tv_bin_reclass_post_count.text = it.data.toString()
+                }
+
+                is HomeViewModel.HomePostViewState.GetUnpostedBinReclass -> {
+                    tv_bin_reclass_unposted_count.text = it.data.toString()
+                }
+                HomeViewModel.HomePostViewState.SuccessPostallBinReclass -> {
+                    iv_bin_reclass_status_post.crossFade(
+                        animateDuration.toLong(),
+                        pb_bin_reclass_post
                     )
                 }
             }

@@ -52,7 +52,7 @@ interface BinreclassDao {
     @Query("SELECT * FROM BinreclassInputData WHERE headerId =:headerId")
     fun getBinreclassInputData(headerId: Int): LiveData<List<BinreclassInputData>>
 
-    @Query("SELECT * FROM BinreclassInputData WHERE transferFromBinCode =:transferFrom AND transferToBinCode =:transferTo AND itemNo =:barcode")
+    @Query("SELECT * FROM BinreclassInputData WHERE binCode =:transferFrom AND newBinCode =:transferTo AND itemIdentifier =:barcode")
     fun getBinreclassInputDataDetail(
         transferFrom: String,
         transferTo: String,

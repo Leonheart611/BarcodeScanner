@@ -20,6 +20,9 @@ interface StockOpnameDao {
     @Query("SELECT * FROM StockOpnameData WHERE itemIdentifier=:barcode")
     fun getStockOpnameDetail(barcode: String): StockOpnameData
 
+    @Query("SELECT * FROM StockOpnameData WHERE itemIdentifier=:barcode AND id =:id")
+    fun getStockOpnameDetail(barcode: String, id: Int): StockOpnameData
+
     @Query("SELECT * FROM StockOpnameData WHERE documentNo = :documentNo AND itemNo =:itemCode")
     fun getStockOpnameDetail(documentNo: String, itemCode: String): StockOpnameData
 
