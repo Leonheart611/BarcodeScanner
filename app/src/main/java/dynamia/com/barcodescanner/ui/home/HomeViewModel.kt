@@ -249,8 +249,9 @@ class HomeViewModel(
                 val receiptEntris = transferReceiptRepository.getAllUnsycnTransferReceiptInput()
                 val purchaseEntries = purchaseOrderRepository.getAllUnSyncPurchaseInput()
                 val rebinClassEntry = binreclassRepository.getAllUnSyncBinreclassnput()
+                val stockOpnameEntry = stockOpnameDataRepository.getAllUnsyncStockInput()
                 val total =
-                    listEntries.size + receiptEntris.size + purchaseEntries.size + rebinClassEntry.size
+                    listEntries.size + receiptEntris.size + purchaseEntries.size + rebinClassEntry.size + stockOpnameEntry.size
                 ui {
                     when (param) {
                         REFRESH -> _homeViewState.value =
