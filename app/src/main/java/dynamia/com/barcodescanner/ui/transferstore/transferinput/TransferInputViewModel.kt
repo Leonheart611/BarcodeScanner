@@ -77,14 +77,14 @@ class TransferInputViewModel(
         }
     }
 
-    fun getStockOpnameValue(identifier: String, id: Int) {
+    fun getStockOpnameValue(identifier: String, id: Int, bincode: String) {
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
                     TransferInputViewState.LoadingSearchPickingList(true)
                 io {
                     if (id == 0) {
-                        stockOpnameRepository.getStockOpnameDetailByBarcode(identifier)
+                        stockOpnameRepository.getStockOpnameDetailByBarcode(identifier, bincode)
                             .collect { data ->
                                 ui {
                                     stockOpnameData = data

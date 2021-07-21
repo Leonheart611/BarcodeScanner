@@ -40,11 +40,34 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
         til_transferinput_name.isVisible = false
         et_tranferinput_qty.setText("1")
         et_tranferinput_qty.isEnabled = false
+        til_transfer_bincode.isVisible = inputType == TransferType.STOCKOPNAME
         et_transfer_input_barcode.requestFocus()
 
-        et_transfer_input_barcode.doAfterTextChanged {
-            documentNo?.let { data -> viewModel.insertDataValue(data, it.toString(), inputType) }
+        when (inputType) {
+            TransferType.STOCKOPNAME -> {
+                et_transfer_input_barcode.doAfterTextChanged {
+                    et_transferinput_bincode.requestFocus()
+                }
+                et_transferinput_bincode.doAfterTextChanged {
+                    documentNo?.let { data ->
+                        viewModel.insertDataValue(data,
+                            et_transfer_input_barcode.text.toString(),
+                            inputType, it.toString())
+                    }
+                }
+
+            }
+            else -> {
+                et_transfer_input_barcode.doAfterTextChanged {
+                    documentNo?.let { data ->
+                        viewModel.insertDataValue(data,
+                            it.toString(),
+                            inputType)
+                    }
+                }
+            }
         }
+
     }
 
     private fun setObserverable() {
@@ -57,6 +80,9 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                     context?.showLongToast(getString(R.string.qty_alreadyscan_qty_fromline_error_mssg))
                 }
                 TransferDetailViewModel.TransferDetailInputViewState.SuccessSaveData -> {
+                    et_transferinput_bincode.apply {
+                        text?.clear()
+                    }
                     et_transfer_input_barcode.apply {
                         text?.clear()
                         requestFocus()

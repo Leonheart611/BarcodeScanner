@@ -1,7 +1,6 @@
 package dynamia.com.core.data.repository
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.StockOpnameDao
@@ -20,7 +19,7 @@ interface StockOpnameRepository {
      */
     fun getALlStockOpname(): LiveData<List<StockOpnameData>>
     fun getStockOpnameDetail(id: Int): StockOpnameData
-    fun getStockOpnameDetailByBarcode(barcode: String): Flow<StockOpnameData>
+    fun getStockOpnameDetailByBarcode(barcode: String, binCode: String): Flow<StockOpnameData>
     fun getStockOpnameDetailByBarcode(barcode: String, id: Int): Flow<StockOpnameData>
     suspend fun insertStockOpnameData(data: StockOpnameData)
     fun deleteAllStockOpname()
@@ -59,8 +58,11 @@ class StockOpnameRepositoryImpl(val dao: StockOpnameDao, val sharedPreferences: 
 
     override fun getStockOpnameDetail(id: Int): StockOpnameData = dao.getStockOpnameDetail(id)
 
-    override fun getStockOpnameDetailByBarcode(barcode: String): Flow<StockOpnameData> = flow {
-        emit(dao.getStockOpnameDetail(barcode))
+    override fun getStockOpnameDetailByBarcode(
+        barcode: String,
+        binCode: String,
+    ): Flow<StockOpnameData> = flow {
+        emit(dao.getStockOpnameDetailBinCode(barcode, binCode))
     }
 
     override fun getStockOpnameDetailByBarcode(barcode: String, id: Int): Flow<StockOpnameData> =

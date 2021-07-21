@@ -23,7 +23,6 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     }
 
     private var animateDuration: Int = 0
-
     private val viewModel: HomeViewModel by viewModel()
 
     override fun onCreateView(

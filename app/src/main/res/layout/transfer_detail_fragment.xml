@@ -68,7 +68,8 @@
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_barcode_scanner" />
+        app:srcCompat="@drawable/ic_barcode_scanner"
+        app:backgroundTint="#FFF176"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_manual_input_transfer"
@@ -79,6 +80,7 @@
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fab_input_transfer"
-        app:srcCompat="@drawable/ic_edit" />
+        app:srcCompat="@drawable/ic_edit"
+        app:backgroundTint="#81C784"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

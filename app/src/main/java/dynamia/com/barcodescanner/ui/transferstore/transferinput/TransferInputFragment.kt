@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -36,7 +37,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
     private val viewModel: TransferInputViewModel by viewModel()
     private val args: TransferInputFragmentArgs by navArgs()
     private var dialog: Dialog? = null
-    private var poNoDialog: Dialog? = null
     var activity: MainActivity? = null
 
     override fun onCreateView(
@@ -100,21 +100,22 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         tv_transfer_item_name.text = data.description
         til_transferinput_name.editText?.setText(data.no)
         when (args.transferType) {
-            SHIPMENT -> tv_transfer_qty.text = data.quantity.toString()
-            RECEIPT -> tv_transfer_qty.text = data.qtyInTransit.toString()
+            SHIPMENT -> tv_transfer_qty.text = "${data.quantity}/${data.alredyScanned}"
+            RECEIPT -> tv_transfer_qty.text = "${data.qtyInTransit}/${data.alredyScanned}"
         }
     }
 
     private fun showSuccessPurchaseData(data: PurchaseOrderLine) {
         tv_transfer_item_name.text = data.description
         til_transferinput_name.editText?.setText(data.no)
-        tv_transfer_qty.text = data.quantity.toString()
+        tv_transfer_qty.text = "${data.quantity}/${data.alredyScanned}"
     }
 
     private fun showSuccessStockOpname(data: StockOpnameData) {
         tv_transfer_item_name.text = data.itemIdentifier
         til_transferinput_name.editText?.setText(data.itemNo)
-        tv_transfer_qty.text = ""
+        tv_transfer_qty.text = "${data.qtyCalculated}/${data.alredyScanned}"
+        et_transferinput_bincode.setText(data.binCode)
     }
 
     private fun setupView() {
@@ -128,9 +129,21 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         }
         et_transfer_input_barcode.setOnEditorActionListener { _, keyCode, event ->
             if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
-                || keyCode == EditorInfo.IME_ACTION_NEXT
+                || keyCode == EditorInfo.IME_ACTION_NEXT && (args.transferType != STOCKOPNAME)
             ) {
                 getPickingListLineData(et_transfer_input_barcode.text.toString())
+                et_tranferinput_qty.requestFocus()
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+
+        et_transferinput_bincode.setOnEditorActionListener { _, actionId, event ->
+            if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
+                || actionId == EditorInfo.IME_ACTION_NEXT && (args.transferType == STOCKOPNAME)
+            ) {
+                getPickingListLineData(et_transfer_input_barcode.text.toString(),
+                    et_transferinput_bincode.text.toString())
                 et_tranferinput_qty.requestFocus()
                 return@setOnEditorActionListener true
             }
@@ -143,15 +156,16 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
             PURCHASE -> getString(R.string.purchase_order_title)
             STOCKOPNAME -> getString(R.string.stock_opname_title)
         }
+        til_transfer_bincode.isVisible = args.transferType == STOCKOPNAME
     }
 
 
-    private fun getPickingListLineData(barcode: String) {
+    private fun getPickingListLineData(barcode: String, binCode: String = "") {
         when (args.transferType) {
             SHIPMENT -> viewModel.getShipmentListLineValue(args.transferNo, barcode)
             RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode)
             PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode)
-            STOCKOPNAME -> viewModel.getStockOpnameValue(barcode,args.stockId)
+            STOCKOPNAME -> viewModel.getStockOpnameValue(barcode, args.stockId, binCode)
         }
     }
 
@@ -194,72 +208,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         et_transferinput_name.text?.clear()
         et_tranferinput_qty.text?.clear()
         et_transfer_input_barcode.requestFocus()
-    }
-
-    private fun showMultipleDataDialog(data: List<PickingListLineValue>) {
-        context?.let { context ->
-            dialog = Dialog(context)
-            dialog?.let { dialog ->
-                with(dialog) {
-                    setContentView(R.layout.dialog_multiple_item)
-                    window
-                        ?.setLayout(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                    val adapter = PickingMultipleLineAdapter(
-                        data.toMutableList(),
-                        this@TransferInputFragment
-                    )
-                    rv_muliple_line.layoutManager =
-                        LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                    rv_muliple_line.adapter = adapter
-
-                    show()
-                }
-            }
-        }
-    }
-
-    private fun showErrorPartNo() {
-        context?.let { context ->
-            poNoDialog = Dialog(context)
-            poNoDialog?.let { dialog ->
-                with(dialog) {
-                    setContentView(R.layout.dialog_part_no_not_found)
-                    window
-                        ?.setLayout(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    btn_ok.setOnClickListener {
-                        dismiss()
-                    }
-                    show()
-                }
-            }
-        }
-    }
-
-    private fun showErrorPONoDialog(message: String) {
-        context?.let { context ->
-            poNoDialog = Dialog(context)
-            poNoDialog?.let { dialog ->
-                with(dialog) {
-                    setContentView(R.layout.dialog_part_no_not_found)
-                    window
-                        ?.setLayout(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    tv_error_message.text = message
-                    btn_ok.setOnClickListener {
-                        dismiss()
-                    }
-                    show()
-                }
-            }
-        }
     }
 
     override fun onMultiplelineSelected(data: PickingListLineValue) {

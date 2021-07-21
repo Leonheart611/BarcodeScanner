@@ -41,7 +41,12 @@ class TransferDetailViewModel(
     private var stockOpnameData: StockOpnameData? = null
 
 
-    fun insertDataValue(no: String, identifier: String, transferType: TransferType) {
+    fun insertDataValue(
+        no: String,
+        identifier: String,
+        transferType: TransferType,
+        binCode: String = "",
+    ) {
         viewModelScope.launch {
             try {
                 io {
@@ -80,7 +85,7 @@ class TransferDetailViewModel(
                                 }
                         }
                         STOCKOPNAME -> {
-                            stockOpnameRepository.getStockOpnameDetailByBarcode(identifier)
+                            stockOpnameRepository.getStockOpnameDetailByBarcode(identifier, binCode)
                                 .collect { data ->
                                     ui {
                                         stockOpnameData = data

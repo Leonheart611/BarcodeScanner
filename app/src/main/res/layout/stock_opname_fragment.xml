@@ -14,6 +14,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
+        app:backgroundTint="#FFF176"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_barcode_scanner" />
@@ -25,6 +26,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
+        app:backgroundTint="#81C784"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fab_input_stock_opname"
         app:srcCompat="@drawable/ic_edit" />
@@ -58,11 +60,12 @@
         android:id="@+id/fab_upload_stock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_upload"
+        app:backgroundTint="#FF8A65"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/fab_manual_input_stock_opname" />
+        app:layout_constraintEnd_toStartOf="@+id/fab_manual_input_stock_opname"
+        app:srcCompat="@drawable/ic_upload" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
