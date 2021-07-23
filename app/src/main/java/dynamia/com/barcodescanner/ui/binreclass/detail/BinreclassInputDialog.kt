@@ -41,6 +41,7 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
     }
 
     fun setupView() {
+        til_transfer_bincode.isVisible = false
         tv_transfer_item_name.text = "From Bin: $fromBin"
         tv_transfer_qty.text = "To Bin: $toBin"
         til_transferinput_name.isVisible = false

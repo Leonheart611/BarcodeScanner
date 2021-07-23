@@ -100,21 +100,21 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         tv_transfer_item_name.text = data.description
         til_transferinput_name.editText?.setText(data.no)
         when (args.transferType) {
-            SHIPMENT -> tv_transfer_qty.text = "${data.quantity}/${data.alredyScanned}"
-            RECEIPT -> tv_transfer_qty.text = "${data.qtyInTransit}/${data.alredyScanned}"
+            SHIPMENT -> tv_transfer_qty.text = "${data.alredyScanned}/${data.quantity}"
+            RECEIPT -> tv_transfer_qty.text = "${data.alredyScanned}/${data.qtyInTransit}"
         }
     }
 
     private fun showSuccessPurchaseData(data: PurchaseOrderLine) {
         tv_transfer_item_name.text = data.description
         til_transferinput_name.editText?.setText(data.no)
-        tv_transfer_qty.text = "${data.quantity}/${data.alredyScanned}"
+        tv_transfer_qty.text = "${data.alredyScanned}/${data.quantity}"
     }
 
     private fun showSuccessStockOpname(data: StockOpnameData) {
         tv_transfer_item_name.text = data.itemIdentifier
         til_transferinput_name.editText?.setText(data.itemNo)
-        tv_transfer_qty.text = "${data.qtyCalculated}/${data.alredyScanned}"
+        tv_transfer_qty.text = "${data.alredyScanned}/${data.qtyCalculated}"
         et_transferinput_bincode.setText(data.binCode)
     }
 

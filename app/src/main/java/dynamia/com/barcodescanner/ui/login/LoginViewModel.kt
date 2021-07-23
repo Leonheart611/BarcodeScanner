@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val sharedPreferences: SharedPreferences,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModelBase(sharedPreferences) {
 
     private var _modelState = MutableLiveData<LoginState>()
@@ -26,7 +26,7 @@ class LoginViewModel(
         username: String,
         password: String,
         domain: String,
-        companyName: String
+        companyName: String,
     ) {
         viewModelScope.launch {
             val userData = UserData(
@@ -43,9 +43,9 @@ class LoginViewModel(
                     editor.putString(Constant.DOMAIN_KEY, domain)
                     editor.putString(Constant.BASEURL_KEY, baseUrl)
                     editor.putString(Constant.PASSWORD_KEY, password)
-                    editor.apply()
+                    val result = editor.commit()
                     userRepository.insertUserData(userData)
-                    if (editor.commit())
+                    if (result)
                         ui { _modelState.value = LoginState.Success("Success Save Data") }
                 }
             } catch (e: Exception) {
