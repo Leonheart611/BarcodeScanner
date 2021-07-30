@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dynamia.com.core.base.ViewModelBase
-import dynamia.com.core.data.model.UserData
+import dynamia.com.core.data.entinty.UserData
 import dynamia.com.core.data.repository.UserRepository
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.io

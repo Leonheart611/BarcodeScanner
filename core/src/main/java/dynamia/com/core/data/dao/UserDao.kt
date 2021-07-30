@@ -1,7 +1,7 @@
 package dynamia.com.core.data.dao
 
 import androidx.room.*
-import dynamia.com.core.data.model.UserData
+import dynamia.com.core.data.entinty.UserData
 
 @Dao
 interface UserDao {

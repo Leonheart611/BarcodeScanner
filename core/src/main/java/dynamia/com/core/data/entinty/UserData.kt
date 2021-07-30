@@ -1,4 +1,4 @@
-package dynamia.com.core.data.model
+package dynamia.com.core.data.entinty
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

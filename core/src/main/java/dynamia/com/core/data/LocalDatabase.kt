@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import dynamia.com.core.data.dao.*
 import dynamia.com.core.data.entinty.*
-import dynamia.com.core.data.model.UserData
 
 @Database(
     entities = [

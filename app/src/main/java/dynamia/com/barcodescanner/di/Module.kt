@@ -27,10 +27,7 @@ val injectionModule = module {
     single { get<LocalDatabase>().stockOpnameDao() }
     single { get<LocalDatabase>().binreclassDao() }
 
-
-    single<StockCountRepository> { StockCountRepositoryImpl(get()) }
     single<UserRepository> { UserRepositoryImpl(get()) }
-    single<NetworkRepository> { NetworkRepositoryImpl(get()) }
     single<TransferShipmentRepository> { TransferShipmentImpl(get(), get()) }
     single<TransferReceiptRepository> { TransferReceiptRepositoryImpl(get(), get(), get()) }
     single<PurchaseOrderRepository> { PurchaseOrderRepositoryImpl(get(), get()) }

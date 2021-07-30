@@ -1,7 +1,7 @@
 package dynamia.com.core.data.repository
 
 import dynamia.com.core.data.dao.UserDao
-import dynamia.com.core.data.model.UserData
+import dynamia.com.core.data.entinty.UserData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

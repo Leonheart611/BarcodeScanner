@@ -10,7 +10,7 @@ import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
-import dynamia.com.core.data.model.UserData
+import dynamia.com.core.data.entinty.UserData
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel

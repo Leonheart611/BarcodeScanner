@@ -1,6 +1,5 @@
 package dynamia.com.barcodescanner.ui.transferstore.transferinput
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -11,32 +10,26 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
-import dynamia.com.barcodescanner.ui.transferstore.adapter.PickingMultipleLineAdapter
 import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.TransferShipmentLine
-import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.util.*
 import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
 import kotlinx.android.synthetic.main.dialog_multiple_item.*
 import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
-import kotlinx.android.synthetic.main.dialog_part_no_not_found.tv_error_message
 import kotlinx.android.synthetic.main.header_layout.*
 import kotlinx.android.synthetic.main.item_input_header.*
 import kotlinx.android.synthetic.main.transfer_input_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleLineSelected {
+class TransferInputFragment : Fragment() {
     private val viewModel: TransferInputViewModel by viewModel()
     private val args: TransferInputFragmentArgs by navArgs()
-    private var dialog: Dialog? = null
     var activity: MainActivity? = null
 
     override fun onCreateView(
@@ -208,10 +201,6 @@ class TransferInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultipleL
         et_transferinput_name.text?.clear()
         et_tranferinput_qty.text?.clear()
         et_transfer_input_barcode.requestFocus()
-    }
-
-    override fun onMultiplelineSelected(data: PickingListLineValue) {
-        dialog?.dismiss()
     }
 
 }
