@@ -1,13 +1,13 @@
 package dynamia.com.barcodescanner.ui.history.adapter
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.ItemTransferInputHistoryBinding
+import dynamia.com.barcodescanner.di.App
 import dynamia.com.core.data.entinty.TransferReceiptInput
-import dynamia.com.core.util.inflate
-import kotlinx.android.synthetic.main.item_transfer_input_history.view.*
 
 class HistoryTransferReceiptInputAdapter(
     private val pickingListScanEntriesValues: MutableList<TransferReceiptInput>,
@@ -25,7 +25,9 @@ class HistoryTransferReceiptInputAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryInputHolder {
-        return HistoryInputHolder(parent.inflate(R.layout.item_transfer_input_history))
+        return HistoryInputHolder(ItemTransferInputHistoryBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     override fun getItemCount(): Int {
@@ -38,31 +40,32 @@ class HistoryTransferReceiptInputAdapter(
         }
     }
 
-    class HistoryInputHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class HistoryInputHolder(val binding: ItemTransferInputHistoryBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(value: TransferReceiptInput, listener: OnHistorySelected) {
-            with(itemView) {
-                tv_transfer_docno.text = "Document No: ${value.documentNo}"
-                tv_transferhistory_qty.text = "Qty: ${value.quantity}"
-                tv_transfer_lineno.text = "Line No: ${value.lineNo}"
-                tv_transfer_itemno.text = "Item No: ${value.itemNo}"
+            with(binding) {
+                tvTransferDocno.text = "Document No: ${value.documentNo}"
+                tvTransferhistoryQty.text = "Qty: ${value.quantity}"
+                tvTransferLineno.text = "Line No: ${value.lineNo}"
+                tvTransferItemno.text = "Item No: ${value.itemNo}"
                 value.id?.let { id ->
-                    setOnClickListener {
+                    root.setOnClickListener {
                         listener.receiptHistoryCLicklistener(value)
                     }
                 }
                 if (value.sync_status) {
-                    tv_transferhistory_status.setText(R.string.posted_status_true)
-                    tv_transferhistory_status.setTextColor(
+                    tvTransferhistoryStatus.setText(R.string.posted_status_true)
+                    tvTransferhistoryStatus.setTextColor(
                         ContextCompat.getColor(
-                            context,
+                            App.context,
                             R.color.posted_true
                         )
                     )
                 } else {
-                    tv_transferhistory_status.setText(R.string.posted_status_false)
-                    tv_transferhistory_status.setTextColor(
+                    tvTransferhistoryStatus.setText(R.string.posted_status_false)
+                    tvTransferhistoryStatus.setTextColor(
                         ContextCompat.getColor(
-                            context,
+                            App.context,
                             R.color.posted_false
                         )
                     )

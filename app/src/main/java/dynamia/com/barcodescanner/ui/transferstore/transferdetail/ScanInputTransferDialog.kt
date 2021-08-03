@@ -8,9 +8,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.ItemInputHeaderBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.util.showLongToast
-import kotlinx.android.synthetic.main.item_input_header.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ScanInputTransferDialog : BottomSheetDialogFragment() {
@@ -19,12 +19,16 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
     private val documentNo by lazy { arguments?.getString(ARGS_DOCUMENT_NO) }
     private val inputType by lazy { arguments?.getSerializable(ARGS_INPUT_TYPE) as TransferType }
 
+    private lateinit var _viewBinding: ItemInputHeaderBinding
+    val viewBinding by lazy { _viewBinding }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.item_input_header, container, false)
+        _viewBinding = ItemInputHeaderBinding.inflate(inflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,40 +38,41 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
     }
 
     fun setupView() {
-        btn_save.isVisible = false
-        btn_reset.isVisible = false
-        cv_transfer_input_detail.isVisible = false
-        til_transferinput_name.isVisible = false
-        et_tranferinput_qty.setText("1")
-        et_tranferinput_qty.isEnabled = false
-        til_transfer_bincode.isVisible = inputType == TransferType.STOCKOPNAME
-        et_transfer_input_barcode.requestFocus()
+        with(viewBinding) {
+            btnSave.isVisible = false
+            btnReset.isVisible = false
+            cvTransferInputDetail.isVisible = false
+            tilTransferinputName.isVisible = false
+            etTranferinputQty.setText("1")
+            etTranferinputQty.isEnabled = false
+            tilTransferBincode.isVisible = inputType == TransferType.STOCKOPNAME
+            etTransferInputBarcode.requestFocus()
 
-        when (inputType) {
-            TransferType.STOCKOPNAME -> {
-                et_transfer_input_barcode.doAfterTextChanged {
-                    et_transferinput_bincode.requestFocus()
-                }
-                et_transferinput_bincode.doAfterTextChanged {
-                    documentNo?.let { data ->
-                        viewModel.insertDataValue(data,
-                            et_transfer_input_barcode.text.toString(),
-                            inputType, it.toString())
+            when (inputType) {
+                TransferType.STOCKOPNAME -> {
+                    etTransferInputBarcode.doAfterTextChanged {
+                        etTransferinputBincode.requestFocus()
                     }
-                }
+                    etTransferinputBincode.doAfterTextChanged {
+                        documentNo?.let { data ->
+                            viewModel.insertDataValue(data,
+                                etTransferinputBincode.text.toString(),
+                                inputType, it.toString())
+                        }
+                    }
 
-            }
-            else -> {
-                et_transfer_input_barcode.doAfterTextChanged {
-                    documentNo?.let { data ->
-                        viewModel.insertDataValue(data,
-                            it.toString(),
-                            inputType)
+                }
+                else -> {
+                    etTransferInputBarcode.doAfterTextChanged {
+                        documentNo?.let { data ->
+                            viewModel.insertDataValue(data,
+                                it.toString(),
+                                inputType)
+                        }
                     }
                 }
             }
         }
-
     }
 
     private fun setObserverable() {
@@ -80,14 +85,16 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                     context?.showLongToast(getString(R.string.qty_alreadyscan_qty_fromline_error_mssg))
                 }
                 TransferDetailViewModel.TransferDetailInputViewState.SuccessSaveData -> {
-                    et_transferinput_bincode.apply {
-                        text?.clear()
+                    with(viewBinding) {
+                        etTransferinputBincode.apply {
+                            text?.clear()
+                        }
+                        etTransferInputBarcode.apply {
+                            text?.clear()
+                            requestFocus()
+                        }
+                        context?.showLongToast("Success Save Data")
                     }
-                    et_transfer_input_barcode.apply {
-                        text?.clear()
-                        requestFocus()
-                    }
-                    context?.showLongToast("Success Save Data")
                 }
             }
         })

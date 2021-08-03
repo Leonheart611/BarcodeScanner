@@ -1,12 +1,10 @@
 package dynamia.com.barcodescanner.ui.binreclass.adapter
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.PickingDetailLineItemBinding
 import dynamia.com.core.data.entinty.BinreclassInputData
-import dynamia.com.core.util.inflate
-import kotlinx.android.synthetic.main.picking_detail_line_item.view.*
 
 class BinReclassInputAdapter(
     private var values: MutableList<BinreclassInputData>,
@@ -14,7 +12,9 @@ class BinReclassInputAdapter(
 ) : RecyclerView.Adapter<BinReclassInputAdapter.BinreclassInputHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BinreclassInputHolder {
-        return BinreclassInputHolder(parent.inflate(R.layout.picking_detail_line_item))
+        return BinreclassInputHolder(PickingDetailLineItemBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     override fun getItemCount(): Int {
@@ -31,13 +31,14 @@ class BinReclassInputAdapter(
         notifyDataSetChanged()
     }
 
-    inner class BinreclassInputHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class BinreclassInputHolder(val binding: PickingDetailLineItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(data: BinreclassInputData) {
-            with(itemView) {
-                tv_item_code.text = data.itemIdentifier
-                tv_qty.text =
+            with(binding) {
+                tvItemCode.text = data.itemIdentifier
+                tvQty.text =
                     "QTY: ${data.quantity}"
-                setOnClickListener {
+                root.setOnClickListener {
                     listener.onclicklistener(data)
                 }
             }

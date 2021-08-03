@@ -1,13 +1,13 @@
 package dynamia.com.barcodescanner.ui.binreclass.adapter
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.BinReclassItemHolderBinding
+import dynamia.com.barcodescanner.di.App.Companion.context
 import dynamia.com.core.data.entinty.BinreclassHeader
-import dynamia.com.core.util.inflate
-import kotlinx.android.synthetic.main.bin_reclass_item_holder.view.*
 
 class BinReclassAdapter(
     private val values: MutableList<BinreclassHeader>,
@@ -22,7 +22,7 @@ class BinReclassAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BinReclassHolder {
-        return BinReclassHolder(parent.inflate(R.layout.bin_reclass_item_holder))
+        return BinReclassHolder(BinReclassItemHolderBinding.inflate(LayoutInflater.from(parent.context),parent,false))
     }
 
     override fun onBindViewHolder(holder: BinReclassHolder, position: Int) {
@@ -31,32 +31,33 @@ class BinReclassAdapter(
 
     override fun getItemCount(): Int = values.size
 
-    inner class BinReclassHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class BinReclassHolder(private val binding: BinReclassItemHolderBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(data: BinreclassHeader) {
-            with(itemView) {
-                tv_rebin_date.text = data.date
-                tv_rebin_docno.text = data.documentNo
-                tv_rebin_code_from.text = data.transferFromBinCode
-                tv_rebin_code_to.text = data.transferToBinCode
+            with(binding) {
+                tvRebinDate.text = data.date
+                tvRebinDocno.text = data.documentNo
+                tvRebinCodeFrom.text = data.transferFromBinCode
+                tvRebinCodeTo.text = data.transferToBinCode
 
                 if (data.sync_status) {
-                    tv_bin_reclass_posted.setText(R.string.posted_status_true)
-                    tv_bin_reclass_posted.setTextColor(
+                    tvBinReclassPosted.setText(R.string.posted_status_true)
+                    tvBinReclassPosted.setTextColor(
                         ContextCompat.getColor(
                             context,
                             R.color.posted_true
                         )
                     )
                 } else {
-                    tv_bin_reclass_posted.setText(R.string.posted_status_false)
-                    tv_bin_reclass_posted.setTextColor(
+                    tvBinReclassPosted.setText(R.string.posted_status_false)
+                    tvBinReclassPosted.setTextColor(
                         ContextCompat.getColor(
                             context,
                             R.color.posted_false
                         )
                     )
                 }
-                setOnClickListener {
+                root.setOnClickListener {
                     listener.onclicklistener(data)
                 }
             }

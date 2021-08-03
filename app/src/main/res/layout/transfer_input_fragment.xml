@@ -40,7 +40,7 @@
             android:layout_height="match_parent">
 
             <include
-                android:id="@+id/include"
+                android:id="@+id/include_transfer_input"
                 layout="@layout/item_input_header"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 android:textSize="18sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/include" />
+                app:layout_constraintTop_toBottomOf="@+id/include_transfer_input" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_history_input"

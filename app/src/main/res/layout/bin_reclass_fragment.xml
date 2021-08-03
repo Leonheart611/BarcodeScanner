@@ -54,7 +54,8 @@
         app:backgroundTint="#FF8A65"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fab_add_bin_reclass"
-        app:srcCompat="@drawable/ic_upload" />
+        app:srcCompat="@drawable/ic_upload"
+        android:contentDescription="Upload All bin reclass Data" />
 
     <Spinner
         android:id="@+id/spn_binreclass_filter"

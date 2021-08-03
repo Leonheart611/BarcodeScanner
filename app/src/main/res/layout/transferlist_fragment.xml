@@ -54,10 +54,10 @@
         app:layout_constraintBottom_toTopOf="@+id/cv_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include2" />
+        app:layout_constraintTop_toBottomOf="@+id/include_transferlist_header" />
 
     <include
-        android:id="@+id/include2"
+        android:id="@+id/include_transferlist_header"
         layout="@layout/header_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

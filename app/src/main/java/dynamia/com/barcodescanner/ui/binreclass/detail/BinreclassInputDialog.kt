@@ -5,19 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.InputRebinClassDialogBinding
 import dynamia.com.core.data.entinty.BinreclassInputData
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.gone
 import dynamia.com.core.util.showLongToast
-import kotlinx.android.synthetic.main.input_rebin_class_dialog.*
-import kotlinx.android.synthetic.main.item_input_header.*
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BinreclassInputDialog : BottomSheetDialogFragment() {
+    private var _viewBinding: InputRebinClassDialogBinding? = null
+    val viewBinding by lazy { _viewBinding!! }
+
     val viewModel: BinreclassDetailViewModel by viewModel()
     private val fromBin by lazy { arguments?.getString(FROMBINCODE) }
     private val toBin by lazy { arguments?.getString(TOBINCODE) }
@@ -28,9 +27,10 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
-        return inflater.inflate(R.layout.input_rebin_class_dialog, container, false)
+        _viewBinding = InputRebinClassDialogBinding.inflate(inflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,17 +41,19 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
     }
 
     fun setupView() {
-        til_transfer_bincode.isVisible = false
-        tv_transfer_item_name.text = "From Bin: $fromBin"
-        tv_transfer_qty.text = "To Bin: $toBin"
-        til_transferinput_name.isVisible = false
-        btn_reset.text = "Cancel"
-        if (idInput == 0) {
-            fab_delete_rebin_class.gone()
-        } else {
-            viewModel.getLocalInputdata(idInput)
-            fab_delete_rebin_class.show()
-            btn_save.text = "Update"
+        with(viewBinding) {
+            includeInputForm.tilTransferBincode.isVisible = false
+            includeInputForm.tvTransferItemName.text = "From Bin: $fromBin"
+            includeInputForm.tvTransferQty.text = "To Bin: $toBin"
+            includeInputForm.tilTransferinputName.isVisible = false
+            includeInputForm.btnReset.text = "Cancel"
+            if (idInput == 0) {
+                fabDeleteRebinClass.gone()
+            } else {
+                viewModel.getLocalInputdata(idInput)
+                fabDeleteRebinClass.show()
+                includeInputForm.btnSave.text = "Update"
+            }
         }
     }
 
@@ -91,33 +93,42 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
     }
 
     private fun clearData() {
-        et_transfer_input_barcode.text?.clear()
-        et_tranferinput_qty.text?.clear()
-        et_transfer_input_barcode.requestFocus()
+        with(viewBinding.includeInputForm) {
+            etTransferInputBarcode.text?.clear()
+            etTranferinputQty.text?.clear()
+            etTransferInputBarcode.requestFocus()
+        }
     }
 
     private fun setupHistoryData(data: BinreclassInputData) {
-        et_transfer_input_barcode.isFocusable = false
-        et_transfer_input_barcode.setText(data.itemNo)
-        et_tranferinput_qty.setText(data.quantity.toString())
+        with(viewBinding.includeInputForm) {
+            etTransferInputBarcode.isFocusable = false
+            etTransferInputBarcode.setText(data.itemNo)
+            etTranferinputQty.setText(data.quantity.toString())
+        }
     }
 
     private fun setClicklistener() {
-        btn_save.setOnClickListener {
-            if (idInput == 0) {
-                viewModel.checkUserInputValidation(
-                    et_transfer_input_barcode.text.toString(),
-                    et_tranferinput_qty.text.toString(), fromBin ?: "", toBin ?: ""
-                )
-            } else {
-                viewModel.updateDataBin(idInput, et_tranferinput_qty.text.toString().toInt())
+        with(viewBinding) {
+            includeInputForm.btnSave.setOnClickListener {
+                if (idInput == 0) {
+                    viewModel.checkUserInputValidation(
+                        includeInputForm.etTransferInputBarcode.text.toString(),
+                        includeInputForm.etTranferinputQty.text.toString(),
+                        fromBin ?: "",
+                        toBin ?: ""
+                    )
+                } else {
+                    viewModel.updateDataBin(idInput,
+                        includeInputForm.etTranferinputQty.text.toString().toInt())
+                }
             }
-        }
-        fab_delete_rebin_class.setOnClickListener {
-            viewModel.deleteDataBin(idInput)
-        }
-        btn_reset.setOnClickListener {
-            dismiss()
+            fabDeleteRebinClass.setOnClickListener {
+                viewModel.deleteDataBin(idInput)
+            }
+            includeInputForm.btnReset.setOnClickListener {
+                dismiss()
+            }
         }
     }
 

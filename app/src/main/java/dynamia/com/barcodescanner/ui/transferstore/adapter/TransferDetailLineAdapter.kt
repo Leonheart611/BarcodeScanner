@@ -1,18 +1,16 @@
 package dynamia.com.barcodescanner.ui.transferstore.adapter
 
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.PickingDetailLineItemBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.SHIPMENT
 import dynamia.com.core.data.entinty.TransferShipmentLine
-import dynamia.com.core.util.inflate
-import kotlinx.android.synthetic.main.picking_detail_line_item.view.*
 import java.util.*
 
 class TransferDetailLineAdapter(
@@ -32,7 +30,9 @@ class TransferDetailLineAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickingDetailHolder {
-        return PickingDetailHolder(parent.inflate(R.layout.picking_detail_line_item))
+        return PickingDetailHolder(PickingDetailLineItemBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     val allData by lazy { values }
@@ -78,26 +78,27 @@ class TransferDetailLineAdapter(
         }
     }
 
-    inner class PickingDetailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PickingDetailHolder(val binding: PickingDetailLineItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bindShipment(transferShipmentLine: TransferShipmentLine) {
-            with(itemView) {
-                tv_item_code.text = transferShipmentLine.itemIdentifier
-                tv_description.text = transferShipmentLine.description
-                tv_qty.text =
+            with(binding) {
+                tvItemCode.text = transferShipmentLine.itemIdentifier
+                tvDescription.text = transferShipmentLine.description
+                tvQty.text =
                     "${transferShipmentLine.alredyScanned} / ${transferShipmentLine.quantity}"
-                setOnClickListener {
+                root.setOnClickListener {
                     listener?.onclicklistener(transferShipmentLine)
                 }
             }
         }
 
         fun bindReceipt(transferShipmentLine: TransferShipmentLine) {
-            with(itemView) {
-                tv_item_code.text = transferShipmentLine.itemIdentifier
-                tv_description.text = transferShipmentLine.description
-                tv_qty.text =
+            with(binding) {
+                tvItemCode.text = transferShipmentLine.itemIdentifier
+                tvDescription.text = transferShipmentLine.description
+                tvQty.text =
                     "${transferShipmentLine.alredyScanned} / ${transferShipmentLine.qtyInTransit}"
-                setOnClickListener {
+                root.setOnClickListener {
                     listener?.onclicklistener(transferShipmentLine)
                 }
             }

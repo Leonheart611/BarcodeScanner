@@ -27,6 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
+        android:id="@+id/include_history"
         layout="@layout/item_input_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

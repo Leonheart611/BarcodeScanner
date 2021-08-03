@@ -15,14 +15,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.BottomSheetPickingHistoryFragmentBinding
+import dynamia.com.barcodescanner.databinding.DeleteConfirmationDialogBinding
 import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.history.HistoryType.*
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.util.showLongToast
-import kotlinx.android.synthetic.main.bottom_sheet_picking_history_fragment.*
-import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
-import kotlinx.android.synthetic.main.item_input_header.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
@@ -30,6 +29,9 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     private val viewModel: TransferInputViewModel by viewModel()
     private val no by lazy { arguments?.getInt(ARGS_TRANSFER_ID) }
     private val historyType by lazy { arguments?.getSerializable(ARGS_HISTORY_TYPE) as HistoryType }
+
+    private var _viewBinding: BottomSheetPickingHistoryFragmentBinding? = null
+    private val viewBinding by lazy { _viewBinding!! }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -64,7 +66,8 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.bottom_sheet_picking_history_fragment, container, false)
+        _viewBinding = BottomSheetPickingHistoryFragmentBinding.inflate(inflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,11 +87,11 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
             when (it) {
                 is TransferInputViewModel.TransferInputViewState.SuccessGetHistoryValue -> {
                     with(it.data) {
-                        et_transferinput_name.apply {
+                        viewBinding.includeHistory.etTransferinputName.apply {
                             setText(this@with.itemNo)
                             isEnabled = false
                         }
-                        et_tranferinput_qty.setText(this.quantity.toString())
+                        viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
                     }
                 }
                 is TransferInputViewModel.TransferInputViewState.ErrorDeleteData -> {
@@ -107,29 +110,29 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                 }
                 is TransferInputViewModel.TransferInputViewState.SuccessGetReceiptHistoryValue -> {
                     with(it.data) {
-                        et_transferinput_name.apply {
+                        viewBinding.includeHistory.etTransferinputName.apply {
                             setText(this@with.itemNo)
                             isEnabled = false
                         }
-                        et_tranferinput_qty.setText(this.quantity.toString())
+                        viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
                     }
                 }
                 is TransferInputViewModel.TransferInputViewState.SuccessGetPurchaseHistory -> {
                     with(it.data) {
-                        et_transferinput_name.apply {
+                        viewBinding.includeHistory.etTransferinputName.apply {
                             setText(this@with.itemNo)
                             isEnabled = false
                         }
-                        et_tranferinput_qty.setText(this.quantity.toString())
+                        viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
                     }
                 }
                 is TransferInputViewModel.TransferInputViewState.SuccessGetStockInputHistory -> {
                     with(it.data) {
-                        et_transferinput_name.apply {
+                        viewBinding.includeHistory.etTransferinputName.apply {
                             setText(this@with.itemNo)
                             isEnabled = false
                         }
-                        et_tranferinput_qty.setText(this.quantity.toString())
+                        viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
                     }
                 }
             }
@@ -137,49 +140,51 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     }
 
     fun setupView() {
-        til_transferinput_barcode.isVisible = false
-        cv_transfer_input_detail.isVisible = false
-        btn_reset.apply {
-            text = "Delete"
-            setOnClickListener {
-                when (historyType) {
-                    SHIPMENT -> no?.let { no -> viewModel.deleteTransferShipmentEntry(no) }
-                    RECEIPT -> no?.let { no -> viewModel.deleteTransferReceiptEntry(no) }
-                    PURCHASE -> no?.let { no -> viewModel.deletePurchaseOrderEntry(no) }
-                    STOCKOPNAME -> no?.let { no -> viewModel.deleteStockOpnameInputData(no) }
-                }
+        with(viewBinding.includeHistory) {
+            tilTransferinputBarcode.isVisible = false
+            cvTransferInputDetail.isVisible = false
+            btnReset.apply {
+                text = "Delete"
+                setOnClickListener {
+                    when (historyType) {
+                        SHIPMENT -> no?.let { no -> viewModel.deleteTransferShipmentEntry(no) }
+                        RECEIPT -> no?.let { no -> viewModel.deleteTransferReceiptEntry(no) }
+                        PURCHASE -> no?.let { no -> viewModel.deletePurchaseOrderEntry(no) }
+                        STOCKOPNAME -> no?.let { no -> viewModel.deleteStockOpnameInputData(no) }
+                    }
 
+                }
             }
-        }
-        btn_save.apply {
-            text = "Update"
-            setOnClickListener {
-                when (historyType) {
-                    SHIPMENT -> no?.let { no ->
-                        viewModel.updateTransferShipmentEntry(no,
-                            et_tranferinput_qty.text.toString().toInt())
-                    }
-                    RECEIPT -> no?.let { no ->
-                        viewModel.updateTransferReceiptEntry(no,
-                            et_tranferinput_qty.text.toString().toInt())
-                    }
-                    PURCHASE -> {
-                        no?.let { no ->
-                            viewModel.updatePurchaseInputData(no,
-                                et_tranferinput_qty.text.toString().toInt())
+            btnSave.apply {
+                text = "Update"
+                setOnClickListener {
+                    when (historyType) {
+                        SHIPMENT -> no?.let { no ->
+                            viewModel.updateTransferShipmentEntry(no,
+                                etTranferinputQty.text.toString().toInt())
                         }
-                    }
-                    STOCKOPNAME -> {
-                        no?.let { no ->
-                            viewModel.updateStockOpnameInputData(no,
-                                et_tranferinput_qty.text.toString().toInt())
+                        RECEIPT -> no?.let { no ->
+                            viewModel.updateTransferReceiptEntry(no,
+                                etTranferinputQty.text.toString().toInt())
+                        }
+                        PURCHASE -> {
+                            no?.let { no ->
+                                viewModel.updatePurchaseInputData(no,
+                                    etTranferinputQty.text.toString().toInt())
+                            }
+                        }
+                        STOCKOPNAME -> {
+                            no?.let { no ->
+                                viewModel.updateStockOpnameInputData(no,
+                                    etTranferinputQty.text.toString().toInt())
+                            }
                         }
                     }
                 }
             }
-        }
-        iv_picking_history_close.setOnClickListener {
-            dismiss()
+            viewBinding.ivPickingHistoryClose.setOnClickListener {
+                dismiss()
+            }
         }
     }
 
@@ -187,18 +192,19 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
         context?.let { context ->
             val dialog = Dialog(context)
             with(dialog) {
-                setContentView(R.layout.delete_confirmation_dialog)
+                val bind = DeleteConfirmationDialogBinding.inflate(layoutInflater)
+                setContentView(bind.root)
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 window
                     ?.setLayout(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
-                btn_delete.setOnClickListener {
+                bind.btnDelete.setOnClickListener {
                     dismiss()
                     setupView()
                 }
-                btn_cancel.setOnClickListener {
+                bind.btnCancel.setOnClickListener {
                     dismiss()
                 }
                 show()

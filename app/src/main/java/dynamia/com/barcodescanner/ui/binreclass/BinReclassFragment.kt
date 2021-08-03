@@ -2,40 +2,29 @@ package dynamia.com.barcodescanner.ui.binreclass
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.BinReclassFragmentBinding
+import dynamia.com.barcodescanner.databinding.BinReclassInputDialogBinding
 import dynamia.com.barcodescanner.ui.binreclass.adapter.BinReclassAdapter
-import dynamia.com.barcodescanner.ui.home.HomeFragmentDirections
-import dynamia.com.barcodescanner.ui.transferstore.transferdetail.PickingPostDialog
+import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
-import kotlinx.android.synthetic.main.bin_reclass_fragment.*
-import kotlinx.android.synthetic.main.bin_relass_header_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BinReclassFragment : Fragment(), BinReclassAdapter.BinreclassOnclicklistener {
+class BinReclassFragment :
+    BaseFragmentBinding<BinReclassFragmentBinding>(BinReclassFragmentBinding::inflate),
+    BinReclassAdapter.BinreclassOnclicklistener {
 
     private val viewModel: BinReclassViewModel by viewModel()
     private val binReclassAdapter = BinReclassAdapter(mutableListOf(), this)
     private var rebinHeader: Dialog? = null
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.bin_reclass_fragment, container, false)
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,7 +33,9 @@ class BinReclassFragment : Fragment(), BinReclassAdapter.BinreclassOnclicklisten
     }
 
     private fun setObseverable() {
-        spn_binreclass_filter.onItemSelectedListener = spinerFilterSelectListener
+        with(viewBinding) {
+            spnBinreclassFilter.onItemSelectedListener = spinerFilterSelectListener
+        }
         viewModel.viewState.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 is BinReclassViewModel.BinReclassInputState.OnFailedSave -> {
@@ -87,22 +78,24 @@ class BinReclassFragment : Fragment(), BinReclassAdapter.BinreclassOnclicklisten
     }
 
     private fun setupView() {
-        with(tb_binreclas_list) {
-            title = viewModel.getCompanyName()
-            setNavigationOnClickListener {
-                view?.findNavController()?.popBackStack()
+        with(viewBinding) {
+            fabAddBinReclass.setOnClickListener {
+                showAddDialog()
             }
-        }
-        with(rv_binreclass_list) {
-            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            adapter = binReclassAdapter
-        }
-        fab_add_bin_reclass.setOnClickListener {
-            showAddDialog()
-        }
-        fab_upload_bin_reclass.setOnClickListener {
-            val dialog = BinReclassPostDialog()
-            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            with(rvBinreclassList) {
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                adapter = binReclassAdapter
+            }
+            with(tbBinreclasList) {
+                title = viewModel.getCompanyName()
+                setNavigationOnClickListener {
+                    view?.findNavController()?.popBackStack()
+                }
+            }
+            fabUploadBinReclass.setOnClickListener {
+                val dialog = BinReclassPostDialog()
+                dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            }
         }
     }
 
@@ -114,44 +107,45 @@ class BinReclassFragment : Fragment(), BinReclassAdapter.BinreclassOnclicklisten
     }
 
     private fun showAddDialog() {
-        context?.let { context ->
-            rebinHeader = Dialog(context)
-            rebinHeader?.let { dialog ->
-                with(dialog) {
-                    setContentView(R.layout.bin_relass_header_dialog)
-                    window
-                        ?.setLayout(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    btn_create_bin.setOnClickListener {
-                        if (checkDialogInput(this)) {
+        rebinHeader = Dialog(requireContext())
+        rebinHeader?.let { dialog ->
+            with(dialog) {
+                val bind = BinReclassInputDialogBinding.inflate(layoutInflater)
+                setContentView(bind.root)
+                window?.setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                with(bind) {
+                    btnCreateBin.setOnClickListener {
+                        if (checkDialogInput(bind)) {
                             viewModel.insertBinReclass(
-                                binFrom = et_bin_from_code.text.toString(),
-                                binTo = et_bin_to_code.text.toString())
+                                binFrom = etBinFromCode.text.toString(),
+                                binTo = etBinToCode.text.toString())
                         }
                     }
-                    btn_cancle_bin.setOnClickListener {
+                    btnCancleBin.setOnClickListener {
                         dismiss()
                     }
-                    show()
                 }
+
+                show()
             }
         }
     }
 
-    fun checkDialogInput(dialog: Dialog): Boolean {
+    fun checkDialogInput(dialog: BinReclassInputDialogBinding): Boolean {
         with(dialog) {
-            til_bin_from.error = null
-            til_bin_to.error = null
+            tilBinFrom.error = null
+            tilBinTo.error = null
             var result = true
-            if (et_bin_from_code.text.toString().isEmpty()) {
+            if (etBinFromCode.text.toString().isEmpty()) {
                 result = false
-                til_bin_from.error = "Harap di isi"
+                tilBinFrom.error = "Harap di isi"
             }
-            if (et_bin_to_code.text.toString().isEmpty()) {
+            if (etBinToCode.text.toString().isEmpty()) {
                 result = false
-                til_bin_to.error = "Harap di isi"
+                tilBinTo.error = "Harap di isi"
             }
             return result
         }

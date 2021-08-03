@@ -1,22 +1,20 @@
 package dynamia.com.barcodescanner.ui.login
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.LoginFragmentBinding
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
+import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.UserData
 import dynamia.com.core.util.showLongToast
-import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class LoginFragment : Fragment() {
+class LoginFragment : BaseFragmentBinding<LoginFragmentBinding>(LoginFragmentBinding::inflate) {
 
     private val viewModel: LoginViewModel by viewModel()
     var activity: MainActivity? = null
@@ -26,12 +24,6 @@ class LoginFragment : Fragment() {
         viewModel.checkSharedPreferences()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.login_fragment, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,58 +35,66 @@ class LoginFragment : Fragment() {
 
     private fun initview() {
         if (BuildConfig.BUILD_TYPE == "debug") {
-            et_server_host.setText(getString(R.string.server_host_name))
-            tied_username.setText(getString(R.string.user_name))
-            tied_password.setText(getString(R.string.password))
-            et_domainname.setText(getString(R.string.domain))
-            et_company_name.setText(getString(R.string.company_name))
+            with(viewBinding) {
+                etServerHost.setText(getString(R.string.server_host_name))
+                tiedUsername.setText(getString(R.string.user_name))
+                tiedPassword.setText(getString(R.string.password))
+                etDomainname.setText(getString(R.string.domain))
+                etCompanyName.setText(getString(R.string.company_name))
+            }
         }
     }
 
     private fun setupListener() {
-        btn_login.setOnClickListener {
-            if (checkNotEmpty()) {
-                if (et_server_host.text.toString().endsWith("/")) {
-                    viewModel.saveSharedPreferences(
-                        baseUrl = et_server_host.text.toString(),
-                        username = tied_username.text.toString(),
-                        password = tied_password.text.toString(),
-                        domain = et_domainname.text.toString(),
-                        companyName = et_company_name.text.toString()
-                    )
+        with(viewBinding) {
+            btnLogin.setOnClickListener {
+                if (checkNotEmpty()) {
+                    if (etServerHost.text.toString().endsWith("/")) {
+                        viewModel.saveSharedPreferences(
+                            baseUrl = etServerHost.text.toString(),
+                            username = tiedUsername.text.toString(),
+                            password = tiedPassword.text.toString(),
+                            domain = etDomainname.text.toString(),
+                            companyName = etCompanyName.text.toString()
+                        )
+                    } else {
+                        context?.showLongToast("Host Name Must end with (/)")
+                    }
                 } else {
-                    context?.showLongToast("Host Name Must end with (/)")
+                    context?.showLongToast("Please fill all form")
                 }
-            } else {
-                context?.showLongToast("Please fill all form")
             }
         }
     }
 
     private fun checkNotEmpty(): Boolean {
         var result = true
-        if (tied_password.text.toString().isEmpty()) {
-            result = false
+        with(viewBinding) {
+            if (tiedPassword.text.toString().isEmpty()) {
+                result = false
+            }
+            if (tiedUsername.text.toString().isEmpty()) {
+                result = false
+            }
+            if (etServerHost.text.toString().isEmpty()) {
+                result = false
+            }
+            if (etDomainname.text.toString().isEmpty()) {
+                result = false
+            }
+            return result
         }
-        if (tied_username.text.toString().isEmpty()) {
-            result = false
-        }
-        if (et_server_host.text.toString().isEmpty()) {
-            result = false
-        }
-        if (et_domainname.text.toString().isEmpty()) {
-            result = false
-        }
-        return result
     }
 
     private fun setView(userdata: UserData) {
         with(userdata) {
-            et_server_host.setText(hostName)
-            tied_username.setText(username)
-            tied_password.setText(password)
-            et_domainname.setText(domainName)
-            et_company_name.setText(companyName)
+            with(viewBinding) {
+                etServerHost.setText(hostName)
+                tiedUsername.setText(username)
+                tiedPassword.setText(password)
+                etDomainname.setText(domainName)
+                etCompanyName.setText(companyName)
+            }
         }
     }
 
