@@ -4,6 +4,7 @@ import dynamia.com.core.data.dao.UserDao
 import dynamia.com.core.data.entinty.UserData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 interface UserRepository {
     suspend fun getUserData(): Flow<UserData?>
@@ -13,7 +14,7 @@ interface UserRepository {
 }
 
 
-class UserRepositoryImpl(val dao: UserDao) : UserRepository {
+class UserRepositoryImpl @Inject constructor(val dao: UserDao) : UserRepository {
     override suspend fun getUserData(): Flow<UserData?> = flow {
         emit(dao.getUserData())
     }

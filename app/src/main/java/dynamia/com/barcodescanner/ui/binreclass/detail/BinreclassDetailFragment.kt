@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.BinReclassInputDialogBinding
 import dynamia.com.barcodescanner.databinding.BinreclassDetailFragmentBinding
@@ -17,13 +19,13 @@ import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.data.entinty.BinreclassInputData
 import dynamia.com.core.util.showLongToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class BinreclassDetailFragment :
     BaseFragmentBinding<BinreclassDetailFragmentBinding>(BinreclassDetailFragmentBinding::inflate),
     BinReclassInputAdapter.OnBinclassInputClicklistener {
 
-    private val viewModel: BinreclassDetailViewModel by viewModel()
+    private val viewModel: BinreclassDetailViewModel by viewModels()
     private val args: BinreclassDetailFragmentArgs by navArgs()
     private var binFrom = ""
     private var binTo = ""

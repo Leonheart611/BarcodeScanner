@@ -5,12 +5,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.LOGOUT
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.REFRESH
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
-import dynamia.com.barcodescanner.ui.stockopname.StockOpnameViewModel
-import dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetailViewModel
-import dynamia.com.core.base.ViewModelBase
+import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.ResultWrapper.*
@@ -19,13 +18,15 @@ import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     val transferShipmentRepository: TransferShipmentRepository,
     val transferReceiptRepository: TransferReceiptRepository,
     val purchaseOrderRepository: PurchaseOrderRepository,
     val stockOpnameDataRepository: StockOpnameRepository,
-    val binreclassRepository: BinreclassRepository,
+    private val binreclassRepository: BinreclassRepository,
     private val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 

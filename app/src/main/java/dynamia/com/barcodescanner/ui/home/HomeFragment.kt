@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.HomeFragmentBinding
 import dynamia.com.barcodescanner.databinding.RefreshWarningDialogBinding
@@ -18,11 +20,11 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBinding::inflate) {
 
-    private val viewModel: HomeViewModel by viewModel()
+    private val viewModel: HomeViewModel by viewModels()
     private var activity: MainActivity? = null
 
     override fun onCreateView(
@@ -165,7 +167,7 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
-                with(bind){
+                with(bind) {
                     warningMessage?.let { message ->
                         tvWarningLogoutRefresh.text = message
                     }

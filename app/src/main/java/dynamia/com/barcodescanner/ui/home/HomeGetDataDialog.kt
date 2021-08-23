@@ -5,17 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat.getDrawable
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.BottomsheetHomeDataDialoogBinding
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.util.crossFade
 import dynamia.com.core.util.readJsonAsset
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
+@AndroidEntryPoint
 class HomeGetDataDialog : BottomSheetDialogFragment() {
 
     companion object {
@@ -23,7 +24,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     }
 
     private var animateDuration: Int = 0
-    private val viewModel: HomeViewModel by viewModel()
+    private val viewModel: HomeViewModel by viewModels()
     private var _viewBinding: BottomsheetHomeDataDialoogBinding? = null
     private val viewBinding by lazy { _viewBinding!! }
 

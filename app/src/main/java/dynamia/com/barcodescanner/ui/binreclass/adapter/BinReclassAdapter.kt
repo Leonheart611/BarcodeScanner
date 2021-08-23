@@ -6,7 +6,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.BinReclassItemHolderBinding
-import dynamia.com.barcodescanner.di.App.Companion.context
 import dynamia.com.core.data.entinty.BinreclassHeader
 
 class BinReclassAdapter(
@@ -22,7 +21,9 @@ class BinReclassAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BinReclassHolder {
-        return BinReclassHolder(BinReclassItemHolderBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+        return BinReclassHolder(BinReclassItemHolderBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     override fun onBindViewHolder(holder: BinReclassHolder, position: Int) {
@@ -44,7 +45,7 @@ class BinReclassAdapter(
                     tvBinReclassPosted.setText(R.string.posted_status_true)
                     tvBinReclassPosted.setTextColor(
                         ContextCompat.getColor(
-                            context,
+                            root.context,
                             R.color.posted_true
                         )
                     )
@@ -52,7 +53,7 @@ class BinReclassAdapter(
                     tvBinReclassPosted.setText(R.string.posted_status_false)
                     tvBinReclassPosted.setTextColor(
                         ContextCompat.getColor(
-                            context,
+                            root.context,
                             R.color.posted_false
                         )
                     )

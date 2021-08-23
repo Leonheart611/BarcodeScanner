@@ -2,9 +2,11 @@ package dynamia.com.barcodescanner.ui.stockopname
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.StockOpnameFragmentBinding
 import dynamia.com.barcodescanner.ui.history.HistoryType
@@ -13,13 +15,13 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.transferdetail.ScanInputTransferDialog
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.StockOpnameData
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class StockOpnameFragment :
     BaseFragmentBinding<StockOpnameFragmentBinding>(StockOpnameFragmentBinding::inflate),
     StockOpnameAdapter.OnStockClicklistener {
 
-    private val viewModel: StockOpnameViewModel by viewModel()
+    private val viewModel: StockOpnameViewModel by viewModels()
 
     private val stockOpnameAdapter = StockOpnameAdapter(mutableListOf(), this)
 

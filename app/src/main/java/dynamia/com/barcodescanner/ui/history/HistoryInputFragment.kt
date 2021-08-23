@@ -1,13 +1,13 @@
 package dynamia.com.barcodescanner.ui.history
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.HistoryInputFragmentBinding
 import dynamia.com.barcodescanner.ui.history.HistoryType.*
@@ -21,8 +21,8 @@ import dynamia.com.core.data.entinty.PurchaseInputData
 import dynamia.com.core.data.entinty.StockOpnameInputData
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferReceiptInput
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class HistoryInputFragment :
     BaseFragmentBinding<HistoryInputFragmentBinding>(HistoryInputFragmentBinding::inflate),
     HistoryTransferInputAdapter.OnHistorySelected,
@@ -30,7 +30,7 @@ class HistoryInputFragment :
     HistoryPurchaseInputAdapter.OnPurchaseHistoryClicklistener,
     HistoryStockOpnameInputAdapter.OnHistorySelected {
 
-    private val viewModel: HistoryInputViewModel by viewModel()
+    private val viewModel: HistoryInputViewModel by viewModels()
     private val args: HistoryInputFragmentArgs by navArgs()
     private var scanEntriesAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
     private var scanTransferReceiptAdapter =
@@ -60,7 +60,8 @@ class HistoryInputFragment :
     private fun setupView() {
         when (args.historyType) {
             SHIPMENT -> {
-                viewBinding.tvTransferInput.text = getString(R.string.transfer_shipment_history_title)
+                viewBinding.tvTransferInput.text =
+                    getString(R.string.transfer_shipment_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.transferShipmentRepository.getTransferInputHistoryLiveData(documentNo)
                         .observe(viewLifecycleOwner, {
@@ -69,7 +70,8 @@ class HistoryInputFragment :
                 }
             }
             RECEIPT -> {
-                viewBinding.tvTransferInput.text = getString(R.string.transfer_receipt_history_title)
+                viewBinding.tvTransferInput.text =
+                    getString(R.string.transfer_receipt_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.transferReceiptRepository.getTransferInputHistoryLiveData(documentNo)
                         .observe(viewLifecycleOwner, {

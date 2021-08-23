@@ -5,11 +5,13 @@ import androidx.lifecycle.LiveData
 import dynamia.com.core.data.dao.BinreclassDao
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.data.entinty.BinreclassInputData
+import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.util.getDocumentCode
 import dynamia.com.core.util.getNormalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 interface BinreclassRepository {
     /**
@@ -49,10 +51,10 @@ interface BinreclassRepository {
 
 }
 
-class BinreclassRepositoryImpl(val dao: BinreclassDao, val sharedPreferences: SharedPreferences) :
-    BinreclassRepository {
-
-    private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
+class BinreclassRepositoryImpl @Inject constructor(
+    val dao: BinreclassDao,
+    private val retrofitService: MasariAPI,
+) : BinreclassRepository {
 
     /**
      * Bin Reclass Header Dao

@@ -1,8 +1,13 @@
 package dynamia.com.barcodescanner.ui.login
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.LoginFragmentBinding
@@ -11,22 +16,25 @@ import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.UserData
 import dynamia.com.core.util.showLongToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
+class LoginFragment :
+    BaseFragmentBinding<LoginFragmentBinding>(LoginFragmentBinding::inflate) {
 
-class LoginFragment : BaseFragmentBinding<LoginFragmentBinding>(LoginFragmentBinding::inflate) {
-
-    private val viewModel: LoginViewModel by viewModel()
+    private val viewModel: LoginViewModel by viewModels()
     var activity: MainActivity? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.checkSharedPreferences()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.checkSharedPreferences()
         activity = requireActivity() as MainActivity
         initview()
         setupListener()

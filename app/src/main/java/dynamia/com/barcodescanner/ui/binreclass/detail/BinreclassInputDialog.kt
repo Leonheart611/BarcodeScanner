@@ -5,19 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.databinding.InputRebinClassDialogBinding
 import dynamia.com.core.data.entinty.BinreclassInputData
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.gone
 import dynamia.com.core.util.showLongToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class BinreclassInputDialog : BottomSheetDialogFragment() {
     private var _viewBinding: InputRebinClassDialogBinding? = null
     val viewBinding by lazy { _viewBinding!! }
 
-    val viewModel: BinreclassDetailViewModel by viewModel()
+    val viewModel: BinreclassDetailViewModel by viewModels()
     private val fromBin by lazy { arguments?.getString(FROMBINCODE) }
     private val toBin by lazy { arguments?.getString(TOBINCODE) }
     private val idInput by lazy { arguments?.getInt(INPUTID) ?: 0 }

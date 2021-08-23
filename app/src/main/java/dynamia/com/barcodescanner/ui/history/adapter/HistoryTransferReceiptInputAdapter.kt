@@ -6,7 +6,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.ItemTransferInputHistoryBinding
-import dynamia.com.barcodescanner.di.App
 import dynamia.com.core.data.entinty.TransferReceiptInput
 
 class HistoryTransferReceiptInputAdapter(
@@ -57,7 +56,7 @@ class HistoryTransferReceiptInputAdapter(
                     tvTransferhistoryStatus.setText(R.string.posted_status_true)
                     tvTransferhistoryStatus.setTextColor(
                         ContextCompat.getColor(
-                            App.context,
+                            root.context,
                             R.color.posted_true
                         )
                     )
@@ -65,7 +64,7 @@ class HistoryTransferReceiptInputAdapter(
                     tvTransferhistoryStatus.setText(R.string.posted_status_false)
                     tvTransferhistoryStatus.setTextColor(
                         ContextCompat.getColor(
-                            App.context,
+                            root.context,
                             R.color.posted_false
                         )
                     )

@@ -4,18 +4,19 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import dynamia.com.barcodescanner.R
-import dynamia.com.barcodescanner.databinding.BinReclassInputDialogBinding
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.databinding.CheckStockFragmentBinding
 import dynamia.com.barcodescanner.databinding.ScanStockSearchDialogBinding
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.util.showLongToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class CheckStockFragment :
     BaseFragmentBinding<CheckStockFragmentBinding>(CheckStockFragmentBinding::inflate) {
 
@@ -26,7 +27,7 @@ class CheckStockFragment :
 
     private var stockAdapter = StockCheckAdapter(mutableListOf())
     private var dialog: Dialog? = null
-    private val viewModel: CheckStockViewModel by viewModel()
+    private val viewModel: CheckStockViewModel by viewModels()
     private var activity: MainActivity? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

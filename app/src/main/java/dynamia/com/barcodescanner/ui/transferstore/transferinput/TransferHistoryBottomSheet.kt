@@ -11,9 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.BottomSheetPickingHistoryFragmentBinding
 import dynamia.com.barcodescanner.databinding.DeleteConfirmationDialogBinding
@@ -22,11 +24,11 @@ import dynamia.com.barcodescanner.ui.history.HistoryType.*
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.util.showLongToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     HistoryTransferInputAdapter.OnHistorySelected {
-    private val viewModel: TransferInputViewModel by viewModel()
+    private val viewModel: TransferInputViewModel by viewModels()
     private val no by lazy { arguments?.getInt(ARGS_TRANSFER_ID) }
     private val historyType by lazy { arguments?.getSerializable(ARGS_HISTORY_TYPE) as HistoryType }
 

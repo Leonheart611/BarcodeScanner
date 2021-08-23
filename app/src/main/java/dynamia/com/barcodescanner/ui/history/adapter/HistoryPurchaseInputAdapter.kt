@@ -6,7 +6,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.ItemTransferInputHistoryBinding
-import dynamia.com.barcodescanner.di.App.Companion.context
 import dynamia.com.core.data.entinty.PurchaseInputData
 
 class HistoryPurchaseInputAdapter(
@@ -25,7 +24,9 @@ class HistoryPurchaseInputAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryInputHolder {
-        return HistoryInputHolder(ItemTransferInputHistoryBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+        return HistoryInputHolder(ItemTransferInputHistoryBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     override fun getItemCount(): Int {
@@ -55,7 +56,7 @@ class HistoryPurchaseInputAdapter(
                     tvTransferhistoryStatus.setText(R.string.posted_status_true)
                     tvTransferhistoryStatus.setTextColor(
                         ContextCompat.getColor(
-                            context,
+                            root.context,
                             R.color.posted_true
                         )
                     )
@@ -63,7 +64,7 @@ class HistoryPurchaseInputAdapter(
                     tvTransferhistoryStatus.setText(R.string.posted_status_false)
                     tvTransferhistoryStatus.setTextColor(
                         ContextCompat.getColor(
-                            context,
+                            root.context,
                             R.color.posted_false
                         )
                     )

@@ -5,16 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.HomePostAllDialogBinding
 import dynamia.com.core.util.crossFade
 import dynamia.com.core.util.gone
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class HomePostAllDialog : BottomSheetDialogFragment() {
 
-    private val viewModel: HomeViewModel by viewModel()
+    private val viewModel: HomeViewModel by viewModels()
     private var animateDuration: Int = 0
     lateinit var _viewBinding: HomePostAllDialogBinding
     val viewBinding by lazy { _viewBinding }

@@ -5,8 +5,10 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.TransferInputFragmentBinding
 import dynamia.com.barcodescanner.ui.MainActivity
@@ -17,12 +19,12 @@ import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.util.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
+@AndroidEntryPoint
 class TransferInputFragment :
     BaseFragmentBinding<TransferInputFragmentBinding>(TransferInputFragmentBinding::inflate) {
-    private val viewModel: TransferInputViewModel by viewModel()
+    private val viewModel: TransferInputViewModel by viewModels()
     private val args: TransferInputFragmentArgs by navArgs()
     var activity: MainActivity? = null
 

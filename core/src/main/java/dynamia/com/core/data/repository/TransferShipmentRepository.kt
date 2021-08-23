@@ -8,12 +8,14 @@ import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.domain.ErrorResponse
+import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 interface TransferShipmentRepository {
     /**
@@ -59,11 +61,10 @@ interface TransferShipmentRepository {
     suspend fun getUser(): Flow<String>
 }
 
-class TransferShipmentImpl(
+class TransferShipmentImpl @Inject constructor(
     val dao: TransferShipmentDao,
-    private val sharedPreferences: SharedPreferences
+    private val retrofitService: MasariAPI,
 ) : TransferShipmentRepository {
-    private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
 
     /**
      * Local Implementation

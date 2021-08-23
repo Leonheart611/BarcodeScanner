@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.databinding.BinReclassFragmentBinding
 import dynamia.com.barcodescanner.databinding.BinReclassInputDialogBinding
 import dynamia.com.barcodescanner.ui.binreclass.adapter.BinReclassAdapter
@@ -16,13 +18,13 @@ import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class BinReclassFragment :
     BaseFragmentBinding<BinReclassFragmentBinding>(BinReclassFragmentBinding::inflate),
     BinReclassAdapter.BinreclassOnclicklistener {
 
-    private val viewModel: BinReclassViewModel by viewModel()
+    private val viewModel: BinReclassViewModel by viewModels()
     private val binReclassAdapter = BinReclassAdapter(mutableListOf(), this)
     private var rebinHeader: Dialog? = null
 

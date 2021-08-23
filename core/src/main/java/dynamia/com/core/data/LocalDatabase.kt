@@ -32,7 +32,7 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun stockOpnameDao(): StockOpnameDao
     abstract fun binreclassDao(): BinreclassDao
 
-    companion object {
+   /* companion object {
         @Volatile
         private var INSTANCE: LocalDatabase? = null
 
@@ -49,5 +49,5 @@ abstract class LocalDatabase : RoomDatabase() {
                 instance
             }
         }
-    }
+    }*/
 }

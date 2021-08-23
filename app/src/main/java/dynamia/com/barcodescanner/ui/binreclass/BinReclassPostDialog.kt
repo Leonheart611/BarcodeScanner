@@ -5,17 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.PickingPostBottomDialogBinding
 import dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetailViewModel
 import dynamia.com.core.util.crossFade
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
+@AndroidEntryPoint
 class BinReclassPostDialog : BottomSheetDialogFragment() {
 
-    val viewModel: TransferDetailViewModel by viewModel()
+    val viewModel: TransferDetailViewModel by viewModels()
     private var _viewBinding: PickingPostBottomDialogBinding? = null
     val viewBinding by lazy { _viewBinding!! }
 

@@ -2,10 +2,12 @@ package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.TransferDetailFragmentBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
@@ -14,13 +16,13 @@ import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAda
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.util.showLongToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class TransferDetailFragment :
     BaseFragmentBinding<TransferDetailFragmentBinding>(TransferDetailFragmentBinding::inflate),
     TransferDetailLineAdapter.OnTransferLineCLicklistener,
     PurchaseDetailLineAdapter.OnPurchaseLineClicklistener {
-    private val viewModel: TransferDetailViewModel by viewModel()
+    private val viewModel: TransferDetailViewModel by viewModels()
     private val args: TransferDetailFragmentArgs by navArgs()
     private val transferReceiptAdapter = TransferDetailLineAdapter(mutableListOf())
     private val purchaseDetailLineAdapter = PurchaseDetailLineAdapter(mutableListOf())

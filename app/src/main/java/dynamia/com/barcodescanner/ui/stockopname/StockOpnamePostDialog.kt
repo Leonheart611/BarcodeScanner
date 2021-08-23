@@ -5,15 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.PickingPostBottomDialogBinding
 import dynamia.com.core.util.crossFade
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class StockOpnamePostDialog : BottomSheetDialogFragment() {
 
-    val viewModel: StockOpnameViewModel by viewModel()
+    val viewModel: StockOpnameViewModel by viewModels()
     private lateinit var _viewBinding: PickingPostBottomDialogBinding
     val viewBinding by lazy { _viewBinding }
 

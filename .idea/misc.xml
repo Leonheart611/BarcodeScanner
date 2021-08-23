@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/bin_reclass_fragment.xml" value="0.1" />
         <entry key="app/src/main/res/layout/bin_reclass_header_dialog.xml" value="0.1" />
         <entry key="app/src/main/res/layout/bin_reclass_header_layout.xml" value="0.1" />
@@ -17,6 +18,10 @@
         <entry key="app/src/main/res/layout/home_fragment.xml" value="0.12817028985507245" />
         <entry key="app/src/main/res/layout/home_post_all_dialog.xml" value="0.13897367840226577" />
         <entry key="app/src/main/res/layout/input_rebin_class_dialog.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/login_fragment.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/receipt_detail_fragment.xml" value="0.12135416666666667" />
+        <entry key="app/src/main/res/layout/receipt_form_item.xml" value="0.12135416666666667" />
+        <entry key="app/src/main/res/layout/receipt_input_fragment.xml" value="0.12135416666666667" />
         <entry key="app/src/main/res/layout/transfer_detail_fragment.xml" value="0.11727456940222898" />
         <entry key="app/src/main/res/layout/transfer_input_fragment.xml" value="0.11727456940222898" />
         <entry key="app/src/main/res/layout/transferlist_fragment.xml" value="0.11727456940222898" />

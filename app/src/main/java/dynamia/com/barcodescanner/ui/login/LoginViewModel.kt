@@ -4,7 +4,8 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import dynamia.com.core.base.ViewModelBase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.entinty.UserData
 import dynamia.com.core.data.repository.UserRepository
 import dynamia.com.core.util.Constant
@@ -12,8 +13,10 @@ import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel(
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val userRepository: UserRepository,
 ) : ViewModelBase(sharedPreferences) {
