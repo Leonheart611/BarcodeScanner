@@ -77,6 +77,9 @@ interface BinreclassDao {
     @Query("DELETE FROM BinreclassInputData where id =:id")
     fun deleteRebinInput(id: Int)
 
+    @Query("DELETE FROM BinreclassInputData")
+    fun deleteAllRebinInput()
+
     @Query("SELECT * FROM BinreclassInputData WHERE sync_status= :unsycn AND headerId =:headerId")
     fun getAllUnsycnRebinclassinputByheaderId(
         unsycn: Boolean,

@@ -45,7 +45,7 @@ interface BinreclassRepository {
     fun updateAllBinReclassBin(data: BinreclassInputData)
     fun deleteBinReclassInputData(id: Int)
     suspend fun postDataBinreclass(value: String): Flow<BinreclassInputData>
-
+    fun deleteAllRebinInput()
 
 }
 
@@ -184,5 +184,9 @@ class BinreclassRepositoryImpl(val dao: BinreclassDao, val sharedPreferences: Sh
 
     override fun updateAllBinReclassBin(data: BinreclassInputData) {
         dao.updateBinReclassInput(data)
+    }
+
+    override fun deleteAllRebinInput() {
+        dao.deleteAllRebinInput()
     }
 }

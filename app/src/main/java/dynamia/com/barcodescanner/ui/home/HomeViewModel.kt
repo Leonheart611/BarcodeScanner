@@ -47,6 +47,8 @@ class HomeViewModel(
                     transferShipmentRepository.deleteAllTransferInput()
                     transferReceiptRepository.deleteAllTransferReceiptHeader()
                     transferReceiptRepository.clearAllInputData()
+                    binreclassRepository.deleteAllBinreclass()
+                    binreclassRepository.deleteAllRebinInput()
                 }
             } catch (e: Exception) {
                 _homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
@@ -70,6 +72,12 @@ class HomeViewModel(
                     transferShipmentRepository.deleteAllTransferHeader()
                     transferShipmentRepository.deleteAllTransferLine()
                     transferShipmentRepository.deleteAllTransferInput()
+
+                    /**
+                     * Delete BIN Reclass Data Input
+                     */
+                    binreclassRepository.deleteAllBinreclass()
+                    binreclassRepository.deleteAllRebinInput()
 
                     transferShipmentRepository.getTransferShipmentHeaderAsync()
                         .collect { dataHeader ->
