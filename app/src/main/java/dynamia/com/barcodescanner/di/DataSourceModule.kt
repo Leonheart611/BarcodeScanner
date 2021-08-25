@@ -1,7 +1,9 @@
 package dynamia.com.barcodescanner.di
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.fragment.app.Fragment
 import androidx.room.Room
 import com.netcosports.ntlm.NTLMAuthenticator
 import dagger.Module
@@ -29,14 +31,13 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object DataSourceModule {
-    private const val PREFERENCES_FILE_KEY = "STRYGWR"
+class DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideSharedPreferences(@ApplicationContext context: Context) =
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
         context.getSharedPreferences(
-            PREFERENCES_FILE_KEY, Context.MODE_PRIVATE
+            Companion.PREFERENCES_FILE_KEY, Context.MODE_PRIVATE
         )
 
     @Provides
@@ -49,37 +50,44 @@ object DataSourceModule {
         ).build()
     }
 
+    @Singleton
     @Provides
     fun provideBinreclassDao(appDatabase: LocalDatabase): BinreclassDao {
         return appDatabase.binreclassDao()
     }
 
+    @Singleton
     @Provides
     fun providePurchaseOrderDao(db: LocalDatabase): PurchaseOrderDao {
         return db.purchaseOrder()
     }
 
+    @Singleton
     @Provides
     fun provideStockOpnameDao(db: LocalDatabase): StockOpnameDao {
         return db.stockOpnameDao()
     }
 
+    @Singleton
     @Provides
     fun provideTransferReceiptDao(db: LocalDatabase): TransferReceiptDao {
         return db.transferReceipt()
     }
 
+    @Singleton
     @Provides
     fun provideTransferShipment(db: LocalDatabase): TransferShipmentDao {
         return db.transferShipment()
     }
 
+    @Singleton
     @Provides
     fun provideUserDao(db: LocalDatabase): UserDao {
         return db.userDao()
     }
 
 
+    @Singleton
     @Provides
     fun provideApiService(sharedPreferences: SharedPreferences): MasariAPI {
         var retrofit: Retrofit? = null
@@ -110,24 +118,28 @@ object DataSourceModule {
         return retrofit!!.create(MasariAPI::class.java)
     }
 
+    @Singleton
     @Provides
     fun provideBinReclassRepository(
         dao: BinreclassDao,
         masariAPI: MasariAPI,
     ): BinreclassRepository = BinreclassRepositoryImpl(dao, masariAPI)
 
+    @Singleton
     @Provides
     fun providePurchaseOrderRepository(
         dao: PurchaseOrderDao,
         api: MasariAPI,
     ): PurchaseOrderRepository = PurchaseOrderRepositoryImpl(dao, api)
 
+    @Singleton
     @Provides
     fun provideStockOpnameRepository(
         dao: StockOpnameDao,
         api: MasariAPI,
     ): StockOpnameRepository = StockOpnameRepositoryImpl(dao, api)
 
+    @Singleton
     @Provides
     fun provideTransferReceiptRepository(
         dao: TransferReceiptDao,
@@ -135,12 +147,19 @@ object DataSourceModule {
         lineDao: TransferShipmentDao,
     ): TransferReceiptRepository = TransferReceiptRepositoryImpl(dao, api, lineDao)
 
+    @Singleton
     @Provides
     fun provideShipmentRepository(
         dao: TransferShipmentDao,
         api: MasariAPI,
     ): TransferShipmentRepository = TransferShipmentImpl(dao, api)
 
+    @Singleton
     @Provides
     fun provideUserRepository(dao: UserDao): UserRepository = UserRepositoryImpl(dao)
+
+    companion object {
+        private const val PREFERENCES_FILE_KEY = "STRYGWR"
+    }
+
 }

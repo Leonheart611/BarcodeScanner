@@ -1,12 +1,10 @@
 package dynamia.com.core.data.repository
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import dynamia.com.core.data.dao.BinreclassDao
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.data.entinty.BinreclassInputData
 import dynamia.com.core.domain.MasariAPI
-import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.util.getDocumentCode
 import dynamia.com.core.util.getNormalDate
 import kotlinx.coroutines.flow.Flow
