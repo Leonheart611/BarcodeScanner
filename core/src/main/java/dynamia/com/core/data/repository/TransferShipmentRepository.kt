@@ -58,7 +58,6 @@ interface TransferShipmentRepository {
     suspend fun getTransferShipmentHeaderAsync(): Flow<ResultWrapper<MutableList<TransferShipmentHeader>>>
     suspend fun getTransferShipmentLineAsync(): Flow<ResultWrapper<MutableList<TransferShipmentLine>>>
     suspend fun postTransferData(value: String): Flow<TransferInputData>
-    suspend fun getUser(): Flow<String>
 }
 
 class TransferShipmentImpl @Inject constructor(
@@ -231,11 +230,6 @@ class TransferShipmentImpl @Inject constructor(
 
     override suspend fun postTransferData(value: String): Flow<TransferInputData> = flow {
         emit(retrofitService.postTransferShipment(value))
-    }
-
-    override suspend fun getUser(): Flow<String> = flow {
-        val result = retrofitService.getCustomer()
-        emit(result.raw().toString())
     }
 }
 

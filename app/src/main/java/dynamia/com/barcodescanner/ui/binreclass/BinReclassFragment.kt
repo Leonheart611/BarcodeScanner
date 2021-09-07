@@ -21,8 +21,8 @@ import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
 class BinReclassFragment :
-    BaseFragmentBinding<BinReclassFragmentBinding>(BinReclassFragmentBinding::inflate),
-    BinReclassAdapter.BinreclassOnclicklistener {
+        BaseFragmentBinding<BinReclassFragmentBinding>(BinReclassFragmentBinding::inflate),
+        BinReclassAdapter.BinreclassOnclicklistener {
 
     private val viewModel: BinReclassViewModel by viewModels()
     private val binReclassAdapter = BinReclassAdapter(mutableListOf(), this)
@@ -46,8 +46,8 @@ class BinReclassFragment :
                 is BinReclassViewModel.BinReclassInputState.OnSuccessSave -> {
                     context?.showLongToast("Success Create Bin Class")
                     findNavController().navigate(BinReclassFragmentDirections.actionBinReclassFragmentToBinreclassDetailFragment(
-                        binTo = it.binTo,
-                        binFrom = it.binFrom
+                            binTo = it.binTo,
+                            binFrom = it.binFrom
                     ))
                     rebinHeader?.dismiss()
                 }
@@ -59,17 +59,17 @@ class BinReclassFragment :
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             when (position) {
                 0 -> viewModel.binreclassRepository.getAllBinReclassHeader()
-                    .observe(viewLifecycleOwner, {
-                        binReclassAdapter.updateData(it.toMutableList())
-                    })
+                        .observe(viewLifecycleOwner, {
+                            binReclassAdapter.updateData(it.toMutableList())
+                        })
                 1 -> viewModel.binreclassRepository.getALlSycn(false)
-                    .observe(viewLifecycleOwner, {
-                        binReclassAdapter.updateData(it.toMutableList())
-                    })
+                        .observe(viewLifecycleOwner, {
+                            binReclassAdapter.updateData(it.toMutableList())
+                        })
                 2 -> viewModel.binreclassRepository.getALlSycn(true)
-                    .observe(viewLifecycleOwner, {
-                        binReclassAdapter.updateData(it.toMutableList())
-                    })
+                        .observe(viewLifecycleOwner, {
+                            binReclassAdapter.updateData(it.toMutableList())
+                        })
             }
         }
 
@@ -103,8 +103,8 @@ class BinReclassFragment :
 
     override fun onclicklistener(data: BinreclassHeader) {
         findNavController().navigate(BinReclassFragmentDirections.actionBinReclassFragmentToBinreclassDetailFragment(
-            binTo = data.transferToBinCode,
-            binFrom = data.transferFromBinCode
+                binTo = data.transferToBinCode,
+                binFrom = data.transferFromBinCode
         ))
     }
 
@@ -115,15 +115,15 @@ class BinReclassFragment :
                 val bind = BinReclassInputDialogBinding.inflate(layoutInflater)
                 setContentView(bind.root)
                 window?.setLayout(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
                 )
                 with(bind) {
                     btnCreateBin.setOnClickListener {
                         if (checkDialogInput(bind)) {
                             viewModel.insertBinReclass(
-                                binFrom = etBinFromCode.text.toString(),
-                                binTo = etBinToCode.text.toString())
+                                    binFrom = etBinFromCode.text.toString(),
+                                    binTo = etBinToCode.text.toString())
                         }
                     }
                     btnCancleBin.setOnClickListener {
@@ -136,7 +136,7 @@ class BinReclassFragment :
         }
     }
 
-    fun checkDialogInput(dialog: BinReclassInputDialogBinding): Boolean {
+    private fun checkDialogInput(dialog: BinReclassInputDialogBinding): Boolean {
         with(dialog) {
             tilBinFrom.error = null
             tilBinTo.error = null

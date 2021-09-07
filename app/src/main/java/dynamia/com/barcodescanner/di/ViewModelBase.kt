@@ -13,14 +13,13 @@ import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 abstract class ViewModelBase(
-    private val userRepository: SharedPreferences,
+        private val userRepository: SharedPreferences,
 ) : ViewModel() {
     private val coroutineJob = Job()
     val coroutineContext = Dispatchers.IO + coroutineJob
-    val uiScope = CoroutineScope(coroutineContext)
     var gson: Gson = GsonBuilder()
-        .excludeFieldsWithoutExposeAnnotation()
-        .create()
+            .excludeFieldsWithoutExposeAnnotation()
+            .create()
 
     fun getCompanyName(): String {
         return userRepository.getString(Constant.USERNAME_KEY, "") ?: ""

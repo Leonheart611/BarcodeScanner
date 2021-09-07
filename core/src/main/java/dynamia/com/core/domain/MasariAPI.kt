@@ -28,7 +28,10 @@ interface MasariAPI {
     suspend fun getStockOpname(@Query("\$filter") filter: String = "Journal_Template_Name eq 'PHYS. INVE'"): Response<BaseResponse<StockOpnameData>>
 
     @GET("Android_StockCheck")
-    suspend fun getCheckStock(@Query("\$filter") filter: String): Response<BaseResponse<StockCheckingData>>
+    suspend fun getCheckStock(
+        @Query("\$filter") filter: String,
+        @Query("\$orderby") order: String = "Inventory desc"
+    ): Response<BaseResponse<StockCheckingData>>
 
     @Headers("Content-Type: application/json")
     @POST("Android_Transaction")

@@ -42,8 +42,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        //callAllApi()
-        getAllDataFromAssets()
+        callAllApi()
+        //getAllDataFromAssets()
         setOnClicklistener()
     }
 
@@ -51,21 +51,29 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
         viewModel.homeGetApiViewState.observe(viewLifecycleOwner, {
             when (it) {
                 SuccessGetShipingData -> {
-                    viewBinding.ivStatusPicking.crossFade(animateDuration.toLong(),
-                        viewBinding.pbTransferstore)
+                    viewBinding.ivStatusPicking.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbTransferstore
+                    )
                 }
                 is FailedGetShippingData -> {
                     with(viewBinding) {
                         tvErrorTransferstore.text = it.message
                         ivStatusPicking.crossFade(animateDuration.toLong(), pbTransferstore)
-                        ivStatusPicking.setImageDrawable(getDrawable(resources,
-                            R.drawable.ic_error_circle,
-                            null))
+                        ivStatusPicking.setImageDrawable(
+                            getDrawable(
+                                resources,
+                                R.drawable.ic_error_circle,
+                                null
+                            )
+                        )
                     }
                 }
                 SuccessGetPurchaseData -> {
-                    viewBinding.ivStatusPurchaseOrder.crossFade(animateDuration.toLong(),
-                        viewBinding.pbPurchaseOrder)
+                    viewBinding.ivStatusPurchaseOrder.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbPurchaseOrder
+                    )
                 }
                 is FailedGetPurchase -> {
                     with(viewBinding) {
@@ -82,8 +90,10 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
 
                 }
                 SuccessGetReceipt -> {
-                    viewBinding.ivStatusReceiptLocal.crossFade(animateDuration.toLong(),
-                        viewBinding.pbReceipt)
+                    viewBinding.ivStatusReceiptLocal.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbReceipt
+                    )
                 }
                 is FailedGetReceipt -> {
                     with(viewBinding) {
@@ -101,8 +111,10 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                 is FailedGetStockOpname -> {
                     with(viewBinding) {
                         tvErrorStockOpname.text = it.message
-                        ivStatusStockOpname.crossFade(animateDuration.toLong(),
-                            pbStockOpname)
+                        ivStatusStockOpname.crossFade(
+                            animateDuration.toLong(),
+                            pbStockOpname
+                        )
                         ivStatusStockOpname.setImageDrawable(
                             getDrawable(
                                 resources,
@@ -113,8 +125,10 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                     }
                 }
                 SuccessGetStockOpname -> {
-                    viewBinding.ivStatusStockOpname.crossFade(animateDuration.toLong(),
-                        viewBinding.pbStockOpname)
+                    viewBinding.ivStatusStockOpname.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbStockOpname
+                    )
                 }
             }
         })
