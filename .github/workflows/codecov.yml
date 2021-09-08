@@ -6,7 +6,8 @@ on:
       - 'master'
   push:
     branches:
-      - 'bugfix/'
+      - 'bugfix'
+      - 'master'
 
 jobs:
   test:
