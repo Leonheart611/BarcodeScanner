@@ -32,17 +32,17 @@ class DataSourceModule {
     @Singleton
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
-            context.getSharedPreferences(
-                    PREFERENCES_FILE_KEY, Context.MODE_PRIVATE
-            )
+        context.getSharedPreferences(
+            PREFERENCES_FILE_KEY, Context.MODE_PRIVATE
+        )
 
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext appContext: Context): LocalDatabase {
         return Room.databaseBuilder(
-                appContext,
-                LocalDatabase::class.java,
-                "MasariDB.sqlite"
+            appContext,
+            LocalDatabase::class.java,
+            "MasariDB.sqlite"
         ).build()
     }
 
@@ -91,25 +91,25 @@ class DataSourceModule {
             val logger = HttpLoggingInterceptor()
             logger.level = HttpLoggingInterceptor.Level.BODY
             val client = OkHttpClient.Builder()
-                    .addInterceptor(logger)
-                    .connectTimeout(120, TimeUnit.SECONDS)
-                    .readTimeout(120, TimeUnit.SECONDS)
-                    .writeTimeout(120, TimeUnit.SECONDS)
-                    .cache(null)
-                    .authenticator(
-                            NTLMAuthenticator(
-                                    sharedPreferences.getUserName(),
-                                    sharedPreferences.getPassword(),
-                                    sharedPreferences.getDomain()
-                            )
+                .addInterceptor(logger)
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .cache(null)
+                .authenticator(
+                    NTLMAuthenticator(
+                        sharedPreferences.getUserName(),
+                        sharedPreferences.getPassword(),
+                        sharedPreferences.getDomain()
                     )
-                    .build()
+                )
+                .build()
             retrofit = Retrofit.Builder()
-                    .baseUrl(sharedPreferences.getBaseUrl())
-                    .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(client)
-                    .build()
+                .baseUrl(sharedPreferences.getBaseUrl())
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build()
         }
         return retrofit!!.create(MasariAPI::class.java)
     }
@@ -117,37 +117,37 @@ class DataSourceModule {
     @Singleton
     @Provides
     fun provideBinReclassRepository(
-            dao: BinreclassDao,
-            masariAPI: MasariAPI,
+        dao: BinreclassDao,
+        masariAPI: MasariAPI,
     ): BinreclassRepository = BinreclassRepositoryImpl(dao, masariAPI)
 
     @Singleton
     @Provides
     fun providePurchaseOrderRepository(
-            dao: PurchaseOrderDao,
-            api: MasariAPI,
+        dao: PurchaseOrderDao,
+        api: MasariAPI,
     ): PurchaseOrderRepository = PurchaseOrderRepositoryImpl(dao, api)
 
     @Singleton
     @Provides
     fun provideStockOpnameRepository(
-            dao: StockOpnameDao,
-            api: MasariAPI,
+        dao: StockOpnameDao,
+        api: MasariAPI,
     ): StockOpnameRepository = StockOpnameRepositoryImpl(dao, api)
 
     @Singleton
     @Provides
     fun provideTransferReceiptRepository(
-            dao: TransferReceiptDao,
-            api: MasariAPI,
-            lineDao: TransferShipmentDao,
+        dao: TransferReceiptDao,
+        api: MasariAPI,
+        lineDao: TransferShipmentDao,
     ): TransferReceiptRepository = TransferReceiptRepositoryImpl(dao, api, lineDao)
 
     @Singleton
     @Provides
     fun provideShipmentRepository(
-            dao: TransferShipmentDao,
-            api: MasariAPI,
+        dao: TransferShipmentDao,
+        api: MasariAPI,
     ): TransferShipmentRepository = TransferShipmentImpl(dao, api)
 
     @Singleton

@@ -128,7 +128,7 @@ class BinreclassDetailViewModel @Inject constructor(
                 io {
                     val data = repository.getBinReclassHeaderDetail(fromBin, toBin)
                     data.let {
-                        insertDataBin(BinreclassInputData(
+                        val result = BinreclassInputData(
                             documentNo = it.documentNo,
                             lineNo = 0,
                             itemIdentifier = barcode,
@@ -138,7 +138,8 @@ class BinreclassDetailViewModel @Inject constructor(
                             insertDateTime = getCurrentDate(),
                             quantity = qty.toInt(),
                             headerId = data.id!!
-                        ))
+                        )
+                        insertDataBin(result)
                     }
                 }
             }
@@ -150,9 +151,11 @@ class BinreclassDetailViewModel @Inject constructor(
             try {
                 io {
                     inputHeader?.let {
-                        repository.updateBinFromAndBinToCode(id = it.id!!,
+                        repository.updateBinFromAndBinToCode(
+                            id = it.id!!,
                             binFrom = fromBin,
-                            binTo = toBin).collect { data ->
+                            binTo = toBin
+                        ).collect { data ->
                             if (data) {
                                 ui {
                                     _viewState.value =

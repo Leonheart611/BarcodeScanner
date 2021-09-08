@@ -29,7 +29,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         _viewBinding = ItemInputHeaderBinding.inflate(inflater, container, false)
         return viewBinding.root
     }

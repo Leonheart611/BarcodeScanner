@@ -39,7 +39,7 @@ interface BinreclassRepository {
     ): List<BinreclassInputData>
 
     fun getBinReclassById(id: Int): Flow<BinreclassInputData>
-    fun insertBinReclassInputData(data: BinreclassInputData)
+    suspend fun insertBinReclassInputData(data: BinreclassInputData)
     fun updateBinReclassInputQty(id: Int, qty: Int)
     fun updateAllBinReclassBin(headerId: Int, newBinTo: String, newFromBin: String)
     fun updateAllBinReclassBin(data: BinreclassInputData)
@@ -75,12 +75,14 @@ class BinreclassRepositoryImpl @Inject constructor(
         val binFromCount = dao.checkTransferFromCount(binFrom) == 0
         val binToCount = dao.checkTransferToCodeCount(binTo) == 0
         if (binFromCount || binToCount) {
-            dao.insertBinReclassHeader(BinreclassHeader(
-                transferToBinCode = binTo,
-                transferFromBinCode = binFrom,
-                date = getNormalDate(),
-                documentNo = getDocumentCode()
-            ))
+            dao.insertBinReclassHeader(
+                BinreclassHeader(
+                    transferToBinCode = binTo,
+                    transferFromBinCode = binFrom,
+                    date = getNormalDate(),
+                    documentNo = getDocumentCode()
+                )
+            )
             emit(true)
         } else {
             emit(false)
@@ -144,10 +146,9 @@ class BinreclassRepositoryImpl @Inject constructor(
         emit(dao.getBinreclassInputDataDetailById(id))
     }
 
-    override fun insertBinReclassInputData(data: BinreclassInputData) {
-        val getExisting = dao.getBinreclassInputDataDetail(data.transferFromBinCode,
-            data.transferToBinCode,
-            data.itemIdentifier)
+    override suspend fun insertBinReclassInputData(data: BinreclassInputData) {
+        val getExisting =
+            dao.getBinreclassInputDataDetail(data.binCode, data.newBinCode, data.itemIdentifier)
         getExisting?.let {
             it.apply {
                 quantity += data.quantity

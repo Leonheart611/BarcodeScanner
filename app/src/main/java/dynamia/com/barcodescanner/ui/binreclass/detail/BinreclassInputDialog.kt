@@ -5,10 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.databinding.InputRebinClassDialogBinding
+import dynamia.com.barcodescanner.ui.binreclass.detail.BinreclassInputDialog.ADD_TYPE.*
+import dynamia.com.barcodescanner.ui.transferstore.TransferType
+import dynamia.com.barcodescanner.ui.transferstore.transferdetail.ScanInputTransferDialog
 import dynamia.com.core.data.entinty.BinreclassInputData
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.gone
@@ -23,6 +28,7 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
     private val fromBin by lazy { arguments?.getString(FROMBINCODE) }
     private val toBin by lazy { arguments?.getString(TOBINCODE) }
     private val idInput by lazy { arguments?.getInt(INPUTID) ?: 0 }
+    private val addType by lazy { arguments?.getSerializable(ADDTYPE) as ADD_TYPE }
 
     private var animateDuration: Int = 0
     override fun onCreateView(
@@ -44,18 +50,44 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
 
     fun setupView() {
         with(viewBinding) {
-            includeInputForm.tilTransferBincode.isVisible = false
-            includeInputForm.tvTransferItemName.text = "From Bin: $fromBin"
-            includeInputForm.tvTransferQty.text = "To Bin: $toBin"
-            includeInputForm.tilTransferinputName.isVisible = false
-            includeInputForm.btnReset.text = "Cancel"
-            if (idInput == 0) {
-                fabDeleteRebinClass.gone()
-            } else {
-                viewModel.getLocalInputdata(idInput)
-                fabDeleteRebinClass.show()
-                includeInputForm.btnSave.text = "Update"
+            when (addType) {
+                SCAN -> {
+                    includeInputForm.tilTransferBincode.isVisible = false
+                    includeInputForm.tvTransferItemName.text = "From Bin: $fromBin"
+                    includeInputForm.tvTransferQty.text = "To Bin: $toBin"
+                    includeInputForm.tilTransferinputName.isVisible = false
+                    includeInputForm.btnReset.text = "Cancel"
+                    fabDeleteRebinClass.gone()
+                    includeInputForm.btnSave.isVisible = false
+                    includeInputForm.etTranferinputQty.setText("1")
+                    includeInputForm.etTranferinputQty.isEnabled = false
+                    includeInputForm.etTransferInputBarcode.doAfterTextChanged {
+                        if (includeInputForm.etTransferInputBarcode.text.toString().isNotEmpty()) {
+                            viewModel.checkUserInputValidation(
+                                includeInputForm.etTransferInputBarcode.text.toString(),
+                                includeInputForm.etTranferinputQty.text.toString(),
+                                fromBin ?: "",
+                                toBin ?: ""
+                            )
+                        }
+                    }
+                }
+                MANUAL -> {
+                    includeInputForm.tilTransferBincode.isVisible = false
+                    includeInputForm.tvTransferItemName.text = "From Bin: $fromBin"
+                    includeInputForm.tvTransferQty.text = "To Bin: $toBin"
+                    includeInputForm.tilTransferinputName.isVisible = false
+                    includeInputForm.btnReset.text = "Cancel"
+                    if (idInput == 0) {
+                        fabDeleteRebinClass.gone()
+                    } else {
+                        viewModel.getLocalInputdata(idInput)
+                        fabDeleteRebinClass.show()
+                        includeInputForm.btnSave.text = "Update"
+                    }
+                }
             }
+
         }
     }
 
@@ -77,7 +109,15 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
                 }
                 BinreclassDetailViewModel.InputReclassViewState.SuccessSaveData -> {
                     context?.showLongToast("Success Save Data")
-                    clearData()
+                    when (addType) {
+                        SCAN -> {
+                            with(viewBinding.includeInputForm) {
+                                etTransferInputBarcode.text?.clear()
+                                etTransferInputBarcode.requestFocus()
+                            }
+                        }
+                        MANUAL -> clearData()
+                    }
                 }
                 BinreclassDetailViewModel.InputReclassViewState.SuccessUpdateData -> {
                     context?.showLongToast("Success Update Data")
@@ -88,7 +128,19 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
                 }
                 BinreclassDetailViewModel.InputReclassViewState.SuccessDeleteData -> {
                     context?.showLongToast("Success Delete Data")
-                    dismiss()
+                    when (addType) {
+                        SCAN -> {
+                            with(viewBinding.includeInputForm) {
+                                etTransferInputBarcode.text?.clear()
+                                etTransferInputBarcode.requestFocus()
+                            }
+                        }
+                        MANUAL -> {
+                            clearData()
+                            dismiss()
+                        }
+                    }
+
                 }
             }
         })
@@ -121,8 +173,10 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
                         toBin ?: ""
                     )
                 } else {
-                    viewModel.updateDataBin(idInput,
-                        includeInputForm.etTranferinputQty.text.toString().toInt())
+                    viewModel.updateDataBin(
+                        idInput,
+                        includeInputForm.etTranferinputQty.text.toString().toInt()
+                    )
                 }
             }
             fabDeleteRebinClass.setOnClickListener {
@@ -135,11 +189,17 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(toBin: String, fromBin: String, id: Int = 0): BinreclassInputDialog {
+        fun newInstance(
+            toBin: String,
+            fromBin: String,
+            id: Int = 0,
+            addType: ADD_TYPE
+        ): BinreclassInputDialog {
             val argument = Bundle().apply {
                 putString(FROMBINCODE, fromBin)
                 putString(TOBINCODE, toBin)
                 putInt(INPUTID, id)
+                putSerializable(ADDTYPE, addType)
             }
             return BinreclassInputDialog().apply {
                 arguments = argument
@@ -149,5 +209,10 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
         const val FROMBINCODE = "from_bin_code"
         const val TOBINCODE = "to_bin_code"
         const val INPUTID = "input_id"
+        const val ADDTYPE = "add_type"
+    }
+
+    enum class ADD_TYPE {
+        SCAN, MANUAL
     }
 }

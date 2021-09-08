@@ -71,7 +71,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            app:layout_constraintStart_toStartOf="@+id/tv_rebin_detail_date"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_rebin_detail_date"
             tools:text="User" />
     </androidx.constraintlayout.widget.ConstraintLayout>

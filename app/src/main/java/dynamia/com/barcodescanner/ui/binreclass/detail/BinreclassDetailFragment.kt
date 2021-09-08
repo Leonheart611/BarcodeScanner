@@ -15,6 +15,7 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.BinReclassInputDialogBinding
 import dynamia.com.barcodescanner.databinding.BinreclassDetailFragmentBinding
 import dynamia.com.barcodescanner.ui.binreclass.adapter.BinReclassInputAdapter
+import dynamia.com.barcodescanner.ui.binreclass.detail.BinreclassInputDialog.ADD_TYPE.*
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.data.entinty.BinreclassInputData
@@ -70,7 +71,18 @@ class BinreclassDetailFragment :
             }
             fabAddRebinInput.setOnClickListener {
                 val dialog = BinreclassInputDialog.newInstance(
-                    fromBin = binFrom, toBin = binTo)
+                    fromBin = binFrom,
+                    toBin = binTo,
+                    addType = MANUAL
+                )
+                dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            }
+            fabInputRebin.setOnClickListener {
+                val dialog = BinreclassInputDialog.newInstance(
+                    fromBin = binFrom,
+                    toBin = binTo,
+                    addType = SCAN
+                )
                 dialog.show(requireActivity().supportFragmentManager, dialog.tag)
             }
             with(rvRebinClassInput) {
@@ -109,7 +121,9 @@ class BinreclassDetailFragment :
             val dialog = BinreclassInputDialog.newInstance(
                 fromBin = binFrom,
                 toBin = binTo,
-                id = it)
+                id = it,
+                addType = MANUAL
+            )
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
         }
     }
@@ -134,7 +148,8 @@ class BinreclassDetailFragment :
                             if (checkDialogInput(this)) {
                                 viewModel.updateRebinClassHeader(
                                     fromBin = etBinFromCode.text.toString(),
-                                    toBin = etBinToCode.text.toString())
+                                    toBin = etBinToCode.text.toString()
+                                )
                             }
                         }
                         btnCancleBin.setOnClickListener {

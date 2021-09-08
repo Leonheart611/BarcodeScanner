@@ -33,7 +33,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         _viewBinding = BottomsheetHomeDataDialoogBinding.inflate(inflater, container, false)
         return viewBinding.root
