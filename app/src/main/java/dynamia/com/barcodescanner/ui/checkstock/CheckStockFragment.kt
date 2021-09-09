@@ -9,11 +9,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.databinding.CheckStockFragmentBinding
 import dynamia.com.barcodescanner.databinding.ScanStockSearchDialogBinding
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.core.base.BaseFragmentBinding
+import dynamia.com.core.data.entinty.StockCheckDataAssets
+import dynamia.com.core.data.entinty.StockOpnameDataAssets
+import dynamia.com.core.data.entinty.TransferShipmentHeaderAsset
+import dynamia.com.core.util.readJsonAsset
 import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
@@ -93,4 +98,11 @@ class CheckStockFragment :
         }
     }
 
+    fun getAssetResult() {
+        val data = Gson().fromJson(
+            activity?.readJsonAsset("StockCheck.json"),
+            StockCheckDataAssets::class.java
+        )
+        viewModel.getCheckStockFromAsset(data.value.toMutableList())
+    }
 }

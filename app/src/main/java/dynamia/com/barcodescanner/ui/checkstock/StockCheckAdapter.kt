@@ -16,7 +16,12 @@ class StockCheckAdapter(val values: MutableList<StockCheckingData>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockCheckHolder {
-        return StockCheckHolder(ItemStockCheckingResultBinding.inflate(LayoutInflater.from(parent.context)))
+        return StockCheckHolder(
+            ItemStockCheckingResultBinding.inflate(
+                LayoutInflater.from(parent.context), parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: StockCheckHolder, position: Int) {

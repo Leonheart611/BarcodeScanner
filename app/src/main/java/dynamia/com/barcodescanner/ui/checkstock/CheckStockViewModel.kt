@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CheckStockViewModel @Inject constructor(
-    private val stockOpnameRepository: StockOpnameRepository,
+    val stockOpnameRepository: StockOpnameRepository,
     sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -44,8 +44,11 @@ class CheckStockViewModel @Inject constructor(
                                 }
                             }
                             is ResultWrapper.NetworkError -> {
-                                _checkStockVS.postValue(CheckStockViewState.Error(
-                                    "Error Network"))
+                                _checkStockVS.postValue(
+                                    CheckStockViewState.Error(
+                                        "Error Network"
+                                    )
+                                )
 
                             }
                         }
@@ -56,6 +59,11 @@ class CheckStockViewModel @Inject constructor(
             }
         }
     }
+
+    fun getCheckStockFromAsset(data: MutableList<StockCheckingData>) {
+        _checkStockVS.value = CheckStockViewState.Success(data)
+    }
+
 
     sealed class CheckStockViewState {
         class Loading(val loading: Boolean) : CheckStockViewState()
