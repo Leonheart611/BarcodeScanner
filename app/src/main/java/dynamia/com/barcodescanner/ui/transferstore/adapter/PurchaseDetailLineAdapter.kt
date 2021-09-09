@@ -1,15 +1,15 @@
 package dynamia.com.barcodescanner.ui.transferstore.adapter
 
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.PickingDetailLineItemBinding
 import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.util.inflate
-import kotlinx.android.synthetic.main.picking_detail_line_item.view.*
 import java.util.*
 
 class PurchaseDetailLineAdapter(
@@ -23,7 +23,9 @@ class PurchaseDetailLineAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PurchaseLineHolder {
-        return PurchaseLineHolder(parent.inflate(R.layout.picking_detail_line_item))
+        return PurchaseLineHolder(PickingDetailLineItemBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     val allData by lazy { values }
@@ -66,14 +68,15 @@ class PurchaseDetailLineAdapter(
         }
     }
 
-    inner class PurchaseLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PurchaseLineHolder(val binding: PickingDetailLineItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bindShipment(transferShipmentLine: PurchaseOrderLine) {
-            with(itemView) {
-                tv_item_code.text = transferShipmentLine.itemIdentifier
-                tv_description.text = transferShipmentLine.description
-                tv_qty.text =
+            with(binding) {
+                tvItemCode.text = transferShipmentLine.itemIdentifier
+                tvDescription.text = transferShipmentLine.description
+                tvQty.text =
                     "${transferShipmentLine.alredyScanned} / ${transferShipmentLine.quantity}"
-                setOnClickListener {
+                root.setOnClickListener {
                     listener?.onclicklistener(transferShipmentLine)
                 }
             }

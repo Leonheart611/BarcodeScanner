@@ -4,7 +4,8 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import dynamia.com.core.base.ViewModelBase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.data.entinty.BinreclassInputData
 import dynamia.com.core.data.repository.BinreclassRepository
@@ -14,8 +15,10 @@ import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BinreclassDetailViewModel(
+@HiltViewModel
+class BinreclassDetailViewModel @Inject constructor(
     val repository: BinreclassRepository,
     sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
@@ -125,7 +128,7 @@ class BinreclassDetailViewModel(
                 io {
                     val data = repository.getBinReclassHeaderDetail(fromBin, toBin)
                     data.let {
-                        insertDataBin(BinreclassInputData(
+                        val result = BinreclassInputData(
                             documentNo = it.documentNo,
                             lineNo = 0,
                             itemIdentifier = barcode,
@@ -135,7 +138,8 @@ class BinreclassDetailViewModel(
                             insertDateTime = getCurrentDate(),
                             quantity = qty.toInt(),
                             headerId = data.id!!
-                        ))
+                        )
+                        insertDataBin(result)
                     }
                 }
             }
@@ -147,9 +151,11 @@ class BinreclassDetailViewModel(
             try {
                 io {
                     inputHeader?.let {
-                        repository.updateBinFromAndBinToCode(id = it.id!!,
+                        repository.updateBinFromAndBinToCode(
+                            id = it.id!!,
                             binFrom = fromBin,
-                            binTo = toBin).collect { data ->
+                            binTo = toBin
+                        ).collect { data ->
                             if (data) {
                                 ui {
                                     _viewState.value =

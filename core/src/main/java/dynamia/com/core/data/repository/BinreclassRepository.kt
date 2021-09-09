@@ -1,15 +1,15 @@
 package dynamia.com.core.data.repository
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import dynamia.com.core.data.dao.BinreclassDao
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.data.entinty.BinreclassInputData
-import dynamia.com.core.domain.MasariRetrofit
+import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.util.getDocumentCode
 import dynamia.com.core.util.getNormalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 interface BinreclassRepository {
     /**
@@ -39,7 +39,7 @@ interface BinreclassRepository {
     ): List<BinreclassInputData>
 
     fun getBinReclassById(id: Int): Flow<BinreclassInputData>
-    fun insertBinReclassInputData(data: BinreclassInputData)
+    suspend fun insertBinReclassInputData(data: BinreclassInputData)
     fun updateBinReclassInputQty(id: Int, qty: Int)
     fun updateAllBinReclassBin(headerId: Int, newBinTo: String, newFromBin: String)
     fun updateAllBinReclassBin(data: BinreclassInputData)
@@ -49,10 +49,10 @@ interface BinreclassRepository {
 
 }
 
-class BinreclassRepositoryImpl(val dao: BinreclassDao, val sharedPreferences: SharedPreferences) :
-    BinreclassRepository {
-
-    private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
+class BinreclassRepositoryImpl @Inject constructor(
+    val dao: BinreclassDao,
+    private val retrofitService: MasariAPI,
+) : BinreclassRepository {
 
     /**
      * Bin Reclass Header Dao
@@ -75,12 +75,14 @@ class BinreclassRepositoryImpl(val dao: BinreclassDao, val sharedPreferences: Sh
         val binFromCount = dao.checkTransferFromCount(binFrom) == 0
         val binToCount = dao.checkTransferToCodeCount(binTo) == 0
         if (binFromCount || binToCount) {
-            dao.insertBinReclassHeader(BinreclassHeader(
-                transferToBinCode = binTo,
-                transferFromBinCode = binFrom,
-                date = getNormalDate(),
-                documentNo = getDocumentCode()
-            ))
+            dao.insertBinReclassHeader(
+                BinreclassHeader(
+                    transferToBinCode = binTo,
+                    transferFromBinCode = binFrom,
+                    date = getNormalDate(),
+                    documentNo = getDocumentCode()
+                )
+            )
             emit(true)
         } else {
             emit(false)
@@ -144,10 +146,9 @@ class BinreclassRepositoryImpl(val dao: BinreclassDao, val sharedPreferences: Sh
         emit(dao.getBinreclassInputDataDetailById(id))
     }
 
-    override fun insertBinReclassInputData(data: BinreclassInputData) {
-        val getExisting = dao.getBinreclassInputDataDetail(data.transferFromBinCode,
-            data.transferToBinCode,
-            data.itemIdentifier)
+    override suspend fun insertBinReclassInputData(data: BinreclassInputData) {
+        val getExisting =
+            dao.getBinreclassInputDataDetail(data.binCode, data.newBinCode, data.itemIdentifier)
         getExisting?.let {
             it.apply {
                 quantity += data.quantity

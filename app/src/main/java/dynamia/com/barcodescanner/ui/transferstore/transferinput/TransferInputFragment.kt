@@ -2,42 +2,31 @@ package dynamia.com.barcodescanner.ui.transferstore.transferinput
 
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.TransferInputFragmentBinding
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
+import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.util.*
-import kotlinx.android.synthetic.main.delete_confirmation_dialog.*
-import kotlinx.android.synthetic.main.dialog_multiple_item.*
-import kotlinx.android.synthetic.main.dialog_part_no_not_found.*
-import kotlinx.android.synthetic.main.header_layout.*
-import kotlinx.android.synthetic.main.item_input_header.*
-import kotlinx.android.synthetic.main.transfer_input_fragment.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-class TransferInputFragment : Fragment() {
-    private val viewModel: TransferInputViewModel by viewModel()
+@AndroidEntryPoint
+class TransferInputFragment :
+    BaseFragmentBinding<TransferInputFragmentBinding>(TransferInputFragmentBinding::inflate) {
+    private val viewModel: TransferInputViewModel by viewModels()
     private val args: TransferInputFragmentArgs by navArgs()
     var activity: MainActivity? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.transfer_input_fragment, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,7 +54,7 @@ class TransferInputFragment : Fragment() {
                     }
                     TransferInputViewModel.TransferInputViewState.SuccessSaveData -> {
                         context?.showLongToast("Success Save Data")
-                        args.barcodeNo?.let { et_tranferinput_qty.text?.clear() }
+                        args.barcodeNo?.let { viewBinding.includeTransferInput.etTranferinputQty.text?.clear() }
                             ?: kotlin.run { clearData() }
                     }
                     is TransferInputViewModel.TransferInputViewState.SuccessGetPurchaseValue -> {
@@ -79,10 +68,12 @@ class TransferInputFragment : Fragment() {
             inputValidation.observe(viewLifecycleOwner, {
                 when (it) {
                     TransferInputViewModel.InputValidation.BarcodeEmpty -> {
-                        til_transferinput_barcode.error = "Must Fill this Field"
+                        viewBinding.includeTransferInput.tilTransferinputBarcode.error =
+                            "Must Fill this Field"
                     }
                     TransferInputViewModel.InputValidation.QtyEmpty -> {
-                        til_transferinput_qty.error = "Must Fill this Field"
+                        viewBinding.includeTransferInput.tilTransferinputQty.error =
+                            "Must Fill this Field"
                     }
                 }
             })
@@ -90,66 +81,74 @@ class TransferInputFragment : Fragment() {
     }
 
     private fun showSuccessfulData(data: TransferShipmentLine) {
-        tv_transfer_item_name.text = data.description
-        til_transferinput_name.editText?.setText(data.no)
-        when (args.transferType) {
-            SHIPMENT -> tv_transfer_qty.text = "${data.alredyScanned}/${data.quantity}"
-            RECEIPT -> tv_transfer_qty.text = "${data.alredyScanned}/${data.qtyInTransit}"
+        with(viewBinding.includeTransferInput) {
+            tvTransferItemName.text = data.description
+            tilTransferinputName.editText?.setText(data.no)
+            when (args.transferType) {
+                SHIPMENT -> tvTransferQty.text = "${data.alredyScanned}/${data.quantity}"
+                RECEIPT -> tvTransferQty.text = "${data.alredyScanned}/${data.qtyInTransit}"
+            }
         }
     }
 
     private fun showSuccessPurchaseData(data: PurchaseOrderLine) {
-        tv_transfer_item_name.text = data.description
-        til_transferinput_name.editText?.setText(data.no)
-        tv_transfer_qty.text = "${data.alredyScanned}/${data.quantity}"
+        with(viewBinding.includeTransferInput) {
+            tvTransferItemName.text = data.description
+            tilTransferinputName.editText?.setText(data.no)
+            tvTransferQty.text = "${data.alredyScanned}/${data.quantity}"
+        }
     }
 
     private fun showSuccessStockOpname(data: StockOpnameData) {
-        tv_transfer_item_name.text = data.itemIdentifier
-        til_transferinput_name.editText?.setText(data.itemNo)
-        tv_transfer_qty.text = "${data.alredyScanned}/${data.qtyCalculated}"
-        et_transferinput_bincode.setText(data.binCode)
+        with(viewBinding.includeTransferInput) {
+            tvTransferItemName.text = data.itemIdentifier
+            tilTransferinputName.editText?.setText(data.itemNo)
+            tvTransferQty.text = "${data.alredyScanned}/${data.qtyCalculated}"
+            etTransferinputBincode.setText(data.binCode)
+        }
     }
 
     private fun setupView() {
-        toolbar_picking_list_input.title = viewModel.getCompanyName()
-        et_transfer_input_barcode.requestFocus()
-        args.barcodeNo?.let {
-            et_transfer_input_barcode.setText(it)
-            et_transfer_input_barcode.isEnabled = false
-            getPickingListLineData(it)
-            et_tranferinput_qty.requestFocus()
-        }
-        et_transfer_input_barcode.setOnEditorActionListener { _, keyCode, event ->
-            if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
-                || keyCode == EditorInfo.IME_ACTION_NEXT && (args.transferType != STOCKOPNAME)
-            ) {
-                getPickingListLineData(et_transfer_input_barcode.text.toString())
-                et_tranferinput_qty.requestFocus()
-                return@setOnEditorActionListener true
+        with(viewBinding) {
+            toolbarPickingListInput.title = viewModel.getCompanyName()
+            includeTransferInput.etTransferInputBarcode.requestFocus()
+            args.barcodeNo?.let {
+                includeTransferInput.etTransferInputBarcode.setText(it)
+                includeTransferInput.etTransferInputBarcode.isEnabled = false
+                getPickingListLineData(it)
+                includeTransferInput.etTranferinputQty.requestFocus()
             }
-            return@setOnEditorActionListener false
-        }
-
-        et_transferinput_bincode.setOnEditorActionListener { _, actionId, event ->
-            if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
-                || actionId == EditorInfo.IME_ACTION_NEXT && (args.transferType == STOCKOPNAME)
-            ) {
-                getPickingListLineData(et_transfer_input_barcode.text.toString(),
-                    et_transferinput_bincode.text.toString())
-                et_tranferinput_qty.requestFocus()
-                return@setOnEditorActionListener true
+            includeTransferInput.etTransferInputBarcode.setOnEditorActionListener { _, keyCode, event ->
+                if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
+                    || keyCode == EditorInfo.IME_ACTION_NEXT && (args.transferType != STOCKOPNAME)
+                ) {
+                    getPickingListLineData(includeTransferInput.etTransferInputBarcode.text.toString())
+                    includeTransferInput.etTranferinputQty.requestFocus()
+                    return@setOnEditorActionListener true
+                }
+                return@setOnEditorActionListener false
             }
-            return@setOnEditorActionListener false
-        }
 
-        tv_transfer_input_title.text = when (args.transferType) {
-            SHIPMENT -> getString(R.string.transfer_store)
-            RECEIPT -> getString(R.string.transfer_receipt_title)
-            PURCHASE -> getString(R.string.purchase_order_title)
-            STOCKOPNAME -> getString(R.string.stock_opname_title)
+            includeTransferInput.etTransferinputBincode.setOnEditorActionListener { _, actionId, event ->
+                if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
+                    || actionId == EditorInfo.IME_ACTION_NEXT && (args.transferType == STOCKOPNAME)
+                ) {
+                    getPickingListLineData(includeTransferInput.etTransferInputBarcode.text.toString(),
+                        includeTransferInput.etTransferinputBincode.text.toString())
+                    includeTransferInput.etTranferinputQty.requestFocus()
+                    return@setOnEditorActionListener true
+                }
+                return@setOnEditorActionListener false
+            }
+
+            tvTransferInputTitle.text = when (args.transferType) {
+                SHIPMENT -> getString(R.string.transfer_store)
+                RECEIPT -> getString(R.string.transfer_receipt_title)
+                PURCHASE -> getString(R.string.purchase_order_title)
+                STOCKOPNAME -> getString(R.string.stock_opname_title)
+            }
+            includeTransferInput.tilTransferBincode.isVisible = args.transferType == STOCKOPNAME
         }
-        til_transfer_bincode.isVisible = args.transferType == STOCKOPNAME
     }
 
 
@@ -163,44 +162,48 @@ class TransferInputFragment : Fragment() {
     }
 
     private fun setupListener() {
-        toolbar_picking_list_input.setOnClickListener { view?.findNavController()?.popBackStack() }
-        btn_reset.setOnClickListener {
-            args.barcodeNo?.let { et_tranferinput_qty.text?.clear() }
-                ?: kotlin.run { clearData() }
-        }
-        btn_save.setOnClickListener {
-            viewModel.checkUserInputValidation(
-                et_transfer_input_barcode.text.toString(),
-                et_tranferinput_qty.text.toString(),
-                args.transferType
-            )
-        }
-        toolbar_picking_list_input.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.history_data -> {
-                    val action =
-                        TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
-                            documentNo = args.transferNo,
-                            historyType = when (args.transferType) {
-                                SHIPMENT -> HistoryType.SHIPMENT
-                                RECEIPT -> HistoryType.RECEIPT
-                                PURCHASE -> HistoryType.PURCHASE
-                                STOCKOPNAME -> HistoryType.STOCKOPNAME
-                            }
-                        )
-                    view?.findNavController()?.navigate(action)
-                    true
+        with(viewBinding) {
+            toolbarPickingListInput.setOnClickListener { view?.findNavController()?.popBackStack() }
+            includeTransferInput.btnReset.setOnClickListener {
+                args.barcodeNo?.let { includeTransferInput.etTranferinputQty.text?.clear() }
+                    ?: kotlin.run { clearData() }
+            }
+            includeTransferInput.btnSave.setOnClickListener {
+                viewModel.checkUserInputValidation(
+                    includeTransferInput.etTransferInputBarcode.text.toString(),
+                    includeTransferInput.etTranferinputQty.text.toString(),
+                    args.transferType
+                )
+            }
+            toolbarPickingListInput.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.history_data -> {
+                        val action =
+                            TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
+                                documentNo = args.transferNo,
+                                historyType = when (args.transferType) {
+                                    SHIPMENT -> HistoryType.SHIPMENT
+                                    RECEIPT -> HistoryType.RECEIPT
+                                    PURCHASE -> HistoryType.PURCHASE
+                                    STOCKOPNAME -> HistoryType.STOCKOPNAME
+                                }
+                            )
+                        view?.findNavController()?.navigate(action)
+                        true
+                    }
+                    else -> false
                 }
-                else -> false
             }
         }
     }
 
     private fun clearData() {
-        et_transfer_input_barcode.text?.clear()
-        et_transferinput_name.text?.clear()
-        et_tranferinput_qty.text?.clear()
-        et_transfer_input_barcode.requestFocus()
+        with(viewBinding.includeTransferInput) {
+            etTransferInputBarcode.text?.clear()
+            etTransferinputName.text?.clear()
+            etTranferinputQty.text?.clear()
+            etTransferInputBarcode.requestFocus()
+        }
     }
 
 }

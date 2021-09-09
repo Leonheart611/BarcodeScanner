@@ -8,7 +8,7 @@
     tools:context=".ui.binreclass.detail.BinreclassDetailFragment">
 
     <include
-        android:id="@+id/include10"
+        android:id="@+id/include_header"
         layout="@layout/bin_reclass_header_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include10" />
+        app:layout_constraintTop_toBottomOf="@+id/include_header" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_rebin_input"
@@ -48,6 +48,18 @@
         android:clickable="true"
         app:backgroundTint="#81C784"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fab_input_rebin"
         app:srcCompat="@drawable/ic_edit" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_input_rebin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:backgroundTint="#FFF176"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_barcode_scanner" />
 </androidx.constraintlayout.widget.ConstraintLayout>

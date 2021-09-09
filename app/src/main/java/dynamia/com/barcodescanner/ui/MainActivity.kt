@@ -6,8 +6,10 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var loadingDialog: Dialog
 

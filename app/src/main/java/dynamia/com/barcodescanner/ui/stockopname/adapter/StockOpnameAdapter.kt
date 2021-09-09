@@ -1,18 +1,12 @@
 package dynamia.com.barcodescanner.ui.stockopname.adapter
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.StockOpnameListItemBinding
 import dynamia.com.core.data.entinty.StockOpnameData
-import dynamia.com.core.util.inflate
-import kotlinx.android.synthetic.main.picking_detail_line_item.view.*
-import kotlinx.android.synthetic.main.picking_detail_line_item.view.tv_description
-import kotlinx.android.synthetic.main.picking_detail_line_item.view.tv_item_code
-import kotlinx.android.synthetic.main.picking_detail_line_item.view.tv_qty
-import kotlinx.android.synthetic.main.stock_opname_list_item.view.*
 import java.util.*
 
 class StockOpnameAdapter(
@@ -29,7 +23,9 @@ class StockOpnameAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockOpnameHolder {
-        return StockOpnameHolder(parent.inflate(R.layout.stock_opname_list_item))
+        return StockOpnameHolder(StockOpnameListItemBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     override fun onBindViewHolder(holder: StockOpnameHolder, position: Int) {
@@ -60,15 +56,16 @@ class StockOpnameAdapter(
         }
     }
 
-    inner class StockOpnameHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class StockOpnameHolder(private val binding: StockOpnameListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(data: StockOpnameData) {
-            with(itemView) {
-                tv_item_code.text = data.itemIdentifier
-                tv_description.text = data.description
-                tv_qty.text =
+            with(binding) {
+                tvItemCode.text = data.itemIdentifier
+                tvDescription.text = data.description
+                tvQty.text =
                     "${data.alredyScanned}"
-                tv_stock_opname_bin.text = data.binCode
-                setOnClickListener {
+                tvStockOpnameBin.text = data.binCode
+                root.setOnClickListener {
                     listener.onStockClicklistener(data)
                 }
             }

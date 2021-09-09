@@ -8,30 +8,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.HomeFragmentBinding
+import dynamia.com.barcodescanner.databinding.RefreshWarningDialogBinding
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeViewState.DBhasEmpty
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
+import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
-import kotlinx.android.synthetic.main.home_fragment.*
-import kotlinx.android.synthetic.main.home_item_detail.*
-import kotlinx.android.synthetic.main.refresh_warning_dialog.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeFragment : Fragment() {
+@AndroidEntryPoint
+class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBinding::inflate) {
 
-    private val viewModel: HomeViewModel by viewModel()
+    private val viewModel: HomeViewModel by viewModels()
     private var activity: MainActivity? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         viewModel.checkEmptyData()
-        return inflater.inflate(R.layout.home_fragment, container, false)
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,16 +78,16 @@ class HomeFragment : Fragment() {
 
             transferReceiptRepository.getAllTransferReceiptHeader()
                 .observe(viewLifecycleOwner, {
-                    tv_count_receipt.text = it.size.toString()
+                    viewBinding.homeInclude.tvCountReceipt.text = it.size.toString()
                 })
             transferShipmentRepository.getAllTransferHeader().observe(viewLifecycleOwner, {
-                tv_transfer_count.text = it.size.toString()
+                viewBinding.homeInclude.tvTransferCount.text = it.size.toString()
             })
             purchaseOrderRepository.getAllPurchaseOrderHeader().observe(viewLifecycleOwner, {
-                tv_count_purchase_order.text = it.size.toString()
+                viewBinding.homeInclude.tvCountPurchaseOrder.text = it.size.toString()
             })
             stockOpnameDataRepository.getALlStockOpname().observe(viewLifecycleOwner, {
-                tv_count_stock_opname.text = it.size.toString()
+                viewBinding.homeInclude.tvCountStockOpname.text = it.size.toString()
             })
         }
     }
@@ -101,46 +103,51 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView() {
-        toolbar_home.title = getString(R.string.employee_title, viewModel.getCompanyName())
+        viewBinding.toolbarHome.title =
+            getString(R.string.employee_title, viewModel.getCompanyName())
     }
 
     private fun setListener() {
-        cv_log_out.setOnClickListener {
-            viewModel.checkUnpostedData(HomeViewModel.FunctionDialog.LOGOUT)
-        }
-        cv_refresh.setOnClickListener {
-            viewModel.checkUnpostedData(HomeViewModel.FunctionDialog.REFRESH)
-        }
-        cv_upload.setOnClickListener {
-            openPostStatusApi()
-        }
-        cv_transfer_store.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToPickingListFragment(
-                TransferType.SHIPMENT
-            )
-            findNavController().navigate(action)
-        }
-        cv_transfer_receipt.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToPickingListFragment(
-                TransferType.RECEIPT
-            )
-            findNavController().navigate(action)
-        }
-        cv_purchase_order.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToPickingListFragment(
-                TransferType.PURCHASE
-            )
-            findNavController().navigate(action)
-        }
-        cv_stock_opname.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToStockOpnameFragment()
-            findNavController().navigate(action)
-        }
-        cv_check_stock.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCheckStockFragment())
-        }
-        cv_bin_reclass.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBinReclassFragment())
+        with(viewBinding) {
+            cvLogOut.setOnClickListener {
+                viewModel.checkUnpostedData(HomeViewModel.FunctionDialog.LOGOUT)
+            }
+            cvRefresh.setOnClickListener {
+                viewModel.checkUnpostedData(HomeViewModel.FunctionDialog.REFRESH)
+            }
+            cvUpload.setOnClickListener {
+                openPostStatusApi()
+            }
+            with(homeInclude) {
+                cvTransferStore.setOnClickListener {
+                    val action = HomeFragmentDirections.actionHomeFragmentToPickingListFragment(
+                        TransferType.SHIPMENT
+                    )
+                    findNavController().navigate(action)
+                }
+                cvTransferReceipt.setOnClickListener {
+                    val action = HomeFragmentDirections.actionHomeFragmentToPickingListFragment(
+                        TransferType.RECEIPT
+                    )
+                    findNavController().navigate(action)
+                }
+                cvPurchaseOrder.setOnClickListener {
+                    val action = HomeFragmentDirections.actionHomeFragmentToPickingListFragment(
+                        TransferType.PURCHASE
+                    )
+                    findNavController().navigate(action)
+                }
+                cvStockOpname.setOnClickListener {
+                    val action = HomeFragmentDirections.actionHomeFragmentToStockOpnameFragment()
+                    findNavController().navigate(action)
+                }
+                cvCheckStock.setOnClickListener {
+                    findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCheckStockFragment())
+                }
+                cvBinReclass.setOnClickListener {
+                    findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBinReclassFragment())
+                }
+            }
         }
     }
 
@@ -152,27 +159,30 @@ class HomeFragment : Fragment() {
         context?.let { context ->
             val dialog = Dialog(context)
             with(dialog) {
-                setContentView(R.layout.refresh_warning_dialog)
+                val bind = RefreshWarningDialogBinding.inflate(layoutInflater)
+                setContentView(bind.root)
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 window
                     ?.setLayout(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     )
-                warningMessage?.let { message ->
-                    tv_warning_logout_refresh.text = message
-                }
-                unpostedCount?.let {
-                    tv_unpost_data.text =
-                        getString(R.string.refresh_and_logout_warning_unposted_data, it)
-                    tv_unpost_data.isVisible = true
-                }
-                btn_refresh_yes.setOnClickListener {
-                    call()
-                    dismiss()
-                }
-                btn_refresh_no.setOnClickListener {
-                    dismiss()
+                with(bind) {
+                    warningMessage?.let { message ->
+                        tvWarningLogoutRefresh.text = message
+                    }
+                    unpostedCount?.let {
+                        tvUnpostData.text =
+                            getString(R.string.refresh_and_logout_warning_unposted_data, it)
+                        tvUnpostData.isVisible = true
+                    }
+                    btnRefreshYes.setOnClickListener {
+                        call()
+                        dismiss()
+                    }
+                    btnRefreshNo.setOnClickListener {
+                        dismiss()
+                    }
                 }
                 show()
             }

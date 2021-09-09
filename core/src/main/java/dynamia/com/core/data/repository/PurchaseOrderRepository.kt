@@ -8,12 +8,14 @@ import dynamia.com.core.data.entinty.PurchaseInputData
 import dynamia.com.core.data.entinty.PurchaseOrderHeader
 import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.domain.ErrorResponse
+import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 interface PurchaseOrderRepository {
     /**
@@ -60,11 +62,10 @@ interface PurchaseOrderRepository {
 
 }
 
-class PurchaseOrderRepositoryImpl(
+class PurchaseOrderRepositoryImpl @Inject constructor(
     private val dao: PurchaseOrderDao,
-    private val sharedPreferences: SharedPreferences,
+    private val retrofitService: MasariAPI,
 ) : PurchaseOrderRepository {
-    private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
 
     /**
      * Purchase Order Header

@@ -4,15 +4,17 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetailViewModel
-import dynamia.com.core.base.ViewModelBase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.repository.StockOpnameRepository
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StockOpnameViewModel(
+@HiltViewModel
+class StockOpnameViewModel @Inject constructor(
     val repository: StockOpnameRepository,
     sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {

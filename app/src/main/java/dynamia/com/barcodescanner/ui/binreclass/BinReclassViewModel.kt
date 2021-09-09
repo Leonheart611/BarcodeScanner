@@ -3,17 +3,19 @@ package dynamia.com.barcodescanner.ui.binreclass
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dynamia.com.core.base.ViewModelBase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.repository.BinreclassRepository
 import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BinReclassViewModel(
+@HiltViewModel
+class BinReclassViewModel @Inject constructor(
     val binreclassRepository: BinreclassRepository,
     sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {

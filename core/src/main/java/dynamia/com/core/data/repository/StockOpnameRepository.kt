@@ -1,6 +1,5 @@
 package dynamia.com.core.data.repository
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.StockOpnameDao
@@ -8,10 +7,11 @@ import dynamia.com.core.data.entinty.StockCheckingData
 import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.StockOpnameInputData
 import dynamia.com.core.domain.ErrorResponse
-import dynamia.com.core.domain.MasariRetrofit
+import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 interface StockOpnameRepository {
     /**
@@ -50,9 +50,10 @@ interface StockOpnameRepository {
 
 }
 
-class StockOpnameRepositoryImpl(val dao: StockOpnameDao, val sharedPreferences: SharedPreferences) :
-    StockOpnameRepository {
-    private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
+class StockOpnameRepositoryImpl @Inject constructor(
+    val dao: StockOpnameDao,
+    private val retrofitService: MasariAPI,
+) : StockOpnameRepository {
 
     override fun getALlStockOpname(): LiveData<List<StockOpnameData>> = dao.getALlStockOpname()
 

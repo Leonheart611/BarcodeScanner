@@ -1,49 +1,43 @@
 package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 
-import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.TransferDetailFragmentBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.barcodescanner.ui.transferstore.adapter.PurchaseDetailLineAdapter
 import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAdapter
+import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.util.showLongToast
-import kotlinx.android.synthetic.main.dialog_validate_s.*
-import kotlinx.android.synthetic.main.transfer_detail_fragment.*
-import kotlinx.android.synthetic.main.transfer_header_layout.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferLineCLicklistener,
+@AndroidEntryPoint
+class TransferDetailFragment :
+    BaseFragmentBinding<TransferDetailFragmentBinding>(TransferDetailFragmentBinding::inflate),
+    TransferDetailLineAdapter.OnTransferLineCLicklistener,
     PurchaseDetailLineAdapter.OnPurchaseLineClicklistener {
-    private val viewModel: TransferDetailViewModel by viewModel()
+    private val viewModel: TransferDetailViewModel by viewModels()
     private val args: TransferDetailFragmentArgs by navArgs()
     private val transferReceiptAdapter = TransferDetailLineAdapter(mutableListOf())
     private val purchaseDetailLineAdapter = PurchaseDetailLineAdapter(mutableListOf())
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.transfer_detail_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        tv_transferdetail_store.text =
-            getString(R.string.transfer_store_name, viewModel.getCompanyName())
-        toolbar_transfer_detail.title = viewModel.getCompanyName()
-        tv_transferdetail_no.text = getString(R.string.transfer_store_no, args.transferNo)
-        rv_picking_detail.layoutManager =
-            LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        with(viewBinding) {
+            includeTransferDetail.tvTransferdetailStore.text =
+                getString(R.string.transfer_store_name, viewModel.getCompanyName())
+            toolbarTransferDetail.title = viewModel.getCompanyName()
+            includeTransferDetail.tvTransferdetailNo.text =
+                getString(R.string.transfer_store_no, args.transferNo)
+            rvPickingDetail.layoutManager =
+                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        }
         when (args.transferType) {
             SHIPMENT -> setupShipmentView()
             RECEIPT -> setupReceiptView()
@@ -56,20 +50,20 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
     private fun setupShipmentView() {
         viewModel.getTransferShipingDetail(args.transferNo)
         transferReceiptAdapter.setTransferType(args.transferType)
-        rv_picking_detail.adapter = transferReceiptAdapter
+        viewBinding.rvPickingDetail.adapter = transferReceiptAdapter
         transferReceiptAdapter.setOnClickListener(this)
     }
 
     private fun setupReceiptView() {
         viewModel.getTransferReceiptDetail(args.transferNo)
         transferReceiptAdapter.setTransferType(args.transferType)
-        rv_picking_detail.adapter = transferReceiptAdapter
+        viewBinding.rvPickingDetail.adapter = transferReceiptAdapter
         transferReceiptAdapter.setOnClickListener(this)
     }
 
     private fun setupPurchaseView() {
         viewModel.getPurchaseOrderDetail(args.transferNo)
-        rv_picking_detail.adapter = purchaseDetailLineAdapter
+        viewBinding.rvPickingDetail.adapter = purchaseDetailLineAdapter
         purchaseDetailLineAdapter.setOnClickListener(this)
     }
 
@@ -110,39 +104,44 @@ class TransferDetailFragment : Fragment(), TransferDetailLineAdapter.OnTransferL
 
     private fun setupMainViewPurchase(value: PurchaseOrderHeader) {
         with(value) {
-            tv_transferdetail_status.text = getString(R.string.transfer_store_status, status)
+            viewBinding.includeTransferDetail.tvTransferdetailStatus.text =
+                getString(R.string.transfer_store_status, status)
         }
     }
 
     private fun setupMainViewShipment(value: TransferShipmentHeader) {
         with(value) {
-            tv_transferdetail_status.text = getString(R.string.transfer_store_status, status)
+            viewBinding.includeTransferDetail.tvTransferdetailStatus.text =
+                getString(R.string.transfer_store_status, status)
         }
     }
 
     private fun setupViewReceipt(value: TransferReceiptHeader) {
         with(value) {
-            tv_transferdetail_status.text = getString(R.string.transfer_store_status, status)
+            viewBinding.includeTransferDetail.tvTransferdetailStatus.text =
+                getString(R.string.transfer_store_status, status)
         }
     }
 
     private fun setupListener() {
-        toolbar_transfer_detail.setNavigationOnClickListener {
-            view?.findNavController()?.popBackStack()
-        }
-        fab_input_transfer.setOnClickListener {
-            val bottomSheetFragment =
-                ScanInputTransferDialog.newInstance(args.transferNo, args.transferType)
-            bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
-        }
-        fab_manual_input_transfer.setOnClickListener {
-            val action =
-                TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                    args.transferNo, null, args.transferType)
-            view?.findNavController()?.navigate(action)
-        }
-        btn_submit.setOnClickListener {
-            showPostDialog()
+        with(viewBinding) {
+            toolbarTransferDetail.setNavigationOnClickListener {
+                view?.findNavController()?.popBackStack()
+            }
+            fabInputTransfer.setOnClickListener {
+                val bottomSheetFragment =
+                    ScanInputTransferDialog.newInstance(args.transferNo, args.transferType)
+                bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+            }
+            fabManualInputTransfer.setOnClickListener {
+                val action =
+                    TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
+                        args.transferNo, null, args.transferType)
+                view?.findNavController()?.navigate(action)
+            }
+            includeTransferDetail.btnSubmit.setOnClickListener {
+                showPostDialog()
+            }
         }
     }
 

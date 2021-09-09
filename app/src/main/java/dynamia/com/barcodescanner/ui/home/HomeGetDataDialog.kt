@@ -4,18 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat.getDrawable
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.BottomsheetHomeDataDialoogBinding
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.util.crossFade
 import dynamia.com.core.util.readJsonAsset
-import kotlinx.android.synthetic.main.bottomsheet_home_data_dialoog.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
+@AndroidEntryPoint
 class HomeGetDataDialog : BottomSheetDialogFragment() {
 
     companion object {
@@ -23,15 +24,19 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     }
 
     private var animateDuration: Int = 0
-    private val viewModel: HomeViewModel by viewModel()
+    private val viewModel: HomeViewModel by viewModels()
+    private var _viewBinding: BottomsheetHomeDataDialoogBinding? = null
+    private val viewBinding by lazy { _viewBinding!! }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
-        return inflater.inflate(R.layout.bottomsheet_home_data_dialoog, container, false)
+        _viewBinding = BottomsheetHomeDataDialoogBinding.inflate(inflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,56 +51,84 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
         viewModel.homeGetApiViewState.observe(viewLifecycleOwner, {
             when (it) {
                 SuccessGetShipingData -> {
-                    iv_status_picking.crossFade(animateDuration.toLong(), pb_transferstore)
+                    viewBinding.ivStatusPicking.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbTransferstore
+                    )
                 }
                 is FailedGetShippingData -> {
-                    tv_error_transferstore.text = it.message
-                    iv_status_picking.crossFade(animateDuration.toLong(), pb_transferstore)
-                    iv_status_picking.setImageDrawable(
-                        ResourcesCompat.getDrawable(resources, R.drawable.ic_error_circle, null)
-                    )
+                    with(viewBinding) {
+                        tvErrorTransferstore.text = it.message
+                        ivStatusPicking.crossFade(animateDuration.toLong(), pbTransferstore)
+                        ivStatusPicking.setImageDrawable(
+                            getDrawable(
+                                resources,
+                                R.drawable.ic_error_circle,
+                                null
+                            )
+                        )
+                    }
                 }
                 SuccessGetPurchaseData -> {
-                    iv_status_purchase_order.crossFade(animateDuration.toLong(), pb_purchase_order)
+                    viewBinding.ivStatusPurchaseOrder.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbPurchaseOrder
+                    )
                 }
                 is FailedGetPurchase -> {
-                    tv_error_purchase_order.text = it.message
-                    iv_status_purchase_order.crossFade(animateDuration.toLong(), pb_purchase_order)
-                    iv_status_purchase_order.setImageDrawable(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_error_circle,
-                            null
+                    with(viewBinding) {
+                        tvErrorPurchaseOrder.text = it.message
+                        ivStatusPurchaseOrder.crossFade(animateDuration.toLong(), pbPurchaseOrder)
+                        ivStatusPurchaseOrder.setImageDrawable(
+                            getDrawable(
+                                resources,
+                                R.drawable.ic_error_circle,
+                                null
+                            )
                         )
-                    )
+                    }
+
                 }
                 SuccessGetReceipt -> {
-                    iv_status_receipt_local.crossFade(animateDuration.toLong(), pb_receipt)
+                    viewBinding.ivStatusReceiptLocal.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbReceipt
+                    )
                 }
                 is FailedGetReceipt -> {
-                    tv_error_receipt.text = it.message
-                    iv_status_receipt_local.crossFade(animateDuration.toLong(), pb_receipt)
-                    iv_status_receipt_local.setImageDrawable(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_error_circle,
-                            null
+                    with(viewBinding) {
+                        tvErrorReceipt.text = it.message
+                        ivStatusReceiptLocal.crossFade(animateDuration.toLong(), pbReceipt)
+                        ivStatusReceiptLocal.setImageDrawable(
+                            getDrawable(
+                                resources,
+                                R.drawable.ic_error_circle,
+                                null
+                            )
                         )
-                    )
+                    }
                 }
                 is FailedGetStockOpname -> {
-                    tv_error_stock_opname.text = it.message
-                    iv_status_stock_opname.crossFade(animateDuration.toLong(), pb_stock_opname)
-                    iv_status_stock_opname.setImageDrawable(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_error_circle,
-                            null
+                    with(viewBinding) {
+                        tvErrorStockOpname.text = it.message
+                        ivStatusStockOpname.crossFade(
+                            animateDuration.toLong(),
+                            pbStockOpname
                         )
-                    )
+                        ivStatusStockOpname.setImageDrawable(
+                            getDrawable(
+                                resources,
+                                R.drawable.ic_error_circle,
+                                null
+                            )
+                        )
+                    }
                 }
                 SuccessGetStockOpname -> {
-                    iv_status_stock_opname.crossFade(animateDuration.toLong(), pb_stock_opname)
+                    viewBinding.ivStatusStockOpname.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbStockOpname
+                    )
                 }
             }
         })
@@ -145,7 +178,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     }
 
     fun setOnClicklistener() {
-        btn_dialog_close.setOnClickListener {
+        viewBinding.btnDialogClose.setOnClickListener {
             dismissAllowingStateLoss()
         }
     }

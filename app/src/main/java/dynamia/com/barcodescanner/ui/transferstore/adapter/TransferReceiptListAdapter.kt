@@ -1,12 +1,10 @@
 package dynamia.com.barcodescanner.ui.transferstore.adapter
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.TransferListItemBinding
 import dynamia.com.core.data.entinty.TransferReceiptHeader
-import dynamia.com.core.util.inflate
-import kotlinx.android.synthetic.main.transfer_list_item.view.*
 
 
 class TransferReceiptListAdapter(
@@ -25,7 +23,9 @@ class TransferReceiptListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransferReceiptHolder {
-        return TransferReceiptHolder(parent.inflate(R.layout.transfer_list_item))
+        return TransferReceiptHolder(TransferListItemBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     override fun getItemCount(): Int {
@@ -38,13 +38,14 @@ class TransferReceiptListAdapter(
         }
     }
 
-    class TransferReceiptHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class TransferReceiptHolder(val binding: TransferListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(value: TransferReceiptHeader, listener: OnTransferReceiptListCLicklistener) {
-            with(itemView) {
-                tv_transfer_no.text = value.no
-                tv_transfer_date.text = value.postingDate
-                tv_transfer_status.text = "Status: ${value.status}"
-                setOnClickListener {
+            with(binding) {
+                tvTransferNo.text = value.no
+                tvTransferDate.text = value.postingDate
+                tvTransferStatus.text = "Status: ${value.status}"
+                root.setOnClickListener {
                     listener.clickListener(value)
                 }
             }

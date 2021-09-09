@@ -8,10 +8,12 @@ import dynamia.com.core.data.dao.TransferShipmentDao
 import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferReceiptInput
 import dynamia.com.core.domain.ErrorResponse
+import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 interface TransferReceiptRepository {
     /**
@@ -43,12 +45,11 @@ interface TransferReceiptRepository {
 
 }
 
-class TransferReceiptRepositoryImpl(
+class TransferReceiptRepositoryImpl @Inject constructor(
     val dao: TransferReceiptDao,
-    private val sharedPreferences: SharedPreferences,
-    val lineDao: TransferShipmentDao,
+    private val retrofitService: MasariAPI,
+    private val lineDao: TransferShipmentDao,
 ) : TransferReceiptRepository {
-    private val retrofitService by lazy { MasariRetrofit().getClient(sharedPreferences) }
 
     override fun getAllTransferReceiptHeader(): LiveData<List<TransferReceiptHeader>> =
         dao.getAllTransferReceiptHeader()

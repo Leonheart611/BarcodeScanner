@@ -1,25 +1,25 @@
-package dynamia.com.core.base
+package dynamia.com.barcodescanner.di
 
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.getUserName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import org.koin.core.component.KoinComponent
+import javax.inject.Inject
 
-
-abstract class ViewModelBase(private val userRepository: SharedPreferences) : ViewModel(),
-    KoinComponent {
+abstract class ViewModelBase(
+        private val userRepository: SharedPreferences,
+) : ViewModel() {
     private val coroutineJob = Job()
     val coroutineContext = Dispatchers.IO + coroutineJob
-    val uiScope = CoroutineScope(coroutineContext)
     var gson: Gson = GsonBuilder()
-        .excludeFieldsWithoutExposeAnnotation()
-        .create()
+            .excludeFieldsWithoutExposeAnnotation()
+            .create()
 
     fun getCompanyName(): String {
         return userRepository.getString(Constant.USERNAME_KEY, "") ?: ""

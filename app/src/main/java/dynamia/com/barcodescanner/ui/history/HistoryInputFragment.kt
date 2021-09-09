@@ -1,47 +1,42 @@
 package dynamia.com.barcodescanner.ui.history
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.HistoryInputFragmentBinding
 import dynamia.com.barcodescanner.ui.history.HistoryType.*
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryPurchaseInputAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryStockOpnameInputAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferReceiptInputAdapter
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferHistoryBottomSheet
+import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.PurchaseInputData
 import dynamia.com.core.data.entinty.StockOpnameInputData
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferReceiptInput
-import kotlinx.android.synthetic.main.history_input_fragment.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySelected,
+@AndroidEntryPoint
+class HistoryInputFragment :
+    BaseFragmentBinding<HistoryInputFragmentBinding>(HistoryInputFragmentBinding::inflate),
+    HistoryTransferInputAdapter.OnHistorySelected,
     HistoryTransferReceiptInputAdapter.OnHistorySelected,
     HistoryPurchaseInputAdapter.OnPurchaseHistoryClicklistener,
     HistoryStockOpnameInputAdapter.OnHistorySelected {
 
-    private val viewModel: HistoryInputViewModel by viewModel()
+    private val viewModel: HistoryInputViewModel by viewModels()
     private val args: HistoryInputFragmentArgs by navArgs()
     private var scanEntriesAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
     private var scanTransferReceiptAdapter =
         HistoryTransferReceiptInputAdapter(mutableListOf(), this)
     private var scanInputPurchaseAdapter = HistoryPurchaseInputAdapter(mutableListOf(), this)
     private var scanStockInputAdapter = HistoryStockOpnameInputAdapter(mutableListOf(), this)
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.history_input_fragment, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,7 +46,7 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
     }
 
     private fun setupRecylerView() {
-        with(rv_input_history) {
+        with(viewBinding.rvInputHistory) {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             adapter = when (args.historyType) {
                 SHIPMENT -> scanEntriesAdapter
@@ -65,7 +60,8 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
     private fun setupView() {
         when (args.historyType) {
             SHIPMENT -> {
-                tv_transfer_input.text = getString(R.string.transfer_shipment_history_title)
+                viewBinding.tvTransferInput.text =
+                    getString(R.string.transfer_shipment_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.transferShipmentRepository.getTransferInputHistoryLiveData(documentNo)
                         .observe(viewLifecycleOwner, {
@@ -74,7 +70,8 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
                 }
             }
             RECEIPT -> {
-                tv_transfer_input.text = getString(R.string.transfer_receipt_history_title)
+                viewBinding.tvTransferInput.text =
+                    getString(R.string.transfer_receipt_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.transferReceiptRepository.getTransferInputHistoryLiveData(documentNo)
                         .observe(viewLifecycleOwner, {
@@ -83,7 +80,7 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
                 }
             }
             PURCHASE -> {
-                tv_transfer_input.text = getString(R.string.purchase_order_history_title)
+                viewBinding.tvTransferInput.text = getString(R.string.purchase_order_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.purchaseOrderRepository.getAllPurchaseInputByNo(documentNo)
                         .observe(viewLifecycleOwner, {
@@ -92,7 +89,7 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
                 }
             }
             STOCKOPNAME -> {
-                tv_transfer_input.text = getString(R.string.stock_opname_history_title)
+                viewBinding.tvTransferInput.text = getString(R.string.stock_opname_history_title)
                 args.documentNo?.let { documentNo ->
                     viewModel.stockOpnameRepository.getAllInputStockOpnameByDocumentNo(documentNo)
                         .observe(viewLifecycleOwner, {
@@ -109,8 +106,8 @@ class HistoryInputFragment : Fragment(), HistoryTransferInputAdapter.OnHistorySe
     }
 
     private fun setupListener() {
-        tb_history.title = viewModel.getCompanyName()
-        tb_history.setNavigationOnClickListener {
+        viewBinding.tbHistory.title = viewModel.getCompanyName()
+        viewBinding.tbHistory.setNavigationOnClickListener {
             view?.findNavController()?.popBackStack()
         }
     }

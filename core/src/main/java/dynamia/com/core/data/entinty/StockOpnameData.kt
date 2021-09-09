@@ -42,3 +42,7 @@ data class StockCheckingData(
     @SerializedName("Global_Dimension_2_Filter") val globalDimension2Filter: String,
     @SerializedName("Drop_Shipment_Filter") val dropShipmentFilter: String
 )
+
+data class StockCheckDataAssets(
+    @SerializedName("value") val value: List<StockCheckingData>,
+)

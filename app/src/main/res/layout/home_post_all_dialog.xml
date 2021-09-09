@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <include
-            android:id="@+id/include5"
+            android:id="@+id/include_transfer"
             layout="@layout/picking_post_bottom_dialog"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -21,40 +21,40 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
-            android:id="@+id/include6"
+            android:id="@+id/include_receipt"
             layout="@layout/receipt_post_bottom_sheet_dialog"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include5" />
+            app:layout_constraintTop_toBottomOf="@+id/include_transfer" />
 
         <include
-            android:id="@+id/include7"
+            android:id="@+id/include_purchase"
             layout="@layout/receipt_post_import_bottom_sheet_dialog"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include6" />
+            app:layout_constraintTop_toBottomOf="@+id/include_receipt" />
 
         <include
-            android:id="@+id/include8"
+            android:id="@+id/include_stock"
             layout="@layout/fragment_post_stock_count_dialog"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include7" />
+            app:layout_constraintTop_toBottomOf="@+id/include_purchase" />
 
         <include
-            android:id="@+id/include12"
+            android:id="@+id/include_binreclass"
             layout="@layout/fragment_post_bin_reclass_dialog"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include8" />
+            app:layout_constraintTop_toBottomOf="@+id/include_stock" />
 
         <Button
             android:id="@+id/btn_dismiss_all_post"
@@ -67,7 +67,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include12" />
+            app:layout_constraintTop_toBottomOf="@+id/include_binreclass" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

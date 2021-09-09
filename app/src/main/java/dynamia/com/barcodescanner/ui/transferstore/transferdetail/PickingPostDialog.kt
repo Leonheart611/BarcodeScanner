@@ -5,18 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.PickingPostBottomDialogBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.core.util.crossFade
-import kotlinx.android.synthetic.main.picking_post_bottom_dialog.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class PickingPostDialog : BottomSheetDialogFragment() {
 
-    val viewModel: TransferDetailViewModel by viewModel()
+    val viewModel: TransferDetailViewModel by viewModels()
     private val postType by lazy { arguments?.getSerializable(POST_TYPE) as TransferType }
+    private lateinit var _viewBinding: PickingPostBottomDialogBinding
+    val viewBinding by lazy { _viewBinding }
 
     private var animateDuration: Int = 0
     override fun onCreateView(
@@ -25,7 +29,8 @@ class PickingPostDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?,
     ): View? {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
-        return inflater.inflate(R.layout.picking_post_bottom_dialog, container, false)
+        _viewBinding = PickingPostBottomDialogBinding.inflate(inflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,41 +48,45 @@ class PickingPostDialog : BottomSheetDialogFragment() {
         viewModel.pickingPostViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.PickingDetailPostViewState.GetUnpostedData -> {
-                    tv_transfer_total_unposted.text = it.data.toString()
+                    viewBinding.tvTransferTotalUnposted.text = it.data.toString()
                 }
                 is TransferDetailViewModel.PickingDetailPostViewState.GetSuccessfullyPostedData -> {
-                    tv_transfer_shipment_posted_count.text = it.data.toString()
+                    viewBinding.tvTransferShipmentPostedCount.text = it.data.toString()
                 }
                 is TransferDetailViewModel.PickingDetailPostViewState.ErrorPostData -> {
-                    iv_status_post_transfer_shipment.crossFade(
-                        animateDuration.toLong(),
-                        pb_transfer_shipment_post_dialog
-                    )
-                    iv_status_post_transfer_shipment.setImageDrawable(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_error_circle,
-                            null
+                    with(viewBinding) {
+                        ivStatusPostTransferShipment.crossFade(
+                            animateDuration.toLong(),
+                            pbTransferShipmentPostDialog
                         )
-                    )
-                    tv_error_transfer_shipment_post.text = it.message
-                    btn_dismis_picking_post.isEnabled = true
+                        ivStatusPostTransferShipment.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                R.drawable.ic_error_circle,
+                                null
+                            )
+                        )
+                        tvErrorTransferShipmentPost.text = it.message
+                        btnDismisPickingPost.isEnabled = true
+                    }
                 }
                 TransferDetailViewModel.PickingDetailPostViewState.AllDataPosted -> {
-                    iv_status_post_transfer_shipment.crossFade(
+                    viewBinding.ivStatusPostTransferShipment.crossFade(
                         animateDuration.toLong(),
-                        pb_transfer_shipment_post_dialog
+                        viewBinding.pbTransferShipmentPostDialog
                     )
-                    btn_dismis_picking_post.isEnabled = true
+                    viewBinding.btnDismisPickingPost.isEnabled = true
                 }
             }
         })
     }
 
     private fun setClicklistener() {
-        btn_dismis_picking_post.isEnabled = false
-        btn_dismis_picking_post.setOnClickListener {
-            dismissAllowingStateLoss()
+        with(viewBinding) {
+            btnDismisPickingPost.isEnabled = false
+            btnDismisPickingPost.setOnClickListener {
+                dismissAllowingStateLoss()
+            }
         }
     }
 
@@ -90,6 +99,7 @@ class PickingPostDialog : BottomSheetDialogFragment() {
                 arguments = argument
             }
         }
+
         const val POST_TYPE = "post_type"
     }
 
