@@ -32,6 +32,10 @@ interface StockOpnameDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = StockOpnameData::class)
     fun insertStockOpnameData(data: StockOpnameData)
 
+
+    @Query("SELECT count(*) from StockOpnameData")
+    fun getStockOpnameDataCount(): Int
+
     @Query("DELETE FROM StockOpnameData")
     fun deleteAllStockOpname()
 

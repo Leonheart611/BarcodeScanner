@@ -104,6 +104,8 @@
     <string name="transfer_store">Transfer Shipment</string>
     <string name="transfer_store_name">Store: %1$s</string>
     <string name="transfer_store_status">Status: %1$s</string>
+    <string name="transfer_store_from">From: %1$s</string>
+    <string name="transfer_store_to">To: %1$s</string>
     <string name="transfer_store_no">No: %1$s</string>
     <string name="transfer_shipment_history_title">Transfer Shipment History</string>
     <string name="transfer_receipt_title">Transfer Receipt</string>

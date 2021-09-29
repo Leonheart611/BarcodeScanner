@@ -75,6 +75,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun checkServerUrl(server: String): Boolean {
+        return (server.endsWith("/")) && (server.startsWith("http://") || server.startsWith("https://"))
+    }
+
     sealed class LoginState {
         class Success(val message: String) : LoginState()
         class Error(val message: String) : LoginState()

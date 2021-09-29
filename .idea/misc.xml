@@ -4,13 +4,27 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/bin_reclass_header_layout.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/bin_reclass_item_holder.xml" value="0.25" />
         <entry key="app/src/main/res/layout/binreclass_detail_fragment.xml" value="0.11651469098277609" />
         <entry key="app/src/main/res/layout/check_stock_fragment.xml" value="0.11651469098277609" />
+        <entry key="app/src/main/res/layout/dialog_multiple_item.xml" value="0.11550151975683891" />
+        <entry key="app/src/main/res/layout/home_fragment.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/home_item_detail.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/home_item_list.xml" value="0.24619480673940683" />
         <entry key="app/src/main/res/layout/input_rebin_class_dialog.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_history_input.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_input_header.xml" value="0.12193287479792173" />
+        <entry key="app/src/main/res/layout/item_receipt_import_list.xml" value="0.11550151975683891" />
+        <entry key="app/src/main/res/layout/item_receipt_list.xml" value="0.11550151975683891" />
         <entry key="app/src/main/res/layout/item_stock_checking_result.xml" value="0.19604206997396906" />
-        <entry key="app/src/main/res/layout/item_transfer_input_history.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_transfer_input_history.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/picking_detail_line_item.xml" value="0.11550151975683891" />
+        <entry key="app/src/main/res/layout/stock_count_item.xml" value="0.11550151975683891" />
+        <entry key="app/src/main/res/layout/stock_opname_list_item.xml" value="0.10168159472084698" />
         <entry key="app/src/main/res/layout/transfer_detail_fragment.xml" value="0.11651469098277609" />
+        <entry key="app/src/main/res/layout/transfer_header_layout.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/transfer_input_fragment.xml" value="0.11550151975683891" />
+        <entry key="app/src/main/res/layout/transfer_list_item.xml" value="0.25" />
       </map>
     </option>
   </component>

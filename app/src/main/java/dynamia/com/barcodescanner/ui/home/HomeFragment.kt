@@ -21,6 +21,7 @@ import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
 
+
 @AndroidEntryPoint
 class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBinding::inflate) {
 
@@ -63,8 +64,10 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
                         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
                     }
                     is HomeViewModel.HomeViewState.GetUnpostedDataLogout -> {
-                        showDialog(if (it.unpostedCount.isEmpty()) null else it.unpostedCount,
-                            getString(R.string.logout_warning)) {
+                        showDialog(
+                            if (it.unpostedCount.isEmpty()) null else it.unpostedCount,
+                            getString(R.string.logout_warning)
+                        ) {
                             viewModel.logOutSharedPreferences()
                         }
                     }
@@ -94,6 +97,7 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
 
     private fun openStatusApi() {
         val dialog = HomeGetDataDialog()
+        dialog.setCancelable(false);
         dialog.show(requireActivity().supportFragmentManager, HomeGetDataDialog.TAG)
     }
 

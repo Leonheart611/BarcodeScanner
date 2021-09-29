@@ -23,9 +23,13 @@ class PurchaseHeaderListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PurchaseHeaderHolder {
-        return PurchaseHeaderHolder(TransferListItemBinding.inflate(LayoutInflater.from(parent.context),
-            parent,
-            false))
+        return PurchaseHeaderHolder(
+            TransferListItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun getItemCount(): Int {
@@ -44,7 +48,7 @@ class PurchaseHeaderListAdapter(
             with(binding) {
                 tvTransferNo.text = value.no
                 tvTransferDate.text = value.documentDate
-                tvTransferStatus.text = "Status: ${value.status}"
+                tvTransferFrom.text = "Status: ${value.status}"
                 root.setOnClickListener {
                     listener.clickListener(value)
                 }

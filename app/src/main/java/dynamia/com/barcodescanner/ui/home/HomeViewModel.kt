@@ -33,13 +33,16 @@ class HomeViewModel @Inject constructor(
     private var _homeViewState = MutableLiveData<Event<HomeViewState>>()
     val homeViewState: LiveData<Event<HomeViewState>> by lazy { _homeViewState }
 
-    private var _homeGetApiViewState = MutableLiveData<HomeGetApiViewState>()
-    val homeGetApiViewState: LiveData<HomeGetApiViewState> by lazy { _homeGetApiViewState }
+    private var _homeGetApiViewState = MutableLiveData<Event<HomeGetApiViewState>>()
+    val homeGetApiViewState: LiveData<Event<HomeGetApiViewState>> by lazy { _homeGetApiViewState }
 
     private var _homePostViewState = MutableLiveData<HomePostViewState>()
     val homePostViewState: LiveData<HomePostViewState> by lazy { _homePostViewState }
 
-    private fun clearAllDB() {
+    var progress = 0
+    val homeGetDataCount = MutableLiveData<Event<Int>>()
+
+    private fun clearAllDB() =
         viewModelScope.launch {
             try {
                 io {
@@ -50,19 +53,16 @@ class HomeViewModel @Inject constructor(
                     transferReceiptRepository.clearAllInputData()
                     binreclassRepository.deleteAllBinreclass()
                     binreclassRepository.deleteAllRebinInput()
+                    sharedPreferences.edit().clear().apply()
                 }
             } catch (e: Exception) {
                 _homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
                 Log.e("clearAllDb", e.localizedMessage)
             }
         }
-    }
 
     fun logOutSharedPreferences() {
         clearAllDB()
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.apply()
         _homeViewState.value = Event(HomeViewState.HasSuccessLogout)
     }
 
@@ -70,6 +70,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 io {
+                    homeGetDataCount.postValue(Event(0))
                     transferShipmentRepository.deleteAllTransferHeader()
                     transferShipmentRepository.deleteAllTransferLine()
                     transferShipmentRepository.deleteAllTransferInput()
@@ -82,25 +83,30 @@ class HomeViewModel @Inject constructor(
 
                     transferShipmentRepository.getTransferShipmentHeaderAsync()
                         .collect { dataHeader ->
+                            progress++
+                            homeGetDataCount.postValue(Event(progress))
                             when (dataHeader) {
                                 is Success -> {
                                     dataHeader.value.forEach {
                                         transferShipmentRepository.insertTransferHeader(it)
                                     }
+
                                 }
                                 is GenericError -> {
                                     ui {
                                         _homeGetApiViewState.value =
-                                            FailedGetShippingData("${dataHeader.code} ${dataHeader.error}")
+                                            Event(FailedGetShippingData("${dataHeader.code} ${dataHeader.error}"))
                                     }
                                 }
                                 is NetworkError -> {
-                                    _homeGetApiViewState.postValue(FailedGetShippingData("Error Network"))
+                                    _homeGetApiViewState.postValue(Event(FailedGetShippingData("Error Network")))
 
                                 }
                             }
                         }
                     transferShipmentRepository.getTransferShipmentLineAsync().collect { data ->
+                        progress++
+                        homeGetDataCount.postValue(Event(progress))
                         when (data) {
                             is Success -> {
                                 data.value.forEach {
@@ -110,18 +116,18 @@ class HomeViewModel @Inject constructor(
                             is GenericError -> {
                                 ui {
                                     _homeGetApiViewState.value =
-                                        FailedGetShippingData("${data.code} ${data.error}")
+                                        Event(FailedGetShippingData("${data.code} ${data.error}"))
                                 }
                             }
                             is NetworkError -> {
-                                _homeGetApiViewState.postValue(FailedGetShippingData(data.error))
+                                _homeGetApiViewState.postValue(Event(FailedGetShippingData(data.error)))
                             }
                         }
                     }
                 }
-                ui { _homeGetApiViewState.value = SuccessGetShipingData }
+                ui { _homeGetApiViewState.value = Event(SuccessGetShipingData) }
             } catch (e: Exception) {
-                _homeGetApiViewState.value = FailedGetShippingData(e.localizedMessage)
+                _homeGetApiViewState.value = Event(FailedGetShippingData(e.localizedMessage))
             }
         }
     }
@@ -130,8 +136,14 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 io {
-                    transferShipmentRepository.getCheckEmptyOrNot().collect {
-                        ui { _homeViewState.value = Event(HomeViewState.DBhasEmpty(it)) }
+                    val shipmentCount = transferShipmentRepository.getCheckEmptyOrNot()
+                    val transferCount = transferReceiptRepository.getTransferReceiptCount()
+                    val purchaseCount = purchaseOrderRepository.getPurchaseOrderHeaderCount()
+                    val stockOpnameCount = stockOpnameDataRepository.countStockOpnameData()
+
+                    ui {
+                        _homeViewState.value =
+                            Event(HomeViewState.DBhasEmpty(shipmentCount + transferCount + purchaseCount + stockOpnameCount))
                     }
                 }
             } catch (e: Exception) {
@@ -150,13 +162,16 @@ class HomeViewModel @Inject constructor(
                         deleteAllPurchaseInputData()
 
                         getPurchaseOrderHeaderAsync().collect { value ->
+                            progress++
+                            homeGetDataCount.postValue(Event(progress))
                             when (value) {
                                 is GenericError -> ui {
                                     _homeGetApiViewState.value =
-                                        FailedGetPurchase("${value.code} ${value.error}")
+                                        Event(FailedGetPurchase("${value.code} ${value.error}"))
                                 }
-                                is NetworkError -> _homeGetApiViewState.postValue(FailedGetPurchase(
-                                    value.error))
+                                is NetworkError -> _homeGetApiViewState.postValue(
+                                    Event(FailedGetPurchase(value.error))
+                                )
                                 is Success -> {
                                     value.value.forEach {
                                         insertPurchaseOrderHeader(it)
@@ -165,16 +180,30 @@ class HomeViewModel @Inject constructor(
                             }
                         }
                         getPurchaseOrderLineAsync().collect { value ->
+                            progress++
+                            homeGetDataCount.postValue(Event(progress))
                             when (value) {
-                                is GenericError -> _homeGetApiViewState.postValue(FailedGetPurchase(
-                                    "${value.code} ${value.error}"))
-                                is NetworkError -> _homeGetApiViewState.postValue(FailedGetPurchase(
-                                    value.error))
+                                is GenericError -> _homeGetApiViewState.postValue(
+                                    Event(
+                                        FailedGetPurchase(
+                                            "${value.code} ${value.error}"
+                                        )
+                                    )
+                                )
+                                is NetworkError -> _homeGetApiViewState.postValue(
+                                    Event(
+                                        FailedGetPurchase(
+                                            value.error
+                                        )
+                                    )
+                                )
                                 is Success -> {
                                     value.value.forEach {
                                         insertPurchaseOrderLine(it)
                                     }
-                                    ui { _homeGetApiViewState.value = SuccessGetPurchaseData }
+                                    ui {
+                                        _homeGetApiViewState.value = Event(SuccessGetPurchaseData)
+                                    }
                                 }
                             }
                         }
@@ -182,7 +211,7 @@ class HomeViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _homeGetApiViewState.value =
-                    FailedGetPurchase(e.localizedMessage)
+                    Event(FailedGetPurchase(e.localizedMessage))
             }
         }
     }
@@ -195,25 +224,32 @@ class HomeViewModel @Inject constructor(
                     transferReceiptRepository.clearAllInputData()
 
                     transferReceiptRepository.getTransferReceiptHeaderAsync().collect { value ->
+                        progress++
+                        homeGetDataCount.postValue(Event(progress))
                         when (value) {
                             is GenericError -> ui {
                                 _homeGetApiViewState.value =
-                                    FailedGetReceipt("${value.code} ${value.error}")
+                                    Event(FailedGetReceipt("${value.code} ${value.error}"))
                             }
-                            is NetworkError -> _homeGetApiViewState.postValue(FailedGetReceipt(
-                                value.error))
+                            is NetworkError -> _homeGetApiViewState.postValue(
+                                Event(
+                                    FailedGetReceipt(
+                                        value.error
+                                    )
+                                )
+                            )
                             is Success -> {
                                 value.value.forEach {
                                     transferReceiptRepository.insertTransferReceiptHeader(it)
                                 }
-                                ui { _homeGetApiViewState.value = SuccessGetReceipt }
+                                ui { _homeGetApiViewState.value = Event(SuccessGetReceipt) }
                             }
                         }
                     }
                 }
             } catch (e: Exception) {
                 _homeGetApiViewState.value =
-                    FailedGetReceipt(e.localizedMessage)
+                    Event(FailedGetReceipt(e.localizedMessage))
             }
         }
     }
@@ -227,18 +263,21 @@ class HomeViewModel @Inject constructor(
                         deleteAllStockOpname()
 
                         getStockOpnameAsync().collect { value ->
+                            progress++
+                            homeGetDataCount.postValue(Event(progress))
                             when (value) {
                                 is GenericError -> ui {
                                     _homeGetApiViewState.value =
-                                        FailedGetStockOpname("${value.code} ${value.error}")
+                                        Event(FailedGetStockOpname("${value.code} ${value.error}"))
                                 }
                                 is NetworkError -> _homeGetApiViewState.postValue(
-                                    FailedGetStockOpname(value.error))
+                                    Event(FailedGetStockOpname(value.error))
+                                )
                                 is Success -> {
                                     value.value.forEach {
                                         insertStockOpnameData(it)
                                     }
-                                    ui { _homeGetApiViewState.value = SuccessGetStockOpname }
+                                    ui { _homeGetApiViewState.value = Event(SuccessGetStockOpname) }
                                 }
                             }
                         }
@@ -246,7 +285,7 @@ class HomeViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _homeGetApiViewState.value =
-                    FailedGetStockOpname(e.localizedMessage)
+                    Event(FailedGetStockOpname(e.localizedMessage))
             }
         }
     }
@@ -472,10 +511,13 @@ class HomeViewModel @Inject constructor(
     sealed class HomeGetApiViewState {
         object SuccessGetShipingData : HomeGetApiViewState()
         class FailedGetShippingData(val message: String) : HomeGetApiViewState()
+
         object SuccessGetReceipt : HomeGetApiViewState()
         class FailedGetReceipt(val message: String) : HomeGetApiViewState()
+
         object SuccessGetPurchaseData : HomeGetApiViewState()
         class FailedGetPurchase(val message: String) : HomeGetApiViewState()
+
         object SuccessGetStockOpname : HomeGetApiViewState()
         class FailedGetStockOpname(val message: String) : HomeGetApiViewState()
     }
@@ -560,7 +602,8 @@ class HomeViewModel @Inject constructor(
                     transferReceiptHeader.value?.let {
                         it.forEach { transferReceiptHeader ->
                             transferReceiptRepository.insertTransferReceiptHeader(
-                                transferReceiptHeader)
+                                transferReceiptHeader
+                            )
                         }
                     }
                     transferShipmentLine.value?.let {
@@ -584,10 +627,10 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     ui {
-                        _homeGetApiViewState.value = SuccessGetStockOpname
-                        _homeGetApiViewState.value = SuccessGetShipingData
-                        _homeGetApiViewState.value = SuccessGetReceipt
-                        _homeGetApiViewState.value = SuccessGetPurchaseData
+                        _homeGetApiViewState.value = Event(SuccessGetStockOpname)
+                        _homeGetApiViewState.value = Event(SuccessGetShipingData)
+                        _homeGetApiViewState.value = Event(SuccessGetReceipt)
+                        _homeGetApiViewState.value = Event(SuccessGetPurchaseData)
                     }
                 }
             }

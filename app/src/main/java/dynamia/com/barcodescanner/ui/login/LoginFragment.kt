@@ -46,7 +46,7 @@ class LoginFragment :
         with(viewBinding) {
             btnLogin.setOnClickListener {
                 if (checkNotEmpty()) {
-                    if (etServerHost.text.toString().endsWith("/")) {
+                    if (viewModel.checkServerUrl(etServerHost.text.toString())) {
                         viewModel.saveSharedPreferences(
                             baseUrl = etServerHost.text.toString(),
                             username = tiedUsername.text.toString(),
@@ -55,7 +55,7 @@ class LoginFragment :
                             companyName = etCompanyName.text.toString()
                         )
                     } else {
-                        context?.showLongToast("Host Name Must end with (/)")
+                        context?.showLongToast("Host Name Must start with (HTTP://) and end with (/)")
                     }
                 } else {
                     context?.showLongToast("Please fill all form")

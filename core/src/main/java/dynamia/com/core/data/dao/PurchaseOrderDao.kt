@@ -20,6 +20,9 @@ interface PurchaseOrderDao {
     @Query("SELECT * FROM PurchaseOrderHeader WHERE `no` =:no ")
     fun getPurchaseOrderDetail(no: String): PurchaseOrderHeader
 
+    @Query("SELECT count(*) from PurchaseOrderHeader")
+    fun getPurchaseOrderHeaderCount(): Int
+
     @Query("DELETE FROM PurchaseOrderHeader")
     fun deleteAllPurchaseOrderHeader()
 

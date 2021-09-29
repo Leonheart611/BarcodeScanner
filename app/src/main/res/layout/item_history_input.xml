@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     app:cardCornerRadius="5dp"
     app:cardElevation="5dp"
-    app:cardPreventCornerOverlap="true"
-    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="false"
     app:contentPadding="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -171,6 +172,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView13"
             tools:text="Post Status :  Posted" />

@@ -1,6 +1,5 @@
 package dynamia.com.core.data.repository
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.PurchaseOrderDao
@@ -9,7 +8,6 @@ import dynamia.com.core.data.entinty.PurchaseOrderHeader
 import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
-import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,6 +23,7 @@ interface PurchaseOrderRepository {
     suspend fun insertPurchaseOrderHeader(value: PurchaseOrderHeader)
     suspend fun getPurchaseOrderDetail(no: String): Flow<PurchaseOrderHeader>
     suspend fun deleteAllPurchaseOrderHeader()
+    suspend fun getPurchaseOrderHeaderCount(): Int
 
     /**
      * Purchase Order Line
@@ -81,6 +80,7 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
         emit(dao.getPurchaseOrderDetail(no))
     }
 
+    override suspend fun getPurchaseOrderHeaderCount(): Int = dao.getPurchaseOrderHeaderCount()
 
     override suspend fun deleteAllPurchaseOrderHeader() {
         dao.deleteAllPurchaseOrderHeader()

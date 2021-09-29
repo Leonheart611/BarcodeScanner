@@ -43,8 +43,9 @@ class TransferReceiptListAdapter(
         fun bind(value: TransferReceiptHeader, listener: OnTransferReceiptListCLicklistener) {
             with(binding) {
                 tvTransferNo.text = value.no
+                tvTransferFrom.text = value.transferFromCode
+                tvTransferTo.text = value.transferToCode
                 tvTransferDate.text = value.postingDate
-                tvTransferStatus.text = "Status: ${value.status}"
                 root.setOnClickListener {
                     listener.clickListener(value)
                 }

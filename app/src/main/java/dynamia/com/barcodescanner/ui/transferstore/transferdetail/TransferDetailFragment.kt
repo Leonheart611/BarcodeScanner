@@ -30,8 +30,6 @@ class TransferDetailFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(viewBinding) {
-            includeTransferDetail.tvTransferdetailStore.text =
-                getString(R.string.transfer_store_name, viewModel.getCompanyName())
             toolbarTransferDetail.title = viewModel.getCompanyName()
             includeTransferDetail.tvTransferdetailNo.text =
                 getString(R.string.transfer_store_no, args.transferNo)
@@ -70,7 +68,8 @@ class TransferDetailFragment :
     private fun setObseverable() {
         when (args.transferType) {
             SHIPMENT, RECEIPT -> viewModel.transferShipmentRepository.getLineListFromHeaderLiveData(
-                args.transferNo)
+                args.transferNo
+            )
                 .observe(viewLifecycleOwner, {
                     transferReceiptAdapter.update(it.toMutableList())
                 })
@@ -104,22 +103,33 @@ class TransferDetailFragment :
 
     private fun setupMainViewPurchase(value: PurchaseOrderHeader) {
         with(value) {
-            viewBinding.includeTransferDetail.tvTransferdetailStatus.text =
+            viewBinding.includeTransferDetail.tvTransferdetailTo.text =
                 getString(R.string.transfer_store_status, status)
+            viewBinding.includeTransferDetail.tvTransferdetailDate.text =
+                getString(R.string.transfer_store_name, viewModel.getCompanyName())
+
         }
     }
 
     private fun setupMainViewShipment(value: TransferShipmentHeader) {
         with(value) {
-            viewBinding.includeTransferDetail.tvTransferdetailStatus.text =
-                getString(R.string.transfer_store_status, status)
+            viewBinding.includeTransferDetail.tvTransferdetailFrom.text =
+                getString(R.string.transfer_store_from, transferFromCode)
+            viewBinding.includeTransferDetail.tvTransferdetailTo.text =
+                getString(R.string.transfer_store_to, transferToCode)
+            viewBinding.includeTransferDetail.tvTransferdetailDate.text =
+                getString(R.string.bin_reclass_detail_date, postingDate)
         }
     }
 
     private fun setupViewReceipt(value: TransferReceiptHeader) {
         with(value) {
-            viewBinding.includeTransferDetail.tvTransferdetailStatus.text =
-                getString(R.string.transfer_store_status, status)
+            viewBinding.includeTransferDetail.tvTransferdetailFrom.text =
+                getString(R.string.transfer_store_from, transferFromCode)
+            viewBinding.includeTransferDetail.tvTransferdetailTo.text =
+                getString(R.string.transfer_store_to, transferToCode)
+            viewBinding.includeTransferDetail.tvTransferdetailDate.text =
+                getString(R.string.bin_reclass_detail_date, postingDate)
         }
     }
 
@@ -136,7 +146,8 @@ class TransferDetailFragment :
             fabManualInputTransfer.setOnClickListener {
                 val action =
                     TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                        args.transferNo, null, args.transferType)
+                        args.transferNo, null, args.transferType
+                    )
                 view?.findNavController()?.navigate(action)
             }
             includeTransferDetail.btnSubmit.setOnClickListener {
@@ -153,14 +164,16 @@ class TransferDetailFragment :
     override fun onclicklistener(pickingListLineValue: TransferShipmentLine) {
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                args.transferNo, pickingListLineValue.itemIdentifier, args.transferType)
+                args.transferNo, pickingListLineValue.itemIdentifier, args.transferType
+            )
         view?.findNavController()?.navigate(action)
     }
 
     override fun onclicklistener(value: PurchaseOrderLine) {
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                args.transferNo, value.itemIdentifier, args.transferType)
+                args.transferNo, value.itemIdentifier, args.transferType
+            )
         view?.findNavController()?.navigate(action)
     }
 }

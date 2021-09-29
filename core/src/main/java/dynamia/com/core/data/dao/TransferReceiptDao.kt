@@ -19,6 +19,9 @@ interface TransferReceiptDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = TransferReceiptHeader::class)
     fun insertTransferReceiptHeader(data: TransferReceiptHeader)
 
+    @Query("SELECT count(*) from TransferReceiptHeader")
+    fun getTransferReceiptCount(): Int
+
     @Query("DELETE FROM TransferReceiptHeader")
     fun deleteAllTransferReceiptHeader()
 

@@ -56,4 +56,23 @@ class ExampleUnitTest {
         val result = value.startsWith("S")
         assertEquals(result, true)
     }
+
+    @Test
+    fun `check if url start with http or https is true`() {
+        val value =
+            "http://192.168.1.13:7048/BC180/OdataV4/Company(\"\\'CRONUS Australia Pty. Ltd.\\'\")/"
+        val result =
+            (value.endsWith("/")) && (value.startsWith("http://") || value.startsWith("https://"))
+        assertEquals(result, true)
+    }
+
+    @Test
+    fun `check if url start with http or https is false`() {
+        val value =
+            "192.168.1.13:7048/BC180/OdataV4/Company(\"\\'CRONUS Australia Pty. Ltd.\\'\")/"
+        val result =
+            (value.endsWith("/")) && (value.startsWith("http://") || value.startsWith("https://"))
+        assertEquals(result, false)
+    }
+
 }

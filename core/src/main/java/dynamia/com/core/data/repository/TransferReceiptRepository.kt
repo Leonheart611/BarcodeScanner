@@ -1,15 +1,14 @@
 package dynamia.com.core.data.repository
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
+import dagger.hilt.android.scopes.FragmentScoped
 import dynamia.com.core.data.dao.TransferReceiptDao
 import dynamia.com.core.data.dao.TransferShipmentDao
 import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferReceiptInput
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
-import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -23,6 +22,7 @@ interface TransferReceiptRepository {
     fun getTransferHeaderDetail(no: String): Flow<TransferReceiptHeader>
     suspend fun insertTransferReceiptHeader(data: TransferReceiptHeader)
     suspend fun deleteAllTransferReceiptHeader()
+    suspend fun getTransferReceiptCount(): Int
 
     fun getAllTransferReceiptInput(): LiveData<List<TransferReceiptInput>>
     suspend fun insertTransferReceiptInput(data: TransferReceiptInput): Boolean
@@ -137,6 +137,8 @@ class TransferReceiptRepositoryImpl @Inject constructor(
     override suspend fun clearAllInputData() {
         dao.clearAllInputData()
     }
+
+    override suspend fun getTransferReceiptCount(): Int = dao.getTransferReceiptCount()
 
     /**
      * Remote Impl

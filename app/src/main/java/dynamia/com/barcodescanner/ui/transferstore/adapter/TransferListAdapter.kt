@@ -22,7 +22,13 @@ class TransferListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickingListHolder {
-        return PickingListHolder(TransferListItemBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+        return PickingListHolder(
+            TransferListItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun getItemCount(): Int {
@@ -40,8 +46,9 @@ class TransferListAdapter(
         fun bind(value: TransferShipmentHeader, listener: OnTransferListClicklistener) {
             with(binding) {
                 tvTransferNo.text = value.no
+                tvTransferFrom.text = value.transferFromCode
+                tvTransferTo.text = value.transferToCode
                 tvTransferDate.text = value.postingDate
-                tvTransferStatus.text = "Status: ${value.status}"
                 root.setOnClickListener {
                     listener.clickListener(value)
                 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat.getDrawable
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
@@ -13,8 +14,11 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.BottomsheetHomeDataDialoogBinding
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.data.entinty.*
+import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.crossFade
 import dynamia.com.core.util.readJsonAsset
+import kotlinx.coroutines.GlobalScope
+import kotlin.coroutines.coroutineContext
 
 @AndroidEntryPoint
 class HomeGetDataDialog : BottomSheetDialogFragment() {
@@ -48,7 +52,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     }
 
     private fun setObserverable() {
-        viewModel.homeGetApiViewState.observe(viewLifecycleOwner, {
+        viewModel.homeGetApiViewState.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 SuccessGetShipingData -> {
                     viewBinding.ivStatusPicking.crossFade(
@@ -132,13 +136,21 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                 }
             }
         })
+        viewModel.homeGetDataCount.observe(viewLifecycleOwner, EventObserver {
+            if (it == 6) {
+                viewBinding.btnDialogClose.isVisible = true
+                viewModel.progress = 0
+            }else{
+                viewBinding.btnDialogClose.isVisible = false
+            }
+        })
     }
 
     private fun callAllApi() {
-        viewModel.getTransferData()
-        viewModel.getReceiptDataAsync()
-        viewModel.getPurchaseDataAsync()
-        viewModel.getStockOpname()
+        viewModel.getTransferData() // 2count
+        viewModel.getReceiptDataAsync() // 1count
+        viewModel.getPurchaseDataAsync() // 2count
+        viewModel.getStockOpname() // 1count
     }
 
 

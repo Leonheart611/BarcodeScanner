@@ -1,6 +1,5 @@
 package dynamia.com.core.data.repository
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.TransferShipmentDao
@@ -9,7 +8,6 @@ import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
-import dynamia.com.core.domain.MasariRetrofit
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +23,7 @@ interface TransferShipmentRepository {
     suspend fun getTransferHeaderDetail(no: String): Flow<TransferShipmentHeader>
     suspend fun insertTransferHeader(data: TransferShipmentHeader)
     suspend fun deleteAllTransferHeader()
-    suspend fun getCheckEmptyOrNot(): Flow<Int>
+    suspend fun getCheckEmptyOrNot(): Int
 
     /**
      * Local Transfer Line
@@ -97,7 +95,7 @@ class TransferShipmentImpl @Inject constructor(
     override fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>> =
         dao.getLineListFromHeaderLiveData(no)
 
-    override suspend fun getCheckEmptyOrNot(): Flow<Int> = flow { emit(dao.getCheckEmptyOrNot()) }
+    override suspend fun getCheckEmptyOrNot(): Int = dao.getCheckEmptyOrNot()
 
 
     override fun getAllTransferInput(): LiveData<List<TransferInputData>> =
