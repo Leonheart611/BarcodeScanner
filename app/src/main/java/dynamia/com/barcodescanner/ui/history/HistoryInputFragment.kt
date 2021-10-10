@@ -11,16 +11,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.HistoryInputFragmentBinding
 import dynamia.com.barcodescanner.ui.history.HistoryType.*
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryPurchaseInputAdapter
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryStockOpnameInputAdapter
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
-import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferReceiptInputAdapter
+import dynamia.com.barcodescanner.ui.history.adapter.*
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferHistoryBottomSheet
 import dynamia.com.core.base.BaseFragmentBinding
-import dynamia.com.core.data.entinty.PurchaseInputData
-import dynamia.com.core.data.entinty.StockOpnameInputData
-import dynamia.com.core.data.entinty.TransferInputData
-import dynamia.com.core.data.entinty.TransferReceiptInput
+import dynamia.com.core.data.entinty.*
 
 @AndroidEntryPoint
 class HistoryInputFragment :
@@ -28,7 +22,8 @@ class HistoryInputFragment :
     HistoryTransferInputAdapter.OnHistorySelected,
     HistoryTransferReceiptInputAdapter.OnHistorySelected,
     HistoryPurchaseInputAdapter.OnPurchaseHistoryClicklistener,
-    HistoryStockOpnameInputAdapter.OnHistorySelected {
+    HistoryStockOpnameInputAdapter.OnHistorySelected,
+    HistoryInventoryInputAdapter.HistoryInventoryClicklistener {
 
     private val viewModel: HistoryInputViewModel by viewModels()
     private val args: HistoryInputFragmentArgs by navArgs()
@@ -37,6 +32,7 @@ class HistoryInputFragment :
         HistoryTransferReceiptInputAdapter(mutableListOf(), this)
     private var scanInputPurchaseAdapter = HistoryPurchaseInputAdapter(mutableListOf(), this)
     private var scanStockInputAdapter = HistoryStockOpnameInputAdapter(mutableListOf(), this)
+    private var scanInventoryInputAdapter = HistoryInventoryInputAdapter(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,6 +49,7 @@ class HistoryInputFragment :
                 RECEIPT -> scanTransferReceiptAdapter
                 PURCHASE -> scanInputPurchaseAdapter
                 STOCKOPNAME -> scanStockInputAdapter
+                INVENTORY -> scanInventoryInputAdapter
             }
         }
     }
@@ -102,6 +99,15 @@ class HistoryInputFragment :
                         })
                 }
             }
+            INVENTORY -> {
+                viewBinding.tvTransferInput.text = getString(R.string.inventory_pick_history)
+                args.documentNo?.let { no ->
+                    viewModel.inventoryRepository.getInventoryInputData(no)
+                        .observe(viewLifecycleOwner, {
+                            scanInventoryInputAdapter.submitList(it)
+                        })
+                }
+            }
         }
     }
 
@@ -136,6 +142,13 @@ class HistoryInputFragment :
     override fun onStockOpnameCLicklistener(value: StockOpnameInputData) {
         value.id?.let {
             val dialog = TransferHistoryBottomSheet.newInstance(it, STOCKOPNAME)
+            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+        }
+    }
+
+    override fun onclicklistener(value: InventoryInputData) {
+        value.id?.let {
+            val dialog = TransferHistoryBottomSheet.newInstance(it, INVENTORY)
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
         }
     }

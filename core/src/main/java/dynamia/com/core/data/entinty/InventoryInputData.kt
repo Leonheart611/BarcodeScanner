@@ -5,11 +5,10 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-
-@Entity(tableName = "StockOpnameInputData")
-data class StockOpnameInputData(
+@Entity(tableName = "InventoryInputData")
+data class InventoryInputData(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
-    @SerializedName("Table_ID") @Expose(serialize = true) val tableID: Int = 4,
+    @SerializedName("Table_ID") @Expose(serialize = true) val tableID: Int = 1,
     @SerializedName("Document_No") @Expose(serialize = true) val documentNo: String,
     @SerializedName("Line_No") @Expose(serialize = true) val lineNo: Int,
     @SerializedName("Item_No") @Expose(serialize = true) val itemNo: String,
@@ -26,9 +25,9 @@ data class StockOpnameInputData(
     @SerializedName("Insert_DateTime") @Expose(serialize = true) val insertDateTime: String,
     @SerializedName("Box") @Expose(serialize = true) val box: String = "",
     @Expose(serialize = false, deserialize = false) var sync_status: Boolean = false,
-    @Expose(serialize = false, deserialize = false) var headerId: Int,
 ) {
     fun postSuccess() {
         sync_status = true
     }
 }
+

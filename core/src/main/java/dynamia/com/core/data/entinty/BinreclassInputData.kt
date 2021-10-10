@@ -24,6 +24,7 @@ data class BinreclassInputData(
     @SerializedName("User_Name") @Expose(serialize = true) val userName: String,
     @SerializedName("Insert_DateTime") @Expose(serialize = true) val insertDateTime: String,
     @SerializedName("Item_Identifier") @Expose(serialize = true) val itemIdentifier: String = "",
+    @SerializedName("Box") @Expose(serialize = true) val box: String = "",
     @Expose(serialize = false, deserialize = false) val headerId: Int,
     @Expose(serialize = false, deserialize = false) var sync_status: Boolean = false,
 ) {
@@ -31,4 +32,6 @@ data class BinreclassInputData(
         sync_status = true
     }
 }
+
+
 

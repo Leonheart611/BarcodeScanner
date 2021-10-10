@@ -1,0 +1,49 @@
+{
+  "@odata.context": "http://192.168.1.13:7048/BC180/OdataV4/$metadata#Company('CRONUS%20Australia%20Pty.%20Ltd.')/Android_PurchaseOrderLine",
+  "value": [
+    {
+      "@odata.etag": "W/\"JzQ0O3VJNVd5WGw0M1Q1ckIvU3pNTEx1ODJNRDM1a0lDazJvQVVRYjgrQmlwbmM9MTswMDsn\"",
+      "Type": "Invt. Pick",
+      "No": "IP000001",
+      "Location_Code": "UA-WH2",
+      "Posting_Date": "2021-10-04",
+      "Source_No": "TO/2021/00000015",
+      "Source_Document": "Outbound Transfer",
+      "Destination_No": "UA-WH2",
+      "Transfer_to_Code": "UA-CP"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O3VJNVd5WGw0M1Q1ckIvU3pNTEx1ODJNRDM1a0lDazJvQVVRYjgrQmlwbmM9MTswMDsn\"",
+      "Type": "Invt. Pick",
+      "No": "IP000002",
+      "Location_Code": "UA-WH2",
+      "Posting_Date": "2021-10-04",
+      "Source_No": "TO/2021/00000015",
+      "Source_Document": "Outbound Transfer",
+      "Destination_No": "UA-WH2",
+      "Transfer_to_Code": "UA-CP"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O3VJNVd5WGw0M1Q1ckIvU3pNTEx1ODJNRDM1a0lDazJvQVVRYjgrQmlwbmM9MTswMDsn\"",
+      "Type": "Invt. Pick",
+      "No": "IP000003",
+      "Location_Code": "UA-WH2",
+      "Posting_Date": "2021-10-04",
+      "Source_No": "TO/2021/00000015",
+      "Source_Document": "Outbound Transfer",
+      "Destination_No": "UA-WH2",
+      "Transfer_to_Code": "UA-CP"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O3VJNVd5WGw0M1Q1ckIvU3pNTEx1ODJNRDM1a0lDazJvQVVRYjgrQmlwbmM9MTswMDsn\"",
+      "Type": "Invt. Pick",
+      "No": "IP000004",
+      "Location_Code": "UA-WH2",
+      "Posting_Date": "2021-10-04",
+      "Source_No": "TO/2021/00000015",
+      "Source_Document": "Outbound Transfer",
+      "Destination_No": "UA-WH2",
+      "Transfer_to_Code": "UA-CP"
+    }
+  ]
+}

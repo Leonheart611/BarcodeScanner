@@ -9,10 +9,7 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.entinty.*
-import dynamia.com.core.data.repository.PurchaseOrderRepository
-import dynamia.com.core.data.repository.StockOpnameRepository
-import dynamia.com.core.data.repository.TransferReceiptRepository
-import dynamia.com.core.data.repository.TransferShipmentRepository
+import dynamia.com.core.data.repository.*
 import dynamia.com.core.util.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -24,6 +21,7 @@ class TransferInputViewModel @Inject constructor(
     private val transferReceiptRepository: TransferReceiptRepository,
     private val purchaseOrderRepository: PurchaseOrderRepository,
     private val stockOpnameRepository: StockOpnameRepository,
+    private val inventoryRepository: InventoryRepository,
     val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
@@ -35,9 +33,11 @@ class TransferInputViewModel @Inject constructor(
     private var transferLineData: TransferShipmentLine? = null
     private var transferHeaderData: TransferShipmentHeader? = null
     private var transferReceiptHeader: TransferReceiptHeader? = null
+    private var inventoryPickHeader: InventoryPickHeader? = null
 
     private var purchaseHeader: PurchaseOrderHeader? = null
     private var purchaseLineData: PurchaseOrderLine? = null
+    private var inventoryPickLine: InventoryPickLine? = null
 
     private var stockOpnameData: StockOpnameData? = null
 
@@ -153,6 +153,34 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
+    fun getInventoryLineValue(no: String, identifier: String) {
+        viewModelScope.launch {
+            try {
+                _transferInputViewState.value =
+                    TransferInputViewState.LoadingSearchPickingList(true)
+                io {
+                    inventoryRepository.getInventoryHeaderDetail(no)
+                        .collect { inventoryPickHeader = it }
+                    inventoryRepository.getDetailInventoryPickLine(no, identifier).collect {
+                        inventoryPickLine = it
+                        ui {
+                            _transferInputViewState.value =
+                                TransferInputViewState.SuccessGetInventoryValue(it)
+                            _transferInputViewState.value =
+                                TransferInputViewState.LoadingSearchPickingList(false)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _transferInputViewState.value =
+                    TransferInputViewState.LoadingSearchPickingList(false)
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+
     fun getReceiptListLineValue(no: String, identifier: String) {
         viewModelScope.launch {
             try {
@@ -215,7 +243,40 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    private fun insertStockOpnameData(qty: String) {
+    private fun insertInventoryInput(qty: String, box: String) {
+        viewModelScope.launch {
+            try {
+                io {
+                    inventoryPickHeader?.let { header ->
+                        inventoryPickLine?.let { line ->
+                            inventoryRepository.insertInputInventory(
+                                InventoryInputData(
+                                    tableID = 2,
+                                    documentNo = header.no,
+                                    lineNo = line.lineNo,
+                                    itemNo = line.itemRefNo,
+                                    quantity = qty.toInt(),
+                                    box = box,
+                                    locationCode = header.locationCode,
+                                    userName = getUserName(),
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                )
+                            )
+                            ui {
+                                _transferInputViewState.value =
+                                    TransferInputViewState.SuccessSaveData
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun insertStockOpnameData(qty: String, box: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -230,7 +291,8 @@ class TransferInputViewModel @Inject constructor(
                                 userName = sharedPreferences.getUserName(),
                                 insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
                                 locationCode = data.locationCode,
-                                headerId = data.id!!
+                                headerId = data.id!!,
+                                box = box
                             )
                         )
                         ui {
@@ -246,7 +308,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    private fun insertPurchaseInput(qty: String) {
+    private fun insertPurchaseInput(qty: String, box: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -257,9 +319,10 @@ class TransferInputViewModel @Inject constructor(
                                     documentNo = line.documentNo,
                                     quantity = qty.toInt(),
                                     lineNo = line.lineNo,
-                                    itemNo = line.no,
+                                    itemNo = line.itemRefNo,
                                     userName = sharedPreferences.getUserName(),
-                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                    box = box
                                 )
                             )
                             ui {
@@ -282,8 +345,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-
-    private fun insertTransferShipmentInput(qty: String) {
+    private fun insertTransferShipmentInput(qty: String, box: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -294,11 +356,12 @@ class TransferInputViewModel @Inject constructor(
                                     documentNo = line.documentNo,
                                     quantity = qty.toInt(),
                                     lineNo = line.lineNo,
-                                    itemNo = line.no,
+                                    itemNo = line.itemRefNo,
                                     transferFromBinCode = header.transferFromCode,
                                     transferToBinCode = header.transferToCode,
                                     userName = sharedPreferences.getUserName(),
-                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                    box = box
                                 )
                             )
                             ui {
@@ -321,7 +384,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    private fun insertTransferReceiptInput(qty: String) {
+    private fun insertTransferReceiptInput(qty: String, box: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -332,11 +395,12 @@ class TransferInputViewModel @Inject constructor(
                                     documentNo = line.documentNo,
                                     quantity = qty.toInt(),
                                     lineNo = line.lineNo,
-                                    itemNo = line.no,
+                                    itemNo = line.itemRefNo,
                                     transferFromBinCode = header.transferFromCode,
                                     transferToBinCode = header.transferToCode,
                                     userName = sharedPreferences.getUserName(),
-                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                    box = box
                                 )
                             )
                             ui {
@@ -363,6 +427,7 @@ class TransferInputViewModel @Inject constructor(
         barcode: String,
         qty: String,
         typesInput: TransferType,
+        box: String
     ) {
         if (barcode.isEmpty()) {
             _inputValidaton.value = InputValidation.BarcodeEmpty
@@ -372,10 +437,11 @@ class TransferInputViewModel @Inject constructor(
         }
         if (barcode.isNotEmpty() && qty.isNotEmpty()) {
             when (typesInput) {
-                SHIPMENT -> insertTransferShipmentInput(qty)
-                RECEIPT -> insertTransferReceiptInput(qty)
-                PURCHASE -> insertPurchaseInput(qty)
-                STOCKOPNAME -> insertStockOpnameData(qty)
+                SHIPMENT -> insertTransferShipmentInput(qty, box)
+                RECEIPT -> insertTransferReceiptInput(qty, box)
+                PURCHASE -> insertPurchaseInput(qty, box)
+                STOCKOPNAME -> insertStockOpnameData(qty, box)
+                INVENTORY -> insertInventoryInput(qty, box)
             }
         }
     }
@@ -549,6 +615,59 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
+    fun updateInventoryInput(id: Int, newQty: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    inventoryRepository.updateInventoryQty(id, newQty).collect {
+                        if (it) {
+                            ui {
+                                _transferInputViewState.value =
+                                    TransferInputViewState.SuccessUpdateData
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+            }
+        }
+    }
+
+    fun getInventoryDetailInput(id: Int) {
+        viewModelScope.launch {
+            io {
+                inventoryRepository.getInventoryInputDetail(id).collect {
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessGetInventoryInput(it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteInventory(id: Int) {
+        viewModelScope.launch {
+            try {
+                io {
+                    inventoryRepository.deleteInventoryInput(id)
+                    ui {
+                        _transferInputViewState.value =
+                            TransferInputViewState.SuccessDeleteData
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+            }
+        }
+
+    }
+
 
     sealed class TransferInputViewState {
         /**
@@ -565,6 +684,9 @@ class TransferInputViewModel @Inject constructor(
 
         class SuccessGetPurchaseValue(val data: PurchaseOrderLine) : TransferInputViewState()
         class SuccessGetStockOpnameValue(val data: StockOpnameData) : TransferInputViewState()
+
+        class SuccessGetInventoryValue(val data: InventoryPickLine) : TransferInputViewState()
+        class SuccessGetInventoryInput(val data: InventoryInputData) : TransferInputViewState()
 
         object SuccessSaveData : TransferInputViewState()
         class ErrorSaveData(val message: String) : TransferInputViewState()

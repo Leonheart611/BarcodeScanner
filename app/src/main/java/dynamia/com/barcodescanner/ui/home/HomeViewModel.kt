@@ -28,6 +28,7 @@ class HomeViewModel @Inject constructor(
     val stockOpnameDataRepository: StockOpnameRepository,
     private val binreclassRepository: BinreclassRepository,
     private val sharedPreferences: SharedPreferences,
+    val inventoryRepository: InventoryRepository
 ) : ViewModelBase(sharedPreferences) {
 
     private var _homeViewState = MutableLiveData<Event<HomeViewState>>()
@@ -38,6 +39,9 @@ class HomeViewModel @Inject constructor(
 
     private var _homePostViewState = MutableLiveData<HomePostViewState>()
     val homePostViewState: LiveData<HomePostViewState> by lazy { _homePostViewState }
+
+    private var _inventoryPostViewState = MutableLiveData<InventoryPostViewState>()
+    val inventoryPostViewState: LiveData<InventoryPostViewState> by lazy { _inventoryPostViewState }
 
     var progress = 0
     val homeGetDataCount = MutableLiveData<Event<Int>>()
@@ -109,9 +113,7 @@ class HomeViewModel @Inject constructor(
                         homeGetDataCount.postValue(Event(progress))
                         when (data) {
                             is Success -> {
-                                data.value.forEach {
-                                    transferShipmentRepository.insertTransferLine(it)
-                                }
+                                transferShipmentRepository.insertTransferLineAll(data.value)
                             }
                             is GenericError -> {
                                 ui {
@@ -290,6 +292,58 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getInventoryData() {
+        viewModelScope.launch {
+            try {
+                io {
+                    with(inventoryRepository) {
+                        deleteAllInventoryPickLine()
+                        deleteAllInventoryInput()
+                        deleteAllInventoryHeader()
+
+                        getInventoryHeaderRemote().collect { value ->
+                            progress++
+                            homeGetDataCount.postValue(Event(progress))
+                            when (value) {
+                                is GenericError -> ui {
+                                    _homeGetApiViewState.value =
+                                        Event(FailedGetInventory("${value.code} ${value.error}"))
+                                }
+                                is NetworkError -> _homeGetApiViewState.postValue(
+                                    Event(FailedGetInventory(value.error))
+                                )
+                                is Success -> {
+                                    insertInventoryHeaderAll(value.value)
+                                    ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
+                                }
+                            }
+                        }
+                        getInventoryLineRemote().collect { value ->
+                            progress++
+                            homeGetDataCount.postValue(Event(progress))
+                            when (value) {
+                                is GenericError -> ui {
+                                    _homeGetApiViewState.value =
+                                        Event(FailedGetInventory("${value.code} ${value.error}"))
+                                }
+                                is NetworkError -> _homeGetApiViewState.postValue(
+                                    Event(FailedGetInventory(value.error))
+                                )
+                                is Success -> {
+                                    insertInventoryLineAll(value.value)
+                                    ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _homeGetApiViewState.value =
+                    Event(FailedGetInventory(e.localizedMessage))
+            }
+        }
+    }
+
     fun checkUnpostedData(param: FunctionDialog) {
         viewModelScope.launch {
             io {
@@ -298,8 +352,9 @@ class HomeViewModel @Inject constructor(
                 val purchaseEntries = purchaseOrderRepository.getAllUnSyncPurchaseInput()
                 val rebinClassEntry = binreclassRepository.getAllUnSyncBinreclassnput()
                 val stockOpnameEntry = stockOpnameDataRepository.getAllUnsyncStockInput()
+                val inventoryEntry = inventoryRepository.getUnpostedInventoryData()
                 val total =
-                    listEntries.size + receiptEntris.size + purchaseEntries.size + rebinClassEntry.size + stockOpnameEntry.size
+                    listEntries.size + receiptEntris.size + purchaseEntries.size + rebinClassEntry.size + stockOpnameEntry.size + inventoryEntry.size
                 ui {
                     when (param) {
                         REFRESH -> _homeViewState.value =
@@ -498,6 +553,45 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun postInventoryData() {
+        viewModelScope.launch {
+            try {
+                var dataPosted = 0
+                io {
+                    val listEntries =
+                        inventoryRepository.getUnpostedInventoryData()
+                    ui {
+                        _inventoryPostViewState.value =
+                            InventoryPostViewState.UnpostedData(listEntries.size)
+                        _inventoryPostViewState.value =
+                            InventoryPostViewState.SuccessData(dataPosted)
+                    }
+                    for (data in listEntries) {
+                        val param = gson.toJson(data)
+                        inventoryRepository.postInventoryData(param).collect {
+                            dataPosted++
+                            ui {
+                                _inventoryPostViewState.value =
+                                    InventoryPostViewState.SuccessData(dataPosted)
+                            }
+                            data.apply {
+                                sync_status = true
+                            }
+                            inventoryRepository.updateInventoryInput(data)
+                        }
+                    }
+                    ui {
+                        _inventoryPostViewState.value =
+                            InventoryPostViewState.SuccessPostallData
+                    }
+                }
+            } catch (e: Exception) {
+                _inventoryPostViewState.value =
+                    InventoryPostViewState.ErrorPost(e.localizedMessage)
+            }
+        }
+    }
+
 
     sealed class HomeViewState {
         class Error(val message: String) : HomeViewState()
@@ -508,6 +602,7 @@ class HomeViewModel @Inject constructor(
         class GetUnpostedDataLogout(val unpostedCount: String) : HomeViewState()
     }
 
+    //TODO: Pecahkan View State buat didalam 1 folder dan buat class masing -  masing
     sealed class HomeGetApiViewState {
         object SuccessGetShipingData : HomeGetApiViewState()
         class FailedGetShippingData(val message: String) : HomeGetApiViewState()
@@ -515,13 +610,29 @@ class HomeViewModel @Inject constructor(
         object SuccessGetReceipt : HomeGetApiViewState()
         class FailedGetReceipt(val message: String) : HomeGetApiViewState()
 
+        /**
+         * Purchase View State
+         */
+
         object SuccessGetPurchaseData : HomeGetApiViewState()
         class FailedGetPurchase(val message: String) : HomeGetApiViewState()
 
+        /**
+         * Stockopname View State
+         */
+
         object SuccessGetStockOpname : HomeGetApiViewState()
         class FailedGetStockOpname(val message: String) : HomeGetApiViewState()
+
+        /**
+         * Inventory Get ViewState
+         */
+
+        object SuccessGetInventory : HomeGetApiViewState()
+        class FailedGetInventory(val message: String) : HomeGetApiViewState()
     }
 
+    // TODO: Pisahkan buat 1 folder tersendiri
     sealed class HomePostViewState {
         /**
          * Transfer Shipment Post
@@ -563,7 +674,13 @@ class HomeViewModel @Inject constructor(
         class GetSuccessfulBinReclass(val data: Int) : HomePostViewState()
         class ErrorPostBinReclass(val message: String) : HomePostViewState()
         object SuccessPostallBinReclass : HomePostViewState()
+    }
 
+    sealed class InventoryPostViewState {
+        class UnpostedData(val data: Int) : InventoryPostViewState()
+        class SuccessData(val data: Int) : InventoryPostViewState()
+        class ErrorPost(val message: String) : InventoryPostViewState()
+        object SuccessPostallData : InventoryPostViewState()
     }
 
 
@@ -578,9 +695,10 @@ class HomeViewModel @Inject constructor(
         purchaseOrderHeaderAssets: PurchaseOrderHeaderAssets,
         purchaseOrderLineAsset: PurchaseOrderLineAsset,
         stockOpnameDataAssets: StockOpnameDataAssets,
+        inventoryPickHeaderAssets: InventoryPickHeaderAssets,
+        inventoryPickLineAsset: InventoryPickLineAsset
     ) {
         try {
-
             viewModelScope.launch {
                 io {
                     transferShipmentRepository.deleteAllTransferHeader()
@@ -588,6 +706,11 @@ class HomeViewModel @Inject constructor(
                     transferShipmentRepository.deleteAllTransferInput()
                     transferReceiptRepository.deleteAllTransferReceiptHeader()
                     transferReceiptRepository.clearAllInputData()
+                    with(inventoryRepository) {
+                        deleteAllInventoryHeader()
+                        deleteAllInventoryInput()
+                        deleteAllInventoryPickLine()
+                    }
                     with(purchaseOrderRepository) {
                         deleteAllPurchaseInputData()
                         deleteAllPurchaseOrderHeader()
@@ -607,9 +730,7 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     transferShipmentLine.value?.let {
-                        it.forEach { data ->
-                            transferShipmentRepository.insertTransferLine(data)
-                        }
+                        transferShipmentRepository.insertTransferLineAll(it)
                     }
                     purchaseOrderHeaderAssets.value?.let {
                         it.forEach { data ->
@@ -626,11 +747,19 @@ class HomeViewModel @Inject constructor(
                             stockOpnameDataRepository.insertStockOpnameData(data)
                         }
                     }
+                    inventoryPickHeaderAssets.value?.let {
+                        inventoryRepository.insertInventoryHeaderAll(it)
+                    }
+                    inventoryPickLineAsset.value?.let {
+                        inventoryRepository.insertInventoryLineAll(it)
+                    }
+
                     ui {
                         _homeGetApiViewState.value = Event(SuccessGetStockOpname)
                         _homeGetApiViewState.value = Event(SuccessGetShipingData)
                         _homeGetApiViewState.value = Event(SuccessGetReceipt)
                         _homeGetApiViewState.value = Event(SuccessGetPurchaseData)
+                        _homeGetApiViewState.value = Event(SuccessGetInventory)
                     }
                 }
             }

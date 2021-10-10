@@ -85,4 +85,10 @@ class FragmentModule {
         dao: TransferShipmentDao,
         api: MasariAPI,
     ): TransferShipmentRepository = TransferShipmentImpl(dao, api)
+
+    @Provides
+    fun provideInventoryRepository(
+        dao: InventoryDao,
+        api: MasariAPI
+    ): InventoryRepository = InventoryRepositoryImpl(dao, api)
 }

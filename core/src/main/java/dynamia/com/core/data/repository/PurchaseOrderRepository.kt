@@ -1,6 +1,10 @@
 package dynamia.com.core.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.PurchaseOrderDao
 import dynamia.com.core.data.entinty.PurchaseInputData
@@ -24,6 +28,7 @@ interface PurchaseOrderRepository {
     suspend fun getPurchaseOrderDetail(no: String): Flow<PurchaseOrderHeader>
     suspend fun deleteAllPurchaseOrderHeader()
     suspend fun getPurchaseOrderHeaderCount(): Int
+    fun getAllPurchaseOrderPage(): Flow<PagingData<PurchaseOrderHeader>>
 
     /**
      * Purchase Order Line
@@ -69,8 +74,19 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
     /**
      * Purchase Order Header
      */
+
+
     override fun getAllPurchaseOrderHeader(): LiveData<List<PurchaseOrderHeader>> =
         dao.getAllPurchaseOrderHeader()
+
+    override fun getAllPurchaseOrderPage(): Flow<PagingData<PurchaseOrderHeader>> {
+        val pagingSourceFactory = { dao.getAllPurchaseOrderPage() }
+
+        return Pager(
+            config = PagingConfig(pageSize = 25, enablePlaceholders = false),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow
+    }
 
     override suspend fun insertPurchaseOrderHeader(value: PurchaseOrderHeader) {
         dao.insertPurchaseOrderHeader(value)
@@ -121,12 +137,17 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
             try {
                 val lineData =
                     dao.getPurchaseOrderLineByLineno(value.documentNo, value.lineNo)
-                lineData.apply {
-                    this.alredyScanned += value.quantity
+                if ((lineData.alredyScanned + value.quantity) <= lineData.quantity) {
+
+                    lineData.apply {
+                        this.alredyScanned += value.quantity
+                    }
+                    dao.insertPurchaseOrderData(value)
+                    dao.updatePurchaseOrderLine(lineData)
+                    true
+                } else {
+                    false
                 }
-                dao.insertPurchaseOrderData(value)
-                dao.updatePurchaseOrderLine(lineData)
-                true
             } catch (e: Exception) {
                 false
             }
@@ -155,7 +176,12 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
         no: String,
         identifier: String,
     ): Flow<PurchaseOrderLine> = flow {
-        emit(dao.getPurchaseOrderLineByBarcode(no, identifier))
+        val result = dao.getPurchaseOrderLineByBarcode(no, identifier)
+        if (result != null) {
+            emit(result)
+        } else {
+            emit(dao.getPurchaseOrderLineByItemRef(no, identifier))
+        }
     }
 
     override suspend fun deletePurchaseInputData(id: Int) {

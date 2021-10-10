@@ -18,13 +18,13 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
 
     private val viewModel: HomeViewModel by viewModels()
     private var animateDuration: Int = 0
-    lateinit var _viewBinding: HomePostAllDialogBinding
+    private lateinit var _viewBinding: HomePostAllDialogBinding
     val viewBinding by lazy { _viewBinding }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         _viewBinding = HomePostAllDialogBinding.inflate(inflater, container, false)
         return viewBinding.root
@@ -48,6 +48,7 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
             postPurchaseData()
             postStockOpnameData()
             postBinReclassData()
+
         }
     }
 
@@ -58,12 +59,16 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
             includePurchase.btnDismisReceiptImport.gone()
             includeStock.btnDismisStockCount.gone()
             includeBinreclass.btnDismisBinReclassPost.gone()
+            includeInventory.btnDismissInventoryPost.gone()
         }
     }
 
     private fun setObseverable() {
         viewModel.homePostViewState.observe(viewLifecycleOwner, {
             when (it) {
+                /**
+                 * Transfer Shipment View State
+                 */
                 is HomeViewModel.HomePostViewState.GetUnpostedTransferShipment -> {
                     viewBinding.includeTransfer.tvTransferTotalUnposted.text = it.data.toString()
                 }
@@ -94,7 +99,9 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                     )
                 }
 
-
+                /**
+                 * Transfer Receipt View State
+                 */
                 is HomeViewModel.HomePostViewState.GetUnpostedTransferReceipt -> {
                     viewBinding.includeReceipt.tvReceiptTotalPost.text = it.data.toString()
                 }
@@ -124,7 +131,9 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                     )
                 }
 
-
+                /**
+                 * Purchase View State
+                 */
                 is HomeViewModel.HomePostViewState.GetUnpostedPurchase -> {
                     viewBinding.includePurchase.tvPurhcaseUnpostedCount.text = it.data.toString()
                 }
@@ -154,6 +163,9 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                     )
                 }
 
+                /**
+                 * Stock View State
+                 */
 
                 is HomeViewModel.HomePostViewState.GetUnpostedStock -> {
                     viewBinding.includeStock.tvStockTotalPost.text = it.data.toString()
@@ -183,6 +195,10 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                         viewBinding.includeStock.pbPostStockCount
                     )
                 }
+
+                /**
+                 * Binreclass View state
+                 */
 
                 is HomeViewModel.HomePostViewState.ErrorPostBinReclass -> {
                     with(viewBinding.includeBinreclass) {
@@ -216,6 +232,41 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                 }
             }
         })
+
+        viewModel.inventoryPostViewState.observe(viewLifecycleOwner, {
+            when (it) {
+                is HomeViewModel.InventoryPostViewState.ErrorPost -> {
+                    with(viewBinding.includeInventory) {
+                        ivInventoryPostStatus.crossFade(
+                            animateDuration.toLong(),
+                            pbInventoryPost
+                        )
+                        ivInventoryPostStatus.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                R.drawable.ic_error_circle,
+                                null
+                            )
+                        )
+                        tvInventoryErrorMessage.text = it.message
+                    }
+                }
+                is HomeViewModel.InventoryPostViewState.SuccessData -> {
+                    viewBinding.includeInventory.tvInventoryPostCount.text = it.data.toString()
+                }
+                HomeViewModel.InventoryPostViewState.SuccessPostallData -> {
+                    viewBinding.includeInventory.ivInventoryPostStatus.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.includeInventory.pbInventoryPost
+                    )
+                }
+                is HomeViewModel.InventoryPostViewState.UnpostedData -> {
+                    viewBinding.includeInventory.tvInventoryUnpostedCount.text =
+                        it.data.toString()
+                }
+            }
+        })
+
     }
 
 }

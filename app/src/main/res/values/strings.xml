@@ -73,7 +73,7 @@
     <string name="picklistno_history_title">History Picking List: %1$s</string>
     <string name="pickinglist_all_history">History All Picking List</string>
     <string name="import_and_local_all_history">History All Receipt</string>
-    <string name="part_no_error_message">Part No yang Anda Scan tidak di temukan Harap Scan Ulang</string>
+    <string name="part_no_error_message">Barcode yang Anda Scan tidak di temukan Harap Scan Ulang</string>
     <string name="sn_no_already_inputed">No SN yang di masukan sudah ada</string>
     <string name="stock_count_post">Stock Opname Post Data</string>
     <string name="total_data_posted">Data Posted</string>
@@ -136,4 +136,6 @@
         <item>Show Posted Status = True</item>
     </string-array>
     <string name="bin_reclass_posted">Bin Reclass Post Data</string>
+    <string name="inventory_pick_title">Inventory Pick</string>
+    <string name="inventory_pick_history">Inventory Pick History</string>
 </resources>

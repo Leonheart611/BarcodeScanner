@@ -2,38 +2,36 @@ package dynamia.com.barcodescanner.ui.transferstore.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.databinding.TransferListItemBinding
 import dynamia.com.core.data.entinty.TransferReceiptHeader
 
 
 class TransferReceiptListAdapter(
-    private val transferDatas: MutableList<TransferReceiptHeader>,
     private val listener: OnTransferReceiptListCLicklistener,
-) : RecyclerView.Adapter<TransferReceiptListAdapter.TransferReceiptHolder>() {
+) : ListAdapter<TransferReceiptHeader, TransferReceiptListAdapter.TransferReceiptHolder>(
+    TransferReceiptDiffUtil()
+) {
 
     interface OnTransferReceiptListCLicklistener {
         fun clickListener(data: TransferReceiptHeader)
     }
 
-    fun updateData(data: MutableList<TransferReceiptHeader>) {
-        transferDatas.clear()
-        transferDatas.addAll(data)
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransferReceiptHolder {
-        return TransferReceiptHolder(TransferListItemBinding.inflate(LayoutInflater.from(parent.context),
-            parent,
-            false))
+        return TransferReceiptHolder(
+            TransferListItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
-    override fun getItemCount(): Int {
-        return transferDatas.size
-    }
 
     override fun onBindViewHolder(holder: TransferReceiptHolder, position: Int) {
-        transferDatas[position].let {
+        getItem(position).let {
             holder.bind(it, listener)
         }
     }
@@ -52,4 +50,21 @@ class TransferReceiptListAdapter(
             }
         }
     }
+
+    class TransferReceiptDiffUtil : DiffUtil.ItemCallback<TransferReceiptHeader>() {
+        override fun areItemsTheSame(
+            oldItem: TransferReceiptHeader,
+            newItem: TransferReceiptHeader
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: TransferReceiptHeader,
+            newItem: TransferReceiptHeader
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
 }

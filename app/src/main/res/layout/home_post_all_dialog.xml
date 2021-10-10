@@ -60,11 +60,19 @@
             android:id="@+id/btn_dismiss_all_post"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:backgroundTint="@color/generalBlue"
             android:text="Close"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/include_inventory" />
+
+        <include
+            android:id="@+id/include_inventory"
+            layout="@layout/fragment_post_inventory_dialog"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include_binreclass" />

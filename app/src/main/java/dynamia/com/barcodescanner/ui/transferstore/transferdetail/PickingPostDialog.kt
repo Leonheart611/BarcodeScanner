@@ -27,7 +27,7 @@ class PickingPostDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         animateDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         _viewBinding = PickingPostBottomDialogBinding.inflate(inflater, container, false)
         return viewBinding.root
@@ -39,6 +39,7 @@ class PickingPostDialog : BottomSheetDialogFragment() {
             SHIPMENT -> viewModel.postShipmentData()
             RECEIPT -> viewModel.postReceiptData()
             PURCHASE -> viewModel.postPurchaseData()
+            INVENTORY -> viewModel.postInventoryData()
         }
         setObseverable()
         setClicklistener()

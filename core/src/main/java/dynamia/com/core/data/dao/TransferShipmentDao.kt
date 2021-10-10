@@ -11,7 +11,7 @@ interface TransferShipmentDao {
     /**
      * TransferShipmentHeader
      */
-    @Query("SELECT * FROM TransferShipmentHeader")
+    @Query("SELECT * FROM TransferShipmentHeader ORDER BY `no` DESC")
     fun getAllTransferHeader(): LiveData<List<TransferShipmentHeader>>
 
     @Query("SELECT * FROM TransferShipmentHeader WHERE `no`=:no")
@@ -33,22 +33,22 @@ interface TransferShipmentDao {
     fun getAllTransferLine(): LiveData<List<TransferShipmentLine>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = TransferShipmentLine::class)
-    fun insertTransferLine(data: TransferShipmentLine)
+    fun insertTransferLine(data: List<TransferShipmentLine>)
 
     @Query("DELETE FROM TransferShipmentLine")
     fun deleteAllTransferLine()
 
-    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no")
-    fun getLineListFromHeader(no: String): List<TransferShipmentLine>
-
-    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no")
+    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND quantity != 0")
     fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>>
 
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND lineNo = :lineNo")
     fun getLineDetail(no: String, lineNo: Int): TransferShipmentLine
 
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND itemIdentifier = :identifier")
-    fun getLineDetailFromBarcode(no: String, identifier: String): TransferShipmentLine
+    fun getLineDetailFromBarcode(no: String, identifier: String): TransferShipmentLine?
+
+    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND itemRefNo = :identifier")
+    fun getLineDetailFromRef(no: String, identifier: String): TransferShipmentLine?
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = TransferShipmentLine::class)
     fun updateTransferLine(data: TransferShipmentLine)

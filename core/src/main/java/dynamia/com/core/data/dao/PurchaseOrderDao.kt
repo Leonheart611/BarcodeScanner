@@ -1,6 +1,7 @@
 package dynamia.com.core.data.dao
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
 import dynamia.com.core.data.entinty.PurchaseInputData
 import dynamia.com.core.data.entinty.PurchaseOrderHeader
@@ -11,8 +12,11 @@ interface PurchaseOrderDao {
     /**
      * Purchase Order Header
      */
-    @Query("SELECT * FROM PurchaseOrderHeader")
+    @Query("SELECT * FROM PurchaseOrderHeader ORDER BY `no` DESC")
     fun getAllPurchaseOrderHeader(): LiveData<List<PurchaseOrderHeader>>
+
+    @Query("SELECT * FROM PurchaseOrderHeader")
+    fun getAllPurchaseOrderPage(): PagingSource<Int, PurchaseOrderHeader>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = PurchaseOrderHeader::class)
     fun insertPurchaseOrderHeader(value: PurchaseOrderHeader)
@@ -33,14 +37,17 @@ interface PurchaseOrderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = PurchaseOrderLine::class)
     fun insertPurchaseOrderLine(value: PurchaseOrderLine)
 
-    @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo =:no")
+    @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo =:no AND quantity != 0")
     fun getPurchaseOrderLineDetailByNo(no: String): LiveData<List<PurchaseOrderLine>>
 
     @Query("SELECT * FROM PurchaseOrderLine WHERE id=:id")
     fun getPurchaseOrderLineDetailById(id: Int): PurchaseOrderLine
 
     @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo=:no AND itemIdentifier =:identifier")
-    fun getPurchaseOrderLineByBarcode(no: String, identifier: String): PurchaseOrderLine
+    fun getPurchaseOrderLineByBarcode(no: String, identifier: String): PurchaseOrderLine?
+
+    @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo=:no AND itemRefNo =:identifier")
+    fun getPurchaseOrderLineByItemRef(no: String, identifier: String): PurchaseOrderLine
 
     @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo=:no AND lineNo =:lineNo")
     fun getPurchaseOrderLineByLineno(no: String, lineNo: Int): PurchaseOrderLine

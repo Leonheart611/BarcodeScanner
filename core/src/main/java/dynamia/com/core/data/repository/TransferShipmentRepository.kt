@@ -29,9 +29,8 @@ interface TransferShipmentRepository {
      * Local Transfer Line
      */
     suspend fun getAllTransferLine(): LiveData<List<TransferShipmentLine>>
-    suspend fun insertTransferLine(data: TransferShipmentLine)
+    suspend fun insertTransferLineAll(data: List<TransferShipmentLine>)
     suspend fun deleteAllTransferLine()
-    suspend fun getLineListFromHeader(no: String): Flow<List<TransferShipmentLine>>
     fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>>
     suspend fun getLineDetailFromBarcode(no: String, identifier: String): Flow<TransferShipmentLine>
 
@@ -82,15 +81,10 @@ class TransferShipmentImpl @Inject constructor(
     override suspend fun getAllTransferLine(): LiveData<List<TransferShipmentLine>> =
         dao.getAllTransferLine()
 
-    override suspend fun insertTransferLine(data: TransferShipmentLine) =
+    override suspend fun insertTransferLineAll(data: List<TransferShipmentLine>) =
         dao.insertTransferLine(data)
 
     override suspend fun deleteAllTransferLine() = dao.deleteAllTransferLine()
-
-    override suspend fun getLineListFromHeader(no: String): Flow<List<TransferShipmentLine>> =
-        flow {
-            emit(dao.getLineListFromHeader(no))
-        }
 
     override fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>> =
         dao.getLineListFromHeaderLiveData(no)
@@ -126,7 +120,16 @@ class TransferShipmentImpl @Inject constructor(
     override suspend fun getLineDetailFromBarcode(
         no: String,
         identifier: String,
-    ): Flow<TransferShipmentLine> = flow { emit(dao.getLineDetailFromBarcode(no, identifier)) }
+    ): Flow<TransferShipmentLine> = flow {
+        val result = dao.getLineDetailFromBarcode(no, identifier)
+        if (result != null) {
+            emit(result)
+        } else {
+            dao.getLineDetailFromRef(no, identifier)?.let { emit(it) }
+                ?: kotlin.run { error("Data Not Found") }
+        }
+
+    }
 
     override suspend fun updateTransferInput(data: TransferInputData) {
         dao.updateTransferInput(data)

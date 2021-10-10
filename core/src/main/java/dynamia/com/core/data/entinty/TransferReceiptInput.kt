@@ -23,6 +23,7 @@ class TransferReceiptInput(
     @SerializedName("Sync_to_BC") @Expose(serialize = true) val syncToBC: Int = 2,
     @SerializedName("User_Name") @Expose(serialize = true) val userName: String,
     @SerializedName("Insert_DateTime") @Expose(serialize = true) val insertDateTime: String,
+    @SerializedName("Box") @Expose(serialize = true) val box: String = "",
     @Expose(serialize = false, deserialize = false) var sync_status: Boolean = false,
 ) {
     fun postDataSuccess() {

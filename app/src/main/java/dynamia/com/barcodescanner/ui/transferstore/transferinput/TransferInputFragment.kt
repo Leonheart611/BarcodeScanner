@@ -15,6 +15,7 @@ import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.core.base.BaseFragmentBinding
+import dynamia.com.core.data.entinty.InventoryPickLine
 import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.TransferShipmentLine
@@ -63,6 +64,9 @@ class TransferInputFragment :
                     is TransferInputViewModel.TransferInputViewState.SuccessGetStockOpnameValue -> {
                         showSuccessStockOpname(it.data)
                     }
+                    is TransferInputViewModel.TransferInputViewState.SuccessGetInventoryValue -> {
+                        showSuccessInventoryData(it.data)
+                    }
                 }
             })
             inputValidation.observe(viewLifecycleOwner, {
@@ -80,10 +84,18 @@ class TransferInputFragment :
         }
     }
 
+    private fun showSuccessInventoryData(data: InventoryPickLine) {
+        with(viewBinding.includeTransferInput) {
+            tvTransferItemName.text = data.description
+            tilTransferinputName.editText?.setText(data.itemRefNo)
+            tvTransferQty.text = "${data.alredyScanned}"
+        }
+    }
+
     private fun showSuccessfulData(data: TransferShipmentLine) {
         with(viewBinding.includeTransferInput) {
             tvTransferItemName.text = data.description
-            tilTransferinputName.editText?.setText(data.no)
+            tilTransferinputName.editText?.setText(data.itemRefNo)
             when (args.transferType) {
                 SHIPMENT -> tvTransferQty.text = "${data.alredyScanned}/${data.quantity}"
                 RECEIPT -> tvTransferQty.text = "${data.alredyScanned}/${data.qtyInTransit}"
@@ -133,8 +145,10 @@ class TransferInputFragment :
                 if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
                     || actionId == EditorInfo.IME_ACTION_NEXT && (args.transferType == STOCKOPNAME)
                 ) {
-                    getPickingListLineData(includeTransferInput.etTransferInputBarcode.text.toString(),
-                        includeTransferInput.etTransferinputBincode.text.toString())
+                    getPickingListLineData(
+                        includeTransferInput.etTransferInputBarcode.text.toString(),
+                        includeTransferInput.etTransferinputBincode.text.toString()
+                    )
                     includeTransferInput.etTranferinputQty.requestFocus()
                     return@setOnEditorActionListener true
                 }
@@ -146,6 +160,7 @@ class TransferInputFragment :
                 RECEIPT -> getString(R.string.transfer_receipt_title)
                 PURCHASE -> getString(R.string.purchase_order_title)
                 STOCKOPNAME -> getString(R.string.stock_opname_title)
+                INVENTORY -> getString(R.string.inventory_pick_title)
             }
             includeTransferInput.tilTransferBincode.isVisible = args.transferType == STOCKOPNAME
         }
@@ -158,6 +173,7 @@ class TransferInputFragment :
             RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode)
             PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode)
             STOCKOPNAME -> viewModel.getStockOpnameValue(barcode, args.stockId, binCode)
+            INVENTORY -> viewModel.getInventoryLineValue(args.transferNo, barcode)
         }
     }
 
@@ -172,7 +188,8 @@ class TransferInputFragment :
                 viewModel.checkUserInputValidation(
                     includeTransferInput.etTransferInputBarcode.text.toString(),
                     includeTransferInput.etTranferinputQty.text.toString(),
-                    args.transferType
+                    args.transferType,
+                    includeTransferInput.etBoxInput.text.toString()
                 )
             }
             toolbarPickingListInput.setOnMenuItemClickListener {
@@ -186,6 +203,7 @@ class TransferInputFragment :
                                     RECEIPT -> HistoryType.RECEIPT
                                     PURCHASE -> HistoryType.PURCHASE
                                     STOCKOPNAME -> HistoryType.STOCKOPNAME
+                                    INVENTORY -> HistoryType.INVENTORY
                                 }
                             )
                         view?.findNavController()?.navigate(action)

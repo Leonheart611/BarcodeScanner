@@ -1,5 +1,8 @@
 package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +14,9 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.DialogPartNoNotFoundBinding
 import dynamia.com.barcodescanner.databinding.ItemInputHeaderBinding
+import dynamia.com.barcodescanner.databinding.RefreshWarningDialogBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.util.showLongToast
 
@@ -49,28 +54,39 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
             etTranferinputQty.setText("1")
             etTranferinputQty.isEnabled = false
             tilTransferBincode.isVisible = inputType == TransferType.STOCKOPNAME
-            etTransferInputBarcode.requestFocus()
-
+            etBoxInput.requestFocus()
+            etBoxInput.doAfterTextChanged {
+                etTransferInputBarcode.requestFocus()
+            }
             when (inputType) {
                 TransferType.STOCKOPNAME -> {
                     etTransferInputBarcode.doAfterTextChanged {
                         etTransferinputBincode.requestFocus()
                     }
                     etTransferinputBincode.doAfterTextChanged {
-                        documentNo?.let { data ->
-                            viewModel.insertDataValue(data,
-                                etTransferinputBincode.text.toString(),
-                                inputType, it.toString())
+                        if (!it.isNullOrEmpty()) {
+                            documentNo?.let { data ->
+                                viewModel.insertDataValue(
+                                    data,
+                                    etTransferinputBincode.text.toString(),
+                                    inputType, it.toString(),
+                                    etBoxInput.text.toString()
+                                )
+                            }
                         }
                     }
-
                 }
                 else -> {
                     etTransferInputBarcode.doAfterTextChanged {
-                        documentNo?.let { data ->
-                            viewModel.insertDataValue(data,
-                                it.toString(),
-                                inputType)
+                        if (it.isNullOrEmpty().not()) {
+                            documentNo?.let { data ->
+                                viewModel.insertDataValue(
+                                    data,
+                                    it.toString(),
+                                    inputType,
+                                    box = etBoxInput.text.toString()
+                                )
+                            }
                         }
                     }
                 }
@@ -82,25 +98,51 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
         viewModel.transferInputViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.TransferDetailInputViewState.ErrorGetData -> {
-                    context?.showLongToast(it.message)
+                    showDialog {
+                        with(viewBinding) {
+                            etTransferInputBarcode.text?.clear()
+                            etTransferInputBarcode.requestFocus()
+                        }
+                    }
                 }
                 TransferDetailViewModel.TransferDetailInputViewState.ErrorSaveData -> {
                     context?.showLongToast(getString(R.string.qty_alreadyscan_qty_fromline_error_mssg))
                 }
                 TransferDetailViewModel.TransferDetailInputViewState.SuccessSaveData -> {
                     with(viewBinding) {
-                        etTransferinputBincode.apply {
-                            text?.clear()
-                        }
-                        etTransferInputBarcode.apply {
-                            text?.clear()
-                            requestFocus()
-                        }
+                        etTransferinputBincode.text?.clear()
+                        etTransferInputBarcode.text?.clear()
+                        etTransferInputBarcode.requestFocus()
                         context?.showLongToast("Success Save Data")
                     }
                 }
             }
         })
+    }
+
+    private fun showDialog(
+        call: () -> Unit,
+    ) {
+        context?.let { context ->
+            val dialog = Dialog(context)
+            with(dialog) {
+                val bind = DialogPartNoNotFoundBinding.inflate(layoutInflater)
+                setContentView(bind.root)
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                window
+                    ?.setLayout(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                with(bind) {
+                    btnOk.setOnClickListener {
+                        call()
+                        dismiss()
+                    }
+                }
+                show()
+            }
+        }
     }
 
 

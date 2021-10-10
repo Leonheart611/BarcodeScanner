@@ -10,6 +10,7 @@ data class PurchaseOrderLine(
     @SerializedName("Document_Type") val documentType: String,
     @SerializedName("Document_No") val documentNo: String,
     @SerializedName("Line_No") val lineNo: Int,
+    @SerializedName("Item_Ref_No") val itemRefNo: String = "",
     @SerializedName("No") val no: String,
     @SerializedName("Description") val description: String,
     @SerializedName("Quantity") val quantity: Int,

@@ -21,8 +21,11 @@ import dynamia.com.core.data.entinty.*
         StockOpnameData::class,
         StockOpnameInputData::class,
         BinreclassHeader::class,
-        BinreclassInputData::class
-    ], version = 17, exportSchema = false
+        BinreclassInputData::class,
+        InventoryPickHeader::class,
+        InventoryPickLine::class,
+        InventoryInputData::class
+    ], version = 22, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferShipment(): TransferShipmentDao
@@ -31,23 +34,5 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun purchaseOrder(): PurchaseOrderDao
     abstract fun stockOpnameDao(): StockOpnameDao
     abstract fun binreclassDao(): BinreclassDao
-
-   /* companion object {
-        @Volatile
-        private var INSTANCE: LocalDatabase? = null
-
-        fun getDatabase(
-            context: Context,
-        ): LocalDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    LocalDatabase::class.java,
-                    "MasariDB.sqlite"
-                ).fallbackToDestructiveMigration().build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }*/
+    abstract fun inventoryDao(): InventoryDao
 }

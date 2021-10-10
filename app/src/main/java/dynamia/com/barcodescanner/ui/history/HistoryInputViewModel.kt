@@ -3,10 +3,7 @@ package dynamia.com.barcodescanner.ui.history
 import android.content.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.di.ViewModelBase
-import dynamia.com.core.data.repository.PurchaseOrderRepository
-import dynamia.com.core.data.repository.StockOpnameRepository
-import dynamia.com.core.data.repository.TransferReceiptRepository
-import dynamia.com.core.data.repository.TransferShipmentRepository
+import dynamia.com.core.data.repository.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,5 +12,6 @@ class HistoryInputViewModel @Inject constructor(
     val transferReceiptRepository: TransferReceiptRepository,
     val purchaseOrderRepository: PurchaseOrderRepository,
     val stockOpnameRepository: StockOpnameRepository,
+    val inventoryRepository: InventoryRepository,
     userRepository: SharedPreferences,
 ) : ViewModelBase(userRepository)

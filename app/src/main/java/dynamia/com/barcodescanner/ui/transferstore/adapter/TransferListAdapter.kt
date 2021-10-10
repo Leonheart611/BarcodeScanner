@@ -2,23 +2,20 @@ package dynamia.com.barcodescanner.ui.transferstore.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.databinding.TransferListItemBinding
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 
 class TransferListAdapter(
-    private val transferDatas: MutableList<TransferShipmentHeader>,
     private val listener: OnTransferListClicklistener,
-) : RecyclerView.Adapter<TransferListAdapter.PickingListHolder>() {
+) : ListAdapter<TransferShipmentHeader, TransferListAdapter.PickingListHolder>(
+    TransferShipmentHeaderDiffUtil()
+) {
 
     interface OnTransferListClicklistener {
         fun clickListener(data: TransferShipmentHeader)
-    }
-
-    fun updateData(data: MutableList<TransferShipmentHeader>) {
-        transferDatas.clear()
-        transferDatas.addAll(data)
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickingListHolder {
@@ -31,12 +28,9 @@ class TransferListAdapter(
         )
     }
 
-    override fun getItemCount(): Int {
-        return transferDatas.size
-    }
 
     override fun onBindViewHolder(holder: PickingListHolder, position: Int) {
-        transferDatas[position].let {
+        getItem(position).let {
             holder.bind(it, listener)
         }
     }
@@ -53,6 +47,22 @@ class TransferListAdapter(
                     listener.clickListener(value)
                 }
             }
+        }
+    }
+
+    class TransferShipmentHeaderDiffUtil : DiffUtil.ItemCallback<TransferShipmentHeader>() {
+        override fun areItemsTheSame(
+            oldItem: TransferShipmentHeader,
+            newItem: TransferShipmentHeader
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: TransferShipmentHeader,
+            newItem: TransferShipmentHeader
+        ): Boolean {
+            return oldItem == newItem
         }
     }
 }

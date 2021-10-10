@@ -32,7 +32,7 @@ class DataSourceModule {
             appContext,
             LocalDatabase::class.java,
             "MasariDB.sqlite"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Singleton
@@ -45,6 +45,12 @@ class DataSourceModule {
     @Provides
     fun providePurchaseOrderDao(db: LocalDatabase): PurchaseOrderDao {
         return db.purchaseOrder()
+    }
+
+    @Singleton
+    @Provides
+    fun provideInventoryDao(db: LocalDatabase): InventoryDao {
+        return db.inventoryDao()
     }
 
     @Singleton

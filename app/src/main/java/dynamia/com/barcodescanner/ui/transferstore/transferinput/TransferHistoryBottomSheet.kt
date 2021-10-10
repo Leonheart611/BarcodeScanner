@@ -1,6 +1,5 @@
 package dynamia.com.barcodescanner.ui.transferstore.transferinput
 
-import android.app.Activity
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -40,6 +39,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
             setupFullHeight(bottomSheetDialog)
+            dialogInterface.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         return dialog
     }
@@ -59,7 +59,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
 
     private fun getWindowHeight(): Int {
         val displayMetrics = DisplayMetrics()
-        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 
@@ -79,6 +79,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
             RECEIPT -> no?.let { viewModel.getHistoryReceiptDetail(it) }
             PURCHASE -> no?.let { viewModel.getPurchaseHistoryDetail(it) }
             STOCKOPNAME -> no?.let { viewModel.getStockOpnameHistoryDetail(it) }
+            INVENTORY -> no?.let { viewModel.getInventoryDetailInput(it) }
         }
         setupView()
         setObseverable()
@@ -137,6 +138,15 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                         viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
                     }
                 }
+                is TransferInputViewModel.TransferInputViewState.SuccessGetInventoryInput -> {
+                    with(it.data) {
+                        viewBinding.includeHistory.etTransferinputName.apply {
+                            setText(this@with.itemNo)
+                            isEnabled = false
+                        }
+                        viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
+                    }
+                }
             }
         })
     }
@@ -153,6 +163,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                         RECEIPT -> no?.let { no -> viewModel.deleteTransferReceiptEntry(no) }
                         PURCHASE -> no?.let { no -> viewModel.deletePurchaseOrderEntry(no) }
                         STOCKOPNAME -> no?.let { no -> viewModel.deleteStockOpnameInputData(no) }
+                        INVENTORY -> no?.let { viewModel.deleteInventory(it) }
                     }
 
                 }
@@ -162,23 +173,39 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                 setOnClickListener {
                     when (historyType) {
                         SHIPMENT -> no?.let { no ->
-                            viewModel.updateTransferShipmentEntry(no,
-                                etTranferinputQty.text.toString().toInt())
+                            viewModel.updateTransferShipmentEntry(
+                                no,
+                                etTranferinputQty.text.toString().toInt()
+                            )
                         }
                         RECEIPT -> no?.let { no ->
-                            viewModel.updateTransferReceiptEntry(no,
-                                etTranferinputQty.text.toString().toInt())
+                            viewModel.updateTransferReceiptEntry(
+                                no,
+                                etTranferinputQty.text.toString().toInt()
+                            )
                         }
                         PURCHASE -> {
                             no?.let { no ->
-                                viewModel.updatePurchaseInputData(no,
-                                    etTranferinputQty.text.toString().toInt())
+                                viewModel.updatePurchaseInputData(
+                                    no,
+                                    etTranferinputQty.text.toString().toInt()
+                                )
                             }
                         }
                         STOCKOPNAME -> {
                             no?.let { no ->
-                                viewModel.updateStockOpnameInputData(no,
-                                    etTranferinputQty.text.toString().toInt())
+                                viewModel.updateStockOpnameInputData(
+                                    no,
+                                    etTranferinputQty.text.toString().toInt()
+                                )
+                            }
+                        }
+                        INVENTORY -> {
+                            no?.let {
+                                viewModel.updateInventoryInput(
+                                    it,
+                                    etTranferinputQty.text.toString().toInt()
+                                )
                             }
                         }
                     }

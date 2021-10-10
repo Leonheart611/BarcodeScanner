@@ -33,6 +33,12 @@ interface MasariAPI {
         @Query("\$orderby") order: String = "Inventory desc"
     ): Response<BaseResponse<StockCheckingData>>
 
+    @GET("Android_InventoryPick")
+    suspend fun getInventoryPickHeader(): Response<BaseResponse<InventoryPickHeader>>
+
+    @GET("Android_InventoryPickLine")
+    suspend fun getInventoryPickLine(): Response<BaseResponse<InventoryPickLine>>
+
     @Headers("Content-Type: application/json")
     @POST("Android_Transaction")
     suspend fun postTransferShipment(@Body value: String): TransferInputData
@@ -53,8 +59,9 @@ interface MasariAPI {
     @POST("Android_Transaction")
     suspend fun postBinreclassInput(@Body value: String): BinreclassInputData
 
-    @GET("Chart_of_Accounts")
-    suspend fun getCustomer(): Response<String>
+    @Headers("Content-Type: application/json")
+    @POST("Android_Transaction")
+    suspend fun postInventoryInput(@Body value: String): InventoryInputData
 }
 
 data class BaseResponse<T>(

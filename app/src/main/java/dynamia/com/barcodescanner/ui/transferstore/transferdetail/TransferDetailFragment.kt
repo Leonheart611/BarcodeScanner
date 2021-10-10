@@ -11,6 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.TransferDetailFragmentBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
+import dynamia.com.barcodescanner.ui.transferstore.adapter.InventoryLineListAdapter
 import dynamia.com.barcodescanner.ui.transferstore.adapter.PurchaseDetailLineAdapter
 import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAdapter
 import dynamia.com.core.base.BaseFragmentBinding
@@ -21,11 +22,13 @@ import dynamia.com.core.util.showLongToast
 class TransferDetailFragment :
     BaseFragmentBinding<TransferDetailFragmentBinding>(TransferDetailFragmentBinding::inflate),
     TransferDetailLineAdapter.OnTransferLineCLicklistener,
-    PurchaseDetailLineAdapter.OnPurchaseLineClicklistener {
+    PurchaseDetailLineAdapter.OnPurchaseLineClicklistener,
+    InventoryLineListAdapter.OnclickInventoryLineAdapter {
     private val viewModel: TransferDetailViewModel by viewModels()
     private val args: TransferDetailFragmentArgs by navArgs()
-    private val transferReceiptAdapter = TransferDetailLineAdapter(mutableListOf())
-    private val purchaseDetailLineAdapter = PurchaseDetailLineAdapter(mutableListOf())
+    private val transferReceiptAdapter = TransferDetailLineAdapter()
+    private val purchaseDetailLineAdapter = PurchaseDetailLineAdapter()
+    private val inventoryLineAdapter = InventoryLineListAdapter(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,9 +43,15 @@ class TransferDetailFragment :
             SHIPMENT -> setupShipmentView()
             RECEIPT -> setupReceiptView()
             PURCHASE -> setupPurchaseView()
+            INVENTORY -> setInventoryView()
         }
         setupListener()
         setObseverable()
+    }
+
+    private fun setInventoryView() {
+        viewModel.getInventoryHeader(args.transferNo)
+        viewBinding.rvPickingDetail.adapter = inventoryLineAdapter
     }
 
     private fun setupShipmentView() {
@@ -71,12 +80,18 @@ class TransferDetailFragment :
                 args.transferNo
             )
                 .observe(viewLifecycleOwner, {
-                    transferReceiptAdapter.update(it.toMutableList())
+                    transferReceiptAdapter.submitList(it)
                 })
             PURCHASE -> {
                 viewModel.purchaseOrderRepository.getPurchaseOrderLineByNo(args.transferNo)
                     .observe(viewLifecycleOwner, {
-                        purchaseDetailLineAdapter.update(it.toMutableList())
+                        purchaseDetailLineAdapter.submitList(it)
+                    })
+            }
+            INVENTORY -> {
+                viewModel.inventoryRepository.getAllInventoryPickLine(args.transferNo)
+                    .observe(viewLifecycleOwner, {
+                        inventoryLineAdapter.submitList(it)
                     })
             }
         }
@@ -89,7 +104,7 @@ class TransferDetailFragment :
                     context?.showLongToast(it.message)
                 }
                 is TransferDetailViewModel.TransferListViewState.SuccessGetPickingLineData -> {
-                    transferReceiptAdapter.update(it.values)
+                    transferReceiptAdapter.submitList(it.values)
                 }
                 is TransferDetailViewModel.TransferListViewState.SuccessGetReceiptLocalData -> {
                     setupViewReceipt(it.values)
@@ -97,8 +112,22 @@ class TransferDetailFragment :
                 is TransferDetailViewModel.TransferListViewState.SuccessGetPurchaseData -> {
                     setupMainViewPurchase(it.value)
                 }
+                is TransferDetailViewModel.TransferListViewState.SuccessGetInventoryData -> {
+                    setupMainViewInventory(it.value)
+                }
             }
         })
+    }
+
+    private fun setupMainViewInventory(value: InventoryPickHeader) {
+        with(value) {
+            viewBinding.includeTransferDetail.tvTransferdetailFrom.text =
+                getString(R.string.transfer_store_from, destinationNo)
+            viewBinding.includeTransferDetail.tvTransferdetailTo.text =
+                getString(R.string.transfer_store_to, transferToCode)
+            viewBinding.includeTransferDetail.tvTransferdetailDate.text =
+                getString(R.string.bin_reclass_detail_date, postingDate)
+        }
     }
 
     private fun setupMainViewPurchase(value: PurchaseOrderHeader) {
@@ -173,6 +202,14 @@ class TransferDetailFragment :
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
                 args.transferNo, value.itemIdentifier, args.transferType
+            )
+        view?.findNavController()?.navigate(action)
+    }
+
+    override fun onclicklistener(data: InventoryPickLine) {
+        val action =
+            TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
+                args.transferNo, data.itemRefNo, args.transferType
             )
         view?.findNavController()?.navigate(action)
     }

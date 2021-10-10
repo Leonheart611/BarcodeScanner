@@ -134,13 +134,35 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                         viewBinding.pbStockOpname
                     )
                 }
+                is FailedGetInventory -> {
+                    with(viewBinding) {
+                        tvErrorInventory.text = it.message
+                        ivStatusInventory.crossFade(
+                            animateDuration.toLong(),
+                            pbInventory
+                        )
+                        ivStatusInventory.setImageDrawable(
+                            getDrawable(
+                                resources,
+                                R.drawable.ic_error_circle,
+                                null
+                            )
+                        )
+                    }
+                }
+                SuccessGetInventory -> {
+                    viewBinding.ivStatusInventory.crossFade(
+                        animateDuration.toLong(),
+                        viewBinding.pbInventory
+                    )
+                }
             }
         })
         viewModel.homeGetDataCount.observe(viewLifecycleOwner, EventObserver {
-            if (it == 6) {
+            if (it == 8) {
                 viewBinding.btnDialogClose.isVisible = true
                 viewModel.progress = 0
-            }else{
+            } else {
                 viewBinding.btnDialogClose.isVisible = false
             }
         })
@@ -151,6 +173,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
         viewModel.getReceiptDataAsync() // 1count
         viewModel.getPurchaseDataAsync() // 2count
         viewModel.getStockOpname() // 1count
+        viewModel.getInventoryData() // 2 count
     }
 
 
@@ -179,13 +202,23 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             activity?.readJsonAsset("StockOpnameData.json"),
             StockOpnameDataAssets::class.java
         )
+        val inventoryPickHeaderAssets = Gson().fromJson(
+            activity?.readJsonAsset("InventoryPickHeader.json"),
+            InventoryPickHeaderAssets::class.java
+        )
+        val inventoryPickLine = Gson().fromJson(
+            activity?.readJsonAsset("InventoryPickLine.json"),
+            InventoryPickLineAsset::class.java
+        )
         viewModel.saveAssetData(
             transferShipmentHeader,
             transferShipmentLine,
             transferReceiptHeader,
             purchaseOrderHeader,
             purchaseOrderLine,
-            stockOpnameList
+            stockOpnameList,
+            inventoryPickHeaderAssets,
+            inventoryPickLine
         )
     }
 

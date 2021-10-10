@@ -92,12 +92,15 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
             stockOpnameDataRepository.getALlStockOpname().observe(viewLifecycleOwner, {
                 viewBinding.homeInclude.tvCountStockOpname.text = it.size.toString()
             })
+            inventoryRepository.getAllInventoryHeader().observe(viewLifecycleOwner, {
+                viewBinding.homeInclude.tvInventoryCount.text = it.size.toString()
+            })
         }
     }
 
     private fun openStatusApi() {
         val dialog = HomeGetDataDialog()
-        dialog.setCancelable(false);
+        dialog.isCancelable = false
         dialog.show(requireActivity().supportFragmentManager, HomeGetDataDialog.TAG)
     }
 
@@ -150,6 +153,13 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
                 }
                 cvBinReclass.setOnClickListener {
                     findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBinReclassFragment())
+                }
+                cvInventory.setOnClickListener {
+                    findNavController().navigate(
+                        HomeFragmentDirections.actionHomeFragmentToPickingListFragment(
+                            TransferType.INVENTORY
+                        )
+                    )
                 }
             }
         }
