@@ -50,6 +50,9 @@ interface TransferReceiptDao {
     @Query("SELECT * FROM TransferReceiptInput WHERE id = :id")
     fun getTransferInputDetail(id: Int): TransferReceiptInput
 
+    @Query("SELECT SUM(quantity) FROM TransferReceiptInput WHERE documentNo=:no")
+    fun getQtyScanInputTotal(no: String): Int
+
     @Query("DELETE FROM TransferReceiptInput where id =:id")
     fun deleteTransferInput(id: Int)
 

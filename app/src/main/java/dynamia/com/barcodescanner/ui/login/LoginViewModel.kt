@@ -3,9 +3,13 @@ package dynamia.com.barcodescanner.ui.login
 import android.content.SharedPreferences
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.ui.home.HomeViewModel
 import dynamia.com.core.data.entinty.UserData
+import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.data.repository.UserRepository
+import dynamia.com.core.domain.ResultWrapper
 import dynamia.com.core.util.Constant
+import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
@@ -15,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
-    private val userRepository: UserRepository,
+    private val userRepository: UserRepository
 ) : ViewModel(), LifecycleObserver {
 
     private var _modelState = MutableLiveData<LoginState>()
@@ -79,11 +83,15 @@ class LoginViewModel @Inject constructor(
         return (server.endsWith("/")) && (server.startsWith("http://") || server.startsWith("https://"))
     }
 
+    fun setSuccessCheckLogin() {
+        _modelState.value = LoginState.SuccessCheckLogin
+    }
+
     sealed class LoginState {
         class Success(val message: String) : LoginState()
         class Error(val message: String) : LoginState()
-        class ShowLoading(val boolean: Boolean) : LoginState()
         class UserhasLogin(val userData: UserData?) : LoginState()
+        object SuccessCheckLogin : LoginState()
         class UserHaveData(val userData: UserData) : LoginState()
     }
 

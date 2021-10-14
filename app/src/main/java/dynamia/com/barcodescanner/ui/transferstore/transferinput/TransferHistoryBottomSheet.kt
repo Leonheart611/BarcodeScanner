@@ -21,6 +21,7 @@ import dynamia.com.barcodescanner.databinding.DeleteConfirmationDialogBinding
 import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.history.HistoryType.*
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
+import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.util.showLongToast
 
@@ -95,6 +96,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                             isEnabled = false
                         }
                         viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
+                        viewBinding.includeHistory.etBoxInput.setText(this.box)
                     }
                 }
                 is TransferInputViewModel.TransferInputViewState.ErrorDeleteData -> {
@@ -118,6 +120,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                             isEnabled = false
                         }
                         viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
+                        viewBinding.includeHistory.etBoxInput.setText(this.box)
                     }
                 }
                 is TransferInputViewModel.TransferInputViewState.SuccessGetPurchaseHistory -> {
@@ -127,6 +130,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                             isEnabled = false
                         }
                         viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
+                        viewBinding.includeHistory.etBoxInput.setText(this.box)
                     }
                 }
                 is TransferInputViewModel.TransferInputViewState.SuccessGetStockInputHistory -> {
@@ -213,6 +217,13 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
             }
             viewBinding.ivPickingHistoryClose.setOnClickListener {
                 dismiss()
+            }
+            viewBinding.includeHistory.tilTransferBincode.isVisible =
+                (historyType == STOCKOPNAME || historyType == INVENTORY)
+            viewBinding.includeHistory.tilInputBox.isVisible = when (historyType) {
+                INVENTORY -> false
+                STOCKOPNAME -> false
+                else -> true
             }
         }
     }

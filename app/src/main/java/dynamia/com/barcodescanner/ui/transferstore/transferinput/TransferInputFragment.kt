@@ -86,15 +86,16 @@ class TransferInputFragment :
 
     private fun showSuccessInventoryData(data: InventoryPickLine) {
         with(viewBinding.includeTransferInput) {
-            tvTransferItemName.text = data.description
+            tvTransferItemName.text = data.itemNo
             tilTransferinputName.editText?.setText(data.itemRefNo)
             tvTransferQty.text = "${data.alredyScanned}"
+            etTransferinputBincode.setText(data.binCode)
         }
     }
 
     private fun showSuccessfulData(data: TransferShipmentLine) {
         with(viewBinding.includeTransferInput) {
-            tvTransferItemName.text = data.description
+            tvTransferItemName.text = data.itemNo
             tilTransferinputName.editText?.setText(data.itemRefNo)
             when (args.transferType) {
                 SHIPMENT -> tvTransferQty.text = "${data.alredyScanned}/${data.quantity}"
@@ -105,7 +106,7 @@ class TransferInputFragment :
 
     private fun showSuccessPurchaseData(data: PurchaseOrderLine) {
         with(viewBinding.includeTransferInput) {
-            tvTransferItemName.text = data.description
+            tvTransferItemName.text = data.itemRefNo
             tilTransferinputName.editText?.setText(data.no)
             tvTransferQty.text = "${data.alredyScanned}/${data.quantity}"
         }
@@ -113,7 +114,7 @@ class TransferInputFragment :
 
     private fun showSuccessStockOpname(data: StockOpnameData) {
         with(viewBinding.includeTransferInput) {
-            tvTransferItemName.text = data.itemIdentifier
+            tvTransferItemName.text = data.itemNo
             tilTransferinputName.editText?.setText(data.itemNo)
             tvTransferQty.text = "${data.alredyScanned}/${data.qtyCalculated}"
             etTransferinputBincode.setText(data.binCode)
@@ -162,7 +163,13 @@ class TransferInputFragment :
                 STOCKOPNAME -> getString(R.string.stock_opname_title)
                 INVENTORY -> getString(R.string.inventory_pick_title)
             }
-            includeTransferInput.tilTransferBincode.isVisible = args.transferType == STOCKOPNAME
+            includeTransferInput.tilTransferBincode.isVisible =
+                (args.transferType == STOCKOPNAME || args.transferType == INVENTORY)
+            includeTransferInput.tilInputBox.isVisible = when (args.transferType) {
+                INVENTORY -> false
+                STOCKOPNAME -> false
+                else -> true
+            }
         }
     }
 
@@ -189,7 +196,10 @@ class TransferInputFragment :
                     includeTransferInput.etTransferInputBarcode.text.toString(),
                     includeTransferInput.etTranferinputQty.text.toString(),
                     args.transferType,
-                    includeTransferInput.etBoxInput.text.toString()
+                    box = when (args.transferType) {
+                        INVENTORY -> includeTransferInput.etTransferinputBincode.text.toString()
+                        else -> includeTransferInput.etBoxInput.text.toString()
+                    }
                 )
             }
             toolbarPickingListInput.setOnMenuItemClickListener {

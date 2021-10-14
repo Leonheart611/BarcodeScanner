@@ -129,6 +129,7 @@ class TransferDetailViewModel @Inject constructor(
                         ui {
                             _pickingDetailViewState.value =
                                 TransferListViewState.SuccessGetLocalData(data)
+
                         }
                     }
                 }
@@ -372,6 +373,59 @@ class TransferDetailViewModel @Inject constructor(
         }
     }
 
+    fun getTransferDetailScanQty(no: String) {
+        viewModelScope.launch {
+            io {
+                transferShipmentRepository.getQtyAndScanQtyLiveData(no).collect {
+                    ui {
+                        _pickingDetailViewState.value =
+                            TransferListViewState.SuccessGetQtyTotal(it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getTransferReceiptScanQty(no: String) {
+        viewModelScope.launch {
+            io {
+                transferReceiptRepository.getTransferReceiptQtyDetail(no).collect {
+                    ui {
+                        _pickingDetailViewState.value =
+                            TransferListViewState.SuccessGetQtyTotal(it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getPurchaseScanQty(no: String) {
+        viewModelScope.launch {
+            io {
+                purchaseOrderRepository.getPurchaseQtyDetail(no).collect {
+                    ui {
+                        _pickingDetailViewState.value =
+                            TransferListViewState.SuccessGetQtyTotal(it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getInventoryScanQty(no: String) {
+        viewModelScope.launch {
+            io {
+                inventoryRepository.getInventoryDetailQty(no).collect {
+                    ui {
+                        _pickingDetailViewState.value =
+                            TransferListViewState.SuccessGetQtyTotal(it)
+                    }
+                }
+            }
+        }
+    }
+
+
     /**
     Post Remote Input Data
      */
@@ -576,6 +630,8 @@ class TransferDetailViewModel @Inject constructor(
         class SuccessGetPickingLineData(val values: MutableList<TransferShipmentLine>) :
             TransferListViewState()
 
+
+        class SuccessGetQtyTotal(val data: ScanQty) : TransferListViewState()
         class ErrorGetLocalData(val message: String) : TransferListViewState()
         class SuccessGetPurchaseData(val value: PurchaseOrderHeader) : TransferListViewState()
     }

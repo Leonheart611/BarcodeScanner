@@ -243,7 +243,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    private fun insertInventoryInput(qty: String, box: String) {
+    private fun insertInventoryInput(qty: String, bin: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -254,9 +254,9 @@ class TransferInputViewModel @Inject constructor(
                                     tableID = 2,
                                     documentNo = header.no,
                                     lineNo = line.lineNo,
-                                    itemNo = line.itemRefNo,
+                                    itemNo = line.itemNo,
                                     quantity = qty.toInt(),
-                                    box = box,
+                                    binCode = bin,
                                     locationCode = header.locationCode,
                                     userName = getUserName(),
                                     insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
@@ -319,7 +319,7 @@ class TransferInputViewModel @Inject constructor(
                                     documentNo = line.documentNo,
                                     quantity = qty.toInt(),
                                     lineNo = line.lineNo,
-                                    itemNo = line.itemRefNo,
+                                    itemNo = line.no,
                                     userName = sharedPreferences.getUserName(),
                                     insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
                                     box = box
@@ -356,7 +356,7 @@ class TransferInputViewModel @Inject constructor(
                                     documentNo = line.documentNo,
                                     quantity = qty.toInt(),
                                     lineNo = line.lineNo,
-                                    itemNo = line.itemRefNo,
+                                    itemNo = line.itemNo,
                                     transferFromBinCode = header.transferFromCode,
                                     transferToBinCode = header.transferToCode,
                                     userName = sharedPreferences.getUserName(),
@@ -395,7 +395,7 @@ class TransferInputViewModel @Inject constructor(
                                     documentNo = line.documentNo,
                                     quantity = qty.toInt(),
                                     lineNo = line.lineNo,
-                                    itemNo = line.itemRefNo,
+                                    itemNo = line.itemNo,
                                     transferFromBinCode = header.transferFromCode,
                                     transferToBinCode = header.transferToCode,
                                     userName = sharedPreferences.getUserName(),

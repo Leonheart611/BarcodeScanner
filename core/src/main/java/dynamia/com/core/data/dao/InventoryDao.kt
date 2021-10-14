@@ -23,18 +23,24 @@ interface InventoryDao {
     @Query("DELETE FROM InventoryPickHeader")
     fun deleteAllInventoryHeader()
 
-    /*
-    Inventory Line DAO
+    /**
+     * Inventory Line DAO
      */
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = InventoryPickLine::class)
     fun insertInventoryLineAll(datas: List<InventoryPickLine>)
 
-    @Query("SELECT * FROM InventoryPickLine WHERE `no` = :no ORDER BY `no` DESC")
-    fun getAllInventoryPickLine(no: String): LiveData<List<InventoryPickLine>>
+    @Query("SELECT * FROM InventoryPickLine WHERE `no` = :no ORDER BY `no` DESC LIMIT :page")
+    fun getAllInventoryPickLine(no: String, page: Int): LiveData<List<InventoryPickLine>>
 
     @Query("SELECT * FROM InventoryPickLine WHERE `no` =:no AND itemRefNo = :itemRefNo")
     fun getInventoryPickLineDetail(no: String, itemRefNo: String): InventoryPickLine
+
+    @Query("SELECT SUM(alredyScanned) FROM InventoryPickLine WHERE `no` =:no")
+    fun getAlreadyScanTotal(no: String): Int
+
+    @Query("SELECT SUM(quantity) FROM InventoryPickLine WHERE `no`=:no")
+    fun getQtyScanTotal(no: String): Int
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = InventoryPickLine::class)
     fun updateInventoryPickLine(value: InventoryPickLine)

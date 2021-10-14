@@ -30,7 +30,7 @@ class HistoryInputFragment :
     private var scanEntriesAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
     private var scanTransferReceiptAdapter =
         HistoryTransferReceiptInputAdapter(mutableListOf(), this)
-    private var scanInputPurchaseAdapter = HistoryPurchaseInputAdapter(mutableListOf(), this)
+    private var scanInputPurchaseAdapter = HistoryPurchaseInputAdapter(this)
     private var scanStockInputAdapter = HistoryStockOpnameInputAdapter(mutableListOf(), this)
     private var scanInventoryInputAdapter = HistoryInventoryInputAdapter(this)
 
@@ -81,7 +81,7 @@ class HistoryInputFragment :
                 args.documentNo?.let { documentNo ->
                     viewModel.purchaseOrderRepository.getAllPurchaseInputByNo(documentNo)
                         .observe(viewLifecycleOwner, {
-                            scanInputPurchaseAdapter.updateData(it.toMutableList())
+                            scanInputPurchaseAdapter.submitList(it)
                         })
                 }
             }

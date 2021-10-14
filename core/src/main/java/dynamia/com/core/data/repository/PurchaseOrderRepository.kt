@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.PurchaseOrderDao
 import dynamia.com.core.data.entinty.PurchaseInputData
 import dynamia.com.core.data.entinty.PurchaseOrderHeader
 import dynamia.com.core.data.entinty.PurchaseOrderLine
+import dynamia.com.core.data.entinty.ScanQty
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.ResultWrapper
@@ -34,8 +34,9 @@ interface PurchaseOrderRepository {
      * Purchase Order Line
      */
 
+    fun getPurchaseQtyDetail(no: String): Flow<ScanQty>
     suspend fun insertPurchaseOrderLine(value: PurchaseOrderLine)
-    fun getPurchaseOrderLineByNo(no: String): LiveData<List<PurchaseOrderLine>>
+    fun getPurchaseOrderLineByNo(no: String, page: Int = 20): LiveData<List<PurchaseOrderLine>>
     fun getPurchaseOrderLineByBarcode(no: String, identifier: String): Flow<PurchaseOrderLine>
     fun getPurchaseOrderLineDetailById(id: Int): PurchaseOrderLine
     suspend fun deleteAllPurchaseOrderLine()
@@ -109,11 +110,25 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
         dao.insertPurchaseOrderLine(value)
     }
 
-    override fun getPurchaseOrderLineByNo(no: String): LiveData<List<PurchaseOrderLine>> =
-        dao.getPurchaseOrderLineDetailByNo(no)
+    override fun getPurchaseOrderLineByNo(
+        no: String,
+        page: Int
+    ): LiveData<List<PurchaseOrderLine>> =
+        dao.getPurchaseOrderLineDetailByNo(no, page)
 
     override fun getPurchaseOrderLineDetailById(id: Int): PurchaseOrderLine =
         dao.getPurchaseOrderLineDetailById(id)
+
+    override fun getPurchaseQtyDetail(no: String): Flow<ScanQty> = flow {
+        val qtyAlreadyScan = dao.getAlreadyScanTotal(no)
+        val qtyScanTotal = dao.getQtyScanTotal(no)
+        emit(
+            ScanQty(
+                totalQty = qtyScanTotal,
+                totalAlreadyQty = qtyAlreadyScan
+            )
+        )
+    }
 
     override suspend fun deleteAllPurchaseOrderLine() {
         dao.deleteAllPurchaseOrderLine()

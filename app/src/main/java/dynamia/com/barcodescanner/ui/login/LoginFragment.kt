@@ -9,9 +9,11 @@ import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.LoginFragmentBinding
 import dynamia.com.barcodescanner.ui.MainActivity
+import dynamia.com.barcodescanner.ui.home.HomePostAllDialog
 import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.UserData
+import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
@@ -99,19 +101,21 @@ class LoginFragment :
         viewModel.modelState.observe(viewLifecycleOwner, {
             when (it) {
                 is Success -> {
-                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                    context?.showLongToast("Success Login")
+                    val dialog = CheckLoginBottomSheet()
+                    dialog.isCancelable = false
+                    dialog.show(requireActivity().supportFragmentManager, dialog.tag)
                 }
                 is Error -> {
                     context?.showLongToast(it.message)
-                }
-                is ShowLoading -> {
-                    activity?.showLoading(it.boolean)
                 }
                 is UserhasLogin -> {
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 }
                 is UserHaveData -> setView(it.userData)
+                SuccessCheckLogin -> {
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                    context?.showLongToast("Success Login")
+                }
             }
         })
     }

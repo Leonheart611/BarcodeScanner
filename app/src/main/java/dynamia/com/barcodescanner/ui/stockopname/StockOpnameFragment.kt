@@ -23,7 +23,7 @@ class StockOpnameFragment :
 
     private val viewModel: StockOpnameViewModel by viewModels()
 
-    private val stockOpnameAdapter = StockOpnameAdapter(mutableListOf(), this)
+    private val stockOpnameAdapter = StockOpnameAdapter(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,7 +39,8 @@ class StockOpnameFragment :
                     StockOpnameFragmentDirections.actionStockOpnameFragmentToTransferInputFragment(
                         transferNo = "",
                         barcodeNo = null,
-                        TransferType.STOCKOPNAME)
+                        TransferType.STOCKOPNAME
+                    )
                 view?.findNavController()?.navigate(action)
             }
             fabInputStockOpname.setOnClickListener {
@@ -52,7 +53,7 @@ class StockOpnameFragment :
 
     private fun setupObseverable() {
         viewModel.repository.getALlStockOpname().observe(viewLifecycleOwner, {
-            stockOpnameAdapter.updateData(it.toMutableList())
+            stockOpnameAdapter.submitList(it)
         })
     }
 
@@ -73,7 +74,8 @@ class StockOpnameFragment :
                             StockOpnameFragmentDirections.actionStockOpnameFragmentToHistoryInputFragment(
                                 showAll = true,
                                 historyType = HistoryType.STOCKOPNAME,
-                                documentNo = null, lineNo = 0)
+                                documentNo = null, lineNo = 0
+                            )
                         view?.findNavController()?.navigate(action)
                         true
                     }
@@ -93,7 +95,8 @@ class StockOpnameFragment :
             StockOpnameFragmentDirections.actionStockOpnameFragmentToTransferInputFragment(
                 transferNo = "",
                 barcodeNo = data.itemIdentifier,
-                TransferType.STOCKOPNAME, stockId = data.id!!)
+                TransferType.STOCKOPNAME, stockId = data.id!!
+            )
         view?.findNavController()?.navigate(action)
     }
 

@@ -3,6 +3,7 @@ package dynamia.com.core.data.repository
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.TransferShipmentDao
+import dynamia.com.core.data.entinty.ScanQty
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
@@ -31,7 +32,12 @@ interface TransferShipmentRepository {
     suspend fun getAllTransferLine(): LiveData<List<TransferShipmentLine>>
     suspend fun insertTransferLineAll(data: List<TransferShipmentLine>)
     suspend fun deleteAllTransferLine()
-    fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>>
+    fun getLineListFromHeaderLiveData(
+        no: String,
+        page: Int = 20
+    ): LiveData<List<TransferShipmentLine>>
+
+    fun getQtyAndScanQtyLiveData(no: String): Flow<ScanQty>
     suspend fun getLineDetailFromBarcode(no: String, identifier: String): Flow<TransferShipmentLine>
 
     /**
@@ -86,8 +92,11 @@ class TransferShipmentImpl @Inject constructor(
 
     override suspend fun deleteAllTransferLine() = dao.deleteAllTransferLine()
 
-    override fun getLineListFromHeaderLiveData(no: String): LiveData<List<TransferShipmentLine>> =
-        dao.getLineListFromHeaderLiveData(no)
+    override fun getLineListFromHeaderLiveData(
+        no: String,
+        page: Int
+    ): LiveData<List<TransferShipmentLine>> =
+        dao.getLineListFromHeaderLiveData(no, page)
 
     override suspend fun getCheckEmptyOrNot(): Int = dao.getCheckEmptyOrNot()
 
@@ -116,6 +125,18 @@ class TransferShipmentImpl @Inject constructor(
                 false
             }
         }
+
+    override fun getQtyAndScanQtyLiveData(no: String): Flow<ScanQty> = flow {
+        val qtyAlreadyScan = dao.getAlreadyScanTotal(no)
+        val qtyScanTotal = dao.getQtyScanTotal(no)
+
+        emit(
+            ScanQty(
+                totalQty = qtyScanTotal,
+                totalAlreadyQty = qtyAlreadyScan
+            )
+        )
+    }
 
     override suspend fun getLineDetailFromBarcode(
         no: String,

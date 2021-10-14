@@ -37,8 +37,8 @@ interface PurchaseOrderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = PurchaseOrderLine::class)
     fun insertPurchaseOrderLine(value: PurchaseOrderLine)
 
-    @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo =:no AND quantity != 0")
-    fun getPurchaseOrderLineDetailByNo(no: String): LiveData<List<PurchaseOrderLine>>
+    @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo =:no AND quantity != 0 LIMIT :page")
+    fun getPurchaseOrderLineDetailByNo(no: String, page: Int): LiveData<List<PurchaseOrderLine>>
 
     @Query("SELECT * FROM PurchaseOrderLine WHERE id=:id")
     fun getPurchaseOrderLineDetailById(id: Int): PurchaseOrderLine
@@ -51,6 +51,12 @@ interface PurchaseOrderDao {
 
     @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo=:no AND lineNo =:lineNo")
     fun getPurchaseOrderLineByLineno(no: String, lineNo: Int): PurchaseOrderLine
+
+    @Query("SELECT SUM(alredyScanned) FROM PurchaseOrderLine WHERE documentNo =:no")
+    fun getAlreadyScanTotal(no: String): Int
+
+    @Query("SELECT SUM(quantity) FROM PurchaseOrderLine WHERE documentNo=:no")
+    fun getQtyScanTotal(no: String): Int
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = PurchaseOrderLine::class)
     fun updatePurchaseOrderLine(value: PurchaseOrderLine)

@@ -39,6 +39,7 @@ class InventoryLineListAdapter(val listener: OnclickInventoryLineAdapter) :
                 tvDescription.text = data.description
                 tvQty.text =
                     "${data.alredyScanned} / ${data.quantity}"
+                tvBinCode.text = data.binCode
                 root.setOnClickListener {
                     listener.onclicklistener(data)
                 }

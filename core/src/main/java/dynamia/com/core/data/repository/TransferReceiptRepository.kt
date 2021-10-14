@@ -2,9 +2,9 @@ package dynamia.com.core.data.repository
 
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
-import dagger.hilt.android.scopes.FragmentScoped
 import dynamia.com.core.data.dao.TransferReceiptDao
 import dynamia.com.core.data.dao.TransferShipmentDao
+import dynamia.com.core.data.entinty.ScanQty
 import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferReceiptInput
 import dynamia.com.core.domain.ErrorResponse
@@ -24,6 +24,7 @@ interface TransferReceiptRepository {
     suspend fun deleteAllTransferReceiptHeader()
     suspend fun getTransferReceiptCount(): Int
 
+    fun getTransferReceiptQtyDetail(no: String): Flow<ScanQty>
     fun getAllTransferReceiptInput(): LiveData<List<TransferReceiptInput>>
     suspend fun insertTransferReceiptInput(data: TransferReceiptInput): Boolean
     suspend fun updateTransferReceiptInput(data: TransferReceiptInput)
@@ -122,6 +123,17 @@ class TransferReceiptRepositoryImpl @Inject constructor(
 
     override suspend fun getTransferInputDetail(id: Int): Flow<TransferReceiptInput> = flow {
         emit(dao.getTransferInputDetail(id))
+    }
+
+    override fun getTransferReceiptQtyDetail(no: String): Flow<ScanQty> = flow {
+        val qtyTotal = lineDao.getQtyScanTotal(no)
+        val qtyScanTotal = dao.getQtyScanInputTotal(no)
+        emit(
+            ScanQty(
+                totalQty = qtyTotal,
+                totalAlreadyQty = qtyScanTotal
+            )
+        )
     }
 
     override suspend fun deleteTransferInput(id: Int) {

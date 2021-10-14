@@ -37,8 +37,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/tv_transferdetail_user"
             app:layout_constraintTop_toBottomOf="@+id/tv_transferdetail_user"
             tools:text="Tanggal" />
@@ -75,5 +73,14 @@
             app:layout_constraintStart_toStartOf="@+id/tv_transferdetail_from"
             app:layout_constraintTop_toBottomOf="@+id/tv_transferdetail_from"
             tools:text="To" />
+
+        <TextView
+            android:id="@+id/tv_detail_total_scan_count"
+            android:layout_width="wrap_content"
+            android:layout_height="19dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="@+id/tv_transferdetail_user"
+            app:layout_constraintTop_toBottomOf="@+id/tv_transferdetail_date"
+            tools:text="120/ 200" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
