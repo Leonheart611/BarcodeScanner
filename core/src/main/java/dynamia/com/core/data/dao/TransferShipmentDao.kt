@@ -39,7 +39,7 @@ interface TransferShipmentDao {
     fun deleteAllTransferLine()
 
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND quantity != 0 LIMIT :page")
-    fun getLineListFromHeaderLiveData(no: String, page:Int): LiveData<List<TransferShipmentLine>>
+    fun getLineListFromHeaderLiveData(no: String, page: Int): LiveData<List<TransferShipmentLine>>
 
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND lineNo = :lineNo")
     fun getLineDetail(no: String, lineNo: Int): TransferShipmentLine
@@ -55,6 +55,12 @@ interface TransferShipmentDao {
 
     @Query("SELECT SUM(quantity) FROM TransferShipmentLine WHERE documentNo=:no")
     fun getQtyScanTotal(no: String): Int
+
+    @Query("SELECT SUM(alreadyScanedReceipt) FROM TransferShipmentLine WHERE documentNo=:no")
+    fun getQtyAlreadyScanReceiptTotal(no: String): Int
+
+    @Query("SELECT SUM(qtyInTransit) FROM TransferShipmentLine WHERE documentNo=:no")
+    fun getQtyScanReceiptTotal(no: String): Int
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = TransferShipmentLine::class)
     fun updateTransferLine(data: TransferShipmentLine)

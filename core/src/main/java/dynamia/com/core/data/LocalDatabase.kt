@@ -25,7 +25,7 @@ import dynamia.com.core.data.entinty.*
         InventoryPickHeader::class,
         InventoryPickLine::class,
         InventoryInputData::class
-    ], version = 22, exportSchema = false
+    ], version = 25, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferShipment(): TransferShipmentDao

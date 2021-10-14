@@ -73,9 +73,9 @@ class TransferReceiptRepositoryImpl @Inject constructor(
     override suspend fun insertTransferReceiptInput(data: TransferReceiptInput): Boolean {
         return try {
             val lineData = lineDao.getLineDetail(data.documentNo, data.lineNo)
-            if ((lineData.alredyScanned + data.quantity) <= lineData.qtyInTransit!!) {
+            if ((lineData.alreadyScanedReceipt + data.quantity) <= lineData.qtyInTransit!!) {
                 lineData.apply {
-                    this.alredyScanned += data.quantity
+                    this.alreadyScanedReceipt += data.quantity
                 }
                 dao.insertTransferReceiptInput(data)
                 lineDao.updateTransferLine(lineData)
@@ -96,10 +96,10 @@ class TransferReceiptRepositoryImpl @Inject constructor(
     override suspend fun updateTransferReceiptInputQty(id: Int, newQty: Int): Flow<Boolean> = flow {
         val transferInput = dao.getTransferInputDetail(id)
         val lineData = lineDao.getLineDetail(transferInput.documentNo, transferInput.lineNo)
-        val totalQty = lineData.alredyScanned - transferInput.quantity + newQty
+        val totalQty = lineData.alreadyScanedReceipt - transferInput.quantity + newQty
         if (totalQty <= lineData.qtyInTransit!!) {
             lineData.apply {
-                alredyScanned = totalQty
+                alreadyScanedReceipt = totalQty
             }
             transferInput.apply {
                 quantity = newQty
@@ -126,8 +126,8 @@ class TransferReceiptRepositoryImpl @Inject constructor(
     }
 
     override fun getTransferReceiptQtyDetail(no: String): Flow<ScanQty> = flow {
-        val qtyTotal = lineDao.getQtyScanTotal(no)
-        val qtyScanTotal = dao.getQtyScanInputTotal(no)
+        val qtyTotal = lineDao.getQtyScanReceiptTotal(no)
+        val qtyScanTotal = lineDao.getQtyAlreadyScanReceiptTotal(no)
         emit(
             ScanQty(
                 totalQty = qtyTotal,
@@ -140,7 +140,7 @@ class TransferReceiptRepositoryImpl @Inject constructor(
         val transferInput = dao.getTransferInputDetail(id)
         val lineData = lineDao.getLineDetail(transferInput.documentNo, transferInput.lineNo)
         lineData.apply {
-            alredyScanned -= transferInput.quantity
+            alreadyScanedReceipt -= transferInput.quantity
         }
         dao.deleteTransferInput(id)
         lineDao.updateTransferLine(lineData)

@@ -46,34 +46,15 @@ class TransferDetailFragment :
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val totalItemCount = layoutManager.itemCount
                     val lastVisible: Int = layoutManager.findLastVisibleItemPosition()
-                    val endHasBeenReached = lastVisible >= totalItemCount
+                    val endHasBeenReached = lastVisible >= (totalItemCount - 1)
 
                     if (totalItemCount > 0 && endHasBeenReached) {
-                        when (args.transferType) {
-                            SHIPMENT, RECEIPT -> viewModel.transferShipmentRepository.getLineListFromHeaderLiveData(
-                                args.transferNo, totalItemCount + 20
-                            ).observe(viewLifecycleOwner, {
-                                transferReceiptAdapter.submitList(it)
-                            })
-                            PURCHASE -> {
-                                viewModel.purchaseOrderRepository.getPurchaseOrderLineByNo(
-                                    args.transferNo,
-                                    totalItemCount + 20
-                                )
-                                    .observe(viewLifecycleOwner, {
-                                        purchaseDetailLineAdapter.submitList(it)
-                                    })
-                            }
-                            INVENTORY -> {
-                                viewModel.inventoryRepository.getAllInventoryPickLine(
-                                    args.transferNo,
-                                    totalItemCount + 20
-                                )
-                                    .observe(viewLifecycleOwner, {
-                                        inventoryLineAdapter.submitList(it)
-                                    })
-                            }
-                        }
+                        viewModel.setLine(
+                            TransferDetailViewModel.LineParam(
+                                args.transferNo,
+                                totalItemCount + 20
+                            )
+                        )
                     }
                 }
             })
@@ -96,6 +77,7 @@ class TransferDetailFragment :
     }
 
     private fun setupShipmentView() {
+        viewModel.setLine(TransferDetailViewModel.LineParam(args.transferNo, 20))
         viewModel.getTransferShipingDetail(args.transferNo)
         viewModel.getTransferDetailScanQty(args.transferNo)
         transferReceiptAdapter.setTransferType(args.transferType)
@@ -112,6 +94,7 @@ class TransferDetailFragment :
     }
 
     private fun setupPurchaseView() {
+        viewModel.setLine(TransferDetailViewModel.LineParam(args.transferNo, 20))
         viewModel.getPurchaseOrderDetail(args.transferNo)
         viewModel.getPurchaseScanQty(args.transferNo)
         viewBinding.rvPickingDetail.adapter = purchaseDetailLineAdapter
@@ -120,6 +103,21 @@ class TransferDetailFragment :
 
 
     private fun setObseverable() {
+        when (args.transferType) {
+            SHIPMENT, RECEIPT -> viewModel.shipmentLineData.observe(viewLifecycleOwner, {
+                transferReceiptAdapter.submitList(it)
+            })
+            PURCHASE -> {
+                viewModel.purchaseLineLiveData.observe(viewLifecycleOwner, {
+                    purchaseDetailLineAdapter.submitList(it)
+                })
+            }
+            INVENTORY -> {
+                viewModel.inventoryLineLiveData.observe(viewLifecycleOwner, {
+                    inventoryLineAdapter.submitList(it)
+                })
+            }
+        }
         viewModel.transferListViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.TransferListViewState.SuccessGetLocalData -> {

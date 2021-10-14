@@ -98,7 +98,7 @@ class TransferDetailLineAdapter() :
 
         fun bindReceipt(transferShipmentLine: TransferShipmentLine) {
             with(binding) {
-                tvItemCode.text = transferShipmentLine.itemIdentifier
+                tvItemCode.text = transferShipmentLine.itemRefNo
                 tvDescription.text = transferShipmentLine.description
                 tvQty.text =
                     "${transferShipmentLine.alredyScanned} / ${transferShipmentLine.qtyInTransit}"

@@ -200,9 +200,7 @@ class HomeViewModel @Inject constructor(
                                     )
                                 )
                                 is Success -> {
-                                    value.value.forEach {
-                                        insertPurchaseOrderLine(it)
-                                    }
+                                    insertPurchaseOrderLine(value.value)
                                     ui {
                                         _homeGetApiViewState.value = Event(SuccessGetPurchaseData)
                                     }
@@ -738,9 +736,7 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     purchaseOrderLineAsset.value?.let {
-                        it.forEach { data ->
-                            purchaseOrderRepository.insertPurchaseOrderLine(data)
-                        }
+                        purchaseOrderRepository.insertPurchaseOrderLine(it)
                     }
                     stockOpnameDataAssets.value.let {
                         it.forEach { data ->

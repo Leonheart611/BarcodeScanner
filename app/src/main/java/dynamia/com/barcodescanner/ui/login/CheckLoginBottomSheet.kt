@@ -15,7 +15,7 @@ import dynamia.com.core.util.EventObserver
 @AndroidEntryPoint
 class CheckLoginBottomSheet : BottomSheetDialogFragment() {
 
-    val viewModel: CheckLoginViewModel by viewModels()
+    val viewModel: CheckLoginViewModel by activityViewModels()
     val loginViewModel: LoginViewModel by activityViewModels()
 
     private lateinit var _viewBinding: DialogSelectInputTypeBinding
@@ -34,20 +34,21 @@ class CheckLoginBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.btnCheckLogin.isVisible = false
         viewModel.getTransferData()
+        //viewModel.getTransferDataDummy()
         viewModel.loginViewState.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 is CheckLoginViewModel.LoginViewState.LoginFailed -> {
+                    viewBinding.btnCheckLogin.isVisible = true
+                    viewBinding.pbCheckLogin.isVisible = false
                     viewBinding.tvCheckLoginMessage.text = it.message
                     viewBinding.btnCheckLogin.setOnClickListener {
                         dismiss()
                     }
                 }
                 CheckLoginViewModel.LoginViewState.LoginSuccess -> {
-                    viewBinding.btnCheckLogin.isVisible = true
-                    viewBinding.btnCheckLogin.setOnClickListener {
-                        loginViewModel.setSuccessCheckLogin()
-                        dismiss()
-                    }
+                    loginViewModel.setSuccessCheckLogin()
+                    dismiss()
+
                 }
             }
         })

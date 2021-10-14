@@ -84,7 +84,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun setSuccessCheckLogin() {
-        _modelState.value = LoginState.SuccessCheckLogin
+        _modelState.postValue(LoginState.SuccessCheckLogin)
     }
 
     sealed class LoginState {

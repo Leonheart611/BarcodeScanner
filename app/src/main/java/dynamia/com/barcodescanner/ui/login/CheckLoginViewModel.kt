@@ -21,38 +21,37 @@ class CheckLoginViewModel @Inject constructor(private val transferShipmentReposi
     private var _loginViewState = MutableLiveData<Event<LoginViewState>>()
     val loginViewState: LiveData<Event<LoginViewState>> by lazy { _loginViewState }
 
-    var loading = MutableLiveData<Boolean>()
-
     fun getTransferData() {
         viewModelScope.launch {
             try {
-                loading.postValue(true)
                 io {
-                    transferShipmentRepository.getTransferShipmentLineAsync().collect { data ->
-                        loading.postValue(false)
+                    transferShipmentRepository.getTransferShipmentHeaderAsync().collect { data ->
                         when (data) {
                             is ResultWrapper.Success -> {
-                                _loginViewState.value =
-                                    Event(LoginViewState.LoginSuccess)
+                                _loginViewState.postValue(Event(LoginViewState.LoginSuccess))
                             }
                             is ResultWrapper.GenericError -> {
                                 ui {
-                                    Event(LoginViewState.LoginFailed("${data.code} ${data.error}"))
+                                    _loginViewState.value =
+                                        Event(LoginViewState.LoginFailed("${data.code} ${data.error}"))
                                 }
                             }
                             is ResultWrapper.NetworkError -> {
-                                _loginViewState.value =
-                                    Event(LoginViewState.LoginFailed(data.error))
+                                _loginViewState.postValue(Event(LoginViewState.LoginFailed(data.error)))
+
                             }
                         }
                     }
                 }
             } catch (e: Exception) {
-                loading.postValue(false)
-                _loginViewState.value =
-                    Event(LoginViewState.LoginFailed(e.localizedMessage))
+                _loginViewState.postValue(Event(LoginViewState.LoginFailed(e.localizedMessage)))
+
             }
         }
+    }
+
+    fun getTransferDataDummy(){
+        _loginViewState.postValue(Event(LoginViewState.LoginSuccess))
     }
 
     sealed class LoginViewState {

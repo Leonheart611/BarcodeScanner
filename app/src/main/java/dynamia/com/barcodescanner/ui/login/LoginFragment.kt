@@ -2,6 +2,7 @@ package dynamia.com.barcodescanner.ui.login
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +21,7 @@ import dynamia.com.core.util.showLongToast
 class LoginFragment :
     BaseFragmentBinding<LoginFragmentBinding>(LoginFragmentBinding::inflate) {
 
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: LoginViewModel by activityViewModels()
     var activity: MainActivity? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

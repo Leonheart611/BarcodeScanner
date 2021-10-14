@@ -3,6 +3,7 @@ package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
@@ -25,6 +26,10 @@ class TransferDetailViewModel @Inject constructor(
     private val stockOpnameRepository: StockOpnameRepository,
     private val binreclassRepository: BinreclassRepository,
 ) : ViewModelBase(sharedPreferences) {
+    data class LineParam(
+        val documentNo: String,
+        var page: Int
+    )
 
     private val _pickingDetailViewState = MutableLiveData<TransferListViewState>()
     val transferListViewState: LiveData<TransferListViewState> by lazy { _pickingDetailViewState }
@@ -45,6 +50,29 @@ class TransferDetailViewModel @Inject constructor(
     private var stockOpnameData: StockOpnameData? = null
     private var inventoryPickLine: InventoryPickLine? = null
 
+    private val lineParam = MutableLiveData<LineParam>()
+    val shipmentLineData: LiveData<List<TransferShipmentLine>> = Transformations.switchMap(
+        lineParam
+    ) { param ->
+        transferShipmentRepository.getLineListFromHeaderLiveData(
+            param.documentNo,
+            param.page
+        )
+    }
+
+    val purchaseLineLiveData: LiveData<List<PurchaseOrderLine>> =
+        Transformations.switchMap(lineParam) { param ->
+            purchaseOrderRepository.getPurchaseOrderLineByNo(param.documentNo, param.page)
+        }
+
+    val inventoryLineLiveData: LiveData<List<InventoryPickLine>> =
+        Transformations.switchMap(lineParam) { param ->
+            inventoryRepository.getAllInventoryPickLine(param.documentNo, param.page)
+        }
+
+    fun setLine(data: LineParam) {
+        lineParam.value = data
+    }
 
     fun insertDataValue(
         no: String,

@@ -19,6 +19,7 @@ data class TransferShipmentLine(
     @SerializedName("Transfer_From_Bin_Code") val transferFromBinCode: String,
     @SerializedName("Transfer_To_Bin_Code") val transferToBinCode: String,
     @SerializedName("Already_scaned") var alredyScanned: Int = 0,
+    @SerializedName("Already_scaned_receipt") var alreadyScanedReceipt: Int = 0
 )
 
 data class TransferShipmentLineAsset(

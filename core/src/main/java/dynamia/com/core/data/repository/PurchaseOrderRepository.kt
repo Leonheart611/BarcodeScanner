@@ -35,7 +35,7 @@ interface PurchaseOrderRepository {
      */
 
     fun getPurchaseQtyDetail(no: String): Flow<ScanQty>
-    suspend fun insertPurchaseOrderLine(value: PurchaseOrderLine)
+    suspend fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>)
     fun getPurchaseOrderLineByNo(no: String, page: Int = 20): LiveData<List<PurchaseOrderLine>>
     fun getPurchaseOrderLineByBarcode(no: String, identifier: String): Flow<PurchaseOrderLine>
     fun getPurchaseOrderLineDetailById(id: Int): PurchaseOrderLine
@@ -106,7 +106,7 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
     /**
      * Purchase Order Line
      */
-    override suspend fun insertPurchaseOrderLine(value: PurchaseOrderLine) {
+    override suspend fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>) {
         dao.insertPurchaseOrderLine(value)
     }
 

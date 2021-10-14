@@ -35,7 +35,7 @@ interface PurchaseOrderDao {
      */
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = PurchaseOrderLine::class)
-    fun insertPurchaseOrderLine(value: PurchaseOrderLine)
+    fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>)
 
     @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo =:no AND quantity != 0 LIMIT :page")
     fun getPurchaseOrderLineDetailByNo(no: String, page: Int): LiveData<List<PurchaseOrderLine>>
