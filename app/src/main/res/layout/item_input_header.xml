@@ -107,7 +107,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Bin Code"
-            android:minHeight="48dp"/>
+            android:minHeight="48dp"
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button

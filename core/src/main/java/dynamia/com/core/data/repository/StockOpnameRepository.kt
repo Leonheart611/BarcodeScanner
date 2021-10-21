@@ -64,7 +64,13 @@ class StockOpnameRepositoryImpl @Inject constructor(
         barcode: String,
         binCode: String,
     ): Flow<StockOpnameData> = flow {
-        emit(dao.getStockOpnameDetailBinCode(barcode, binCode))
+        val value = dao.getStockOpnameDetailBinCode(barcode, binCode)
+        if (value != null) {
+            emit(value)
+        } else {
+            dao.getStockOpnameDetailItemRef(barcode, binCode)?.let { emit(it) }
+                ?: kotlin.run { error("Barcode dan Bincode data tidak ditemukan") }
+        }
     }
 
     override fun getStockOpnameDetailByBarcode(barcode: String, id: Int): Flow<StockOpnameData> =

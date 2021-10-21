@@ -1,8 +1,6 @@
 package dynamia.com.core.data
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import dynamia.com.core.data.dao.*
 import dynamia.com.core.data.entinty.*
@@ -25,7 +23,7 @@ import dynamia.com.core.data.entinty.*
         InventoryPickHeader::class,
         InventoryPickLine::class,
         InventoryInputData::class
-    ], version = 25, exportSchema = false
+    ], version = 26, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transferShipment(): TransferShipmentDao

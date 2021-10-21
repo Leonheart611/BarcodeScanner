@@ -116,7 +116,7 @@ class TransferInputFragment :
         with(viewBinding.includeTransferInput) {
             tvTransferItemName.text = data.itemNo
             tilTransferinputName.editText?.setText(data.itemNo)
-            tvTransferQty.text = "${data.alredyScanned}/${data.qtyCalculated}"
+            tvTransferQty.text = "${data.alredyScanned}"
             etTransferinputBincode.setText(data.binCode)
         }
     }

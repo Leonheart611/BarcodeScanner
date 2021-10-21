@@ -34,7 +34,10 @@ interface InventoryDao {
     fun getAllInventoryPickLine(no: String, page: Int): LiveData<List<InventoryPickLine>>
 
     @Query("SELECT * FROM InventoryPickLine WHERE `no` =:no AND itemRefNo = :itemRefNo")
-    fun getInventoryPickLineDetail(no: String, itemRefNo: String): InventoryPickLine
+    fun getInventoryPickLineDetail(no: String, itemRefNo: String): InventoryPickLine?
+
+    @Query("SELECT * FROM InventoryPickLine WHERE `no` =:no AND itemNo = :itemRefNo")
+    fun getInventoryPickLineDetailItemNo(no: String, itemRefNo: String): InventoryPickLine?
 
     @Query("SELECT SUM(alredyScanned) FROM InventoryPickLine WHERE `no` =:no")
     fun getAlreadyScanTotal(no: String): Int
@@ -70,8 +73,8 @@ interface InventoryDao {
     @Update(onConflict = OnConflictStrategy.ABORT, entity = InventoryInputData::class)
     fun updateInputData(data: InventoryInputData)
 
-    @Query("DELETE FROM InventoryInputData WHERE id =:id")
-    fun deleteInventoryInput(id: Int)
+    @Delete(entity = InventoryInputData::class)
+    fun deleteInventoryInput(id: InventoryInputData)
 
     @Query("DELETE FROM InventoryInputData")
     fun deleteAllInventoryInput()

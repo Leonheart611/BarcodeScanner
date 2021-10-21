@@ -76,6 +76,25 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                         }
                     }
                 }
+                TransferType.INVENTORY -> {
+                    tilInputBox.hint = "Bin"
+                    etBoxInput.hint = "Bin"
+                    etBoxInput.doAfterTextChanged {
+                        etTransferInputBarcode.requestFocus()
+                    }
+                    etTransferInputBarcode.doAfterTextChanged {
+                        if (it.isNullOrEmpty().not()) {
+                            documentNo?.let { data ->
+                                viewModel.insertDataValue(
+                                    data,
+                                    it.toString(),
+                                    inputType,
+                                    box = etBoxInput.text.toString()
+                                )
+                            }
+                        }
+                    }
+                }
                 else -> {
                     etTransferInputBarcode.doAfterTextChanged {
                         if (it.isNullOrEmpty().not()) {

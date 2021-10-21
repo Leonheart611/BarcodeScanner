@@ -18,7 +18,10 @@ interface StockOpnameDao {
     fun getStockOpnameDetail(id: Int): StockOpnameData
 
     @Query("SELECT * FROM StockOpnameData WHERE itemIdentifier=:barcode AND binCode =:binCode")
-    fun getStockOpnameDetailBinCode(barcode: String, binCode: String): StockOpnameData
+    fun getStockOpnameDetailBinCode(barcode: String, binCode: String): StockOpnameData?
+
+    @Query("SELECT * FROM StockOpnameData WHERE itemRefNo = :barcode AND binCode =:binCode")
+    fun getStockOpnameDetailItemRef(barcode: String, binCode: String): StockOpnameData?
 
     @Query("SELECT * FROM StockOpnameData WHERE itemIdentifier=:barcode AND id =:id")
     fun getStockOpnameDetail(barcode: String, id: Int): StockOpnameData

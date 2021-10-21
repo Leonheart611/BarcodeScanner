@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.ItemTransferInputHistoryBinding
-import dynamia.com.barcodescanner.ui.transferstore.adapter.InventoryHeaderListAdapter
 import dynamia.com.core.data.entinty.InventoryInputData
 
 class HistoryInventoryInputAdapter(private val clicklistener: HistoryInventoryClicklistener) :

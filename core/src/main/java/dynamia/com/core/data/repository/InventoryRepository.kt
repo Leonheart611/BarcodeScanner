@@ -25,7 +25,7 @@ interface InventoryRepository {
      */
 
     fun insertInventoryLineAll(datas: List<InventoryPickLine>)
-    fun getAllInventoryPickLine(no: String, page:Int = 20): LiveData<List<InventoryPickLine>>
+    fun getAllInventoryPickLine(no: String, page: Int = 20): LiveData<List<InventoryPickLine>>
     fun getDetailInventoryPickLine(no: String, itemNoRef: String): Flow<InventoryPickLine>
     fun updateInventoryPickLine(value: InventoryPickLine)
     fun deleteAllInventoryPickLine()
@@ -42,7 +42,7 @@ interface InventoryRepository {
     fun getInventoryInputDetail(id: Int): Flow<InventoryInputData>
     fun updateInventoryQty(id: Int, newQty: Int): Flow<Boolean>
     fun updateInventoryInput(value: InventoryInputData)
-    fun deleteInventoryInput(id: Int): Flow<Boolean>
+    suspend fun deleteInventoryInput(id: Int)
     fun deleteAllInventoryInput()
 
     /**
@@ -79,7 +79,7 @@ class InventoryRepositoryImpl @Inject constructor(
     }
 
     override fun getAllInventoryPickLine(no: String, page: Int): LiveData<List<InventoryPickLine>> {
-        return dao.getAllInventoryPickLine(no,page)
+        return dao.getAllInventoryPickLine(no, page)
     }
 
     override fun updateInventoryPickLine(value: InventoryPickLine) {
@@ -93,7 +93,7 @@ class InventoryRepositoryImpl @Inject constructor(
     override fun insertInputInventory(data: InventoryInputData) {
         try {
             val lineData = dao.getInventoryPickLineDetail(data.documentNo, data.itemNo)
-            if ((lineData.alredyScanned + data.quantity) <= lineData.quantity) {
+            if ((lineData!!.alredyScanned + data.quantity) <= lineData.quantity) {
                 lineData.apply {
                     this.alredyScanned += data.quantity
                 }
@@ -116,7 +116,14 @@ class InventoryRepositoryImpl @Inject constructor(
         no: String,
         itemNoRef: String
     ): Flow<InventoryPickLine> = flow {
-        emit(dao.getInventoryPickLineDetail(no, itemNoRef))
+        val result = dao.getInventoryPickLineDetail(no, itemNoRef)
+        if (result != null) {
+            emit(result)
+        } else {
+            dao.getInventoryPickLineDetailItemNo(no, itemNoRef)?.let { emit(it) }
+                ?: kotlin.run { error("Data tidak di temukan") }
+        }
+
     }
 
     override fun updateInventoryInput(value: InventoryInputData) {
@@ -130,16 +137,16 @@ class InventoryRepositoryImpl @Inject constructor(
     override fun updateInventoryQty(id: Int, newQty: Int): Flow<Boolean> = flow {
         val inputData = dao.getInventoryInputDetail(id)
         val lineData = dao.getInventoryPickLineDetail(inputData.documentNo, inputData.itemNo)
-        val totalQty = lineData.alredyScanned - inputData.quantity + newQty
-        if (totalQty <= lineData.quantity) {
-            lineData.apply {
+        val totalQty = (lineData?.alredyScanned ?: 0) - inputData.quantity + newQty
+        if (totalQty <= (lineData?.quantity ?: 0)) {
+            lineData?.apply {
                 alredyScanned = totalQty
             }
             inputData.apply {
                 quantity = newQty
             }
             dao.updateInputData(inputData)
-            dao.updateInventoryPickLine(lineData)
+            lineData?.let { dao.updateInventoryPickLine(it) }
             emit(true)
         } else {
             error("Qty yang diinput melebihi yang diperbolehkan")
@@ -169,15 +176,19 @@ class InventoryRepositoryImpl @Inject constructor(
         return dao.getAllUnsycnInputData()
     }
 
-    override fun deleteInventoryInput(id: Int): Flow<Boolean> = flow {
-        val inputData = dao.getInventoryInputDetail(id)
-        val lineData = dao.getInventoryPickLineDetail(inputData.documentNo, inputData.itemNo)
-        lineData.apply {
-            alredyScanned -= inputData.quantity
+    override suspend fun deleteInventoryInput(id: Int) {
+        try {
+            val inputData = dao.getInventoryInputDetail(id)
+            val lineData = dao.getInventoryPickLineDetail(inputData.documentNo, inputData.itemNo)
+            lineData?.apply {
+                alredyScanned -= inputData.quantity
+            }
+            dao.deleteInventoryInput(inputData)
+            lineData?.let { dao.updateInventoryPickLine(it) }
+        } catch (e: Exception) {
+            error(e.localizedMessage)
         }
-        dao.deleteInventoryInput(id)
-        dao.updateInventoryPickLine(lineData)
-        emit(true)
+
     }
 
     /**

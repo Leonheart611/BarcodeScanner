@@ -32,7 +32,7 @@ class StockOpnameAdapter(val listener: OnStockClicklistener) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: StockOpnameData) {
             with(binding) {
-                tvItemCode.text = data.itemIdentifier
+                tvItemCode.text = data.itemRefNo
                 tvDescription.text = data.description
                 tvQty.text =
                     "${data.alredyScanned}"

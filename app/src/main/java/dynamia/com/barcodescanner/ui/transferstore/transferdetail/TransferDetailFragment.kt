@@ -17,6 +17,7 @@ import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAda
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.util.showLongToast
+import dynamia.com.core.util.showShortToast
 
 @AndroidEntryPoint
 class TransferDetailFragment :
@@ -71,6 +72,7 @@ class TransferDetailFragment :
     }
 
     private fun setInventoryView() {
+        viewModel.setLine(TransferDetailViewModel.LineParam(args.transferNo, 20))
         viewModel.getInventoryHeader(args.transferNo)
         viewModel.getInventoryScanQty(args.transferNo)
         viewBinding.rvPickingDetail.adapter = inventoryLineAdapter
@@ -86,6 +88,7 @@ class TransferDetailFragment :
     }
 
     private fun setupReceiptView() {
+        viewModel.setLine(TransferDetailViewModel.LineParam(args.transferNo, 20))
         viewModel.getTransferReceiptDetail(args.transferNo)
         viewModel.getTransferReceiptScanQty(args.transferNo)
         transferReceiptAdapter.setTransferType(args.transferType)
@@ -239,5 +242,16 @@ class TransferDetailFragment :
                 args.transferNo, data.itemRefNo, args.transferType
             )
         view?.findNavController()?.navigate(action)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewBinding.rvPickingDetail.invalidate()
+        viewModel.setLine(
+            TransferDetailViewModel.LineParam(
+                args.transferNo,
+                20
+            )
+        )
     }
 }

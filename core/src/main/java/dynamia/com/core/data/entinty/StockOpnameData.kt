@@ -13,6 +13,7 @@ data class StockOpnameData(
     @SerializedName("Line_No") val lineNo: Int,
     @SerializedName("Document_No") val documentNo: String,
     @SerializedName("Item_No") val itemNo: String,
+    @SerializedName("Item_Ref_No") val itemRefNo: String,
     @SerializedName("Description") val description: String,
     @SerializedName("Qty_Calculated") val qtyCalculated: Int,
     @SerializedName("ItemIdentifier") val itemIdentifier: String,

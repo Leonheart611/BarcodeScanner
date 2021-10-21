@@ -60,6 +60,7 @@
             android:id="@+id/tv_bin_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_item_code"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Bin COde bin code" />
