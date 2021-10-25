@@ -25,7 +25,7 @@ class CheckLoginViewModel @Inject constructor(private val transferShipmentReposi
         viewModelScope.launch {
             try {
                 io {
-                    transferShipmentRepository.getTransferShipmentHeaderAsync().collect { data ->
+                    transferShipmentRepository.checkLoginCredential().collect { data ->
                         when (data) {
                             is ResultWrapper.Success -> {
                                 _loginViewState.postValue(Event(LoginViewState.LoginSuccess))

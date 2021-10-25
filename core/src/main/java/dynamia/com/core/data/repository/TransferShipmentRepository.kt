@@ -61,6 +61,7 @@ interface TransferShipmentRepository {
     suspend fun getTransferShipmentHeaderAsync(): Flow<ResultWrapper<MutableList<TransferShipmentHeader>>>
     suspend fun getTransferShipmentLineAsync(): Flow<ResultWrapper<MutableList<TransferShipmentLine>>>
     suspend fun postTransferData(value: String): Flow<TransferInputData>
+    suspend fun checkLoginCredential(): Flow<ResultWrapper<Boolean>>
 }
 
 class TransferShipmentImpl @Inject constructor(
@@ -249,6 +250,29 @@ class TransferShipmentImpl @Inject constructor(
                 emit(ResultWrapper.NetworkError(e.localizedMessage))
             }
         }
+
+
+    override suspend fun checkLoginCredential(): Flow<ResultWrapper<Boolean>> =
+        flow {
+            try {
+                val result = retrofitService.getTransferShipmentLine()
+                when (result.isSuccessful) {
+                    true -> emit(ResultWrapper.Success(true))
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError(e.localizedMessage))
+            }
+        }
+
 
     override suspend fun postTransferData(value: String): Flow<TransferInputData> = flow {
         emit(retrofitService.postTransferShipment(value))
