@@ -96,4 +96,7 @@
     <string name="receipt_local_history_title">Receipt Local History</string>
     <string name="shipment_not_match_error">Tracking ID harus sama dengan Shipment no</string>
     <string name="part_no_history">Part No: %1$s</string>
+
+    <string name="peminjam_title_text">Peminjam</string>
+    <string name="dor_picking_title_text">Dor Picking</string>
 </resources>

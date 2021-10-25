@@ -96,8 +96,7 @@ class PickingDetailFragment : Fragment() {
                 R.id.menu_search -> {
                     val action =
                         PickingDetailFragmentDirections.actionPickingDetailFragmentToReceiptSearchFragment(
-                            PoNo = args.pickingListNo,
-                            source = Constant.PICKING_LIST
+                            args.pickingListNo, Constant.PICKING_LIST
                         )
                     view?.findNavController()?.navigate(action)
                     true

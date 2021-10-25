@@ -38,8 +38,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        callAllApi()
-        //getAllDataFromAssets()
+        //callAllApi()
+        getAllDataFromAssets()
         setOnClicklistener()
     }
 
@@ -121,6 +121,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             activity?.readJsonAsset("ReceiptLocalLine.json"),
             ReceiptLocalLine::class.java
         )
+
         viewModel.savePickingHeader(
             pickingListheader,
             pickingListLine,

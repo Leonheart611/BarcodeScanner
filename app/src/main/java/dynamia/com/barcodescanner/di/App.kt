@@ -17,7 +17,6 @@ class App : MultiDexApplication() {
 
         val context: Context
             get() = instance
-        private lateinit var firebaseAnalytics: FirebaseAnalytics
     }
 
     init {
@@ -26,12 +25,10 @@ class App : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         startKoin {
             androidLogger()
             androidContext(this@App)
             koin.loadModules(listOf(injectionModule))
-            koin.createRootScope()
         }
     }
 

@@ -26,6 +26,15 @@ interface API {
     @GET("ReceiptLocalLine")
     suspend fun getReceiptLocalLineAsync(): ReceiptLocalLine
 
+    @GET("PeminjamanHeader")
+    suspend fun getPeminjamHeaderAsync(): PeminjamanHeaderAsset
+
+    @GET("PeminjamanDetail")
+    suspend fun getPeminjamanDetailAsycn(): PeminjamanDetailAsset
+
+    @GET("DORPickingListHeader")
+    suspend fun getDorPickingListHeaderAsycn():DorPickingHeader
+
     @Headers("Content-Type: application/json")
     @POST("ReceiptImportEntry")
     suspend fun postReceiptImportEntry(@Body value: String): ReceiptImportScanEntriesValue

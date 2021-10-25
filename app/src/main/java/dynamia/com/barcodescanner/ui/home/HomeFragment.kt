@@ -120,6 +120,12 @@ class HomeFragment : Fragment() {
             val action = HomeFragmentDirections.actionHomeFragmentToStockCountingFragment()
             findNavController().navigate(action)
         }
+        cv_peminjam.setOnClickListener {
+
+        }
+        cv_dor_picking.setOnClickListener {
+
+        }
     }
 
     private fun showDialog() {

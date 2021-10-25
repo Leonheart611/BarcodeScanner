@@ -1,0 +1,35 @@
+{
+  "odata.metadata": "http://labnav.mastersystem.co.id:7048/DynamicsNAV90/OData/$metadata#PeminjamanHeader",
+  "value": [
+    {
+      "No": "BPBI/2020/0004",
+      "Transfer_from_Name": "Gudang Mastersystem",
+      "Transfer_to_Name": "Peminjaman Barang Internal",
+      "Posting_Date": "2020-09-28T00:00:00",
+      "Project_Code": "T10.G.INT",
+      "Status": "Released",
+      "Employee_Code": "STEVEN",
+      "ETag": "52;bBYAAAJ7/0IAUABCAEkALwAyADAAMgAwAC8AMAAwADAANAAAAAAA10;13877983960;"
+    },
+    {
+      "No": "FP/2021/0001",
+      "Transfer_from_Name": "GUDANG PEMINJAMAN",
+      "Transfer_to_Name": "PT ABC",
+      "Posting_Date": "2021-03-07T00:00:00",
+      "Project_Code": "T12.STOCK",
+      "Status": "Released",
+      "Employee_Code": "STEVEN",
+      "ETag": "48;bBYAAAJ7/0YAUAAvADIAMAAyADEALwAwADAAMAAxAAAAAAA=10;13877983980;"
+    },
+    {
+      "No": "FT/2021/0001",
+      "Transfer_from_Name": "Goods In Transit Import",
+      "Transfer_to_Name": "Gudang Mastersystem",
+      "Posting_Date": "2021-10-22T00:00:00",
+      "Project_Code": "T12.STOCK",
+      "Status": "Released",
+      "Employee_Code": "STEVEN",
+      "ETag": "48;bBYAAAJ7/0YAVAAvADIAMAAyADEALwAwADAAMAAxAAAAAAA=10;13877983990;"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "odata.metadata": "http://labnav.mastersystem.co.id:7048/DynamicsNAV90/OData/$metadata#PeminjamanDetail",
+  "value": [
+    {
+      "Document_No": "BPBI/2020/0004",
+      "Line_No": 10000,
+      "Item_No": "CIS.F03.0-0354",
+      "Description": "CATALYST 4500-X 16 PORT 10G IP BASE  FRONT-TO-BACK",
+      "Part_No": "",
+      "Quantity": "1",
+      "Outstanding_Quantity": "1",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "60;bRYAAAJ7/0IAUABCAEkALwAyADAAMgAwAC8AMAAwADAANAAAAACHECcAAAAA10;13877971340;"
+    },
+    {
+      "Document_No": "BPBI/2020/0004",
+      "Line_No": 20000,
+      "Item_No": "CIS.F99.0-00548",
+      "Description": "CATALYST 4500X 750W AC FRONT TO BACK COOLING 2ND",
+      "Part_No": "",
+      "Quantity": "1",
+      "Outstanding_Quantity": "1",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "60;bRYAAAJ7/0IAUABCAEkALwAyADAAMgAwAC8AMAAwADAANAAAAACHIE4AAAAA10;13877971350;"
+    },
+    {
+      "Document_No": "BPBI/2020/0004",
+      "Line_No": 30000,
+      "Item_No": "CIS.F99.0-00547",
+      "Description": "CATALYST 4500X 750W AC FRONT TO BACK COOLING",
+      "Part_No": "",
+      "Quantity": "1",
+      "Outstanding_Quantity": "1",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "60;bRYAAAJ7/0IAUABCAEkALwAyADAAMgAwAC8AMAAwADAANAAAAACHMHUAAAAA10;13877971360;"
+    },
+    {
+      "Document_No": "BPBI/2020/0004",
+      "Line_No": 40000,
+      "Item_No": "CIS.F99.0-0539",
+      "Description": "CATALYST 4500X NETWORK MODULE BLANK",
+      "Part_No": "",
+      "Quantity": "1",
+      "Outstanding_Quantity": "1",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "60;bRYAAAJ7/0IAUABCAEkALwAyADAAMgAwAC8AMAAwADAANAAAAACHQJwAAAAA10;13877971370;"
+    },
+    {
+      "Document_No": "BPBI/2020/0004",
+      "Line_No": 50000,
+      "Item_No": "CIS.F99.0-0193",
+      "Description": "CEE 7/7 TO IEC-C15 8FT EUROPE",
+      "Part_No": "",
+      "Quantity": "1",
+      "Outstanding_Quantity": "1",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "60;bRYAAAJ7/0IAUABCAEkALwAyADAAMgAwAC8AMAAwADAANAAAAACHUMMAAAAA10;13877971380;"
+    },
+    {
+      "Document_No": "BPBI/2020/0004",
+      "Line_No": 60000,
+      "Item_No": "CIS.F06.0-2057",
+      "Description": "CAT4500-X UNIVERSAL CRYPTO IMAGE",
+      "Part_No": "",
+      "Quantity": "1",
+      "Outstanding_Quantity": "1",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "60;bRYAAAJ7/0IAUABCAEkALwAyADAAMgAwAC8AMAAwADAANAAAAACHYOoAAAAA10;13877971390;"
+    },
+    {
+      "Document_No": "BPBI/2020/0004",
+      "Line_No": 70000,
+      "Item_No": "CIS.F06.0-1495",
+      "Description": "IP BASE TO ENT. SERVICES LICENSE FOR 16 PORT CAT",
+      "Part_No": "",
+      "Quantity": "1",
+      "Outstanding_Quantity": "1",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "60;bRYAAAJ7/0IAUABCAEkALwAyADAAMgAwAC8AMAAwADAANAAAAACHcBEBAAAA10;13877971400;"
+    },
+    {
+      "Document_No": "FP/2021/0001",
+      "Line_No": 10000,
+      "Item_No": "CIS.F04.0-0013",
+      "Description": "CISCO ATA 186 2-PORT ADAPTOR",
+      "Part_No": "1PATA186-I2-A",
+      "Quantity": "5",
+      "Outstanding_Quantity": "5",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "56;bRYAAAJ7/0YAUAAvADIAMAAyADEALwAwADAAMAAxAAAAAIcQJwAAAAA=10;13877970780;"
+    },
+    {
+      "Document_No": "FT/2021/0001",
+      "Line_No": 10000,
+      "Item_No": "IBM.A01.0-0001",
+      "Description": "LENOVO M58E-R61",
+      "Part_No": "7298R61",
+      "Quantity": "515",
+      "Outstanding_Quantity": "515",
+      "Status": "Released",
+      "Employe_Code": "STEVEN",
+      "ETag": "56;bRYAAAJ7/0YAVAAvADIAMAAyADEALwAwADAAMAAxAAAAAIcQJwAAAAA=10;13877983320;"
+    }
+  ]
+}

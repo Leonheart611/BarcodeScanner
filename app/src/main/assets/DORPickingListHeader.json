@@ -1,0 +1,17 @@
+{
+  "odata.metadata": "http://labnav.mastersystem.co.id:7048/DynamicsNAV90/OData/$metadata#DORPickingListHeader",
+  "value": [
+    {
+      "No": "2017/DOR/0052",
+      "Transfer_from_Name": "Gudang Mastersystem",
+      "Transfer_to_Name": "CUSTOMER LEASING (INTERIM)",
+      "Sales_Rent_Doc_No": "2016/SO/1210",
+      "Salesperson_Code": "F01",
+      "Req_Delivery_Date": "2016-06-19T00:00:00",
+      "Project_Code": "TT009415A0001",
+      "Status": "Released",
+      "Employee_Code": "STEVEN",
+      "ETag": "52;bBYAAAJ7/zIAMAAxADcALwBEAE8AUgAvADAAMAA1ADIAAAAAAA==10;13877990890;"
+    }
+  ]
+}
