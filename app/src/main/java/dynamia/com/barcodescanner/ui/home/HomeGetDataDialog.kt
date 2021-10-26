@@ -122,6 +122,26 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             ReceiptLocalLine::class.java
         )
 
+        val peminjamHeader = Gson().fromJson(
+            activity?.readJsonAsset("PeminjamanHeader.json"),
+            PeminjamanHeaderAsset::class.java
+        )
+
+        val peminjamLine = Gson().fromJson(
+            activity?.readJsonAsset("PeminjamanDetail.json"),
+            PeminjamanDetailAsset::class.java
+        )
+
+        val dorPickingHeader = Gson().fromJson(
+            activity?.readJsonAsset("DORPickingListHeader.json"),
+            DorPickHeaderAsset::class.java
+        )
+
+        val dorPickingDetail = Gson().fromJson(
+            activity?.readJsonAsset("DORPickingListDetail.json"),
+            DorPickingDetailAsset::class.java
+        )
+
         viewModel.savePickingHeader(
             pickingListheader,
             pickingListLine,

@@ -411,6 +411,10 @@ class HomeViewModel(
         class GetSuccessfulCount(val data: Int) : HomePostViewState()
         class ErrorPostCount(val message: String) : HomePostViewState()
         object SuccessPostallCount : HomePostViewState()
+
+        /**
+         *Peminjaman Get State
+         */
     }
 }
 

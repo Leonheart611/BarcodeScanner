@@ -19,3 +19,7 @@ data class DorPickingDetail(
     @SerializedName("Employe_Code") val employeCode: String,
     @SerializedName("Already_scaned") var alreadyScanned: Int = 0
 )
+
+data class DorPickingDetailAsset(
+    @SerializedName("value") val value: List<DorPickingDetail>
+)

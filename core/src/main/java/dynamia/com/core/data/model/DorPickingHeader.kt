@@ -18,3 +18,6 @@ data class DorPickingHeader(
     @SerializedName("Transfer_from_Name") val transferFromName: String,
     @SerializedName("Transfer_to_Name") val transferToName: String
 )
+data class DorPickHeaderAsset(
+    @SerializedName("value") val value: List<DorPickingHeader>
+)

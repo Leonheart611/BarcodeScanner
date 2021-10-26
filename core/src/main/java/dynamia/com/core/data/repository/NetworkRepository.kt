@@ -21,6 +21,23 @@ interface NetworkRepository {
     suspend fun postReceiptLocalEntry(value: String): Flow<ReceiptLocalScanEntriesValue>
     suspend fun postPickingListEntry(value: String): Flow<PickingListScanEntriesValue>
     suspend fun postStockCountEntry(value: String): Flow<ResultWrapper<StockCount>>
+
+    /**
+     * Peminjaman Network Call
+     */
+
+    suspend fun getPeminjamListHeaderAsync(): Flow<ResultWrapper<MutableList<PeminjamanHeader>>>
+    suspend fun getPeminjamListDetailAsync(): Flow<ResultWrapper<MutableList<PeminjamanDetail>>>
+    suspend fun postPeminjamEntryAsync(value: String): Flow<ResultWrapper<PeminjamScanEntries>>
+
+    /**
+     * DorPicking Network Call
+     */
+    suspend fun getDorPickingListHeaderAsync(): Flow<ResultWrapper<MutableList<DorPickingHeader>>>
+    suspend fun getDorPickingListDetailAsync(): Flow<ResultWrapper<MutableList<DorPickingDetail>>>
+    suspend fun postDorPickingEntryAsync(value: String): Flow<ResultWrapper<DorPickingScanEntries>>
+
+
 }
 
 class NetworkRepositoryImpl(
@@ -118,6 +135,150 @@ class NetworkRepositoryImpl(
                             Gson().fromJson(it.charStream().readText(), ErrorResponse::class.java)
                         emit(ResultWrapper.GenericError(result.code(), errorMessage))
                     }
+            }
+        }
+
+    /**
+     * Peminjaman Network Call
+     */
+    override suspend fun getPeminjamListHeaderAsync(): Flow<ResultWrapper<MutableList<PeminjamanHeader>>> =
+        flow {
+            try {
+                val result = retrofitService.getPeminjamHeaderAsync()
+                when (result.isSuccessful) {
+                    true -> {
+                        result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
+                    }
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError)
+            }
+        }
+
+    override suspend fun getPeminjamListDetailAsync(): Flow<ResultWrapper<MutableList<PeminjamanDetail>>> =
+        flow {
+            try {
+                val result = retrofitService.getPeminjamanDetailAsycn()
+                when (result.isSuccessful) {
+                    true -> {
+                        result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
+                    }
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError)
+            }
+        }
+
+    override suspend fun postPeminjamEntryAsync(value: String): Flow<ResultWrapper<PeminjamScanEntries>> =
+        flow {
+            try {
+                val result = retrofitService.postPeminjamEntry(value)
+                when (result.isSuccessful) {
+                    true -> {
+                        result.body()?.let { emit(ResultWrapper.Success(it)) }
+                    }
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError)
+            }
+        }
+
+    /**
+     * DorPicking Network Call
+     */
+    override suspend fun getDorPickingListHeaderAsync(): Flow<ResultWrapper<MutableList<DorPickingHeader>>> =
+        flow {
+            try {
+                val result = retrofitService.getDorPickingListHeaderAsycn()
+                when (result.isSuccessful) {
+                    true -> {
+                        result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
+                    }
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError)
+            }
+        }
+
+    override suspend fun getDorPickingListDetailAsync(): Flow<ResultWrapper<MutableList<DorPickingDetail>>> =
+        flow {
+            try {
+                val result = retrofitService.getDorPickingListDetailAsycn()
+                when (result.isSuccessful) {
+                    true -> {
+                        result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
+                    }
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError)
+            }
+        }
+
+    override suspend fun postDorPickingEntryAsync(value: String): Flow<ResultWrapper<DorPickingScanEntries>> =
+        flow {
+            try {
+                val result = retrofitService.postDorPickEntry(value)
+                when (result.isSuccessful) {
+                    true -> {
+                        result.body()?.let { emit(ResultWrapper.Success(it)) }
+                    }
+                    else -> {
+                        result.errorBody()?.let {
+                            val errorMessage = Gson().fromJson(
+                                it.charStream().readText(),
+                                ErrorResponse::class.java
+                            )
+                            emit(ResultWrapper.GenericError(result.code(), errorMessage))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResultWrapper.NetworkError)
             }
         }
 }

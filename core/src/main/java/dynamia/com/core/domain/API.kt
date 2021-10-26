@@ -27,13 +27,16 @@ interface API {
     suspend fun getReceiptLocalLineAsync(): ReceiptLocalLine
 
     @GET("PeminjamanHeader")
-    suspend fun getPeminjamHeaderAsync(): PeminjamanHeaderAsset
+    suspend fun getPeminjamHeaderAsync(): Response<PeminjamanHeaderAsset>
 
     @GET("PeminjamanDetail")
-    suspend fun getPeminjamanDetailAsycn(): PeminjamanDetailAsset
+    suspend fun getPeminjamanDetailAsycn(): Response<PeminjamanDetailAsset>
 
     @GET("DORPickingListHeader")
-    suspend fun getDorPickingListHeaderAsycn():DorPickingHeader
+    suspend fun getDorPickingListHeaderAsycn(): Response<DorPickHeaderAsset>
+
+    @GET("DORPickingListDetail")
+    suspend fun getDorPickingListDetailAsycn(): Response<DorPickingDetailAsset>
 
     @Headers("Content-Type: application/json")
     @POST("ReceiptImportEntry")
@@ -50,4 +53,14 @@ interface API {
     @Headers("Content-Type: application/json")
     @POST("StockCountEntry")
     suspend fun postStockCountEntry(@Body value: String): Response<StockCount>
+
+    @Headers("Content-Type: application/json")
+    @POST("PeminjamanEntry")
+    suspend fun postPeminjamEntry(@Body value: String): Response<PeminjamScanEntries>
+
+    @Headers("Content-Type: application/json")
+    @POST("DORPickingEntry")
+    suspend fun postDorPickEntry(@Body value: String): Response<DorPickingScanEntries>
+
+
 }
