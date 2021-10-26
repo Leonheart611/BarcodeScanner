@@ -60,6 +60,15 @@ class TransferDetailViewModel @Inject constructor(
         )
     }
 
+    val transferReceipt: LiveData<List<TransferShipmentLine>> = Transformations.switchMap(
+        lineParam
+    ) { param ->
+        transferShipmentRepository.getLineListFromReceiptLiveData(
+            param.documentNo,
+            param.page
+        )
+    }
+
     val purchaseLineLiveData: LiveData<List<PurchaseOrderLine>> =
         Transformations.switchMap(lineParam) { param ->
             purchaseOrderRepository.getPurchaseOrderLineByNo(param.documentNo, param.page)

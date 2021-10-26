@@ -107,9 +107,14 @@ class TransferDetailFragment :
 
     private fun setObseverable() {
         when (args.transferType) {
-            SHIPMENT, RECEIPT -> viewModel.shipmentLineData.observe(viewLifecycleOwner, {
+            SHIPMENT -> viewModel.shipmentLineData.observe(viewLifecycleOwner, {
                 transferReceiptAdapter.submitList(it)
             })
+            RECEIPT -> {
+                viewModel.transferReceipt.observe(viewLifecycleOwner, {
+                    transferReceiptAdapter.submitList(it)
+                })
+            }
             PURCHASE -> {
                 viewModel.purchaseLineLiveData.observe(viewLifecycleOwner, {
                     purchaseDetailLineAdapter.submitList(it)

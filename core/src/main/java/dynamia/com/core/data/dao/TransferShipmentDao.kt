@@ -41,6 +41,9 @@ interface TransferShipmentDao {
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND quantity != 0 LIMIT :page")
     fun getLineListFromHeaderLiveData(no: String, page: Int): LiveData<List<TransferShipmentLine>>
 
+    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND qtyInTransit != 0 LIMIT :page")
+    fun getLineListFromHeaderReceipt(no: String, page: Int): LiveData<List<TransferShipmentLine>>
+
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND lineNo = :lineNo")
     fun getLineDetail(no: String, lineNo: Int): TransferShipmentLine
 
