@@ -389,6 +389,18 @@ class HomeViewModel(
         class FailedGetReceiptImport(val message: String) : HomeGetApiViewState()
         object SuccessGetReceiptLocal : HomeGetApiViewState()
         class FailedGetReceiptLocal(val message: String) : HomeGetApiViewState()
+
+        /**
+         * Peminjam List ViewState
+         */
+        object SuccessGetPeminjamList : HomeGetApiViewState()
+        class FailedGetPeminjam(val message: String) : HomeGetApiViewState()
+
+        /**
+         * Dor Picking ViewState
+         */
+        object SuccessGetDorList : HomeGetApiViewState()
+        class FailedGetDorList(val message: String) : HomeGetApiViewState()
     }
 
     sealed class HomePostViewState {
