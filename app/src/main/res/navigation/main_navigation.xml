@@ -128,11 +128,11 @@
         android:label="stock_opname_fragment"
         tools:layout="@layout/stock_opname_fragment" >
         <action
-            android:id="@+id/action_stockOpnameFragment_to_transferInputFragment"
-            app:destination="@id/transferInputFragment" />
-        <action
             android:id="@+id/action_stockOpnameFragment_to_historyInputFragment"
             app:destination="@id/historyInputFragment" />
+        <action
+            android:id="@+id/action_stockOpnameFragment_to_stockOpnameInputFragment2"
+            app:destination="@id/stockOpnameInputFragment2" />
     </fragment>
     <fragment
         android:id="@+id/checkStockFragment"
@@ -158,6 +158,19 @@
             app:argType="string" />
         <argument
             android:name="binFrom"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/stockOpnameInputFragment2"
+        android:name="dynamia.com.barcodescanner.ui.stockopname.input.StockOpnameInputFragment"
+        android:label="stock_opname_input_fragment"
+        tools:layout="@layout/stock_opname_input_fragment" >
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="barcode"
             app:argType="string" />
     </fragment>
 </navigation>

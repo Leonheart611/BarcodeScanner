@@ -10,8 +10,11 @@ interface TransferReceiptDao {
     /**
      * TransferReceiptHeader
      */
-    @Query("SELECT * FROM TransferReceiptHeader ORDER BY `no` DESC")
-    fun getAllTransferReceiptHeader(): LiveData<List<TransferReceiptHeader>>
+    @Query("SELECT * FROM TransferReceiptHeader ORDER BY `no` DESC LIMIT :page")
+    fun getAllTransferReceiptHeader(page: Int): LiveData<List<TransferReceiptHeader>>
+
+    @Query("SELECT COUNT(*) FROM TransferReceiptHeader")
+    fun getCount(): LiveData<Int>
 
     @Query("SELECT * FROM TransferReceiptHeader WHERE `no`=:no")
     fun getTransferHeaderDetail(no: String): TransferReceiptHeader

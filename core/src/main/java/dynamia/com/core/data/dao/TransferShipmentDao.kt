@@ -11,11 +11,14 @@ interface TransferShipmentDao {
     /**
      * TransferShipmentHeader
      */
-    @Query("SELECT * FROM TransferShipmentHeader ORDER BY `no` DESC")
-    fun getAllTransferHeader(): LiveData<List<TransferShipmentHeader>>
+    @Query("SELECT * FROM TransferShipmentHeader ORDER BY `no` DESC LIMIT :page")
+    fun getAllTransferHeader(page: Int): LiveData<List<TransferShipmentHeader>>
 
     @Query("SELECT * FROM TransferShipmentHeader WHERE `no`=:no")
     fun getTransferHeaderDetail(no: String): TransferShipmentHeader
+
+    @Query("SELECT COUNT(*) FROM TransferShipmentHeader")
+    fun getCount(): LiveData<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = TransferShipmentHeader::class)
     fun insertTransferHeader(data: TransferShipmentHeader)
@@ -54,16 +57,16 @@ interface TransferShipmentDao {
     fun getLineDetailFromRef(no: String, identifier: String): TransferShipmentLine?
 
     @Query("SELECT SUM(alredyScanned) FROM TransferShipmentLine WHERE documentNo =:no")
-    fun getAlreadyScanTotal(no: String): Int
+    fun getAlreadyScanTotal(no: String): LiveData<Int>
 
     @Query("SELECT SUM(quantity) FROM TransferShipmentLine WHERE documentNo=:no")
-    fun getQtyScanTotal(no: String): Int
+    fun getQtyScanTotal(no: String): LiveData<Int>
 
     @Query("SELECT SUM(alreadyScanedReceipt) FROM TransferShipmentLine WHERE documentNo=:no")
-    fun getQtyAlreadyScanReceiptTotal(no: String): Int
+    fun getQtyAlreadyScanReceiptTotal(no: String): LiveData<Int>
 
     @Query("SELECT SUM(qtyInTransit) FROM TransferShipmentLine WHERE documentNo=:no")
-    fun getQtyScanReceiptTotal(no: String): Int
+    fun getQtyScanReceiptTotal(no: String): LiveData<Int>
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = TransferShipmentLine::class)
     fun updateTransferLine(data: TransferShipmentLine)

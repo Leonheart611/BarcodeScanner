@@ -33,6 +33,7 @@
     <string name="qty_title">QTY</string>
     <string name="sn_title">SN</string>
     <string name="vendor_name_title">Vendor Name</string>
+    <string name="detail_scan_already">%1$s/</string>
     <string name="expect_receipt_date_title">Expected Receipt Date</string>
     <string name="project_code_title">Project Code</string>
     <string name="po_title_header">PO: %1$s</string>
@@ -118,8 +119,8 @@
     <string name="stock_opname_search_title">Journal Template Name</string>
     <string name="stock_checking_title">Stock Checking</string>
     <string name="stock_checking_hint">Search</string>
-    <string name="stock_checking_button_item_identifier">Search by Item Identifier</string>
-    <string name="stock_checking_button_item_no">Search by Item No</string>
+    <string name="stock_checking_button_item_identifier">Search by Alias</string>
+    <string name="stock_checking_button_item_no">Search by Item Look Up </string>
     <string name="bin_reclass_title">Bin Reclass</string>
     <string name="bin_reclass_input_title">Bin Reclass Input</string>
     <string name="bin_reclass_from_hint">Bin From</string>

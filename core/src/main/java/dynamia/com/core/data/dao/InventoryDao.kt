@@ -14,8 +14,11 @@ interface InventoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = InventoryPickHeader::class)
     fun insertInventoryHeaderAll(datas: List<InventoryPickHeader>)
 
-    @Query("SELECT * FROM InventoryPickHeader ORDER BY `no` DESC")
-    fun getAllInventoryHeader(): LiveData<List<InventoryPickHeader>>
+    @Query("SELECT * FROM InventoryPickHeader ORDER BY `no` DESC LIMIT :page")
+    fun getAllInventoryHeader(page: Int): LiveData<List<InventoryPickHeader>>
+
+    @Query("SELECT COUNT(*) FROM InventoryPickHeader")
+    fun getCount(): LiveData<Int>
 
     @Query("SELECT * FROM InventoryPickHeader WHERE `no`=:no")
     fun getInventoryHeaderDetail(no: String): InventoryPickHeader
@@ -40,10 +43,10 @@ interface InventoryDao {
     fun getInventoryPickLineDetailItemNo(no: String, itemRefNo: String): InventoryPickLine?
 
     @Query("SELECT SUM(alredyScanned) FROM InventoryPickLine WHERE `no` =:no")
-    fun getAlreadyScanTotal(no: String): Int
+    fun getAlreadyScanTotal(no: String): LiveData<Int>
 
     @Query("SELECT SUM(quantity) FROM InventoryPickLine WHERE `no`=:no")
-    fun getQtyScanTotal(no: String): Int
+    fun getQtyScanTotal(no: String): LiveData<Int>
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = InventoryPickLine::class)
     fun updateInventoryPickLine(value: InventoryPickLine)

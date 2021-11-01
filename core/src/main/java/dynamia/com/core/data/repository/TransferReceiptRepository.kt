@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.TransferReceiptDao
 import dynamia.com.core.data.dao.TransferShipmentDao
-import dynamia.com.core.data.entinty.ScanQty
 import dynamia.com.core.data.entinty.TransferReceiptHeader
 import dynamia.com.core.data.entinty.TransferReceiptInput
 import dynamia.com.core.domain.ErrorResponse
@@ -18,13 +17,15 @@ interface TransferReceiptRepository {
     /**
      * Local Transfer Receipt
      */
-    fun getAllTransferReceiptHeader(): LiveData<List<TransferReceiptHeader>>
+    fun getAllTransferReceiptHeader(page: Int = 20): LiveData<List<TransferReceiptHeader>>
+    fun getCountTransferReceiptHeader(): LiveData<Int>
     fun getTransferHeaderDetail(no: String): Flow<TransferReceiptHeader>
     suspend fun insertTransferReceiptHeader(data: TransferReceiptHeader)
     suspend fun deleteAllTransferReceiptHeader()
     suspend fun getTransferReceiptCount(): Int
 
-    fun getTransferReceiptQtyDetail(no: String): Flow<ScanQty>
+    fun getTransferReceiptQty(no: String): LiveData<Int>
+    fun getTransferReceiptAlreadyScan(no: String): LiveData<Int>
     fun getAllTransferReceiptInput(): LiveData<List<TransferReceiptInput>>
     suspend fun insertTransferReceiptInput(data: TransferReceiptInput): Boolean
     suspend fun updateTransferReceiptInput(data: TransferReceiptInput)
@@ -52,8 +53,10 @@ class TransferReceiptRepositoryImpl @Inject constructor(
     private val lineDao: TransferShipmentDao,
 ) : TransferReceiptRepository {
 
-    override fun getAllTransferReceiptHeader(): LiveData<List<TransferReceiptHeader>> =
-        dao.getAllTransferReceiptHeader()
+    override fun getAllTransferReceiptHeader(page: Int): LiveData<List<TransferReceiptHeader>> =
+        dao.getAllTransferReceiptHeader(page)
+
+    override fun getCountTransferReceiptHeader(): LiveData<Int> = dao.getCount()
 
     override fun getTransferHeaderDetail(no: String): Flow<TransferReceiptHeader> = flow {
         emit(dao.getTransferHeaderDetail(no))
@@ -125,16 +128,11 @@ class TransferReceiptRepositoryImpl @Inject constructor(
         emit(dao.getTransferInputDetail(id))
     }
 
-    override fun getTransferReceiptQtyDetail(no: String): Flow<ScanQty> = flow {
-        val qtyTotal = lineDao.getQtyScanReceiptTotal(no)
-        val qtyScanTotal = lineDao.getQtyAlreadyScanReceiptTotal(no)
-        emit(
-            ScanQty(
-                totalQty = qtyTotal,
-                totalAlreadyQty = qtyScanTotal
-            )
-        )
-    }
+    override fun getTransferReceiptQty(no: String): LiveData<Int> =
+        lineDao.getQtyScanReceiptTotal(no)
+
+    override fun getTransferReceiptAlreadyScan(no: String): LiveData<Int> =
+        lineDao.getQtyAlreadyScanReceiptTotal(no)
 
     override suspend fun deleteTransferInput(id: Int) {
         val transferInput = dao.getTransferInputDetail(id)

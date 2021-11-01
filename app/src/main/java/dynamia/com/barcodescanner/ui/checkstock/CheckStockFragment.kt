@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 
 import androidx.navigation.findNavController
@@ -27,7 +28,7 @@ class CheckStockFragment :
 
     companion object {
         const val SEARCH_ITEM_IDENTIFIERS = "contains(Item_Identifiers,"
-        const val SEARCH_ITEM_NO = "contains(Item_No,"
+        const val SEARCH_ITEM_NO = "contains(Item_Ref_No,"
     }
 
     private var stockAdapter = StockCheckAdapter(mutableListOf())
@@ -77,18 +78,26 @@ class CheckStockFragment :
                 with(dialog) {
                     val bind = ScanStockSearchDialogBinding.inflate(layoutInflater)
                     setContentView(bind.root)
+                    setCanceledOnTouchOutside(false)
                     window
                         ?.setLayout(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT
                         )
                     with(bind) {
+                        etQuerySearch.doOnTextChanged { text, start, before, count ->
+                            text.isNullOrBlank().not().let {
+                                btnSearchItemIdentifier.isEnabled = it
+                                btnSearchItemNo.isEnabled = it
+                            }
+
+                        }
                         btnSearchItemIdentifier.setOnClickListener {
-                            viewModel.getStockCheck("$SEARCH_ITEM_IDENTIFIERS '${etQuerySearch.text}')")
+                            viewModel.getStockCheck("$SEARCH_ITEM_IDENTIFIERS '${etQuerySearch.text}') and qty gt 0")
                             dismiss()
                         }
                         btnSearchItemNo.setOnClickListener {
-                            viewModel.getStockCheck("$SEARCH_ITEM_NO '${etQuerySearch.text}')")
+                            viewModel.getStockCheck("$SEARCH_ITEM_NO '${etQuerySearch.text}') and qty gt 0")
                             dismiss()
                         }
                     }

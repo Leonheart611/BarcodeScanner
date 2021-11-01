@@ -12,8 +12,11 @@ interface PurchaseOrderDao {
     /**
      * Purchase Order Header
      */
-    @Query("SELECT * FROM PurchaseOrderHeader ORDER BY `no` DESC")
-    fun getAllPurchaseOrderHeader(): LiveData<List<PurchaseOrderHeader>>
+    @Query("SELECT * FROM PurchaseOrderHeader ORDER BY `no` DESC LIMIT :page")
+    fun getAllPurchaseOrderHeader(page: Int): LiveData<List<PurchaseOrderHeader>>
+
+    @Query("SELECT COUNT(*) FROM PurchaseOrderHeader")
+    fun getCount(): LiveData<Int>
 
     @Query("SELECT * FROM PurchaseOrderHeader")
     fun getAllPurchaseOrderPage(): PagingSource<Int, PurchaseOrderHeader>
@@ -53,10 +56,10 @@ interface PurchaseOrderDao {
     fun getPurchaseOrderLineByLineno(no: String, lineNo: Int): PurchaseOrderLine
 
     @Query("SELECT SUM(alredyScanned) FROM PurchaseOrderLine WHERE documentNo =:no")
-    fun getAlreadyScanTotal(no: String): Int
+    fun getAlreadyScanTotal(no: String): LiveData<Int>
 
     @Query("SELECT SUM(quantity) FROM PurchaseOrderLine WHERE documentNo=:no")
-    fun getQtyScanTotal(no: String): Int
+    fun getQtyScanTotal(no: String): LiveData<Int>
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = PurchaseOrderLine::class)
     fun updatePurchaseOrderLine(value: PurchaseOrderLine)

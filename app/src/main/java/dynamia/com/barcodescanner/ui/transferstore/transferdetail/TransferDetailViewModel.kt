@@ -1,10 +1,7 @@
 package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
@@ -51,6 +48,21 @@ class TransferDetailViewModel @Inject constructor(
     private var inventoryPickLine: InventoryPickLine? = null
 
     private val lineParam = MutableLiveData<LineParam>()
+    /**
+     * Transfer Shipment Data
+     */
+    val transFerShipmentQty: LiveData<Int> = Transformations.switchMap(
+        lineParam
+    ) { param ->
+        transferShipmentRepository.getQtyliveData(param.documentNo)
+    }
+
+    val transferShipmentAlreadyScan: LiveData<Int> = Transformations.switchMap(
+        lineParam
+    ) { param ->
+        transferShipmentRepository.getQtyAlreadyScanLiveData(param.documentNo)
+    }
+
     val shipmentLineData: LiveData<List<TransferShipmentLine>> = Transformations.switchMap(
         lineParam
     ) { param ->
@@ -59,6 +71,10 @@ class TransferDetailViewModel @Inject constructor(
             param.page
         )
     }
+
+    /**
+     * Transfer Receipt Data
+     */
 
     val transferReceipt: LiveData<List<TransferShipmentLine>> = Transformations.switchMap(
         lineParam
@@ -69,15 +85,57 @@ class TransferDetailViewModel @Inject constructor(
         )
     }
 
+    val transferReceiptQty: LiveData<Int> = Transformations.switchMap(
+        lineParam
+    ) { param ->
+        transferReceiptRepository.getTransferReceiptQty(param.documentNo)
+    }
+
+    val transferReceiptAlreadyScan: LiveData<Int> = Transformations.switchMap(
+        lineParam
+    ) {
+        transferReceiptRepository.getTransferReceiptAlreadyScan(it.documentNo)
+    }
+
+    /**
+     * Purchase Data
+     */
+
     val purchaseLineLiveData: LiveData<List<PurchaseOrderLine>> =
         Transformations.switchMap(lineParam) { param ->
             purchaseOrderRepository.getPurchaseOrderLineByNo(param.documentNo, param.page)
         }
 
+    val purchaseQty: LiveData<Int> = Transformations.switchMap(lineParam) {
+        purchaseOrderRepository.getPurchaseQtyTotal(it.documentNo)
+    }
+
+    val purchaseAlreadyScan: LiveData<Int> = Transformations.switchMap(lineParam) {
+        purchaseOrderRepository.getPurchaseAlreadyScan(it.documentNo)
+    }
+
+    /**
+     * Inventory Data
+     */
+
+
     val inventoryLineLiveData: LiveData<List<InventoryPickLine>> =
         Transformations.switchMap(lineParam) { param ->
             inventoryRepository.getAllInventoryPickLine(param.documentNo, param.page)
         }
+
+    val inventoryQty = Transformations.switchMap(lineParam) {
+        inventoryRepository.getInventoryQty(it.documentNo)
+    }
+
+    val inventoryAlreadyScan = Transformations.switchMap(lineParam) {
+        inventoryRepository.getInventoryAlreadyQty(it.documentNo)
+    }
+
+
+    /**
+     * Function
+     */
 
     fun setLine(data: LineParam) {
         lineParam.value = data
@@ -166,7 +224,6 @@ class TransferDetailViewModel @Inject constructor(
                         ui {
                             _pickingDetailViewState.value =
                                 TransferListViewState.SuccessGetLocalData(data)
-
                         }
                     }
                 }
@@ -410,58 +467,6 @@ class TransferDetailViewModel @Inject constructor(
         }
     }
 
-    fun getTransferDetailScanQty(no: String) {
-        viewModelScope.launch {
-            io {
-                transferShipmentRepository.getQtyAndScanQtyLiveData(no).collect {
-                    ui {
-                        _pickingDetailViewState.value =
-                            TransferListViewState.SuccessGetQtyTotal(it)
-                    }
-                }
-            }
-        }
-    }
-
-    fun getTransferReceiptScanQty(no: String) {
-        viewModelScope.launch {
-            io {
-                transferReceiptRepository.getTransferReceiptQtyDetail(no).collect {
-                    ui {
-                        _pickingDetailViewState.value =
-                            TransferListViewState.SuccessGetQtyTotal(it)
-                    }
-                }
-            }
-        }
-    }
-
-    fun getPurchaseScanQty(no: String) {
-        viewModelScope.launch {
-            io {
-                purchaseOrderRepository.getPurchaseQtyDetail(no).collect {
-                    ui {
-                        _pickingDetailViewState.value =
-                            TransferListViewState.SuccessGetQtyTotal(it)
-                    }
-                }
-            }
-        }
-    }
-
-    fun getInventoryScanQty(no: String) {
-        viewModelScope.launch {
-            io {
-                inventoryRepository.getInventoryDetailQty(no).collect {
-                    ui {
-                        _pickingDetailViewState.value =
-                            TransferListViewState.SuccessGetQtyTotal(it)
-                    }
-                }
-            }
-        }
-    }
-
 
     /**
     Post Remote Input Data
@@ -667,8 +672,6 @@ class TransferDetailViewModel @Inject constructor(
         class SuccessGetPickingLineData(val values: MutableList<TransferShipmentLine>) :
             TransferListViewState()
 
-
-        class SuccessGetQtyTotal(val data: ScanQty) : TransferListViewState()
         class ErrorGetLocalData(val message: String) : TransferListViewState()
         class SuccessGetPurchaseData(val value: PurchaseOrderHeader) : TransferListViewState()
     }

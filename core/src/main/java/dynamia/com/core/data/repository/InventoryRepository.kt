@@ -6,7 +6,6 @@ import dynamia.com.core.data.dao.InventoryDao
 import dynamia.com.core.data.entinty.InventoryInputData
 import dynamia.com.core.data.entinty.InventoryPickHeader
 import dynamia.com.core.data.entinty.InventoryPickLine
-import dynamia.com.core.data.entinty.ScanQty
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.ResultWrapper
@@ -16,7 +15,8 @@ import javax.inject.Inject
 
 interface InventoryRepository {
     fun insertInventoryHeaderAll(datas: List<InventoryPickHeader>)
-    fun getAllInventoryHeader(): LiveData<List<InventoryPickHeader>>
+    fun getAllInventoryHeader(page: Int): LiveData<List<InventoryPickHeader>>
+    fun getCountInventoryHeader(): LiveData<Int>
     fun getInventoryHeaderDetail(no: String): Flow<InventoryPickHeader>
     fun deleteAllInventoryHeader()
 
@@ -33,8 +33,8 @@ interface InventoryRepository {
     /**
      * Inventory Input Data
      */
-
-    fun getInventoryDetailQty(no: String): Flow<ScanQty>
+    fun getInventoryQty(no: String): LiveData<Int>
+    fun getInventoryAlreadyQty(no: String): LiveData<Int>
     fun insertInputInventory(data: InventoryInputData)
     fun getAllInventoryInputData(): LiveData<List<InventoryInputData>>
     fun getUnpostedInventoryData(): List<InventoryInputData>
@@ -62,9 +62,11 @@ class InventoryRepositoryImpl @Inject constructor(
         dao.insertInventoryHeaderAll(datas)
     }
 
-    override fun getAllInventoryHeader(): LiveData<List<InventoryPickHeader>> {
-        return dao.getAllInventoryHeader()
+    override fun getAllInventoryHeader(page: Int): LiveData<List<InventoryPickHeader>> {
+        return dao.getAllInventoryHeader(page)
     }
+
+    override fun getCountInventoryHeader(): LiveData<Int> = dao.getCount()
 
     override fun getInventoryHeaderDetail(no: String): Flow<InventoryPickHeader> = flow {
         emit(dao.getInventoryHeaderDetail(no))
@@ -153,16 +155,10 @@ class InventoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getInventoryDetailQty(no: String): Flow<ScanQty> = flow {
-        val qtyAlreadyScan = dao.getAlreadyScanTotal(no)
-        val qtyScanTotal = dao.getQtyScanTotal(no)
-        emit(
-            ScanQty(
-                totalQty = qtyScanTotal,
-                totalAlreadyQty = qtyAlreadyScan
-            )
-        )
-    }
+
+    override fun getInventoryQty(no: String): LiveData<Int> = dao.getQtyScanTotal(no)
+
+    override fun getInventoryAlreadyQty(no: String): LiveData<Int> = dao.getAlreadyScanTotal(no)
 
     override fun getInventoryInputData(no: String): LiveData<List<InventoryInputData>> {
         return dao.getInventoryInputData(no)

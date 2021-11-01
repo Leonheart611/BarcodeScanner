@@ -11,8 +11,11 @@ interface StockOpnameDao {
     /**
      * Stock Opname Data
      */
-    @Query("SELECT * FROM StockOpnameData")
-    fun getALlStockOpname(): LiveData<List<StockOpnameData>>
+    @Query("SELECT * FROM StockOpnameData LIMIT :page")
+    fun getALlStockOpname(page: Int): LiveData<List<StockOpnameData>>
+
+    @Query("SELECT COUNT(*) FROM StockOpnameData")
+    fun getCount(): LiveData<Int>
 
     @Query("SELECT * FROM StockOpnameData WHERE id=:id")
     fun getStockOpnameDetail(id: Int): StockOpnameData

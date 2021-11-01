@@ -3,6 +3,7 @@ package dynamia.com.barcodescanner.ui.transferstore
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.di.ViewModelBase
@@ -27,6 +28,29 @@ class TransferListViewModel @Inject constructor(
 
     private var _viewState = MutableLiveData<TransferListViewState>()
     val transferViewState: LiveData<TransferListViewState> by lazy { _viewState }
+
+    private val pager = MutableLiveData<Int>()
+
+    val transferShipmentHeader = Transformations.switchMap(pager) {
+        transferShipmentRepository.getAllTransferHeader(it)
+    }
+
+    val transferReceiptHeader = Transformations.switchMap(pager) {
+        transferReceiptRepository.getAllTransferReceiptHeader(it)
+    }
+
+    val purchaseHeaderData = Transformations.switchMap(pager) {
+        purchaseOrderRepository.getAllPurchaseOrderHeader(it)
+    }
+
+    val inventoryHeaderData = Transformations.switchMap(pager) {
+        inventoryRepository.getAllInventoryHeader(it)
+    }
+
+
+    fun updatePager(int: Int) {
+        pager.value = int
+    }
 
 
     fun updateTransferShipment() {

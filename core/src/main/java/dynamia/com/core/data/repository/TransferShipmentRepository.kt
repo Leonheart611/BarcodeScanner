@@ -3,7 +3,6 @@ package dynamia.com.core.data.repository
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.TransferShipmentDao
-import dynamia.com.core.data.entinty.ScanQty
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.data.entinty.TransferShipmentHeader
 import dynamia.com.core.data.entinty.TransferShipmentLine
@@ -20,7 +19,8 @@ interface TransferShipmentRepository {
     /**
      * Local Transfer Header
      */
-    fun getAllTransferHeader(): LiveData<List<TransferShipmentHeader>>
+    fun getAllTransferHeader(page: Int = 20): LiveData<List<TransferShipmentHeader>>
+    fun getTransferHeaderCount(): LiveData<Int>
     suspend fun getTransferHeaderDetail(no: String): Flow<TransferShipmentHeader>
     suspend fun insertTransferHeader(data: TransferShipmentHeader)
     suspend fun deleteAllTransferHeader()
@@ -42,7 +42,8 @@ interface TransferShipmentRepository {
         page: Int = 20
     ): LiveData<List<TransferShipmentLine>>
 
-    fun getQtyAndScanQtyLiveData(no: String): Flow<ScanQty>
+    fun getQtyliveData(no: String): LiveData<Int>
+    fun getQtyAlreadyScanLiveData(no: String): LiveData<Int>
     suspend fun getLineDetailFromBarcode(no: String, identifier: String): Flow<TransferShipmentLine>
 
     /**
@@ -78,12 +79,14 @@ class TransferShipmentImpl @Inject constructor(
      * Local Implementation
      */
 
-    override fun getAllTransferHeader(): LiveData<List<TransferShipmentHeader>> =
-        dao.getAllTransferHeader()
+    override fun getAllTransferHeader(page: Int): LiveData<List<TransferShipmentHeader>> =
+        dao.getAllTransferHeader(page)
 
     override suspend fun getTransferHeaderDetail(no: String): Flow<TransferShipmentHeader> = flow {
         emit(dao.getTransferHeaderDetail(no))
     }
+
+    override fun getTransferHeaderCount(): LiveData<Int> = dao.getCount()
 
     override suspend fun insertTransferHeader(data: TransferShipmentHeader) =
         dao.insertTransferHeader(data)
@@ -137,17 +140,10 @@ class TransferShipmentImpl @Inject constructor(
             }
         }
 
-    override fun getQtyAndScanQtyLiveData(no: String): Flow<ScanQty> = flow {
-        val qtyAlreadyScan = dao.getAlreadyScanTotal(no)
-        val qtyScanTotal = dao.getQtyScanTotal(no)
+    override fun getQtyliveData(no: String): LiveData<Int> = dao.getQtyScanTotal(no)
 
-        emit(
-            ScanQty(
-                totalQty = qtyScanTotal,
-                totalAlreadyQty = qtyAlreadyScan
-            )
-        )
-    }
+    override fun getQtyAlreadyScanLiveData(no: String): LiveData<Int> =
+        dao.getAlreadyScanTotal(no)
 
     override suspend fun getLineDetailFromBarcode(
         no: String,

@@ -75,12 +75,20 @@
             tools:text="To" />
 
         <TextView
-            android:id="@+id/tv_detail_total_scan_count"
+            android:id="@+id/tv_detail_total_scan_already"
             android:layout_width="wrap_content"
             android:layout_height="19dp"
             android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="@+id/tv_transferdetail_user"
             app:layout_constraintTop_toBottomOf="@+id/tv_transferdetail_date"
-            tools:text="120/ 200" />
+            tools:text="120/" />
+
+        <TextView
+            android:id="@+id/tv_detail_total_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/tv_detail_total_scan_already"
+            app:layout_constraintTop_toTopOf="@+id/tv_detail_total_scan_already"
+            tools:text="300" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

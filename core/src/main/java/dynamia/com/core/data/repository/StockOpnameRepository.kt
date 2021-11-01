@@ -17,7 +17,8 @@ interface StockOpnameRepository {
     /**
      * Stock Opname
      */
-    fun getALlStockOpname(): LiveData<List<StockOpnameData>>
+    fun getALlStockOpname(page: Int = 20): LiveData<List<StockOpnameData>>
+    fun getCountStockOpname(): LiveData<Int>
     fun getStockOpnameDetail(id: Int): StockOpnameData
     fun getStockOpnameDetailByBarcode(barcode: String, binCode: String): Flow<StockOpnameData>
     fun getStockOpnameDetailByBarcode(barcode: String, id: Int): Flow<StockOpnameData>
@@ -56,7 +57,10 @@ class StockOpnameRepositoryImpl @Inject constructor(
     private val retrofitService: MasariAPI,
 ) : StockOpnameRepository {
 
-    override fun getALlStockOpname(): LiveData<List<StockOpnameData>> = dao.getALlStockOpname()
+    override fun getALlStockOpname(page: Int): LiveData<List<StockOpnameData>> =
+        dao.getALlStockOpname(page)
+
+    override fun getCountStockOpname(): LiveData<Int> = dao.getCount()
 
     override fun getStockOpnameDetail(id: Int): StockOpnameData = dao.getStockOpnameDetail(id)
 

@@ -36,10 +36,8 @@ class StockOpnameFragment :
         with(viewBinding) {
             fabManualInputStockOpname.setOnClickListener {
                 val action =
-                    StockOpnameFragmentDirections.actionStockOpnameFragmentToTransferInputFragment(
-                        transferNo = "",
-                        barcodeNo = null,
-                        TransferType.STOCKOPNAME
+                    StockOpnameFragmentDirections.actionStockOpnameFragmentToStockOpnameInputFragment2(
+                        barcode = ""
                     )
                 view?.findNavController()?.navigate(action)
             }
@@ -92,10 +90,9 @@ class StockOpnameFragment :
 
     override fun onStockClicklistener(data: StockOpnameData) {
         val action =
-            StockOpnameFragmentDirections.actionStockOpnameFragmentToTransferInputFragment(
-                transferNo = "",
-                barcodeNo = data.itemIdentifier,
-                TransferType.STOCKOPNAME, stockId = data.id!!
+            StockOpnameFragmentDirections.actionStockOpnameFragmentToStockOpnameInputFragment2(
+                id = data.id ?: 0,
+                barcode = data.itemIdentifier
             )
         view?.findNavController()?.navigate(action)
     }

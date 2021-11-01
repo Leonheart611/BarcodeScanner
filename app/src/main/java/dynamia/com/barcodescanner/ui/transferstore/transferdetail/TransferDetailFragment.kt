@@ -74,14 +74,26 @@ class TransferDetailFragment :
     private fun setInventoryView() {
         viewModel.setLine(TransferDetailViewModel.LineParam(args.transferNo, 20))
         viewModel.getInventoryHeader(args.transferNo)
-        viewModel.getInventoryScanQty(args.transferNo)
+        viewModel.inventoryAlreadyScan.observe(viewLifecycleOwner, {
+            viewBinding.includeTransferDetail.tvDetailTotalScanAlready.text =
+                getString(R.string.detail_scan_already, it.toString())
+        })
+        viewModel.inventoryQty.observe(viewLifecycleOwner, {
+            viewBinding.includeTransferDetail.tvDetailTotalScan.text = it.toString()
+        })
         viewBinding.rvPickingDetail.adapter = inventoryLineAdapter
     }
 
     private fun setupShipmentView() {
         viewModel.setLine(TransferDetailViewModel.LineParam(args.transferNo, 20))
         viewModel.getTransferShipingDetail(args.transferNo)
-        viewModel.getTransferDetailScanQty(args.transferNo)
+        viewModel.transferShipmentAlreadyScan.observe(viewLifecycleOwner, {
+            viewBinding.includeTransferDetail.tvDetailTotalScanAlready.text =
+                getString(R.string.detail_scan_already, it.toString())
+        })
+        viewModel.transFerShipmentQty.observe(viewLifecycleOwner, {
+            viewBinding.includeTransferDetail.tvDetailTotalScan.text = it.toString()
+        })
         transferReceiptAdapter.setTransferType(args.transferType)
         viewBinding.rvPickingDetail.adapter = transferReceiptAdapter
         transferReceiptAdapter.setOnClickListener(this)
@@ -90,7 +102,13 @@ class TransferDetailFragment :
     private fun setupReceiptView() {
         viewModel.setLine(TransferDetailViewModel.LineParam(args.transferNo, 20))
         viewModel.getTransferReceiptDetail(args.transferNo)
-        viewModel.getTransferReceiptScanQty(args.transferNo)
+        viewModel.transferReceiptAlreadyScan.observe(viewLifecycleOwner, {
+            viewBinding.includeTransferDetail.tvDetailTotalScanAlready.text =
+                getString(R.string.detail_scan_already, it.toString())
+        })
+        viewModel.transferReceiptQty.observe(viewLifecycleOwner, {
+            viewBinding.includeTransferDetail.tvDetailTotalScan.text = it.toString()
+        })
         transferReceiptAdapter.setTransferType(args.transferType)
         viewBinding.rvPickingDetail.adapter = transferReceiptAdapter
         transferReceiptAdapter.setOnClickListener(this)
@@ -99,7 +117,13 @@ class TransferDetailFragment :
     private fun setupPurchaseView() {
         viewModel.setLine(TransferDetailViewModel.LineParam(args.transferNo, 20))
         viewModel.getPurchaseOrderDetail(args.transferNo)
-        viewModel.getPurchaseScanQty(args.transferNo)
+        viewModel.purchaseAlreadyScan.observe(viewLifecycleOwner, {
+            viewBinding.includeTransferDetail.tvDetailTotalScanAlready.text =
+                getString(R.string.detail_scan_already, it.toString())
+        })
+        viewModel.purchaseQty.observe(viewLifecycleOwner, {
+            viewBinding.includeTransferDetail.tvDetailTotalScan.text = it.toString()
+        })
         viewBinding.rvPickingDetail.adapter = purchaseDetailLineAdapter
         purchaseDetailLineAdapter.setOnClickListener(this)
     }
@@ -145,10 +169,6 @@ class TransferDetailFragment :
                 }
                 is TransferDetailViewModel.TransferListViewState.SuccessGetInventoryData -> {
                     setupMainViewInventory(it.value)
-                }
-                is TransferDetailViewModel.TransferListViewState.SuccessGetQtyTotal -> {
-                    viewBinding.includeTransferDetail.tvDetailTotalScanCount.text =
-                        "${it.data.totalAlreadyQty} / ${it.data.totalQty}"
                 }
             }
         })

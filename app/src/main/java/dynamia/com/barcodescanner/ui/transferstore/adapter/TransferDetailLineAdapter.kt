@@ -42,7 +42,7 @@ class TransferDetailLineAdapter() :
         )
     }
 
-   // val allData by lazy { values }
+    // val allData by lazy { values }
 
     override fun onBindViewHolder(holder: PickingDetailHolder, position: Int) {
         getItem(position).let {
@@ -101,7 +101,7 @@ class TransferDetailLineAdapter() :
                 tvItemCode.text = transferShipmentLine.itemRefNo
                 tvDescription.text = transferShipmentLine.description
                 tvQty.text =
-                    "${transferShipmentLine.alredyScanned} / ${transferShipmentLine.qtyInTransit}"
+                    "${transferShipmentLine.alreadyScanedReceipt} / ${transferShipmentLine.qtyInTransit}"
                 root.setOnClickListener {
                     listener?.onclicklistener(transferShipmentLine)
                 }

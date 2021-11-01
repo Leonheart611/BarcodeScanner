@@ -79,21 +79,21 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
                 }
             })
 
-            transferReceiptRepository.getAllTransferReceiptHeader()
+            transferReceiptRepository.getCountTransferReceiptHeader()
                 .observe(viewLifecycleOwner, {
-                    viewBinding.homeInclude.tvCountReceipt.text = it.size.toString()
+                    viewBinding.homeInclude.tvCountReceipt.text = it.toString()
                 })
-            transferShipmentRepository.getAllTransferHeader().observe(viewLifecycleOwner, {
-                viewBinding.homeInclude.tvTransferCount.text = it.size.toString()
+            transferShipmentRepository.getTransferHeaderCount().observe(viewLifecycleOwner, {
+                viewBinding.homeInclude.tvTransferCount.text = it.toString()
             })
-            purchaseOrderRepository.getAllPurchaseOrderHeader().observe(viewLifecycleOwner, {
-                viewBinding.homeInclude.tvCountPurchaseOrder.text = it.size.toString()
+            purchaseOrderRepository.getCountPurchaseOrderHeader().observe(viewLifecycleOwner, {
+                viewBinding.homeInclude.tvCountPurchaseOrder.text = it.toString()
             })
-            stockOpnameDataRepository.getALlStockOpname().observe(viewLifecycleOwner, {
-                viewBinding.homeInclude.tvCountStockOpname.text = it.size.toString()
+            stockOpnameDataRepository.getCountStockOpname().observe(viewLifecycleOwner, {
+                viewBinding.homeInclude.tvCountStockOpname.text = it.toString()
             })
-            inventoryRepository.getAllInventoryHeader().observe(viewLifecycleOwner, {
-                viewBinding.homeInclude.tvInventoryCount.text = it.size.toString()
+            inventoryRepository.getCountInventoryHeader().observe(viewLifecycleOwner, {
+                viewBinding.homeInclude.tvInventoryCount.text = it.toString()
             })
         }
     }

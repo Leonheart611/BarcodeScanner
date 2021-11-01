@@ -60,12 +60,28 @@ class TransferListFragment :
 
     private fun setupRecylerView() {
         viewBinding.includeTransferlistHeader.tbHeaderlist.title = viewModel.getCompanyName()
+        viewModel.updatePager(20)
         when (args.transferType) {
             SHIPMENT -> setShipmentView()
             RECEIPT -> setReceiptView()
             PURCHASE -> setPurchaseView()
             INVENTORY -> setInventoryView()
         }
+        viewBinding.rvPickinglist.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val lastVisible: Int = layoutManager.findLastVisibleItemPosition()
+                val endHasBeenReached = lastVisible >= (totalItemCount - 1)
+
+                if (totalItemCount > 0 && endHasBeenReached) {
+                    viewModel.updatePager(
+                        totalItemCount + 20
+                    )
+                }
+            }
+        })
     }
 
     private fun setInventoryView() {
@@ -76,10 +92,9 @@ class TransferListFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = inventoryHeaderListAdapter
             }
-            viewModel.inventoryRepository.getAllInventoryHeader()
-                .observe(viewLifecycleOwner, {
-                    inventoryHeaderListAdapter.submitList(it)
-                })
+            viewModel.inventoryHeaderData.observe(viewLifecycleOwner, {
+                inventoryHeaderListAdapter.submitList(it)
+            })
         }
     }
 
@@ -91,10 +106,9 @@ class TransferListFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = purchaseOrderAdapter
             }
-            viewModel.purchaseOrderRepository.getAllPurchaseOrderHeader()
-                .observe(viewLifecycleOwner, {
-                    purchaseOrderAdapter.submitList(it.toMutableList())
-                })
+            viewModel.purchaseHeaderData.observe(viewLifecycleOwner, {
+                purchaseOrderAdapter.submitList(it.toMutableList())
+            })
         }
     }
 
@@ -107,10 +121,9 @@ class TransferListFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = transferReceiptListAdapter
             }
-            viewModel.transferReceiptRepository.getAllTransferReceiptHeader()
-                .observe(viewLifecycleOwner, {
-                    transferReceiptListAdapter.submitList(it.toMutableList())
-                })
+            viewModel.transferReceiptHeader.observe(viewLifecycleOwner, {
+                transferReceiptListAdapter.submitList(it.toMutableList())
+            })
         }
     }
 
@@ -122,10 +135,9 @@ class TransferListFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = transferListAdapter
             }
-            viewModel.transferShipmentRepository.getAllTransferHeader()
-                .observe(viewLifecycleOwner, {
-                    transferListAdapter.submitList(it.toMutableList())
-                })
+            viewModel.transferShipmentHeader.observe(viewLifecycleOwner, {
+                transferListAdapter.submitList(it.toMutableList())
+            })
             viewModel.transferViewState.observe(viewLifecycleOwner, {
                 when (it) {
                     is TransferListViewModel.TransferListViewState.Error -> {

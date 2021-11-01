@@ -9,7 +9,6 @@ import dynamia.com.core.data.dao.PurchaseOrderDao
 import dynamia.com.core.data.entinty.PurchaseInputData
 import dynamia.com.core.data.entinty.PurchaseOrderHeader
 import dynamia.com.core.data.entinty.PurchaseOrderLine
-import dynamia.com.core.data.entinty.ScanQty
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.ResultWrapper
@@ -23,7 +22,8 @@ interface PurchaseOrderRepository {
     /**
      * Purchase Order Header
      */
-    fun getAllPurchaseOrderHeader(): LiveData<List<PurchaseOrderHeader>>
+    fun getAllPurchaseOrderHeader(page: Int = 20): LiveData<List<PurchaseOrderHeader>>
+    fun getCountPurchaseOrderHeader(): LiveData<Int>
     suspend fun insertPurchaseOrderHeader(value: PurchaseOrderHeader)
     suspend fun getPurchaseOrderDetail(no: String): Flow<PurchaseOrderHeader>
     suspend fun deleteAllPurchaseOrderHeader()
@@ -34,7 +34,8 @@ interface PurchaseOrderRepository {
      * Purchase Order Line
      */
 
-    fun getPurchaseQtyDetail(no: String): Flow<ScanQty>
+    fun getPurchaseQtyTotal(no: String): LiveData<Int>
+    fun getPurchaseAlreadyScan(no: String): LiveData<Int>
     suspend fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>)
     fun getPurchaseOrderLineByNo(no: String, page: Int = 20): LiveData<List<PurchaseOrderLine>>
     fun getPurchaseOrderLineByBarcode(no: String, identifier: String): Flow<PurchaseOrderLine>
@@ -77,8 +78,10 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
      */
 
 
-    override fun getAllPurchaseOrderHeader(): LiveData<List<PurchaseOrderHeader>> =
-        dao.getAllPurchaseOrderHeader()
+    override fun getAllPurchaseOrderHeader(page: Int): LiveData<List<PurchaseOrderHeader>> =
+        dao.getAllPurchaseOrderHeader(page)
+
+    override fun getCountPurchaseOrderHeader(): LiveData<Int> = dao.getCount()
 
     override fun getAllPurchaseOrderPage(): Flow<PagingData<PurchaseOrderHeader>> {
         val pagingSourceFactory = { dao.getAllPurchaseOrderPage() }
@@ -119,16 +122,9 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
     override fun getPurchaseOrderLineDetailById(id: Int): PurchaseOrderLine =
         dao.getPurchaseOrderLineDetailById(id)
 
-    override fun getPurchaseQtyDetail(no: String): Flow<ScanQty> = flow {
-        val qtyAlreadyScan = dao.getAlreadyScanTotal(no)
-        val qtyScanTotal = dao.getQtyScanTotal(no)
-        emit(
-            ScanQty(
-                totalQty = qtyScanTotal,
-                totalAlreadyQty = qtyAlreadyScan
-            )
-        )
-    }
+    override fun getPurchaseQtyTotal(no: String): LiveData<Int> = dao.getQtyScanTotal(no)
+
+    override fun getPurchaseAlreadyScan(no: String): LiveData<Int> = dao.getAlreadyScanTotal(no)
 
     override suspend fun deleteAllPurchaseOrderLine() {
         dao.deleteAllPurchaseOrderLine()
