@@ -21,6 +21,21 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
+    flavorDimensions "version"
+    productFlavors {
+        AppWarehouse {
+            dimension "version"
+            applicationIdSuffix ".appwarehouse"
+            versionNameSuffix "-appwarehouse"
+            manifestPlaceholders = [appLabel:"App Warehouse"]
+        }
+        AppStore {
+            dimension "version"
+            applicationIdSuffix ".appstore"
+            versionNameSuffix "-appstore"
+            manifestPlaceholders = [appLabel:"App Store"]
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true

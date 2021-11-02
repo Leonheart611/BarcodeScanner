@@ -52,6 +52,9 @@ interface PurchaseOrderDao {
     @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo=:no AND itemRefNo =:identifier")
     fun getPurchaseOrderLineByItemRef(no: String, identifier: String): PurchaseOrderLine
 
+    @Query("SELECT * FROM PurchaseOrderLine WHERE id =:id")
+    fun getPurchaseOrderLineLiveData(id: Int): LiveData<PurchaseOrderLine>
+
     @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo=:no AND lineNo =:lineNo")
     fun getPurchaseOrderLineByLineno(no: String, lineNo: Int): PurchaseOrderLine
 

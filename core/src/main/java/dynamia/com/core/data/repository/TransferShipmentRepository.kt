@@ -42,6 +42,7 @@ interface TransferShipmentRepository {
         page: Int = 20
     ): LiveData<List<TransferShipmentLine>>
 
+    fun getLineDetailLiveData(id: Int): LiveData<TransferShipmentLine>
     fun getQtyliveData(no: String): LiveData<Int>
     fun getQtyAlreadyScanLiveData(no: String): LiveData<Int>
     suspend fun getLineDetailFromBarcode(no: String, identifier: String): Flow<TransferShipmentLine>
@@ -114,6 +115,8 @@ class TransferShipmentImpl @Inject constructor(
 
     override suspend fun getCheckEmptyOrNot(): Int = dao.getCheckEmptyOrNot()
 
+    override fun getLineDetailLiveData(id: Int): LiveData<TransferShipmentLine> =
+        dao.getLineDetailLiveData(id)
 
     override fun getAllTransferInput(): LiveData<List<TransferInputData>> =
         dao.getAllTransferInput()

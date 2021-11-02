@@ -3,6 +3,7 @@ package dynamia.com.barcodescanner.ui.transferstore.transferinput
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
@@ -40,6 +41,20 @@ class TransferInputViewModel @Inject constructor(
     private var inventoryPickLine: InventoryPickLine? = null
 
     private var stockOpnameData: StockOpnameData? = null
+
+    private var id = MutableLiveData<Int>()
+
+    val transferShipmentLine = Transformations.switchMap(id) {
+        transferShipmentRepository.getLineDetailLiveData(it)
+    }
+
+    val purchaserOrderLine = Transformations.switchMap(id) {
+        purchaseOrderRepository.getPurchaseOrderLineLiveData(it)
+    }
+
+    val inventoryLine = Transformations.switchMap(id) {
+        inventoryRepository.getInventoryPickLineLiveData(it)
+    }
 
     fun getHistoryValueDetail(no: Int) {
         viewModelScope.launch {
@@ -92,8 +107,6 @@ class TransferInputViewModel @Inject constructor(
                                 ui {
                                     stockOpnameData = data
                                     _transferInputViewState.value =
-                                        TransferInputViewState.SuccessGetStockOpnameValue(data)
-                                    _transferInputViewState.value =
                                         TransferInputViewState.LoadingSearchPickingList(false)
                                 }
                             }
@@ -102,8 +115,6 @@ class TransferInputViewModel @Inject constructor(
                             .collect { data ->
                                 ui {
                                     stockOpnameData = data
-                                    _transferInputViewState.value =
-                                        TransferInputViewState.SuccessGetStockOpnameValue(data)
                                     _transferInputViewState.value =
                                         TransferInputViewState.LoadingSearchPickingList(false)
                                 }
@@ -135,8 +146,7 @@ class TransferInputViewModel @Inject constructor(
                         .collect { data ->
                             ui {
                                 transferLineData = data
-                                _transferInputViewState.value =
-                                    TransferInputViewState.SuccessGetValue(data)
+                                id.value = data.id!!
                                 _transferInputViewState.value =
                                     TransferInputViewState.LoadingSearchPickingList(false)
                             }
@@ -164,8 +174,7 @@ class TransferInputViewModel @Inject constructor(
                     inventoryRepository.getDetailInventoryPickLine(no, identifier).collect {
                         inventoryPickLine = it
                         ui {
-                            _transferInputViewState.value =
-                                TransferInputViewState.SuccessGetInventoryValue(it)
+                            id.value = it.id!!
                             _transferInputViewState.value =
                                 TransferInputViewState.LoadingSearchPickingList(false)
                         }
@@ -194,8 +203,7 @@ class TransferInputViewModel @Inject constructor(
                         .collect { data ->
                             ui {
                                 transferLineData = data
-                                _transferInputViewState.value =
-                                    TransferInputViewState.SuccessGetValue(data)
+                                id.value = data.id!!
                                 _transferInputViewState.value =
                                     TransferInputViewState.LoadingSearchPickingList(false)
                             }
@@ -225,8 +233,7 @@ class TransferInputViewModel @Inject constructor(
                         getPurchaseOrderLineByBarcode(no, identifier).collect { data ->
                             ui {
                                 purchaseLineData = data
-                                _transferInputViewState.value =
-                                    TransferInputViewState.SuccessGetPurchaseValue(data)
+                                id.value = data.id!!
                                 _transferInputViewState.value =
                                     TransferInputViewState.LoadingSearchPickingList(false)
                             }
@@ -673,7 +680,6 @@ class TransferInputViewModel @Inject constructor(
         /**
          * History Success Value
          */
-        class SuccessGetValue(val data: TransferShipmentLine) : TransferInputViewState()
         class SuccessGetHistoryValue(val data: TransferInputData) : TransferInputViewState()
         class SuccessGetReceiptHistoryValue(val data: TransferReceiptInput) :
             TransferInputViewState()
@@ -682,10 +688,6 @@ class TransferInputViewModel @Inject constructor(
 
         class SuccessGetPurchaseHistory(val data: PurchaseInputData) : TransferInputViewState()
 
-        class SuccessGetPurchaseValue(val data: PurchaseOrderLine) : TransferInputViewState()
-        class SuccessGetStockOpnameValue(val data: StockOpnameData) : TransferInputViewState()
-
-        class SuccessGetInventoryValue(val data: InventoryPickLine) : TransferInputViewState()
         class SuccessGetInventoryInput(val data: InventoryInputData) : TransferInputViewState()
 
         object SuccessSaveData : TransferInputViewState()

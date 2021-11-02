@@ -43,7 +43,7 @@ class StockOpnameFragment :
             }
             fabInputStockOpname.setOnClickListener {
                 val bottomSheetFragment =
-                    ScanInputTransferDialog.newInstance("", TransferType.STOCKOPNAME)
+                    ScanInputStockOpnameDialog.newInstance("", TransferType.STOCKOPNAME)
                 bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
             }
         }

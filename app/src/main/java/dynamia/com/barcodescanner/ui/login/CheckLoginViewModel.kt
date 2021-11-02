@@ -32,8 +32,7 @@ class CheckLoginViewModel @Inject constructor(private val transferShipmentReposi
                             }
                             is ResultWrapper.GenericError -> {
                                 ui {
-                                    _loginViewState.value =
-                                        Event(LoginViewState.LoginFailed("${data.code} ${data.error}"))
+                                    _loginViewState.postValue(Event(LoginViewState.LoginFailed("${data.code} ${data.error}")))
                                 }
                             }
                             is ResultWrapper.NetworkError -> {
@@ -50,7 +49,7 @@ class CheckLoginViewModel @Inject constructor(private val transferShipmentReposi
         }
     }
 
-    fun getTransferDataDummy(){
+    fun getTransferDataDummy() {
         _loginViewState.postValue(Event(LoginViewState.LoginSuccess))
     }
 

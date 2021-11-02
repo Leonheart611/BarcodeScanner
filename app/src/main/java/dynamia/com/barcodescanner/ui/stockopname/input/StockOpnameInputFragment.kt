@@ -4,20 +4,19 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
+import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.StockOpnameInputFragmentBinding
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.history.HistoryType
-import dynamia.com.barcodescanner.ui.transferstore.TransferType
-import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputFragmentArgs
-import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputFragmentDirections
-import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputViewModel
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.StockOpnameData
+import dynamia.com.core.util.Constant
 import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
@@ -44,6 +43,11 @@ class StockOpnameInputFragment :
         with(viewBinding) {
             toolbarPickingListInput.title = viewModel.getCompanyName()
             tvTransferInputTitle.text = getString(R.string.stock_opname_title)
+            when (BuildConfig.FLAVOR) {
+                Constant.APP_STORE -> {
+                    includeTransferInput.tilTransferBincode.isVisible = false
+                }
+            }
             if (args.id != 0) {
                 includeTransferInput.etTransferInputBarcode.setText(args.barcode)
                 includeTransferInput.etTransferInputBarcode.isEnabled = false
@@ -81,7 +85,6 @@ class StockOpnameInputFragment :
         with(viewBinding.includeTransferInput) {
             tvTransferItemName.text = data.itemNo
             tilTransferinputName.editText?.setText(data.itemNo)
-            tvTransferQty.text = "${data.alredyScanned}"
             etTransferinputBincode.setText(data.binCode)
         }
     }
@@ -105,8 +108,8 @@ class StockOpnameInputFragment :
                 when (it.itemId) {
                     R.id.history_data -> {
                         val action =
-                            TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
-                                documentNo = "",
+                            StockOpnameInputFragmentDirections.actionStockOpnameInputFragment2ToHistoryInputFragment(
+                                documentNo = null,
                                 historyType = HistoryType.STOCKOPNAME
                             )
                         view?.findNavController()?.navigate(action)
@@ -147,6 +150,9 @@ class StockOpnameInputFragment :
                             "Must Fill this Field"
                     }
                 }
+            })
+            stockOpnameResultQty.observe(viewLifecycleOwner, {
+                viewBinding.includeTransferInput.tvTransferQty.text = "$it"
             })
         }
     }

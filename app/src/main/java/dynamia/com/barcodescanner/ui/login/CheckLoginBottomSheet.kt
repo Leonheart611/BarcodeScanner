@@ -16,7 +16,7 @@ import dynamia.com.core.util.EventObserver
 class CheckLoginBottomSheet : BottomSheetDialogFragment() {
 
     val viewModel: CheckLoginViewModel by activityViewModels()
-    val loginViewModel: LoginViewModel by activityViewModels()
+    private val loginViewModel: LoginViewModel by activityViewModels()
 
     private lateinit var _viewBinding: DialogSelectInputTypeBinding
     val viewBinding by lazy { _viewBinding }
@@ -40,6 +40,7 @@ class CheckLoginBottomSheet : BottomSheetDialogFragment() {
                 is CheckLoginViewModel.LoginViewState.LoginFailed -> {
                     viewBinding.btnCheckLogin.isVisible = true
                     viewBinding.pbCheckLogin.isVisible = false
+                    viewBinding.tvCheckLoginMessage.isVisible = true
                     viewBinding.tvCheckLoginMessage.text = it.message
                     viewBinding.btnCheckLogin.setOnClickListener {
                         dismiss()

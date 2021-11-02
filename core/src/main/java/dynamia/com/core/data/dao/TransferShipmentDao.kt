@@ -50,6 +50,9 @@ interface TransferShipmentDao {
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND lineNo = :lineNo")
     fun getLineDetail(no: String, lineNo: Int): TransferShipmentLine
 
+    @Query("SELECT * FROM TransferShipmentLine WHERE id = :id")
+    fun getLineDetailLiveData(id: Int): LiveData<TransferShipmentLine>
+
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND itemIdentifier = :identifier")
     fun getLineDetailFromBarcode(no: String, identifier: String): TransferShipmentLine?
 

@@ -1,11 +1,9 @@
 package dynamia.com.barcodescanner.ui.stockopname.input
 
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputViewModel
@@ -29,26 +27,52 @@ class StockOpnameInputViewModel @Inject constructor(
     private val _inputValidaton = MutableLiveData<InputValidation>()
     val inputValidation: LiveData<InputValidation> by lazy { _inputValidaton }
 
+    private val stockId = MutableLiveData<Int>()
+
+    val stockOpnameResultQty: LiveData<Int> = Transformations.switchMap(stockId) {
+        repository.getCountQtyInput(it)
+    }
+
+
     fun getStockOpnameValue(identifier: String, id: Int, bincode: String) {
         viewModelScope.launch {
             try {
                 _viewState.value = StockOpnameViewState.Loading(true)
                 io {
                     if (id == 0) {
-                        repository.getStockOpnameDetailByBarcode(identifier, bincode)
-                            .collect { data ->
-                                ui {
-                                    stockOpnameData = data
-                                    _viewState.value = StockOpnameViewState.SuccessGetValue(data)
-                                    _viewState.value = StockOpnameViewState.Loading(false)
-                                }
+                        when (BuildConfig.FLAVOR) {
+                            Constant.APP_STORE -> {
+                                repository.getStockOpnameDetailByBarcode(identifier)
+                                    .collect { data ->
+                                        ui {
+                                            stockOpnameData = data
+                                            _viewState.value =
+                                                StockOpnameViewState.SuccessGetValue(data)
+                                            stockId.value = data.id!!
+                                            _viewState.value = StockOpnameViewState.Loading(false)
+                                        }
+                                    }
                             }
+                            else -> {
+                                repository.getStockOpnameDetailByBarcode(identifier, bincode)
+                                    .collect { data ->
+                                        ui {
+                                            stockOpnameData = data
+                                            _viewState.value =
+                                                StockOpnameViewState.SuccessGetValue(data)
+                                            stockId.value = data.id!!
+                                            _viewState.value = StockOpnameViewState.Loading(false)
+                                        }
+                                    }
+                            }
+                        }
                     } else {
                         repository.getStockOpnameDetailByBarcode(identifier, id)
                             .collect { data ->
                                 ui {
                                     stockOpnameData = data
                                     _viewState.value = StockOpnameViewState.SuccessGetValue(data)
+                                    stockId.value = data.id!!
                                     _viewState.value = StockOpnameViewState.Loading(false)
                                 }
                             }

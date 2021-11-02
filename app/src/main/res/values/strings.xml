@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Masari Apps</string>
     <string name="so_no_title">SO No.</string>
     <string name="customer_name_title">Customer Name</string>
     <string name="customer_po_no_title">Customer PO No.</string>

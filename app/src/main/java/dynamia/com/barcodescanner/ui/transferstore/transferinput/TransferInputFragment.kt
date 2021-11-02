@@ -47,9 +47,6 @@ class TransferInputFragment :
                     is TransferInputViewModel.TransferInputViewState.LoadingSearchPickingList -> {
                         activity?.showLoading(it.status)
                     }
-                    is TransferInputViewModel.TransferInputViewState.SuccessGetValue -> {
-                        showSuccessfulData(it.data)
-                    }
                     is TransferInputViewModel.TransferInputViewState.ErrorSaveData -> {
                         context?.showLongToast(it.message)
                     }
@@ -57,15 +54,6 @@ class TransferInputFragment :
                         context?.showLongToast("Success Save Data")
                         args.barcodeNo?.let { viewBinding.includeTransferInput.etTranferinputQty.text?.clear() }
                             ?: kotlin.run { clearData() }
-                    }
-                    is TransferInputViewModel.TransferInputViewState.SuccessGetPurchaseValue -> {
-                        showSuccessPurchaseData(it.data)
-                    }
-                    is TransferInputViewModel.TransferInputViewState.SuccessGetStockOpnameValue -> {
-                        showSuccessStockOpname(it.data)
-                    }
-                    is TransferInputViewModel.TransferInputViewState.SuccessGetInventoryValue -> {
-                        showSuccessInventoryData(it.data)
                     }
                 }
             })
@@ -81,6 +69,20 @@ class TransferInputFragment :
                     }
                 }
             })
+            when (args.transferType) {
+                SHIPMENT -> transferShipmentLine.observe(
+                    viewLifecycleOwner,
+                    { showSuccessfulData(it) })
+                RECEIPT -> transferShipmentLine.observe(
+                    viewLifecycleOwner,
+                    { showSuccessfulData(it) })
+                PURCHASE -> purchaserOrderLine.observe(
+                    viewLifecycleOwner,
+                    { showSuccessPurchaseData(it) })
+                INVENTORY -> inventoryLine.observe(
+                    viewLifecycleOwner,
+                    { showSuccessInventoryData(it) })
+            }
         }
     }
 
@@ -99,7 +101,7 @@ class TransferInputFragment :
             tilTransferinputName.editText?.setText(data.itemRefNo)
             when (args.transferType) {
                 SHIPMENT -> tvTransferQty.text = "${data.alredyScanned}/${data.quantity}"
-                RECEIPT -> tvTransferQty.text = "${data.alredyScanned}/${data.qtyInTransit}"
+                RECEIPT -> tvTransferQty.text = "${data.alreadyScanedReceipt}/${data.qtyInTransit}"
             }
         }
     }

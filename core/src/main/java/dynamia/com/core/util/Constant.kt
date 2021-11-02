@@ -5,4 +5,6 @@ object Constant {
     const val PASSWORD_KEY = "PASSWORD"
     const val BASEURL_KEY = "BASE_URL"
     const val DOMAIN_KEY = "DOMAIN_NAME"
+    const val APP_WAREHOUSE = "AppWarehouse"
+    const val APP_STORE = "AppStore"
 }

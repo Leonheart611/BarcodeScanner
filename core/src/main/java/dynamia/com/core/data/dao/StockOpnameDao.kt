@@ -26,6 +26,12 @@ interface StockOpnameDao {
     @Query("SELECT * FROM StockOpnameData WHERE itemRefNo = :barcode AND binCode =:binCode")
     fun getStockOpnameDetailItemRef(barcode: String, binCode: String): StockOpnameData?
 
+    @Query("SELECT * FROM StockOpnameData WHERE itemIdentifier=:barcode")
+    fun getStockOpnameDetailBinCode(barcode: String): StockOpnameData?
+
+    @Query("SELECT * FROM StockOpnameData WHERE itemRefNo = :barcode")
+    fun getStockOpnameDetailItemRef(barcode: String): StockOpnameData?
+
     @Query("SELECT * FROM StockOpnameData WHERE itemIdentifier=:barcode AND id =:id")
     fun getStockOpnameDetail(barcode: String, id: Int): StockOpnameData
 
@@ -38,6 +44,8 @@ interface StockOpnameDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = StockOpnameData::class)
     fun insertStockOpnameData(data: StockOpnameData)
 
+    @Query("SELECT alredyScanned from StockOpnameData WHERE id = :id")
+    fun getStockOpnameInputCount(id: Int): LiveData<Int>
 
     @Query("SELECT count(*) from StockOpnameData")
     fun getStockOpnameDataCount(): Int
@@ -59,6 +67,7 @@ interface StockOpnameDao {
 
     @Query("SELECT * FROM StockOpnameInputData WHERE id = :id")
     fun getStockOpnameInputDetail(id: Int): StockOpnameInputData
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = StockOpnameInputData::class)
     fun insertStockOpnameInput(data: StockOpnameInputData)

@@ -34,6 +34,7 @@ interface PurchaseOrderRepository {
      * Purchase Order Line
      */
 
+    fun getPurchaseOrderLineLiveData(id: Int): LiveData<PurchaseOrderLine>
     fun getPurchaseQtyTotal(no: String): LiveData<Int>
     fun getPurchaseAlreadyScan(no: String): LiveData<Int>
     suspend fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>)
@@ -112,6 +113,9 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
     override suspend fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>) {
         dao.insertPurchaseOrderLine(value)
     }
+
+    override fun getPurchaseOrderLineLiveData(id: Int): LiveData<PurchaseOrderLine> =
+        dao.getPurchaseOrderLineLiveData(id)
 
     override fun getPurchaseOrderLineByNo(
         no: String,

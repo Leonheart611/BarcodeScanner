@@ -85,7 +85,7 @@ class CheckStockFragment :
                             ViewGroup.LayoutParams.WRAP_CONTENT
                         )
                     with(bind) {
-                        etQuerySearch.doOnTextChanged { text, start, before, count ->
+                        etQuerySearch.doOnTextChanged { text, _, _, _ ->
                             text.isNullOrBlank().not().let {
                                 btnSearchItemIdentifier.isEnabled = it
                                 btnSearchItemNo.isEnabled = it
@@ -93,11 +93,11 @@ class CheckStockFragment :
 
                         }
                         btnSearchItemIdentifier.setOnClickListener {
-                            viewModel.getStockCheck("$SEARCH_ITEM_IDENTIFIERS '${etQuerySearch.text}') and qty gt 0")
+                            viewModel.getStockCheck("$SEARCH_ITEM_IDENTIFIERS '${etQuerySearch.text}') and Inventory gt 0")
                             dismiss()
                         }
                         btnSearchItemNo.setOnClickListener {
-                            viewModel.getStockCheck("$SEARCH_ITEM_NO '${etQuerySearch.text}') and qty gt 0")
+                            viewModel.getStockCheck("$SEARCH_ITEM_NO '${etQuerySearch.text}') and Inventory gt 0")
                             dismiss()
                         }
                     }

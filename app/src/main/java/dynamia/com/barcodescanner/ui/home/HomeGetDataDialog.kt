@@ -10,15 +10,12 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.BottomsheetHomeDataDialoogBinding
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.data.entinty.*
-import dynamia.com.core.util.EventObserver
-import dynamia.com.core.util.crossFade
-import dynamia.com.core.util.readJsonAsset
-import kotlinx.coroutines.GlobalScope
-import kotlin.coroutines.coroutineContext
+import dynamia.com.core.util.*
 
 @AndroidEntryPoint
 class HomeGetDataDialog : BottomSheetDialogFragment() {
@@ -50,6 +47,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
         //getAllDataFromAssets()
         setOnClicklistener()
     }
+
 
     private fun setObserverable() {
         viewModel.homeGetApiViewState.observe(viewLifecycleOwner, EventObserver {
@@ -159,21 +157,51 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             }
         })
         viewModel.homeGetDataCount.observe(viewLifecycleOwner, EventObserver {
-            if (it == 8) {
-                viewBinding.btnDialogClose.isVisible = true
-                viewModel.progress = 0
-            } else {
-                viewBinding.btnDialogClose.isVisible = false
+            when (BuildConfig.FLAVOR) {
+                Constant.APP_WAREHOUSE -> {
+                    if (it == 8) {
+                        viewBinding.btnDialogClose.isVisible = true
+                        viewModel.progress = 0
+                    } else {
+                        viewBinding.btnDialogClose.isVisible = false
+                    }
+                }
+                Constant.APP_STORE -> {
+                    if (it == 4) {
+                        viewBinding.btnDialogClose.isVisible = true
+                        viewModel.progress = 0
+                    } else {
+                        viewBinding.btnDialogClose.isVisible = false
+                    }
+                }
             }
+
+
         })
     }
 
     private fun callAllApi() {
         viewModel.getTransferData() // 2count
         viewModel.getReceiptDataAsync() // 1count
-        viewModel.getPurchaseDataAsync() // 2count
         viewModel.getStockOpname() // 1count
-        viewModel.getInventoryData() // 2 count
+
+        when (BuildConfig.FLAVOR) {
+            Constant.APP_STORE -> {
+                with(viewBinding) {
+                    tvErrorInventory.gone()
+                    tvPurchaseOrderGet.gone()
+                    tvInventoryGet.gone()
+                    ivStatusPurchaseOrder.gone()
+                    ivStatusInventory.gone()
+                    pbInventory.gone()
+                    pbPurchaseOrder.gone()
+                }
+            }
+            else -> {
+                viewModel.getPurchaseDataAsync() // 2count
+                viewModel.getInventoryData() // 2 count
+            }
+        }
     }
 
 

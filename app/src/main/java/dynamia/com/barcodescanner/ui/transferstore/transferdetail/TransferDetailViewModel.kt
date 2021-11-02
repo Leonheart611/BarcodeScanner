@@ -3,6 +3,7 @@ package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 import android.content.SharedPreferences
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.barcodescanner.di.ViewModelBase
@@ -48,6 +49,7 @@ class TransferDetailViewModel @Inject constructor(
     private var inventoryPickLine: InventoryPickLine? = null
 
     private val lineParam = MutableLiveData<LineParam>()
+
     /**
      * Transfer Shipment Data
      */
@@ -186,13 +188,27 @@ class TransferDetailViewModel @Inject constructor(
                                 }
                         }
                         STOCKOPNAME -> {
-                            stockOpnameRepository.getStockOpnameDetailByBarcode(identifier, binCode)
-                                .collect { data ->
-                                    ui {
-                                        stockOpnameData = data
-                                        insertStockOpnameData("1", box)
+                            if (BuildConfig.FLAVOR == Constant.APP_WAREHOUSE) {
+                                stockOpnameRepository.getStockOpnameDetailByBarcode(
+                                    identifier,
+                                    binCode
+                                )
+                                    .collect { data ->
+                                        ui {
+                                            stockOpnameData = data
+                                            insertStockOpnameData("1", box)
+                                        }
                                     }
-                                }
+                            } else {
+                                stockOpnameRepository.getStockOpnameDetailByBarcode(identifier)
+                                    .collect { data ->
+                                        ui {
+                                            stockOpnameData = data
+                                            insertStockOpnameData("1", box)
+                                        }
+                                    }
+                            }
+
                         }
                         INVENTORY -> {
                             inventoryRepository.getInventoryHeaderDetail(no)

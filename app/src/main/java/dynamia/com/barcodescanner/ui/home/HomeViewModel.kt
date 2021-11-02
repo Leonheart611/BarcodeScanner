@@ -129,6 +129,8 @@ class HomeViewModel @Inject constructor(
                 }
                 ui { _homeGetApiViewState.value = Event(SuccessGetShipingData) }
             } catch (e: Exception) {
+                progress += 10
+                homeGetDataCount.postValue(Event(progress))
                 _homeGetApiViewState.value = Event(FailedGetShippingData(e.localizedMessage))
             }
         }

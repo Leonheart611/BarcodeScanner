@@ -172,5 +172,8 @@
         <argument
             android:name="barcode"
             app:argType="string" />
+        <action
+            android:id="@+id/action_stockOpnameInputFragment2_to_historyInputFragment"
+            app:destination="@id/historyInputFragment" />
     </fragment>
 </navigation>

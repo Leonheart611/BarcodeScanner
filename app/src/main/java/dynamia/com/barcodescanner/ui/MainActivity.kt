@@ -4,9 +4,11 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
+import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 
 @AndroidEntryPoint
@@ -16,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.e("buildConfig", BuildConfig.FLAVOR)
         this.let { context ->
             loadingDialog = Dialog(context)
             with(loadingDialog) {
