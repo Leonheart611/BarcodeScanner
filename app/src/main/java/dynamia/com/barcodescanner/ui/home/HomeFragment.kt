@@ -120,6 +120,7 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
                 with(viewBinding.homeInclude) {
                     cvInventory.isVisible = false
                     cvPurchaseOrder.isVisible = false
+                    cvBinReclass.isVisible = false
                 }
             }
         }

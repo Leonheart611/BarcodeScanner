@@ -3,6 +3,7 @@ package dynamia.com.barcodescanner.ui.transferstore.transferinput
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.BottomSheetPickingHistoryFragmentBinding
 import dynamia.com.barcodescanner.databinding.DeleteConfirmationDialogBinding
@@ -23,6 +25,7 @@ import dynamia.com.barcodescanner.ui.history.HistoryType.*
 import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.data.entinty.TransferInputData
+import dynamia.com.core.util.Constant
 import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
@@ -68,7 +71,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         _viewBinding = BottomSheetPickingHistoryFragmentBinding.inflate(inflater, container, false)
         return viewBinding.root
     }
@@ -135,8 +138,16 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                 }
                 is TransferInputViewModel.TransferInputViewState.SuccessGetStockInputHistory -> {
                     with(it.data) {
+                        viewBinding.includeHistory.etBoxInput.apply {
+                            setText(this@with.box)
+                            isEnabled = false
+                        }
                         viewBinding.includeHistory.etTransferinputName.apply {
                             setText(this@with.itemNo)
+                            isEnabled = false
+                        }
+                        viewBinding.includeHistory.etTransferinputBincode.apply {
+                            setText(this@with.binCode)
                             isEnabled = false
                         }
                         viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
@@ -218,11 +229,14 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
             viewBinding.ivPickingHistoryClose.setOnClickListener {
                 dismiss()
             }
-            viewBinding.includeHistory.tilTransferBincode.isVisible =
-                (historyType == STOCKOPNAME || historyType == INVENTORY)
+            viewBinding.includeHistory.tilTransferBincode.isVisible = when (historyType) {
+                STOCKOPNAME -> BuildConfig.FLAVOR == Constant.APP_WAREHOUSE
+                INVENTORY -> true
+                else -> false
+            }
             viewBinding.includeHistory.tilInputBox.isVisible = when (historyType) {
                 INVENTORY -> false
-                STOCKOPNAME -> false
+                STOCKOPNAME -> true
                 else -> true
             }
         }

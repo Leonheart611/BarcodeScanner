@@ -195,16 +195,14 @@ class TransferDetailViewModel @Inject constructor(
                                 )
                                     .collect { data ->
                                         ui {
-                                            stockOpnameData = data
-                                            insertStockOpnameData("1", box)
+                                            insertStockOpnameData("1", box, data)
                                         }
                                     }
                             } else {
                                 stockOpnameRepository.getStockOpnameDetailByBarcode(identifier)
                                     .collect { data ->
                                         ui {
-                                            stockOpnameData = data
-                                            insertStockOpnameData("1", box)
+                                            insertStockOpnameData("1", box, data)
                                         }
                                     }
                             }
@@ -310,11 +308,11 @@ class TransferDetailViewModel @Inject constructor(
      * Insert Data From Scan Automatic
      */
 
-    private fun insertStockOpnameData(qty: String, box: String) {
+    private fun insertStockOpnameData(qty: String, box: String, data: StockOpnameData) {
         viewModelScope.launch {
             try {
                 io {
-                    stockOpnameData?.let { data ->
+                    data.let { data ->
                         stockOpnameRepository.insertInputStockOpname(
                             StockOpnameInputData(
                                 documentNo = data.documentNo,
@@ -324,7 +322,8 @@ class TransferDetailViewModel @Inject constructor(
                                 binCode = data.binCode,
                                 userName = sharedPreferences.getUserName(),
                                 insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
-                                headerId = data.id!!, box = box
+                                headerId = data.id!!, box = box,
+                                locationCode = data.locationCode
                             )
                         )
                         ui {
