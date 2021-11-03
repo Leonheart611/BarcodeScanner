@@ -1,5 +1,6 @@
 package dynamia.com.core.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import dynamia.com.core.data.dao.InventoryDao
@@ -26,7 +27,12 @@ interface InventoryRepository {
 
     fun insertInventoryLineAll(datas: List<InventoryPickLine>)
     fun getAllInventoryPickLine(no: String, page: Int = 20): LiveData<List<InventoryPickLine>>
-    fun getDetailInventoryPickLine(no: String, itemNoRef: String): Flow<InventoryPickLine>
+    fun getDetailInventoryPickLine(
+        no: String,
+        binCode: String,
+        itemNoRef: String
+    ): Flow<InventoryPickLine>
+
     fun updateInventoryPickLine(value: InventoryPickLine)
     fun getInventoryPickLineLiveData(id: Int): LiveData<InventoryPickLine>
     fun deleteAllInventoryPickLine()
@@ -36,7 +42,7 @@ interface InventoryRepository {
      */
     fun getInventoryQty(no: String): LiveData<Int>
     fun getInventoryAlreadyQty(no: String): LiveData<Int>
-    fun insertInputInventory(data: InventoryInputData)
+    suspend fun insertInputInventory(data: InventoryInputData)
     fun getAllInventoryInputData(): LiveData<List<InventoryInputData>>
     fun getUnpostedInventoryData(): List<InventoryInputData>
     fun getInventoryInputData(no: String): LiveData<List<InventoryInputData>>
@@ -96,9 +102,10 @@ class InventoryRepositoryImpl @Inject constructor(
         dao.deleteAllInventoryPickLine()
     }
 
-    override fun insertInputInventory(data: InventoryInputData) {
+    override suspend fun insertInputInventory(data: InventoryInputData) {
         try {
-            val lineData = dao.getInventoryPickLineDetail(data.documentNo, data.itemNo)
+            val lineData =
+                dao.getInventoryPickLineDetail(data.documentNo, data.binCode, data.itemNo)
             if ((lineData!!.alredyScanned + data.quantity) <= lineData.quantity) {
                 lineData.apply {
                     this.alredyScanned += data.quantity
@@ -109,7 +116,10 @@ class InventoryRepositoryImpl @Inject constructor(
                 error("Qty has Reach maximum allowed")
             }
         } catch (e: Exception) {
-            error(e.localizedMessage)
+            e.message?.let {
+                Log.e("Error Input", it)
+                error(it)
+            }
         }
 
     }
@@ -120,13 +130,14 @@ class InventoryRepositoryImpl @Inject constructor(
 
     override fun getDetailInventoryPickLine(
         no: String,
+        binCode: String,
         itemNoRef: String
     ): Flow<InventoryPickLine> = flow {
-        val result = dao.getInventoryPickLineDetail(no, itemNoRef)
+        val result = dao.getInventoryPickLineDetail(no, binCode, itemNoRef)
         if (result != null) {
             emit(result)
         } else {
-            dao.getInventoryPickLineDetailItemNo(no, itemNoRef)?.let { emit(it) }
+            dao.getInventoryPickLineDetailItemNo(no, binCode, itemNoRef)?.let { emit(it) }
                 ?: kotlin.run { error("Data tidak di temukan") }
         }
 
@@ -142,7 +153,11 @@ class InventoryRepositoryImpl @Inject constructor(
 
     override fun updateInventoryQty(id: Int, newQty: Int): Flow<Boolean> = flow {
         val inputData = dao.getInventoryInputDetail(id)
-        val lineData = dao.getInventoryPickLineDetail(inputData.documentNo, inputData.itemNo)
+        val lineData = dao.getInventoryPickLineDetail(
+            inputData.documentNo,
+            inputData.binCode,
+            inputData.itemNo
+        )
         val totalQty = (lineData?.alredyScanned ?: 0) - inputData.quantity + newQty
         if (totalQty <= (lineData?.quantity ?: 0)) {
             lineData?.apply {
@@ -179,7 +194,11 @@ class InventoryRepositoryImpl @Inject constructor(
     override suspend fun deleteInventoryInput(id: Int) {
         try {
             val inputData = dao.getInventoryInputDetail(id)
-            val lineData = dao.getInventoryPickLineDetail(inputData.documentNo, inputData.itemNo)
+            val lineData = dao.getInventoryPickLineDetail(
+                inputData.documentNo,
+                inputData.binCode,
+                inputData.itemNo
+            )
             lineData?.apply {
                 alredyScanned -= inputData.quantity
             }

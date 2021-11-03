@@ -163,7 +163,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    fun getInventoryLineValue(no: String, identifier: String) {
+    fun getInventoryLineValue(no: String, identifier: String, bincode: String) {
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
@@ -171,7 +171,7 @@ class TransferInputViewModel @Inject constructor(
                 io {
                     inventoryRepository.getInventoryHeaderDetail(no)
                         .collect { inventoryPickHeader = it }
-                    inventoryRepository.getDetailInventoryPickLine(no, identifier).collect {
+                    inventoryRepository.getDetailInventoryPickLine(no, bincode, identifier).collect {
                         inventoryPickLine = it
                         ui {
                             id.value = it.id!!

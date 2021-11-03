@@ -89,7 +89,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                                     data,
                                     it.toString(),
                                     inputType,
-                                    box = etBoxInput.text.toString()
+                                    binCode = etBoxInput.text.toString()
                                 )
                             }
                         }

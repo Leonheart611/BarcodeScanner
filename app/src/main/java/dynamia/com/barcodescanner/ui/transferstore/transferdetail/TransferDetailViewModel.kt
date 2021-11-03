@@ -148,7 +148,7 @@ class TransferDetailViewModel @Inject constructor(
         identifier: String,
         transferType: TransferType,
         binCode: String = "",
-        box: String
+        box: String = ""
     ) {
         viewModelScope.launch {
             try {
@@ -211,9 +211,11 @@ class TransferDetailViewModel @Inject constructor(
                         INVENTORY -> {
                             inventoryRepository.getInventoryHeaderDetail(no)
                                 .collect { inventoryPickHeader = it }
-                            inventoryRepository.getDetailInventoryPickLine(no, identifier)
-                                .collect { inventoryPickLine = it }
-                            insertInventoryData(box)
+                            inventoryRepository.getDetailInventoryPickLine(no, binCode, identifier)
+                                .collect {
+                                    inventoryPickLine = it
+                                    insertInventoryData(binCode)
+                                }
                         }
                     }
 
@@ -380,30 +382,39 @@ class TransferDetailViewModel @Inject constructor(
         }
     }
 
-    private fun insertInventoryData(box: String) {
+    private fun insertInventoryData(binCode: String) {
         viewModelScope.launch {
             try {
                 inventoryPickHeader?.let { header ->
                     inventoryPickLine?.let { line ->
-                        inventoryRepository.insertInputInventory(
-                            InventoryInputData(
-                                tableID = 2,
-                                documentNo = header.no,
-                                lineNo = line.lineNo,
-                                itemNo = line.itemRefNo,
-                                quantity = 1,
-                                box = box,
-                                locationCode = header.locationCode,
-                                userName = getUserName(),
-                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                        io {
+                            inventoryRepository.insertInputInventory(
+                                InventoryInputData(
+                                    tableID = 2,
+                                    documentNo = header.no,
+                                    lineNo = line.lineNo,
+                                    itemNo = line.itemRefNo,
+                                    quantity = 1,
+                                    binCode = binCode,
+                                    locationCode = header.locationCode,
+                                    userName = getUserName(),
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                )
                             )
-                        )
+                            ui {
+                                _transferInputViewState.value =
+                                    TransferDetailInputViewState.SuccessSaveData
+                            }
+                        }
                     }
                 }
             } catch (e: Exception) {
-
+                e.stackTrace
+                _transferInputViewState.value =
+                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
             }
         }
+
     }
 
     private fun insertTransferReceiptInput(qty: String, box: String) {
@@ -412,19 +423,20 @@ class TransferDetailViewModel @Inject constructor(
                 io {
                     transferReceiptHeader?.let { header ->
                         transferLineData?.let { line ->
-                            val value = transferReceiptRepository.insertTransferReceiptInput(
-                                TransferReceiptInput(
-                                    documentNo = line.documentNo,
-                                    quantity = qty.toInt(),
-                                    lineNo = line.lineNo,
-                                    itemNo = line.itemNo,
-                                    transferFromBinCode = header.transferFromCode,
-                                    transferToBinCode = header.transferToCode,
-                                    userName = sharedPreferences.getUserName(),
-                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
-                                    box = box
+                            val value =
+                                transferReceiptRepository.insertTransferReceiptInput(
+                                    TransferReceiptInput(
+                                        documentNo = line.documentNo,
+                                        quantity = qty.toInt(),
+                                        lineNo = line.lineNo,
+                                        itemNo = line.itemNo,
+                                        transferFromBinCode = header.transferFromCode,
+                                        transferToBinCode = header.transferToCode,
+                                        userName = sharedPreferences.getUserName(),
+                                        insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                        box = box
+                                    )
                                 )
-                            )
                             ui {
                                 if (value) {
                                     _transferInputViewState.value =
@@ -506,7 +518,9 @@ class TransferDetailViewModel @Inject constructor(
                             dataPosted++
                             ui {
                                 _pickingPostViewState.value =
-                                    PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                                    PickingDetailPostViewState.GetSuccessfullyPostedData(
+                                        dataPosted
+                                    )
                             }
                             data.apply {
                                 sync_status = true
@@ -514,7 +528,10 @@ class TransferDetailViewModel @Inject constructor(
                             transferShipmentRepository.updateTransferInput(data)
                         }
                     }
-                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.AllDataPosted
+                    }
                 }
             } catch (e: Exception) {
                 _pickingPostViewState.value =
@@ -542,7 +559,9 @@ class TransferDetailViewModel @Inject constructor(
                             dataPosted++
                             ui {
                                 _pickingPostViewState.value =
-                                    PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                                    PickingDetailPostViewState.GetSuccessfullyPostedData(
+                                        dataPosted
+                                    )
                             }
                             data.apply {
                                 sync_status = true
@@ -550,7 +569,10 @@ class TransferDetailViewModel @Inject constructor(
                             transferReceiptRepository.updateTransferReceiptInput(data)
                         }
                     }
-                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.AllDataPosted
+                    }
                 }
             } catch (e: Exception) {
                 _pickingPostViewState.value =
@@ -578,13 +600,18 @@ class TransferDetailViewModel @Inject constructor(
                             dataPosted++
                             ui {
                                 _pickingPostViewState.value =
-                                    PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                                    PickingDetailPostViewState.GetSuccessfullyPostedData(
+                                        dataPosted
+                                    )
                             }
                             data.postSuccess()
                             purchaseOrderRepository.updatePurchaseInputData(data)
                         }
                     }
-                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.AllDataPosted
+                    }
                 }
             } catch (e: Exception) {
                 _pickingPostViewState.value =
@@ -613,7 +640,9 @@ class TransferDetailViewModel @Inject constructor(
                             dataPosted++
                             ui {
                                 _pickingPostViewState.value =
-                                    PickingDetailPostViewState.GetSuccessfullyPostedData(dataPosted)
+                                    PickingDetailPostViewState.GetSuccessfullyPostedData(
+                                        dataPosted
+                                    )
                             }
                             data.apply {
                                 sync_status = true
@@ -621,7 +650,10 @@ class TransferDetailViewModel @Inject constructor(
                             inventoryRepository.updateInventoryInput(data)
                         }
                     }
-                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.AllDataPosted
+                    }
                 }
             } catch (e: Exception) {
                 _pickingPostViewState.value =
@@ -646,7 +678,9 @@ class TransferDetailViewModel @Inject constructor(
                     }
                     for (header in headerEntries) {
                         val listUnpostedData =
-                            binreclassRepository.getAllUnSyncBinreclassnputByHeaderId(headerId = header.id!!)
+                            binreclassRepository.getAllUnSyncBinreclassnputByHeaderId(
+                                headerId = header.id!!
+                            )
 
                         for (data in listUnpostedData) {
                             val param = gson.toJson(data)
@@ -667,7 +701,10 @@ class TransferDetailViewModel @Inject constructor(
                         }
                         binreclassRepository.updateBinReclassHeader(header)
                     }
-                    ui { _pickingPostViewState.value = PickingDetailPostViewState.AllDataPosted }
+                    ui {
+                        _pickingPostViewState.value =
+                            PickingDetailPostViewState.AllDataPosted
+                    }
                 }
             } catch (e: Exception) {
                 _pickingPostViewState.value =
@@ -678,17 +715,21 @@ class TransferDetailViewModel @Inject constructor(
 
 
     sealed class TransferListViewState {
-        class SuccessGetLocalData(val value: TransferShipmentHeader) : TransferListViewState()
+        class SuccessGetLocalData(val value: TransferShipmentHeader) :
+            TransferListViewState()
+
         class SuccessGetReceiptLocalData(val values: TransferReceiptHeader) :
             TransferListViewState()
 
-        class SuccessGetInventoryData(val value: InventoryPickHeader) : TransferListViewState()
+        class SuccessGetInventoryData(val value: InventoryPickHeader) :
+            TransferListViewState()
 
         class SuccessGetPickingLineData(val values: MutableList<TransferShipmentLine>) :
             TransferListViewState()
 
         class ErrorGetLocalData(val message: String) : TransferListViewState()
-        class SuccessGetPurchaseData(val value: PurchaseOrderHeader) : TransferListViewState()
+        class SuccessGetPurchaseData(val value: PurchaseOrderHeader) :
+            TransferListViewState()
     }
 
     sealed class PickingDetailPostViewState {

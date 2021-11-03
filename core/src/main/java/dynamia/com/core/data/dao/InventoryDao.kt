@@ -36,14 +36,22 @@ interface InventoryDao {
     @Query("SELECT * FROM InventoryPickLine WHERE `no` = :no ORDER BY `no` DESC LIMIT :page")
     fun getAllInventoryPickLine(no: String, page: Int): LiveData<List<InventoryPickLine>>
 
-    @Query("SELECT * FROM InventoryPickLine WHERE `no` =:no AND itemRefNo = :itemRefNo")
-    fun getInventoryPickLineDetail(no: String, itemRefNo: String): InventoryPickLine?
+    @Query("SELECT * FROM InventoryPickLine WHERE `no`=:no  AND binCode =:binCode AND itemRefNo = :itemRefNo")
+    fun getInventoryPickLineDetail(
+        no: String,
+        binCode: String,
+        itemRefNo: String
+    ): InventoryPickLine?
 
     @Query("SELECT * FROM InventoryPickLine WHERE id =:id")
     fun getInventoryPickLineLiveData(id: Int): LiveData<InventoryPickLine>
 
-    @Query("SELECT * FROM InventoryPickLine WHERE `no` =:no AND itemNo = :itemRefNo")
-    fun getInventoryPickLineDetailItemNo(no: String, itemRefNo: String): InventoryPickLine?
+    @Query("SELECT * FROM InventoryPickLine WHERE `no`=:no AND binCode =:binCode AND itemNo = :itemRefNo")
+    fun getInventoryPickLineDetailItemNo(
+        no: String,
+        binCode: String,
+        itemRefNo: String
+    ): InventoryPickLine?
 
     @Query("SELECT SUM(alredyScanned) FROM InventoryPickLine WHERE `no` =:no")
     fun getAlreadyScanTotal(no: String): LiveData<Int>

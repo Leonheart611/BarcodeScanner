@@ -114,15 +114,6 @@ class TransferInputFragment :
         }
     }
 
-    private fun showSuccessStockOpname(data: StockOpnameData) {
-        with(viewBinding.includeTransferInput) {
-            tvTransferItemName.text = data.itemNo
-            tilTransferinputName.editText?.setText(data.itemNo)
-            tvTransferQty.text = "${data.alredyScanned}"
-            etTransferinputBincode.setText(data.binCode)
-        }
-    }
-
     private fun setupView() {
         with(viewBinding) {
             toolbarPickingListInput.title = viewModel.getCompanyName()
@@ -137,8 +128,15 @@ class TransferInputFragment :
                 if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
                     || keyCode == EditorInfo.IME_ACTION_NEXT && (args.transferType != STOCKOPNAME)
                 ) {
-                    getPickingListLineData(includeTransferInput.etTransferInputBarcode.text.toString())
-                    includeTransferInput.etTranferinputQty.requestFocus()
+                    when (args.transferType) {
+                        INVENTORY -> {
+                            includeTransferInput.etTransferinputBincode.requestFocus()
+                        }
+                        else -> {
+                            getPickingListLineData(includeTransferInput.etTransferInputBarcode.text.toString())
+                            includeTransferInput.etTranferinputQty.requestFocus()
+                        }
+                    }
                     return@setOnEditorActionListener true
                 }
                 return@setOnEditorActionListener false
@@ -146,7 +144,7 @@ class TransferInputFragment :
 
             includeTransferInput.etTransferinputBincode.setOnEditorActionListener { _, actionId, event ->
                 if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
-                    || actionId == EditorInfo.IME_ACTION_NEXT && (args.transferType == STOCKOPNAME)
+                    || actionId == EditorInfo.IME_ACTION_NEXT && (args.transferType == INVENTORY)
                 ) {
                     getPickingListLineData(
                         includeTransferInput.etTransferInputBarcode.text.toString(),
@@ -182,7 +180,7 @@ class TransferInputFragment :
             RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode)
             PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode)
             STOCKOPNAME -> viewModel.getStockOpnameValue(barcode, args.stockId, binCode)
-            INVENTORY -> viewModel.getInventoryLineValue(args.transferNo, barcode)
+            INVENTORY -> viewModel.getInventoryLineValue(args.transferNo, barcode, binCode)
         }
     }
 
