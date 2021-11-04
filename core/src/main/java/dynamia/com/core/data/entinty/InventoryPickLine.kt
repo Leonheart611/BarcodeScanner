@@ -20,7 +20,8 @@ data class InventoryPickLine(
     @SerializedName("Qty_to_Handle") val qtyToHandle: Int,
     @SerializedName("Quantity") val quantity: Int,
     @SerializedName("Unit_of_Measure_Code") val unitOfMeasureCode: String,
-    @SerializedName("Already_scaned") var alredyScanned: Int = 0,
+    @SerializedName("ItemIdentifier") val itemIdentifier: String,
+    @SerializedName("Already_scaned") var alredyScanned: Int = 0
 )
 
 data class InventoryPickLineAsset(

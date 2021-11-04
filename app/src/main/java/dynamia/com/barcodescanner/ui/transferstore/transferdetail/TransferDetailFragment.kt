@@ -264,7 +264,7 @@ class TransferDetailFragment :
     override fun onclicklistener(data: InventoryPickLine) {
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                args.transferNo, data.itemRefNo, args.transferType
+                args.transferNo, data.itemRefNo, args.transferType, binCode = data.binCode
             )
         view?.findNavController()?.navigate(action)
     }

@@ -171,14 +171,15 @@ class TransferInputViewModel @Inject constructor(
                 io {
                     inventoryRepository.getInventoryHeaderDetail(no)
                         .collect { inventoryPickHeader = it }
-                    inventoryRepository.getDetailInventoryPickLine(no, bincode, identifier).collect {
-                        inventoryPickLine = it
-                        ui {
-                            id.value = it.id!!
-                            _transferInputViewState.value =
-                                TransferInputViewState.LoadingSearchPickingList(false)
+                    inventoryRepository.getDetailInventoryPickLine(no, bincode, identifier)
+                        .collect {
+                            inventoryPickLine = it
+                            ui {
+                                id.value = it.id!!
+                                _transferInputViewState.value =
+                                    TransferInputViewState.LoadingSearchPickingList(false)
+                            }
                         }
-                    }
                 }
             } catch (e: Exception) {
                 _transferInputViewState.value =
@@ -268,10 +269,11 @@ class TransferInputViewModel @Inject constructor(
                                     userName = getUserName(),
                                     insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
                                 )
-                            )
-                            ui {
-                                _transferInputViewState.value =
-                                    TransferInputViewState.SuccessSaveData
+                            ).collect {
+                                ui {
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.SuccessSaveData
+                                }
                             }
                         }
                     }

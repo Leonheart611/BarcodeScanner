@@ -37,7 +37,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_input_box">
+        app:layout_constraintTop_toBottomOf="@+id/til_transfer_bincode">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_transfer_input_barcode"
@@ -67,8 +67,8 @@
             android:clickable="false"
             android:focusable="false"
             android:hint="Item Name"
-            android:singleLine="true"
-            android:minHeight="48dp"/>
+            android:minHeight="48dp"
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -80,7 +80,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_transfer_bincode">
+        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_tranferinput_qty"
@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/qty_title"
             android:inputType="number"
-            android:minHeight="48dp"/>
+            android:minHeight="48dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -100,7 +100,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_transferinput_name">
+        app:layout_constraintTop_toBottomOf="@+id/til_input_box">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_transferinput_bincode"

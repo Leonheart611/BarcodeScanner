@@ -400,10 +400,11 @@ class TransferDetailViewModel @Inject constructor(
                                     userName = getUserName(),
                                     insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
                                 )
-                            )
-                            ui {
-                                _transferInputViewState.value =
-                                    TransferDetailInputViewState.SuccessSaveData
+                            ).collect {
+                                ui {
+                                    _transferInputViewState.value =
+                                        TransferDetailInputViewState.SuccessSaveData
+                                }
                             }
                         }
                     }

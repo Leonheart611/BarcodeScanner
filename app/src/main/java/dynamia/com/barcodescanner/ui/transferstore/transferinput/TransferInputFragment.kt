@@ -52,8 +52,9 @@ class TransferInputFragment :
                     }
                     TransferInputViewModel.TransferInputViewState.SuccessSaveData -> {
                         context?.showLongToast("Success Save Data")
-                        args.barcodeNo?.let { viewBinding.includeTransferInput.etTranferinputQty.text?.clear() }
-                            ?: kotlin.run { clearData() }
+                        /*args.barcodeNo?.let { viewBinding.includeTransferInput.etTranferinputQty.text?.clear() }
+                            ?: kotlin.run { clearData() }*/
+                        viewBinding.includeTransferInput.etTranferinputQty.text?.clear()
                     }
                 }
             })
@@ -117,26 +118,29 @@ class TransferInputFragment :
     private fun setupView() {
         with(viewBinding) {
             toolbarPickingListInput.title = viewModel.getCompanyName()
-            includeTransferInput.etTransferInputBarcode.requestFocus()
+            when (args.transferType) {
+                INVENTORY -> {
+                    includeTransferInput.etTransferinputBincode.requestFocus()
+                }
+                else -> {
+                    includeTransferInput.etTransferInputBarcode.requestFocus()
+                }
+            }
             args.barcodeNo?.let {
                 includeTransferInput.etTransferInputBarcode.setText(it)
                 includeTransferInput.etTransferInputBarcode.isEnabled = false
-                getPickingListLineData(it)
+                getPickingListLineData(it, args.binCode)
                 includeTransferInput.etTranferinputQty.requestFocus()
             }
             includeTransferInput.etTransferInputBarcode.setOnEditorActionListener { _, keyCode, event ->
                 if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
                     || keyCode == EditorInfo.IME_ACTION_NEXT && (args.transferType != STOCKOPNAME)
                 ) {
-                    when (args.transferType) {
-                        INVENTORY -> {
-                            includeTransferInput.etTransferinputBincode.requestFocus()
-                        }
-                        else -> {
-                            getPickingListLineData(includeTransferInput.etTransferInputBarcode.text.toString())
-                            includeTransferInput.etTranferinputQty.requestFocus()
-                        }
-                    }
+                    getPickingListLineData(
+                        includeTransferInput.etTransferInputBarcode.text.toString(),
+                        includeTransferInput.etTransferinputBincode.text.toString()
+                    )
+                    includeTransferInput.etTranferinputQty.requestFocus()
                     return@setOnEditorActionListener true
                 }
                 return@setOnEditorActionListener false
@@ -146,11 +150,7 @@ class TransferInputFragment :
                 if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
                     || actionId == EditorInfo.IME_ACTION_NEXT && (args.transferType == INVENTORY)
                 ) {
-                    getPickingListLineData(
-                        includeTransferInput.etTransferInputBarcode.text.toString(),
-                        includeTransferInput.etTransferinputBincode.text.toString()
-                    )
-                    includeTransferInput.etTranferinputQty.requestFocus()
+                    includeTransferInput.etTransferInputBarcode.requestFocus()
                     return@setOnEditorActionListener true
                 }
                 return@setOnEditorActionListener false

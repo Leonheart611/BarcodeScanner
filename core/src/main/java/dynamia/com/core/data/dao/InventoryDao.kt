@@ -46,7 +46,7 @@ interface InventoryDao {
     @Query("SELECT * FROM InventoryPickLine WHERE id =:id")
     fun getInventoryPickLineLiveData(id: Int): LiveData<InventoryPickLine>
 
-    @Query("SELECT * FROM InventoryPickLine WHERE `no`=:no AND binCode =:binCode AND itemNo = :itemRefNo")
+    @Query("SELECT * FROM InventoryPickLine WHERE `no`=:no AND binCode =:binCode AND itemIdentifier = :itemRefNo")
     fun getInventoryPickLineDetailItemNo(
         no: String,
         binCode: String,

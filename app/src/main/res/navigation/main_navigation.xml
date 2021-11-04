@@ -29,6 +29,10 @@
             android:name="stockId"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="binCode"
+            app:argType="string"
+            android:defaultValue='""' />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
