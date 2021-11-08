@@ -177,10 +177,9 @@ class StockOpnameRepositoryImpl @Inject constructor(
         flow {
             try {
                 val result = retrofitService.getStockOpname()
-                when (result.isSuccessful) {
-                    true -> {
-                        result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
-                    }
+                when (result.code()) {
+                    200 -> result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
+                    400 -> emit(ResultWrapper.SuccessEmptyValue)
                     else -> {
                         result.errorBody()?.let {
                             val errorMessage = Gson().fromJson(
@@ -203,10 +202,9 @@ class StockOpnameRepositoryImpl @Inject constructor(
         flow {
             try {
                 val result = retrofitService.getCheckStock(value)
-                when (result.isSuccessful) {
-                    true -> {
-                        result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
-                    }
+                when (result.code()) {
+                    200 -> result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
+                    400 -> emit(ResultWrapper.SuccessEmptyValue)
                     else -> {
                         result.errorBody()?.let {
                             val errorMessage = Gson().fromJson(

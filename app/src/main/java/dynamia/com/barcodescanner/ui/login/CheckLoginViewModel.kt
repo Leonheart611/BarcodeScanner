@@ -39,6 +39,9 @@ class CheckLoginViewModel @Inject constructor(private val transferShipmentReposi
                                 _loginViewState.postValue(Event(LoginViewState.LoginFailed(data.error)))
 
                             }
+                            ResultWrapper.SuccessEmptyValue -> {
+                                _loginViewState.postValue(Event(LoginViewState.LoginSuccess))
+                            }
                         }
                     }
                 }

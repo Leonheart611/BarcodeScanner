@@ -6,10 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.LOGOUT
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.FunctionDialog.REFRESH
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
-import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.ResultWrapper.*
@@ -57,6 +57,8 @@ class HomeViewModel @Inject constructor(
                     transferReceiptRepository.clearAllInputData()
                     binreclassRepository.deleteAllBinreclass()
                     binreclassRepository.deleteAllRebinInput()
+                    stockOpnameDataRepository.deleteAllInputStockOpname()
+                    stockOpnameDataRepository.deleteAllStockOpname()
                     sharedPreferences.edit().clear().apply()
                 }
             } catch (e: Exception) {
@@ -246,6 +248,9 @@ class HomeViewModel @Inject constructor(
                                 }
                                 ui { _homeGetApiViewState.value = Event(SuccessGetReceipt) }
                             }
+                            SuccessEmptyValue -> {
+                                ui { _homeGetApiViewState.value = Event(SuccessGetReceipt) }
+                            }
                         }
                     }
                 }
@@ -279,6 +284,9 @@ class HomeViewModel @Inject constructor(
                                     value.value.forEach {
                                         insertStockOpnameData(it)
                                     }
+                                    ui { _homeGetApiViewState.value = Event(SuccessGetStockOpname) }
+                                }
+                                SuccessEmptyValue -> {
                                     ui { _homeGetApiViewState.value = Event(SuccessGetStockOpname) }
                                 }
                             }
@@ -316,6 +324,9 @@ class HomeViewModel @Inject constructor(
                                     insertInventoryHeaderAll(value.value)
                                     ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
                                 }
+                                SuccessEmptyValue -> {
+                                    ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
+                                }
                             }
                         }
                         getInventoryLineRemote().collect { value ->
@@ -331,6 +342,9 @@ class HomeViewModel @Inject constructor(
                                 )
                                 is Success -> {
                                     insertInventoryLineAll(value.value)
+                                    ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
+                                }
+                                SuccessEmptyValue -> {
                                     ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
                                 }
                             }

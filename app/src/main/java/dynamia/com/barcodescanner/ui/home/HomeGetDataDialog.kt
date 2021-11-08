@@ -1,12 +1,17 @@
 package dynamia.com.barcodescanner.ui.home
 
+import android.app.Dialog
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.core.content.res.ResourcesCompat.getDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +34,34 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     private var _viewBinding: BottomsheetHomeDataDialoogBinding? = null
     private val viewBinding by lazy { _viewBinding!! }
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheetDialog = dialogInterface as BottomSheetDialog
+            setupFullHeight(bottomSheetDialog)
+            dialogInterface.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        return dialog
+    }
+
+    private fun setupFullHeight(bottomSheetDialog: BottomSheetDialog) {
+        val bottomSheet =
+            bottomSheetDialog.findViewById<View>(R.id.design_bottom_sheet) as FrameLayout
+        val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from(bottomSheet)
+        val layoutParams = bottomSheet.layoutParams
+        val windowHeight = getWindowHeight()
+        if (layoutParams != null) {
+            layoutParams.height = windowHeight
+        }
+        bottomSheet.layoutParams = layoutParams
+        behavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+    }
+
+    private fun getWindowHeight(): Int {
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        return displayMetrics.heightPixels
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
