@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
-import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.util.*
@@ -259,7 +259,6 @@ class TransferInputViewModel @Inject constructor(
                         inventoryPickLine?.let { line ->
                             inventoryRepository.insertInputInventory(
                                 InventoryInputData(
-                                    tableID = 2,
                                     documentNo = header.no,
                                     lineNo = line.lineNo,
                                     itemNo = line.itemNo,

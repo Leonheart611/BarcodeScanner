@@ -1,16 +1,19 @@
 package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 
 import android.content.SharedPreferences
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.BuildConfig
+import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
-import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.util.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -390,7 +393,6 @@ class TransferDetailViewModel @Inject constructor(
                         io {
                             inventoryRepository.insertInputInventory(
                                 InventoryInputData(
-                                    tableID = 2,
                                     documentNo = header.no,
                                     lineNo = line.lineNo,
                                     itemNo = line.itemRefNo,

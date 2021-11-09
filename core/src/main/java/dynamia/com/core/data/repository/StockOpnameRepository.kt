@@ -23,6 +23,7 @@ interface StockOpnameRepository {
     fun getStockOpnameDetailByBarcode(barcode: String, binCode: String): Flow<StockOpnameData>
     fun getStockOpnameDetailByBarcode(barcode: String, id: Int): Flow<StockOpnameData>
     fun getStockOpnameDetailByBarcode(barcode: String): Flow<StockOpnameData>
+    fun getStockOpnameDetailStore(barcode: String): Flow<StockOpnameData>
     suspend fun insertStockOpnameData(data: StockOpnameData)
     suspend fun countStockOpnameData(): Int
     fun deleteAllStockOpname()
@@ -79,6 +80,7 @@ class StockOpnameRepositoryImpl @Inject constructor(
         }
     }
 
+
     override fun getStockOpnameDetailByBarcode(barcode: String): Flow<StockOpnameData> = flow {
         val value = dao.getStockOpnameDetailBinCode(barcode)
         if (value != null) {
@@ -87,6 +89,11 @@ class StockOpnameRepositoryImpl @Inject constructor(
             dao.getStockOpnameDetailItemRef(barcode)?.let { emit(it) }
                 ?: kotlin.run { error("Barcode dan Bincode data tidak ditemukan") }
         }
+    }
+
+    override fun getStockOpnameDetailStore(barcode: String): Flow<StockOpnameData> = flow {
+        val value = dao.getStockOpnameDetailItemRef(barcode)
+        value?.let { emit(it) } ?: kotlin.run { error("Barcode dan Bincode data tidak ditemukan") }
     }
 
     override fun getCountQtyInput(id: Int): LiveData<Int> = dao.getStockOpnameInputCount(id)

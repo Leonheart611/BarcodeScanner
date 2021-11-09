@@ -1,12 +1,13 @@
 package dynamia.com.barcodescanner.ui.stockopname.input
 
 import android.content.SharedPreferences
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.di.ViewModelBase
-import dynamia.com.barcodescanner.ui.transferstore.TransferType
-import dynamia.com.barcodescanner.ui.transferstore.transferinput.TransferInputViewModel
 import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.StockOpnameInputData
 import dynamia.com.core.data.repository.StockOpnameRepository
@@ -42,7 +43,7 @@ class StockOpnameInputViewModel @Inject constructor(
                     if (id == 0) {
                         when (BuildConfig.FLAVOR) {
                             Constant.APP_STORE -> {
-                                repository.getStockOpnameDetailByBarcode(identifier)
+                                repository.getStockOpnameDetailStore(identifier)
                                     .collect { data ->
                                         ui {
                                             stockOpnameData = data

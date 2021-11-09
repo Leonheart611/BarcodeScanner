@@ -208,8 +208,6 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                     }
                 }
             }
-
-
         })
     }
 

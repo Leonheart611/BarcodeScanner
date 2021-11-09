@@ -48,7 +48,7 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
             postPurchaseData()
             postStockOpnameData()
             postBinReclassData()
-
+            postInventoryData()
         }
     }
 
