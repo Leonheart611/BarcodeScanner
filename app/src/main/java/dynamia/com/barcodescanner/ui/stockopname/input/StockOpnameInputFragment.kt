@@ -58,7 +58,10 @@ class StockOpnameInputFragment :
                 if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
                     || keyCode == EditorInfo.IME_ACTION_NEXT
                 ) {
-                    getPickingListLineData(includeTransferInput.etTransferInputBarcode.text.toString())
+                    getPickingListLineData(
+                        includeTransferInput.etTransferInputBarcode.text.toString(),
+                        binCode = includeTransferInput.etTransferinputBincode.text.toString()
+                    )
                     includeTransferInput.etTranferinputQty.requestFocus()
                     return@setOnEditorActionListener true
                 }
@@ -69,11 +72,7 @@ class StockOpnameInputFragment :
                 if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
                     || actionId == EditorInfo.IME_ACTION_NEXT
                 ) {
-                    getPickingListLineData(
-                        includeTransferInput.etTransferInputBarcode.text.toString(),
-                        includeTransferInput.etTransferinputBincode.text.toString()
-                    )
-                    includeTransferInput.etTranferinputQty.requestFocus()
+                    includeTransferInput.etTransferInputBarcode.requestFocus()
                     return@setOnEditorActionListener true
                 }
                 return@setOnEditorActionListener false

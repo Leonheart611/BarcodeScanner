@@ -11,7 +11,7 @@ interface StockOpnameDao {
     /**
      * Stock Opname Data
      */
-    @Query("SELECT * FROM StockOpnameData LIMIT :page")
+    @Query("SELECT * FROM StockOpnameData ORDER BY binCode ASC LIMIT :page")
     fun getALlStockOpname(page: Int): LiveData<List<StockOpnameData>>
 
     @Query("SELECT COUNT(*) FROM StockOpnameData")

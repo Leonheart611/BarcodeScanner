@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -21,7 +20,6 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.EventObserver
-import dynamia.com.core.util.gone
 import dynamia.com.core.util.showLongToast
 
 
@@ -31,14 +29,14 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
     private val viewModel: HomeViewModel by viewModels()
     private var activity: MainActivity? = null
 
-    override fun onCreateView(
+    /*override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         viewModel.checkEmptyData()
         return super.onCreateView(inflater, container, savedInstanceState)
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
