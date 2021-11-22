@@ -311,7 +311,7 @@ class TransferInputViewModel @Inject constructor(
                                     locationCode = header.locationCode,
                                     userName = getUserName(),
                                     insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
-                                )
+                                ), line.id ?: 0
                             ).collect {
                                 ui {
                                     _transferInputViewState.value =

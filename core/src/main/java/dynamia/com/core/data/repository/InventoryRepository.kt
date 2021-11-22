@@ -11,7 +11,6 @@ import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -44,7 +43,7 @@ interface InventoryRepository {
      */
     fun getInventoryQty(no: String): LiveData<Int>
     fun getInventoryAlreadyQty(no: String): LiveData<Int>
-    suspend fun insertInputInventory(data: InventoryInputData): Flow<Boolean>
+    suspend fun insertInputInventory(data: InventoryInputData, detailId: Int): Flow<Boolean>
     fun getAllInventoryInputData(): LiveData<List<InventoryInputData>>
     fun getUnpostedInventoryData(): List<InventoryInputData>
     fun getInventoryInputData(no: String): LiveData<List<InventoryInputData>>
@@ -108,23 +107,21 @@ class InventoryRepositoryImpl @Inject constructor(
         dao.deleteAllInventoryPickLine()
     }
 
-    override suspend fun insertInputInventory(data: InventoryInputData): Flow<Boolean> = flow {
+    override suspend fun insertInputInventory(
+        data: InventoryInputData,
+        detailId: Int
+    ): Flow<Boolean> = flow {
         try {
-            getDetailInventoryPickLine(
-                data.documentNo,
-                data.binCode,
-                data.itemNo
-            ).collect { lineData ->
-                if ((lineData.alredyScanned + data.quantity) <= lineData.quantity) {
-                    lineData.apply {
-                        this.alredyScanned += data.quantity
-                    }
-                    dao.insertInputInventory(data)
-                    dao.updateInventoryPickLine(lineData)
-                    emit(true)
-                } else {
-                    error("Qty has Reach maximum allowed")
+            val lineData = dao.getInventoryPickLineFromId(detailId)
+            if ((lineData.alredyScanned + data.quantity) <= lineData.quantity) {
+                lineData.apply {
+                    this.alredyScanned += data.quantity
                 }
+                dao.insertInputInventory(data)
+                dao.updateInventoryPickLine(lineData)
+                emit(true)
+            } else {
+                error("Qty has Reach maximum allowed")
             }
         } catch (e: Exception) {
             e.message?.let {
