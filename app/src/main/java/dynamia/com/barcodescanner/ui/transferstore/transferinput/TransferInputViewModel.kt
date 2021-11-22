@@ -133,7 +133,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    fun getShipmentListLineValue(no: String, identifier: String) {
+    fun getShipmentListLineValue(no: String, identifier: String, stockId: Int) {
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
@@ -142,8 +142,8 @@ class TransferInputViewModel @Inject constructor(
                     transferShipmentRepository.getTransferHeaderDetail(no).collect {
                         transferHeaderData = it
                     }
-                    transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
-                        .collect { data ->
+                    if (stockId != 0) {
+                        transferShipmentRepository.getLineDetailFromId(stockId).collect { data ->
                             ui {
                                 transferLineData = data
                                 id.value = data.id!!
@@ -151,7 +151,17 @@ class TransferInputViewModel @Inject constructor(
                                     TransferInputViewState.LoadingSearchPickingList(false)
                             }
                         }
-
+                    } else {
+                        transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
+                            .collect { data ->
+                                ui {
+                                    transferLineData = data
+                                    id.value = data.id!!
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                }
+                            }
+                    }
                 }
             } catch (e: Exception) {
                 e.stackTrace
@@ -163,7 +173,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    fun getInventoryLineValue(no: String, identifier: String, bincode: String) {
+    fun getInventoryLineValue(no: String, identifier: String, bincode: String, stockId: Int) {
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
@@ -171,8 +181,9 @@ class TransferInputViewModel @Inject constructor(
                 io {
                     inventoryRepository.getInventoryHeaderDetail(no)
                         .collect { inventoryPickHeader = it }
-                    inventoryRepository.getDetailInventoryPickLine(no, bincode, identifier)
-                        .collect {
+
+                    if (stockId != 0) {
+                        inventoryRepository.getInventoryPickLineFromId(stockId).collect {
                             inventoryPickLine = it
                             ui {
                                 id.value = it.id!!
@@ -180,6 +191,17 @@ class TransferInputViewModel @Inject constructor(
                                     TransferInputViewState.LoadingSearchPickingList(false)
                             }
                         }
+                    } else {
+                        inventoryRepository.getDetailInventoryPickLine(no, bincode, identifier)
+                            .collect {
+                                inventoryPickLine = it
+                                ui {
+                                    id.value = it.id!!
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                }
+                            }
+                    }
                 }
             } catch (e: Exception) {
                 _transferInputViewState.value =
@@ -191,7 +213,7 @@ class TransferInputViewModel @Inject constructor(
     }
 
 
-    fun getReceiptListLineValue(no: String, identifier: String) {
+    fun getReceiptListLineValue(no: String, identifier: String, stockId: Int) {
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
@@ -200,16 +222,27 @@ class TransferInputViewModel @Inject constructor(
                     transferReceiptRepository.getTransferHeaderDetail(no).collect {
                         transferReceiptHeader = it
                     }
-                    transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
-                        .collect { data ->
-                            ui {
-                                transferLineData = data
-                                id.value = data.id!!
-                                _transferInputViewState.value =
-                                    TransferInputViewState.LoadingSearchPickingList(false)
+                    if (stockId != 0) {
+                        transferShipmentRepository.getLineDetailFromId(stockId)
+                            .collect { data ->
+                                ui {
+                                    transferLineData = data
+                                    id.value = data.id!!
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                }
                             }
-                        }
-
+                    } else {
+                        transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
+                            .collect { data ->
+                                ui {
+                                    transferLineData = data
+                                    id.value = data.id!!
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                }
+                            }
+                    }
                 }
             } catch (e: Exception) {
                 e.stackTrace
@@ -221,7 +254,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    fun getPurchaseLineValue(no: String, identifier: String) {
+    fun getPurchaseLineValue(no: String, identifier: String, stockId: Int) {
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
@@ -231,12 +264,23 @@ class TransferInputViewModel @Inject constructor(
                         getPurchaseOrderDetail(no).collect {
                             purchaseHeader = it
                         }
-                        getPurchaseOrderLineByBarcode(no, identifier).collect { data ->
-                            ui {
-                                purchaseLineData = data
-                                id.value = data.id!!
-                                _transferInputViewState.value =
-                                    TransferInputViewState.LoadingSearchPickingList(false)
+                        if (stockId != 0) {
+                            getPurchaseOrderLineDetailById(stockId).collect { data ->
+                                ui {
+                                    purchaseLineData = data
+                                    id.value = data.id!!
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                }
+                            }
+                        } else {
+                            getPurchaseOrderLineByBarcode(no, identifier).collect { data ->
+                                ui {
+                                    purchaseLineData = data
+                                    id.value = data.id!!
+                                    _transferInputViewState.value =
+                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                }
                             }
                         }
                     }

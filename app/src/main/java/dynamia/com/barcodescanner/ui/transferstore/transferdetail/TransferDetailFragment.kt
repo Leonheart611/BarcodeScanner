@@ -17,7 +17,6 @@ import dynamia.com.barcodescanner.ui.transferstore.adapter.TransferDetailLineAda
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.util.showLongToast
-import dynamia.com.core.util.showShortToast
 
 @AndroidEntryPoint
 class TransferDetailFragment :
@@ -245,10 +244,10 @@ class TransferDetailFragment :
         dialog.show(requireActivity().supportFragmentManager, dialog.tag)
     }
 
-    override fun onclicklistener(pickingListLineValue: TransferShipmentLine) {
+    override fun onclicklistener(value: TransferShipmentLine) {
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                args.transferNo, pickingListLineValue.itemIdentifier, args.transferType
+                args.transferNo, value.itemIdentifier, args.transferType , stockId = value.id ?: 0
             )
         view?.findNavController()?.navigate(action)
     }
@@ -256,7 +255,7 @@ class TransferDetailFragment :
     override fun onclicklistener(value: PurchaseOrderLine) {
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                args.transferNo, value.itemIdentifier, args.transferType
+                args.transferNo, value.itemIdentifier, args.transferType, stockId = value.id ?: 0
             )
         view?.findNavController()?.navigate(action)
     }
@@ -264,7 +263,7 @@ class TransferDetailFragment :
     override fun onclicklistener(data: InventoryPickLine) {
         val action =
             TransferDetailFragmentDirections.actionTransferDetailFragmentToTransferInputFragment(
-                args.transferNo, data.itemRefNo, args.transferType, binCode = data.binCode
+                args.transferNo, data.itemRefNo, args.transferType, binCode = data.binCode, stockId = data.id ?: 0
             )
         view?.findNavController()?.navigate(action)
     }

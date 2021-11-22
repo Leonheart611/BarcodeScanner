@@ -33,7 +33,7 @@ interface InventoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = InventoryPickLine::class)
     fun insertInventoryLineAll(datas: List<InventoryPickLine>)
 
-    @Query("SELECT * FROM InventoryPickLine WHERE `no` = :no AND quantity != 0 ORDER BY `no` DESC LIMIT :page")
+    @Query("SELECT * FROM InventoryPickLine WHERE `no` = :no AND quantity != 0 ORDER BY binCode ASC LIMIT :page")
     fun getAllInventoryPickLine(no: String, page: Int): LiveData<List<InventoryPickLine>>
 
     @Query("SELECT * FROM InventoryPickLine WHERE `no`=:no  AND binCode =:binCode AND itemRefNo = :itemRefNo")
@@ -45,6 +45,9 @@ interface InventoryDao {
 
     @Query("SELECT * FROM InventoryPickLine WHERE id =:id")
     fun getInventoryPickLineLiveData(id: Int): LiveData<InventoryPickLine>
+
+    @Query("SELECT * FROM InventoryPickLine WHERE id =:id")
+    fun getInventoryPickLineFromId(id: Int): InventoryPickLine
 
     @Query("SELECT * FROM InventoryPickLine WHERE `no`=:no AND binCode =:binCode AND itemIdentifier = :itemRefNo")
     fun getInventoryPickLineDetailItemNo(

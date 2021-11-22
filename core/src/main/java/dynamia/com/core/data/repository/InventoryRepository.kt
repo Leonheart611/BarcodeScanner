@@ -36,6 +36,7 @@ interface InventoryRepository {
 
     fun updateInventoryPickLine(value: InventoryPickLine)
     fun getInventoryPickLineLiveData(id: Int): LiveData<InventoryPickLine>
+    fun getInventoryPickLineFromId(id: Int): Flow<InventoryPickLine>
     fun deleteAllInventoryPickLine()
 
     /**
@@ -98,6 +99,10 @@ class InventoryRepositoryImpl @Inject constructor(
 
     override fun getInventoryPickLineLiveData(id: Int): LiveData<InventoryPickLine> =
         dao.getInventoryPickLineLiveData(id)
+
+    override fun getInventoryPickLineFromId(id: Int): Flow<InventoryPickLine> = flow {
+        emit(dao.getInventoryPickLineFromId(id))
+    }
 
     override fun deleteAllInventoryPickLine() {
         dao.deleteAllInventoryPickLine()

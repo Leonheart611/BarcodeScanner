@@ -17,7 +17,6 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.InventoryPickLine
 import dynamia.com.core.data.entinty.PurchaseOrderLine
-import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.util.*
 import java.util.*
@@ -176,11 +175,11 @@ class TransferInputFragment :
 
     private fun getPickingListLineData(barcode: String, binCode: String = "") {
         when (args.transferType) {
-            SHIPMENT -> viewModel.getShipmentListLineValue(args.transferNo, barcode)
-            RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode)
-            PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode)
+            SHIPMENT -> viewModel.getShipmentListLineValue(args.transferNo, barcode, args.stockId)
+            RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode, args.stockId)
+            PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode, args.stockId)
             STOCKOPNAME -> viewModel.getStockOpnameValue(barcode, args.stockId, binCode)
-            INVENTORY -> viewModel.getInventoryLineValue(args.transferNo, barcode, binCode)
+            INVENTORY -> viewModel.getInventoryLineValue(args.transferNo, barcode, binCode, args.stockId)
         }
     }
 
