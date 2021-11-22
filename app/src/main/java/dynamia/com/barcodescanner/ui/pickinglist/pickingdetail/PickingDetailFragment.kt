@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.pickinglist.adapter.PickingDetailAdapter
+import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType
 import dynamia.com.core.data.model.PickingListHeaderValue
 import dynamia.com.core.data.model.PickingListLineValue
 import dynamia.com.core.util.Constant
@@ -170,12 +171,14 @@ class PickingDetailFragment : Fragment() {
                         val action = if (cb_check_s_true.isChecked) {
                             PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(
                                 args.pickingListNo,
-                                true
+                                true,
+                                InputType.PICKING
                             )
                         } else {
                             PickingDetailFragmentDirections.actionPickingDetailFragmentToReceivingFragment(
                                 args.pickingListNo,
-                                false
+                                false,
+                                InputType.PICKING
                             )
                         }
                         view?.findNavController()?.navigate(action)

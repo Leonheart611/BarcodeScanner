@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeViewState.DBhasEmpty
+import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
 import dynamia.com.core.util.showLongToast
@@ -33,8 +34,8 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.home_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         activity = requireActivity() as MainActivity
         setObservable()
         initView()
@@ -53,6 +54,16 @@ class HomeFragment : Fragment() {
         viewModel.receiptLocalRepository.getCountReceiptLocalHeader(viewModel.getEmployeeName())
             .observe(viewLifecycleOwner, {
                 tv_count_receipt_local.text = it.toString()
+            })
+
+        viewModel.peminjamRepository.getAllPeminjamHeader(viewModel.getEmployeeName())
+            .observe(viewLifecycleOwner, {
+                tv_peminjam_count.text = it.size.toString()
+            })
+
+        viewModel.dorRepository.getAllDorHeader(viewModel.getEmployeeName())
+            .observe(viewLifecycleOwner, {
+                tv_dor_count.text = it.size.toString()
             })
 
         viewModel.homeViewState.observe(viewLifecycleOwner, {
@@ -121,10 +132,14 @@ class HomeFragment : Fragment() {
             findNavController().navigate(action)
         }
         cv_peminjam.setOnClickListener {
-
+            val action =
+                HomeFragmentDirections.actionHomeFragmentToPeminjamaanListFragment(InputType.PEMINJAMAN)
+            findNavController().navigate(action)
         }
         cv_dor_picking.setOnClickListener {
-
+            val action =
+                HomeFragmentDirections.actionHomeFragmentToPeminjamaanListFragment(InputType.DOR)
+            findNavController().navigate(action)
         }
     }
 

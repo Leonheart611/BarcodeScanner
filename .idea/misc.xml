@@ -11,13 +11,17 @@
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/dialog_validate_s.xml" value="0.1213768115942029" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/fragment_post_inventory_dialog.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/fragment_post_stock_count_dialog.xml" value="0.22" />
-        <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/home_fragment.xml" value="0.1213768115942029" />
+        <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/home_fragment.xml" value="0.14666666666666667" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/home_item_detail.xml" value="0.22" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/home_post_all_dialog.xml" value="0.22" />
+        <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/item_history_input.xml" value="0.2171875" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/item_input_header.xml" value="0.22" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/item_stockopname_input.xml" value="0.22" />
+        <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/list_item_recieving.xml" value="0.22" />
+        <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/picking_detail_fragment.xml" value="0.11458333333333333" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/picking_detail_line_item.xml" value="0.48951048951048953" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/picking_post_bottom_dialog.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/receiving_fragment.xml" value="0.19114583333333332" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/scan_stock_search_dialog.xml" value="0.22" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/stock_opname_fragment.xml" value="0.1" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/stock_opname_input_fragment.xml" value="0.16666666666666666" />

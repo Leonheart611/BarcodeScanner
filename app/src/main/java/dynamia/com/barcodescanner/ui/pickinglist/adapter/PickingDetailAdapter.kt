@@ -45,7 +45,7 @@ class PickingDetailAdapter(private var pickingListLineValues: MutableList<Pickin
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(p0: CharSequence?): FilterResults {
-                val query = p0.toString().toUpperCase(Locale.ROOT)
+                val query = p0.toString().uppercase(Locale.ROOT)
                 val filterResult = FilterResults()
                 filterResult.values = if (query.isEmpty())
                     allData

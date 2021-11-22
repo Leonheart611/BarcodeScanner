@@ -23,6 +23,7 @@
     <string name="today_activity">Today Activity</string>
     <string name="back">Back</string>
     <string name="picklistno_title">Picking List: %1$s</string>
+    <string name="peminjamlistno_title">Peminjam List: %1$s</string>
     <string name="receipthistory_title">History PO No : %1$s</string>
     <string name="pickingList_header_title">Picking List</string>
     <string name="receipt_local_header">Receipt Local</string>
@@ -99,4 +100,6 @@
 
     <string name="peminjam_title_text">Peminjam</string>
     <string name="dor_picking_title_text">Dor Picking</string>
+    <string name="peminjam_history_title">Peminjaman input History</string>
+    <string name="dor_picking_history_title">Dor Picking input History</string>
 </resources>

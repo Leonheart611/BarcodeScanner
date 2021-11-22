@@ -18,13 +18,15 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    val pickingListRepository: PickingListRepository,
-    val receiptImportRepository: ReceiptImportRepository,
-    val receiptLocalRepository: ReceiptLocalRepository,
-    private val stockCountRepository: StockCountRepository,
-    private val sharedPreferences: SharedPreferences,
-    private val networkRepository: NetworkRepository,
-    val app: Application
+	val pickingListRepository: PickingListRepository,
+	val receiptImportRepository: ReceiptImportRepository,
+	val receiptLocalRepository: ReceiptLocalRepository,
+	val dorRepository: DorPickingRepository,
+	val peminjamRepository: PeminjamRepository,
+	private val stockCountRepository: StockCountRepository,
+	private val sharedPreferences: SharedPreferences,
+	private val networkRepository: NetworkRepository,
+	val app: Application
 ) : ViewModelBase(sharedPreferences) {
 
     private var _homeViewState = MutableLiveData<HomeViewState>()
@@ -171,6 +173,71 @@ class HomeViewModel(
             }
         }
     }
+
+    fun getPeminjamApi() {
+        viewModelScope.launch {
+            try {
+                io {
+                    networkRepository.getPeminjamListDetailAsync().collect {
+                        when (it) {
+                            is GenericError -> {
+                                _homeGetApiViewState.postValue(FailedGetPeminjam("${it.code}, ${it.error}"))
+                            }
+                            NetworkError -> {
+                                _homeGetApiViewState.postValue(FailedGetPeminjam("Internal Server Error"))
+                            }
+                            is Success -> {
+                                peminjamRepository.insertAllPeminjamDetail(it.value)
+                            }
+                        }
+                    }
+                    networkRepository.getPeminjamListHeaderAsync().collect {
+                        when (it) {
+                            is GenericError -> _homeGetApiViewState.postValue(FailedGetPeminjam("${it.code}, ${it.error}"))
+                            NetworkError -> _homeGetApiViewState.postValue(FailedGetPeminjam("Internal Server Error"))
+                            is Success -> peminjamRepository.insertAllPeminjam(it.value)
+                        }
+                    }
+                }
+                ui { _homeGetApiViewState.value = SuccessGetPeminjamList }
+            } catch (e: Exception) {
+                _homeGetApiViewState.postValue(FailedGetPeminjam(e.localizedMessage))
+            }
+        }
+    }
+
+    fun getDorPickingApi() {
+        viewModelScope.launch {
+            try {
+                io {
+                    networkRepository.getDorPickingListDetailAsync().collect {
+                        when (it) {
+                            is GenericError -> {
+                                _homeGetApiViewState.postValue(FailedGetDorList("${it.code}, ${it.error}"))
+                            }
+                            NetworkError -> {
+                                _homeGetApiViewState.postValue(FailedGetDorList("Internal Server Error"))
+                            }
+                            is Success -> {
+                                dorRepository.addAllDorDetail(it.value)
+                            }
+                        }
+                    }
+                    networkRepository.getDorPickingListHeaderAsync().collect {
+                        when (it) {
+                            is GenericError -> _homeGetApiViewState.postValue(FailedGetDorList("${it.code}, ${it.error}"))
+                            NetworkError -> _homeGetApiViewState.postValue(FailedGetDorList("Internal Server Error"))
+                            is Success -> dorRepository.addAllDorHeader(it.value)
+                        }
+                    }
+                }
+                ui { _homeGetApiViewState.value = SuccessGetDorList }
+            } catch (e: Exception) {
+                _homeGetApiViewState.postValue(FailedGetDorList(e.localizedMessage))
+            }
+        }
+    }
+
 
     fun postPickingDataNew() {
         viewModelScope.launch {
@@ -329,7 +396,11 @@ class HomeViewModel(
         receiptImportHeader: ReceiptImportHeader,
         receiptImportLine: ReceiptImportLine,
         receiptLocalHeader: ReceiptLocalHeader,
-        receiptLocalLine: ReceiptLocalLine
+        receiptLocalLine: ReceiptLocalLine,
+        peminjamanHeaderAsset: PeminjamanHeaderAsset,
+        peminjamanDetailAsset: PeminjamanDetailAsset,
+        dorPickHeaderAsset: DorPickHeaderAsset,
+        dorPickingDetailAsset: DorPickingDetailAsset
     ) {
         viewModelScope.launch {
             io {
@@ -368,6 +439,18 @@ class HomeViewModel(
                         receiptLocalRepository.insertReceiptLocalLine(data)
                     }
                     ui { _homeGetApiViewState.value = SuccessGetReceiptLocal }
+                }
+
+                dorPickHeaderAsset.value.let { dorRepository.addAllDorHeader(it) }
+                dorPickingDetailAsset.value.let {
+                    dorRepository.addAllDorDetail(it)
+                    ui { _homeGetApiViewState.value = SuccessGetDorList }
+                }
+
+                peminjamanHeaderAsset.value.let { peminjamRepository.insertAllPeminjam(it) }
+                peminjamanDetailAsset.value.let {
+                    peminjamRepository.insertAllPeminjamDetail(it)
+                    ui { _homeGetApiViewState.value = SuccessGetPeminjamList }
                 }
 
             }
@@ -425,7 +508,7 @@ class HomeViewModel(
         object SuccessPostallCount : HomePostViewState()
 
         /**
-         *Peminjaman Get State
+         *Peminjaman Post State
          */
     }
 }

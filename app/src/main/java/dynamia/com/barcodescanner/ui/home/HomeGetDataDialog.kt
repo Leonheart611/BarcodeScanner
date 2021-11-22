@@ -84,6 +84,35 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                         )
                     )
                 }
+                SuccessGetDorList -> {
+                    iv_status_dor.crossFade(animateDuration.toLong(), pb_dor)
+                }
+                is FailedGetDorList -> {
+                    tv_error_dor.text = it.message
+                    iv_status_dor.crossFade(animateDuration.toLong(), pb_dor)
+                    iv_status_dor.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_error_circle,
+                            null
+                        )
+                    )
+                }
+
+                SuccessGetPeminjamList -> {
+                    iv_status_peminjam.crossFade(animateDuration.toLong(), pb_peminjam)
+                }
+                is FailedGetPeminjam -> {
+                    tv_error_peminjam.text = it.message
+                    iv_status_peminjam.crossFade(animateDuration.toLong(), pb_peminjam)
+                    iv_status_peminjam.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_error_circle,
+                            null
+                        )
+                    )
+                }
             }
         })
     }
@@ -92,6 +121,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
         viewModel.getReceiptImportAPI()
         viewModel.getPickingListApi()
         viewModel.getReceiptLocalApi()
+        viewModel.getDorPickingApi()
+        viewModel.getPeminjamApi()
     }
 
 
@@ -148,10 +179,12 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
             receiptImportHeader,
             receiptImportLine,
             receiptLocalHeader,
-            receiptLocalLine
+            receiptLocalLine,
+            peminjamHeader,
+            peminjamLine,
+            dorPickingHeader,
+            dorPickingDetail
         )
-
-
     }
 
     fun setOnClicklistener() {

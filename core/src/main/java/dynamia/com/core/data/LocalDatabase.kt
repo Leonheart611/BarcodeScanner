@@ -33,6 +33,8 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun receiptLocalHeaderDao(): ReceiptLocalDao
     abstract fun stockCountDao(): StockCountDao
     abstract fun userDao(): UserDao
+    abstract fun dorDao(): DorDao
+    abstract fun peminjamDao(): PeminjamDao
 
     companion object {
         @Volatile

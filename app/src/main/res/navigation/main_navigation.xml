@@ -8,8 +8,7 @@
     <fragment
         android:id="@+id/receivingFragment"
         android:name="dynamia.com.barcodescanner.ui.pickinglist.pickinginput.PickingListInputFragment"
-        android:label="receiving_fragment"
-        tools:layout="@layout/receiving_fragment" >
+        android:label="receiving_fragment">
         <argument
             android:name="pickingListNo"
             app:argType="string" />
@@ -22,6 +21,9 @@
             android:name="validateS"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="inputType"
+            app:argType="dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -65,6 +67,9 @@
         <action
             android:id="@+id/action_homeFragment_to_stockCountingFragment"
             app:destination="@id/stockCountingFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_peminjamaanListFragment"
+            app:destination="@id/peminjamaanListFragment" />
     </fragment>
     <fragment
         android:id="@+id/pickingListFragment"
@@ -219,5 +224,30 @@
         <action
             android:id="@+id/action_receiptSearchFragment_to_historyInputFragment"
             app:destination="@id/historyInputFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/peminjamaanListFragment"
+        android:name="dynamia.com.barcodescanner.ui.peminjaman.PeminjamaanListFragment"
+        android:label="PeminjamaanListFragment" >
+        <argument
+            android:name="inputType"
+            app:argType="dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType" />
+        <action
+            android:id="@+id/action_peminjamaanListFragment_to_peminjamDetailFragment"
+            app:destination="@id/peminjamDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/peminjamDetailFragment"
+        android:name="dynamia.com.barcodescanner.ui.peminjaman.detail.PeminjamDetailFragment"
+        android:label="PeminjamDetailFragment" >
+        <argument
+            android:name="documentNo"
+            app:argType="string" />
+        <argument
+            android:name="inputType"
+            app:argType="dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType" />
+        <action
+            android:id="@+id/action_peminjamDetailFragment_to_receivingFragment"
+            app:destination="@id/receivingFragment" />
     </fragment>
 </navigation>
