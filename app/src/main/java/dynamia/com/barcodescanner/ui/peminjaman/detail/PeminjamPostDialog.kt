@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType
+import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType.DOR
+import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType.PEMINJAMAN
 import dynamia.com.core.util.crossFade
 import kotlinx.android.synthetic.main.picking_post_bottom_dialog.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -14,7 +17,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class PeminjamPostDialog : BottomSheetDialogFragment() {
 	
 	val viewModel: PeminjamDetailViewModel by viewModel()
+	private val inputType by lazy { arguments?.getSerializable(ARGS_INPUT_TYPE) as InputType }
 	private var animateDuration: Int = 0
+	
+	
 	override fun onCreateView(
 		inflater: LayoutInflater,
 		container: ViewGroup?,
@@ -26,7 +32,10 @@ class PeminjamPostDialog : BottomSheetDialogFragment() {
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		viewModel.postPeminjamDataNew()
+		when (inputType) {
+			PEMINJAMAN -> viewModel.postPeminjamDataNew()
+			DOR -> viewModel.postDorDataNew()
+		}
 		setObseverable()
 		setClicklistener()
 	}
@@ -73,4 +82,16 @@ class PeminjamPostDialog : BottomSheetDialogFragment() {
 		}
 	}
 	
+	companion object {
+		private const val ARGS_INPUT_TYPE = "args_input_type"
+		
+		fun newInstance(inputType: InputType): PeminjamPostDialog {
+			val argument = Bundle().apply {
+				putSerializable(ARGS_INPUT_TYPE, inputType)
+			}
+			return PeminjamPostDialog().apply {
+				arguments = argument
+			}
+		}
+	}
 }

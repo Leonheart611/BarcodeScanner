@@ -62,6 +62,9 @@ interface DorDao {
 	@Query("SELECT * FROM DorPickingScanEntries WHERE documentNo =:documentNo")
 	fun getDorScanEntriesHistory(documentNo: String): LiveData<List<DorPickingScanEntries>>
 	
+	@Query("SELECT * FROM DorPickingScanEntries WHERE sycn_status = :status")
+	fun getDorScanEntriesUnposted(status: Boolean): List<DorPickingScanEntries>
+	
 	@Query("SELECT * FROM DorPickingScanEntries WHERE partNo = :partNo AND documentNo =:documentNo LIMIT 5")
 	fun getAllDorScanEntriesHistory(
 		documentNo: String,

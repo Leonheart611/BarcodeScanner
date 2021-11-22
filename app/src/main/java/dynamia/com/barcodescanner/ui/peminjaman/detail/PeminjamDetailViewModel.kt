@@ -83,6 +83,42 @@ class PeminjamDetailViewModel(
 		}
 	}
 	
+	fun postDorDataNew() {
+		viewModelScope.launch {
+			try {
+				var dataPosted = 0
+				io {
+					val pickingListEntries =
+						dorPickingRepository.getDorScanEntriesUnposted()
+					ui {
+						_pickingPostViewState.value =
+							PostViewState.GetUnpostedData(pickingListEntries.size)
+						_pickingPostViewState.value =
+							PostViewState.GetSuccessfullyPostedData(dataPosted)
+					}
+					for (data in pickingListEntries) {
+						val param = gson.toJson(data)
+						networkRepository.postDorPickingEntryAsync(param).collect {
+							dataPosted++
+							ui {
+								_pickingPostViewState.value =
+									PostViewState.GetSuccessfullyPostedData(dataPosted)
+							}
+							data.apply {
+								sycn_status = true
+							}
+							dorPickingRepository.updateDorScanEntries(data)
+						}
+					}
+					ui { _pickingPostViewState.value = PostViewState.AllDataPosted }
+				}
+			} catch (e: Exception) {
+				_pickingPostViewState.value =
+					PostViewState.ErrorPostData(e.localizedMessage)
+			}
+		}
+	}
+	
 	sealed class PostViewState {
 		class GetUnpostedData(val data: Int) : PostViewState()
 		class GetSuccessfullyPostedData(val data: Int) : PostViewState()

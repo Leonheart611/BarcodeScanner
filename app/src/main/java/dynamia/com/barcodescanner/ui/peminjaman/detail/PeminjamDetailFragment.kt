@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.ui.peminjaman.adapter.DorDetailListAdapter
 import dynamia.com.barcodescanner.ui.peminjaman.adapter.PeminjamanDetailListAdapter
-import dynamia.com.barcodescanner.ui.pickinglist.pickingdetail.PickingPostDialog
 import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType.DOR
 import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType.PEMINJAMAN
 import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.PickingHistoryBottomSheet
@@ -130,7 +129,7 @@ class PeminjamDetailFragment : Fragment(), PeminjamanDetailListAdapter.PeminjamO
 	}
 	
 	private fun showPostDialog() {
-		val dialog = PickingPostDialog()
+		val dialog = PeminjamPostDialog.newInstance(args.inputType)
 		dialog.show(requireActivity().supportFragmentManager, dialog.tag)
 	}
 	
@@ -139,7 +138,7 @@ class PeminjamDetailFragment : Fragment(), PeminjamanDetailListAdapter.PeminjamO
 		rv_picking_detail?.adapter = null
 	}
 	
-	fun pickingInputDialog() {
+	private fun pickingInputDialog() {
 		context?.let { context ->
 			settingDialog = Dialog(context)
 			settingDialog?.let { dialog ->

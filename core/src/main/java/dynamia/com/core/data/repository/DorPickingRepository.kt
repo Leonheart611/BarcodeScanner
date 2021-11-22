@@ -36,6 +36,7 @@ interface DorPickingRepository {
 	): LiveData<List<DorPickingScanEntries>>
 	
 	fun checkDorSerialNo(serialNo: String): Boolean
+	fun getDorScanEntriesUnposted(): List<DorPickingScanEntries>
 	fun getAllDorScanEntries(): LiveData<List<DorPickingScanEntries>>
 	fun getDorScanEntriesHistory(documentNo: String): LiveData<List<DorPickingScanEntries>>
 	fun updateDorScanEntries(data: DorPickingScanEntries)
@@ -113,6 +114,9 @@ class DorPickingRepoImpl(private val dao: DorDao) : DorPickingRepository {
 			false
 		}
 	}
+	
+	override fun getDorScanEntriesUnposted(): List<DorPickingScanEntries> =
+		dao.getDorScanEntriesUnposted(false)
 	
 	override fun getDorScanEntriesHistory(documentNo: String): LiveData<List<DorPickingScanEntries>> =
 		dao.getDorScanEntriesHistory(documentNo)
