@@ -33,8 +33,14 @@ class PeminjamPostDialog : BottomSheetDialogFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		when (inputType) {
-			PEMINJAMAN -> viewModel.postPeminjamDataNew()
-			DOR -> viewModel.postDorDataNew()
+			PEMINJAMAN -> {
+				tv_picking_post_title.text = getString(R.string.peminjam_post_title)
+				viewModel.postPeminjamDataNew()
+			}
+			DOR -> {
+				tv_picking_post_title.text = getString(R.string.dor_picking_post_title)
+				viewModel.postDorDataNew()
+			}
 		}
 		setObseverable()
 		setClicklistener()

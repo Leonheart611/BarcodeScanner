@@ -9,6 +9,7 @@
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/dialog_part_no_not_found.xml" value="0.22" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/dialog_select_input_type.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/dialog_validate_s.xml" value="0.1213768115942029" />
+        <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/dor_post_bottom_dialog.xml" value="0.161231884057971" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/fragment_post_inventory_dialog.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/fragment_post_stock_count_dialog.xml" value="0.22" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/home_fragment.xml" value="0.14666666666666667" />
@@ -18,6 +19,7 @@
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/item_input_header.xml" value="0.22" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/item_stockopname_input.xml" value="0.22" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/list_item_recieving.xml" value="0.22" />
+        <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/peminjam_post_bottom_dialog.xml" value="0.4466666666666667" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/picking_detail_fragment.xml" value="0.11458333333333333" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/picking_detail_line_item.xml" value="0.48951048951048953" />
         <entry key="..\:/Users/Mika/StudioProjects/BarcodeScanner/app/src/main/res/layout/picking_post_bottom_dialog.xml" value="0.3333333333333333" />

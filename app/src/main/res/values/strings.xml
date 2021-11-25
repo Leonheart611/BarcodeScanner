@@ -102,4 +102,6 @@
     <string name="dor_picking_title_text">Dor Picking</string>
     <string name="peminjam_history_title">Peminjaman input History</string>
     <string name="dor_picking_history_title">Dor Picking input History</string>
+    <string name="peminjam_post_title">Peminjam Post Data</string>
+    <string name="dor_picking_post_title">Dor Picking Post Data</string>
 </resources>
