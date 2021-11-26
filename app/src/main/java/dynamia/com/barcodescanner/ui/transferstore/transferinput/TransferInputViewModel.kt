@@ -295,7 +295,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    private fun insertInventoryInput(qty: String, bin: String) {
+    private fun insertInventoryInput(qty: String, bin: String, box: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -310,7 +310,8 @@ class TransferInputViewModel @Inject constructor(
                                     binCode = bin,
                                     locationCode = header.locationCode,
                                     userName = getUserName(),
-                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                    box = box
                                 ), line.id ?: 0
                             ).collect {
                                 ui {
@@ -479,7 +480,8 @@ class TransferInputViewModel @Inject constructor(
         barcode: String,
         qty: String,
         typesInput: TransferType,
-        box: String
+        box: String,
+        bin: String = ""
     ) {
         if (barcode.isEmpty()) {
             _inputValidaton.value = InputValidation.BarcodeEmpty
@@ -493,7 +495,7 @@ class TransferInputViewModel @Inject constructor(
                 RECEIPT -> insertTransferReceiptInput(qty, box)
                 PURCHASE -> insertPurchaseInput(qty, box)
                 STOCKOPNAME -> insertStockOpnameData(qty, box)
-                INVENTORY -> insertInventoryInput(qty, box)
+                INVENTORY -> insertInventoryInput(qty, bin = bin, box = box)
             }
         }
     }

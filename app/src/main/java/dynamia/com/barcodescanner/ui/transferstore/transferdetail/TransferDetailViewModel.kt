@@ -217,7 +217,7 @@ class TransferDetailViewModel @Inject constructor(
                             inventoryRepository.getDetailInventoryPickLine(no, binCode, identifier)
                                 .collect {
                                     inventoryPickLine = it
-                                    insertInventoryData(binCode)
+                                    insertInventoryData(binCode, box)
                                 }
                         }
                     }
@@ -385,7 +385,7 @@ class TransferDetailViewModel @Inject constructor(
         }
     }
 
-    private fun insertInventoryData(binCode: String) {
+    private fun insertInventoryData(binCode: String, box: String) {
         viewModelScope.launch {
             try {
                 inventoryPickHeader?.let { header ->
@@ -400,7 +400,8 @@ class TransferDetailViewModel @Inject constructor(
                                     binCode = binCode,
                                     locationCode = header.locationCode,
                                     userName = getUserName(),
-                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}"
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                    box = box
                                 ), line.id ?: 0
                             ).collect {
                                 ui {

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.AnimRes
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
@@ -16,7 +15,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.DialogPartNoNotFoundBinding
 import dynamia.com.barcodescanner.databinding.ItemInputHeaderBinding
-import dynamia.com.barcodescanner.databinding.RefreshWarningDialogBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.util.showLongToast
 
@@ -53,13 +51,13 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
             tilTransferinputName.isVisible = false
             etTranferinputQty.setText("1")
             etTranferinputQty.isEnabled = false
-            tilTransferBincode.isVisible = inputType == TransferType.STOCKOPNAME
             etBoxInput.requestFocus()
             etBoxInput.doAfterTextChanged {
                 etTransferInputBarcode.requestFocus()
             }
             when (inputType) {
                 TransferType.STOCKOPNAME -> {
+                    tilTransferBincode.isVisible = true
                     etTransferInputBarcode.doAfterTextChanged {
                         etTransferinputBincode.requestFocus()
                     }
@@ -77,9 +75,11 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                     }
                 }
                 TransferType.INVENTORY -> {
-                    tilInputBox.hint = "Bin"
-                    etBoxInput.hint = "Bin"
+                    tilTransferBincode.isVisible = true
                     etBoxInput.doAfterTextChanged {
+                        etTransferinputBincode.requestFocus()
+                    }
+                    etTransferinputBincode.doAfterTextChanged {
                         etTransferInputBarcode.requestFocus()
                     }
                     etTransferInputBarcode.doAfterTextChanged {
@@ -89,13 +89,15 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                                     data,
                                     it.toString(),
                                     inputType,
-                                    binCode = etBoxInput.text.toString()
+                                    binCode = etTransferinputBincode.text.toString(),
+                                    box = etBoxInput.text.toString()
                                 )
                             }
                         }
                     }
                 }
                 else -> {
+                    tilTransferBincode.isVisible = false
                     etTransferInputBarcode.doAfterTextChanged {
                         if (it.isNullOrEmpty().not()) {
                             documentNo?.let { data ->
@@ -129,7 +131,6 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                 }
                 TransferDetailViewModel.TransferDetailInputViewState.SuccessSaveData -> {
                     with(viewBinding) {
-                        etTransferinputBincode.text?.clear()
                         etTransferInputBarcode.text?.clear()
                         etTransferInputBarcode.requestFocus()
                         context?.showLongToast("Success Save Data")

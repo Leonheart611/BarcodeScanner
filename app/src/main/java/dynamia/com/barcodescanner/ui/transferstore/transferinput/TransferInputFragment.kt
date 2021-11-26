@@ -165,7 +165,7 @@ class TransferInputFragment :
             includeTransferInput.tilTransferBincode.isVisible =
                 (args.transferType == STOCKOPNAME || args.transferType == INVENTORY)
             includeTransferInput.tilInputBox.isVisible = when (args.transferType) {
-                INVENTORY -> false
+                INVENTORY -> true
                 STOCKOPNAME -> false
                 else -> true
             }
@@ -179,7 +179,12 @@ class TransferInputFragment :
             RECEIPT -> viewModel.getReceiptListLineValue(args.transferNo, barcode, args.stockId)
             PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, barcode, args.stockId)
             STOCKOPNAME -> viewModel.getStockOpnameValue(barcode, args.stockId, binCode)
-            INVENTORY -> viewModel.getInventoryLineValue(args.transferNo, barcode, binCode, args.stockId)
+            INVENTORY -> viewModel.getInventoryLineValue(
+                args.transferNo,
+                barcode,
+                binCode,
+                args.stockId
+            )
         }
     }
 
@@ -195,10 +200,8 @@ class TransferInputFragment :
                     includeTransferInput.etTransferInputBarcode.text.toString(),
                     includeTransferInput.etTranferinputQty.text.toString(),
                     args.transferType,
-                    box = when (args.transferType) {
-                        INVENTORY -> includeTransferInput.etTransferinputBincode.text.toString()
-                        else -> includeTransferInput.etBoxInput.text.toString()
-                    }
+                    box = includeTransferInput.etBoxInput.text.toString(),
+                    bin = includeTransferInput.etTransferinputBincode.text.toString()
                 )
             }
             toolbarPickingListInput.setOnMenuItemClickListener {
