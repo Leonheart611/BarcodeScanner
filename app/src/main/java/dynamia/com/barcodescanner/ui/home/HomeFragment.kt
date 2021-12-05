@@ -29,15 +29,6 @@ class HomeFragment : BaseFragmentBinding<HomeFragmentBinding>(HomeFragmentBindin
     private val viewModel: HomeViewModel by viewModels()
     private var activity: MainActivity? = null
 
-    /*override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        viewModel.checkEmptyData()
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }*/
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity = requireActivity() as MainActivity

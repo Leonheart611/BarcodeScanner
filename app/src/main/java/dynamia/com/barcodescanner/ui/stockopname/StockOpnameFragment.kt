@@ -12,7 +12,6 @@ import dynamia.com.barcodescanner.databinding.StockOpnameFragmentBinding
 import dynamia.com.barcodescanner.ui.history.HistoryType
 import dynamia.com.barcodescanner.ui.stockopname.adapter.StockOpnameAdapter
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
-import dynamia.com.barcodescanner.ui.transferstore.transferdetail.ScanInputTransferDialog
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.StockOpnameData
 
@@ -67,13 +66,20 @@ class StockOpnameFragment :
             }
             tbStockOpname.setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.history_data -> {
+                    R.id.stock_opname_history -> {
                         val action =
                             StockOpnameFragmentDirections.actionStockOpnameFragmentToHistoryInputFragment(
                                 showAll = true,
                                 historyType = HistoryType.STOCKOPNAME,
                                 documentNo = null, lineNo = 0
                             )
+                        view?.findNavController()?.navigate(action)
+                        true
+                    }
+
+                    R.id.stock_opname_delete_box -> {
+                        val action =
+                            StockOpnameFragmentDirections.actionStockOpnameFragmentToStockOpnameDeleteFragment()
                         view?.findNavController()?.navigate(action)
                         true
                     }

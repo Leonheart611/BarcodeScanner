@@ -42,7 +42,8 @@ interface StockOpnameRepository {
     suspend fun updateInputStockOpnameQty(id: Int, newQty: Int)
     suspend fun deleteInputStockOpname(id: Int)
     suspend fun deleteAllInputStockOpname()
-
+    fun getAllInputStockOpnameByBox(box: String): LiveData<List<StockOpnameInputData>>
+    suspend fun deleteAllFromBox(box: String): Flow<Boolean>
 
     /**
      * Stock Opname API Repository
@@ -50,7 +51,6 @@ interface StockOpnameRepository {
 
     suspend fun getStockOpnameAsync(): Flow<ResultWrapper<MutableList<StockOpnameData>>>
     suspend fun postStockOpnameData(value: String): Flow<StockOpnameInputData>
-
     suspend fun getStockCheck(value: String): Flow<ResultWrapper<MutableList<StockCheckingData>>>
 
 }
@@ -158,6 +158,21 @@ class StockOpnameRepositoryImpl @Inject constructor(
 
     override suspend fun updateInputStockOpname(data: StockOpnameInputData) {
         dao.updateStockOpnameInput(data)
+    }
+
+    override fun getAllInputStockOpnameByBox(box: String): LiveData<List<StockOpnameInputData>> =
+        dao.getAllStockOpnameByBox(box)
+
+    override suspend fun deleteAllFromBox(box: String): Flow<Boolean> = flow {
+        try {
+            val data = dao.getAllStockOpnameByBoxList(box)
+            data.forEach {
+                it.id?.let { it1 -> deleteInputStockOpname(it1) }
+            }
+            emit(true)
+        } catch (e: Exception) {
+            error(e.localizedMessage)
+        }
     }
 
     override suspend fun deleteInputStockOpname(id: Int) {

@@ -720,6 +720,9 @@ class HomeViewModel @Inject constructor(
                     transferShipmentRepository.deleteAllTransferInput()
                     transferReceiptRepository.deleteAllTransferReceiptHeader()
                     transferReceiptRepository.clearAllInputData()
+                    stockOpnameDataRepository.deleteAllStockOpname()
+                    stockOpnameDataRepository.deleteAllInputStockOpname()
+
                     with(inventoryRepository) {
                         deleteAllInventoryHeader()
                         deleteAllInventoryInput()

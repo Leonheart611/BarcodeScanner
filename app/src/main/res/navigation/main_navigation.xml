@@ -137,6 +137,9 @@
         <action
             android:id="@+id/action_stockOpnameFragment_to_stockOpnameInputFragment2"
             app:destination="@id/stockOpnameInputFragment2" />
+        <action
+            android:id="@+id/action_stockOpnameFragment_to_stockOpnameDeleteFragment"
+            app:destination="@id/stockOpnameDeleteFragment" />
     </fragment>
     <fragment
         android:id="@+id/checkStockFragment"
@@ -180,4 +183,9 @@
             android:id="@+id/action_stockOpnameInputFragment2_to_historyInputFragment"
             app:destination="@id/historyInputFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/stockOpnameDeleteFragment"
+        android:name="dynamia.com.barcodescanner.ui.stockopname.delete.StockOpnameDeleteFragment"
+        android:label="stock_opname_delete_fragment"
+        tools:layout="@layout/stock_opname_delete_fragment" />
 </navigation>

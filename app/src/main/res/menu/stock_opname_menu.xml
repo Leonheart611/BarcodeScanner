@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/stock_opname_history"
+        android:title="History" />
+    <item
+        android:id="@+id/stock_opname_delete_box"
+        android:title="Delete by Box" />
+</menu>

@@ -68,6 +68,11 @@ interface StockOpnameDao {
     @Query("SELECT * FROM StockOpnameInputData WHERE id = :id")
     fun getStockOpnameInputDetail(id: Int): StockOpnameInputData
 
+    @Query("SELECT * FROM StockOpnameInputData WHERE box = :box")
+    fun getAllStockOpnameByBox(box: String): LiveData<List<StockOpnameInputData>>
+
+    @Query("SELECT * FROM StockOpnameInputData WHERE box = :box")
+    fun getAllStockOpnameByBoxList(box: String): List<StockOpnameInputData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = StockOpnameInputData::class)
     fun insertStockOpnameInput(data: StockOpnameInputData)
@@ -80,6 +85,4 @@ interface StockOpnameDao {
 
     @Query("DELETE FROM StockOpnameInputData")
     fun deleteAllStockOpnameInput()
-
-
 }
