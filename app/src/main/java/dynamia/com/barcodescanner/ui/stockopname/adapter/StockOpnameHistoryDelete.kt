@@ -38,6 +38,7 @@ class StockOpnameHistoryDelete :
                 tvTransferhistoryQty.text = "Qty: ${value.quantity}"
                 tvTransferLineno.text = "Line No: ${value.lineNo}"
                 tvTransferItemno.text = "Item No: ${value.itemNo}"
+                tvBoxNo.text = "Box No: ${value.box}"
                 if (value.sync_status) {
                     tvTransferhistoryStatus.setText(R.string.posted_status_true)
                     tvTransferhistoryStatus.setTextColor(

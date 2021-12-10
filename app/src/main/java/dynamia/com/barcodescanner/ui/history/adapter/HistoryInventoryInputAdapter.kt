@@ -41,6 +41,7 @@ class HistoryInventoryInputAdapter(private val clicklistener: HistoryInventoryCl
                 tvTransferhistoryQty.text = "Qty: ${value.quantity}"
                 tvTransferLineno.text = "Line No: ${value.lineNo}"
                 tvTransferItemno.text = "Item No: ${value.itemNo}"
+                tvBoxNo.text = "Box No: ${value.box}"
                 root.setOnClickListener {
                     clicklistener.onclicklistener(value)
                 }

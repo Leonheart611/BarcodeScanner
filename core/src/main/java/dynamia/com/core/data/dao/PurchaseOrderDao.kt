@@ -75,7 +75,7 @@ interface PurchaseOrderDao {
      * Purchase Order Input Data
      */
 
-    @Query("SELECT * FROM PurchaseInputData")
+    @Query("SELECT * FROM PurchaseInputData ORDER BY id DESC")
     fun getAllPurchaseInputData(): LiveData<List<PurchaseInputData>>
 
     @Query("SELECT * FROM PurchaseInputData WHERE documentNo=:no")

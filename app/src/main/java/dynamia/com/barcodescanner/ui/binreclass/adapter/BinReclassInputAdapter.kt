@@ -2,8 +2,10 @@ package dynamia.com.barcodescanner.ui.binreclass.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import dynamia.com.barcodescanner.databinding.PickingDetailLineItemBinding
+import dynamia.com.barcodescanner.R
+import dynamia.com.barcodescanner.databinding.ItemTransferInputHistoryBinding
 import dynamia.com.core.data.entinty.BinreclassInputData
 
 class BinReclassInputAdapter(
@@ -12,9 +14,13 @@ class BinReclassInputAdapter(
 ) : RecyclerView.Adapter<BinReclassInputAdapter.BinreclassInputHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BinreclassInputHolder {
-        return BinreclassInputHolder(PickingDetailLineItemBinding.inflate(LayoutInflater.from(parent.context),
-            parent,
-            false))
+        return BinreclassInputHolder(
+            ItemTransferInputHistoryBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun getItemCount(): Int {
@@ -31,15 +37,32 @@ class BinReclassInputAdapter(
         notifyDataSetChanged()
     }
 
-    inner class BinreclassInputHolder(val binding: PickingDetailLineItemBinding) :
+    inner class BinreclassInputHolder(val binding: ItemTransferInputHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: BinreclassInputData) {
+        fun bind(value: BinreclassInputData) {
             with(binding) {
-                tvItemCode.text = data.itemIdentifier
-                tvQty.text =
-                    "QTY: ${data.quantity}"
+                tvTransferDocno.text = "${value.itemIdentifier}"
+                tvTransferhistoryQty.text = "Qty: ${value.quantity}"
+                tvBoxNo.text = "Box No: ${value.box}"
                 root.setOnClickListener {
-                    listener.onclicklistener(data)
+                    listener.onclicklistener(value)
+                }
+                if (value.sync_status) {
+                    tvTransferhistoryStatus.setText(R.string.posted_status_true)
+                    tvTransferhistoryStatus.setTextColor(
+                        ContextCompat.getColor(
+                            root.context,
+                            R.color.posted_true
+                        )
+                    )
+                } else {
+                    tvTransferhistoryStatus.setText(R.string.posted_status_false)
+                    tvTransferhistoryStatus.setTextColor(
+                        ContextCompat.getColor(
+                            root.context,
+                            R.color.posted_false
+                        )
+                    )
                 }
             }
 

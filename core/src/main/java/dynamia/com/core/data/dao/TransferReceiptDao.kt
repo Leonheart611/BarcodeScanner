@@ -32,7 +32,7 @@ interface TransferReceiptDao {
      * TransferReceiptInput
      */
 
-    @Query("SELECT * FROM TransferReceiptInput")
+    @Query("SELECT * FROM TransferReceiptInput ORDER BY id DESC")
     fun getAllTransferReceiptInput(): LiveData<List<TransferReceiptInput>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = TransferReceiptInput::class)

@@ -24,6 +24,7 @@ interface StockOpnameRepository {
     fun getStockOpnameDetailByBarcode(barcode: String, id: Int): Flow<StockOpnameData>
     fun getStockOpnameDetailByBarcode(barcode: String): Flow<StockOpnameData>
     fun getStockOpnameDetailStore(barcode: String): Flow<StockOpnameData>
+    fun getStockOpnameAlreadyScanTotal(): LiveData<Int>
     suspend fun insertStockOpnameData(data: StockOpnameData)
     suspend fun countStockOpnameData(): Int
     fun deleteAllStockOpname()
@@ -103,6 +104,8 @@ class StockOpnameRepositoryImpl @Inject constructor(
             emit(dao.getStockOpnameDetail(barcode, id))
         }
 
+    override fun getStockOpnameAlreadyScanTotal(): LiveData<Int> =
+        dao.getStockOpnameAlreadyScanTotal()
 
     override suspend fun insertStockOpnameData(data: StockOpnameData) {
         dao.insertStockOpnameData(data)

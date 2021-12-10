@@ -24,9 +24,13 @@ class HistoryStockOpnameInputAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryInputHolder {
-        return HistoryInputHolder(ItemTransferInputHistoryBinding.inflate(LayoutInflater.from(parent.context),
-            parent,
-            false))
+        return HistoryInputHolder(
+            ItemTransferInputHistoryBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun getItemCount(): Int {
@@ -47,6 +51,7 @@ class HistoryStockOpnameInputAdapter(
                 tvTransferhistoryQty.text = "Qty: ${value.quantity}"
                 tvTransferLineno.text = "Line No: ${value.lineNo}"
                 tvTransferItemno.text = "Item No: ${value.itemNo}"
+                tvBoxNo.text = "Box No: ${value.box}"
                 value.id?.let { id ->
                     root.setOnClickListener {
                         listener.onStockOpnameCLicklistener(value)

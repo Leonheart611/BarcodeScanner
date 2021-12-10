@@ -47,6 +47,7 @@ class HistoryTransferReceiptInputAdapter(
                 tvTransferhistoryQty.text = "Qty: ${value.quantity}"
                 tvTransferLineno.text = "Line No: ${value.lineNo}"
                 tvTransferItemno.text = "Item No: ${value.itemNo}"
+                tvBoxNo.text = "Box No: ${value.box}"
                 value.id?.let { id ->
                     root.setOnClickListener {
                         listener.receiptHistoryCLicklistener(value)

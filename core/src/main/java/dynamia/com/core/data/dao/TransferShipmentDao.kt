@@ -81,7 +81,7 @@ interface TransferShipmentDao {
      * Transfer Shipment InputData
      */
 
-    @Query("SELECT * FROM TransferInputData")
+    @Query("SELECT * FROM TransferInputData ORDER BY id DESC")
     fun getAllTransferInput(): LiveData<List<TransferInputData>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = TransferInputData::class)

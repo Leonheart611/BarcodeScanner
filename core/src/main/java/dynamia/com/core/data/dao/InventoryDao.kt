@@ -75,7 +75,7 @@ interface InventoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = InventoryInputData::class)
     fun insertInputInventory(data: InventoryInputData)
 
-    @Query("SELECT * FROM InventoryInputData")
+    @Query("SELECT * FROM InventoryInputData ORDER BY id DESC")
     fun getAllInventoryInputData(): LiveData<List<InventoryInputData>>
 
     @Query("SELECT * FROM InventoryInputData WHERE id =:id")
@@ -84,7 +84,7 @@ interface InventoryDao {
     @Query("SELECT * FROM InventoryInputData WHERE sync_status =:status")
     fun getAllUnsycnInputData(status: Boolean = false): List<InventoryInputData>
 
-    @Query("SELECT * FROM InventoryInputData WHERE documentNo =:no")
+    @Query("SELECT * FROM InventoryInputData WHERE documentNo =:no ORDER BY id DESC")
     fun getInventoryInputData(no: String): LiveData<List<InventoryInputData>>
 
     @Update(onConflict = OnConflictStrategy.ABORT, entity = InventoryInputData::class)

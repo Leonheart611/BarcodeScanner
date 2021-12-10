@@ -5,15 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.databinding.InputRebinClassDialogBinding
-import dynamia.com.barcodescanner.ui.binreclass.detail.BinreclassInputDialog.ADD_TYPE.*
-import dynamia.com.barcodescanner.ui.transferstore.TransferType
-import dynamia.com.barcodescanner.ui.transferstore.transferdetail.ScanInputTransferDialog
+import dynamia.com.barcodescanner.ui.binreclass.detail.BinreclassInputDialog.ADD_TYPE.MANUAL
+import dynamia.com.barcodescanner.ui.binreclass.detail.BinreclassInputDialog.ADD_TYPE.SCAN
 import dynamia.com.core.data.entinty.BinreclassInputData
 import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.gone
@@ -67,7 +65,8 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
                                 includeInputForm.etTransferInputBarcode.text.toString(),
                                 includeInputForm.etTranferinputQty.text.toString(),
                                 fromBin ?: "",
-                                toBin ?: ""
+                                toBin ?: "",
+                                includeInputForm.etBoxInput.text.toString()
                             )
                         }
                     }
@@ -157,7 +156,8 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
     private fun setupHistoryData(data: BinreclassInputData) {
         with(viewBinding.includeInputForm) {
             etTransferInputBarcode.isFocusable = false
-            etTransferInputBarcode.setText(data.itemNo)
+            etTransferInputBarcode.setText(data.itemIdentifier)
+            etBoxInput.setText(data.box)
             etTranferinputQty.setText(data.quantity.toString())
         }
     }
@@ -167,10 +167,11 @@ class BinreclassInputDialog : BottomSheetDialogFragment() {
             includeInputForm.btnSave.setOnClickListener {
                 if (idInput == 0) {
                     viewModel.checkUserInputValidation(
-                        includeInputForm.etTransferInputBarcode.text.toString(),
-                        includeInputForm.etTranferinputQty.text.toString(),
-                        fromBin ?: "",
-                        toBin ?: ""
+                        barcode = includeInputForm.etTransferInputBarcode.text.toString(),
+                        qty = includeInputForm.etTranferinputQty.text.toString(),
+                        fromBin = fromBin ?: "",
+                        toBin = toBin ?: "",
+                        box = includeInputForm.etBoxInput.text.toString()
                     )
                 } else {
                     viewModel.updateDataBin(

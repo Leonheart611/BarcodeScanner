@@ -116,6 +116,7 @@ class BinreclassDetailViewModel @Inject constructor(
         qty: String,
         fromBin: String,
         toBin: String,
+        box: String
     ) {
         if (barcode.isEmpty()) {
             _inputValidaton.value = Event(InputValidation.BarcodeEmpty)
@@ -137,7 +138,8 @@ class BinreclassDetailViewModel @Inject constructor(
                             userName = getUserName(),
                             insertDateTime = getCurrentDate(),
                             quantity = qty.toInt(),
-                            headerId = data.id!!
+                            headerId = data.id!!,
+                            box = box
                         )
                         insertDataBin(result)
                     }

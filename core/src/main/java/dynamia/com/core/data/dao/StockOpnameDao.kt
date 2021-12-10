@@ -50,13 +50,16 @@ interface StockOpnameDao {
     @Query("SELECT count(*) from StockOpnameData")
     fun getStockOpnameDataCount(): Int
 
+    @Query("SELECT SUM(alredyScanned) from StockOpnameData")
+    fun getStockOpnameAlreadyScanTotal(): LiveData<Int>
+
     @Query("DELETE FROM StockOpnameData")
     fun deleteAllStockOpname()
 
     /**
      * Stock Opname Input Data
      */
-    @Query("SELECT * FROM StockOpnameInputData")
+    @Query("SELECT * FROM StockOpnameInputData ORDER BY id DESC")
     fun getALlStockOpnameInput(): LiveData<List<StockOpnameInputData>>
 
     @Query("SELECT * FROM StockOpnameInputData WHERE documentNo = :documentNo")

@@ -46,7 +46,7 @@ interface BinreclassDao {
     /**
      * Bin Reclass Input Dao
      */
-    @Query("SELECT * FROM BinreclassInputData")
+    @Query("SELECT * FROM BinreclassInputData ORDER BY id DESC")
     fun getAllBinreclassInputData(): LiveData<List<BinreclassInputData>>
 
     @Query("SELECT * FROM BinreclassInputData WHERE headerId =:headerId")
@@ -62,7 +62,7 @@ interface BinreclassDao {
     @Query("SELECT * FROM BinreclassInputData WHERE id= :id")
     fun getBinreclassInputDataDetailById(id: Int): BinreclassInputData
 
-    @Query("SELECT * FROM BinreclassInputData WHERE sync_status= :unsycn")
+    @Query("SELECT * FROM BinreclassInputData WHERE sync_status= :unsycn ORDER BY id DESC")
     fun getAllUnsycnBinreclassInput(unsycn: Boolean): List<BinreclassInputData>
 
     @Query("SELECT * FROM BinreclassInputData WHERE headerId= :id")

@@ -91,6 +91,10 @@ class StockOpnameFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = stockOpnameAdapter
             }
+            viewModel.repository.getStockOpnameAlreadyScanTotal().observe(viewLifecycleOwner, {
+                tvStockOpnameTotalScan.text =
+                    getString(R.string.stock_opname_total_scanned, it.toString())
+            })
         }
     }
 

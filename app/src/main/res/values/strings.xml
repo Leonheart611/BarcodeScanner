@@ -139,5 +139,6 @@
     <string name="inventory_pick_title">Inventory Pick</string>
     <string name="inventory_pick_history">Inventory Pick History</string>
     <string name="stock_opname_qty_box_delete">Total QTY: %1$s</string>
+    <string name="stock_opname_total_scanned">Total Scan: %1$s</string>
     <string name="stock_opname_box_delete_warning">Semua data berdasarkan box yang dicari akan dihapus, Apakah anda yakin?</string>
 </resources>
