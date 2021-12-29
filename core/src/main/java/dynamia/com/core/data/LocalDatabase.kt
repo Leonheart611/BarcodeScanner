@@ -25,7 +25,7 @@ import dynamia.com.core.data.model.*
         DorPickingHeader::class,
         DorPickingDetail::class,
         DorPickingScanEntries::class
-    ], version = 20, exportSchema = false
+    ], version = 21, exportSchema = false
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun pickingListDao(): PickingListDao

@@ -12,6 +12,7 @@ import dynamia.com.core.data.model.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.ResultWrapper.*
 import dynamia.com.core.util.Constant
+import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
@@ -29,8 +30,8 @@ class HomeViewModel(
 	val app: Application
 ) : ViewModelBase(sharedPreferences) {
 	
-	private var _homeViewState = MutableLiveData<HomeViewState>()
-	val homeViewState: LiveData<HomeViewState> by lazy { _homeViewState }
+	private var _homeViewState = MutableLiveData<Event<HomeViewState>>()
+	val homeViewState: LiveData<Event<HomeViewState>> by lazy { _homeViewState }
 	
 	private var _homeGetApiViewState = MutableLiveData<HomeGetApiViewState>()
 	val homeGetApiViewState: LiveData<HomeGetApiViewState> by lazy { _homeGetApiViewState }
@@ -43,11 +44,11 @@ class HomeViewModel(
 			try {
 				io {
 					pickingListRepository.getCheckEmptyOrNot().collect { data ->
-						ui { _homeViewState.value = HomeViewState.DBhasEmpty(data) }
+						ui { _homeViewState.value = Event(HomeViewState.DBhasEmpty(data)) }
 					}
 				}
 			} catch (e: Exception) {
-				_homeViewState.value = HomeViewState.Error(e.localizedMessage)
+				_homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
 			}
 		}
 	}
@@ -68,13 +69,20 @@ class HomeViewModel(
 					receiptLocalRepository.clearReceiptLocalLine()
 					receiptLocalRepository.clearReceiptLocalScanEntries()
 					
+					dorRepository.deleteAllDorData()
+					dorRepository.deleteAllDorDetail()
+					dorRepository.deleteAllDorScanEntries()
+					
+					peminjamRepository.deleteAllPeminjamHeader()
+					peminjamRepository.clearPeminjamDetailData()
+					peminjamRepository.deleteAllPeminjamScanEntries()
+					
 					stockCountRepository.clearStockCount()
 				}
 			} catch (e: Exception) {
-				_homeViewState.value = HomeViewState.Error(e.localizedMessage)
+				_homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
 				Log.e("clearAllDb", e.localizedMessage)
 			}
-			
 		}
 		
 	}
@@ -84,7 +92,7 @@ class HomeViewModel(
 		val editor = sharedPreferences.edit()
 		editor.clear()
 		editor.apply()
-		_homeViewState.value = HomeViewState.HasSuccessLogout
+		_homeViewState.value = Event(HomeViewState.HasSuccessLogout)
 	}
 	
 	private fun getUserData(): UserData {

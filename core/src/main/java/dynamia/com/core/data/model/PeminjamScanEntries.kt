@@ -18,6 +18,7 @@ data class PeminjamScanEntries(
     @SerializedName("Tracking_ID") @Expose(serialize = true) val trackingID: String,
     @SerializedName("Mac_Address") @Expose(serialize = true) val macAddress: String,
     @SerializedName("Employee_Code") @Expose(serialize = true) val employeeCode: String,
+    @SerializedName("Exclude") @Expose(serialize = true) val Exclude: Boolean = false,
     @SerializedName("Date") @Expose(serialize = true) val date: String,
     @SerializedName("Time") @Expose(serialize = true) val time: String,
     @Expose(serialize = false, deserialize = false) var sycn_status: Boolean

@@ -482,6 +482,7 @@ class ReceiptInputFragment : Fragment(),
             false
         }
 
+        //TODO: CHECK PO NO
         et_po_no.addSetOnEditorClickListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 if (checkPONo(et_po_no.getTextAsString().checkFirstCharacter("K")).not()) {
@@ -612,13 +613,13 @@ class ReceiptInputFragment : Fragment(),
             result = false
             et_packingid.setError(getString(R.string.error_input_message))
         }
-        if (et_po_no.isEmpty()) {
+        /*if (et_po_no.isEmpty()) {
             result = false
             et_po_no.setError(getString(R.string.error_input_message))
         } else if (checkPONo(et_po_no.getTextAsString().checkFirstCharacter("K")).not()) {
             result = false
             et_po_no.setError(getString(R.string.error_po_no_not_same))
-        }
+        }*/
         if (et_part_receipt_input.isEmpty()) {
             result = false
             et_part_receipt_input.setError(getString(R.string.error_input_message))
@@ -627,10 +628,10 @@ class ReceiptInputFragment : Fragment(),
             result = false
             et_sn_no.setError(getString(R.string.error_input_message))
         }
-        if (et_trackingid.isEmpty()) {
+      /*  if (et_trackingid.isEmpty()) {
             result = false
             et_trackingid.setError(getString(R.string.error_input_message))
-        }
+        }*/
         if (et_description.isEmpty()) {
             result = false
             et_description.setError(getString(R.string.error_input_message))

@@ -15,6 +15,7 @@ import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeViewState.DBhasEmpty
 import dynamia.com.barcodescanner.ui.pickinglist.pickinginput.InputType
 import dynamia.com.core.util.Constant.RECEIPT_IMPORT
 import dynamia.com.core.util.Constant.RECEIPT_LOCAL
+import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
 import kotlinx.android.synthetic.main.home_fragment.*
 import kotlinx.android.synthetic.main.home_item_detail.*
@@ -66,7 +67,7 @@ class HomeFragment : Fragment() {
                 tv_dor_count.text = it.size.toString()
             })
 
-        viewModel.homeViewState.observe(viewLifecycleOwner, {
+        viewModel.homeViewState.observe(viewLifecycleOwner, EventObserver{
             when (it) {
                 is DBhasEmpty -> {
                     if (it.value == 0) {

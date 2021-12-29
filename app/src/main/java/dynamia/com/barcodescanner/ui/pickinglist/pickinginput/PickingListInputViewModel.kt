@@ -44,6 +44,10 @@ class PickingListInputViewModel(
 		peminjamanRepository.getAllPeminjamScanEntriesHistory(data.documentNo, data.partNo)
 	}
 	
+	val dorInsertHistory = Transformations.switchMap(param){
+		dorPickingRepository.getAllDorScanEntriesHistory(it.documentNo,it.partNo)
+	}
+	
 	fun updateHistoryParam(data: Param) {
 		param.value = data
 	}
@@ -135,8 +139,8 @@ class PickingListInputViewModel(
 						io {
 							val result = dorPickingRepository.checkDorSerialNo(serialNo)
 							ui {
-								_peminjamInputViewState.value =
-									PeminjamanInputViewState.CheckSNResult(result)
+								_dorInputViewState.value =
+									DorInputViewState.CheckSNResult(result)
 							}
 						}
 					}

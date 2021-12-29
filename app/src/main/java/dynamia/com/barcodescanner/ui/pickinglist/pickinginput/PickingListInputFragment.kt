@@ -185,6 +185,9 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 				})
 			}
 			DOR -> {
+				viewModel.dorInsertHistory.observe(viewLifecycleOwner, {
+					dorInsertAdapter.submitList(it)
+				})
 				viewModel.dorInputViewState.observe(viewLifecycleOwner, {
 					when (it) {
 						is PickingListInputViewModel.DorInputViewState.CheckSNResult -> {
