@@ -1,5 +1,6 @@
 package dynamia.com.barcodescanner.ui.transferstore.transferinput
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -27,9 +28,13 @@ class TransferInputFragment :
     private val viewModel: TransferInputViewModel by viewModels()
     private val args: TransferInputFragmentArgs by navArgs()
     var activity: MainActivity? = null
+    private var mpFail: MediaPlayer? = null
+    private var mpSuccess: MediaPlayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mpFail = MediaPlayer.create(context, R.raw.error)
+        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         setupView()
         activity = requireActivity() as MainActivity
         setupListener()
@@ -42,6 +47,7 @@ class TransferInputFragment :
                 when (it) {
                     is TransferInputViewModel.TransferInputViewState.ErrorGetData -> {
                         context?.showLongToast(it.message)
+                        mpFail?.start()
                     }
                     is TransferInputViewModel.TransferInputViewState.LoadingSearchPickingList -> {
                         activity?.showLoading(it.status)
@@ -83,6 +89,10 @@ class TransferInputFragment :
                     viewLifecycleOwner,
                     { showSuccessInventoryData(it) })
             }
+
+            soundSuccess.observe(viewLifecycleOwner, EventObserver {
+                if (it) mpSuccess?.start()
+            })
         }
     }
 
@@ -236,4 +246,15 @@ class TransferInputFragment :
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        mpFail?.release()
+        mpSuccess?.release()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mpFail?.release()
+        mpSuccess?.release()
+    }
 }

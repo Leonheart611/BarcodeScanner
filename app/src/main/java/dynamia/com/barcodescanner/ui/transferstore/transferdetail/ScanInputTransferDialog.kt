@@ -3,6 +3,7 @@ package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,8 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
 
     private lateinit var _viewBinding: ItemInputHeaderBinding
     val viewBinding by lazy { _viewBinding }
+    private var mpFail: MediaPlayer? = null
+    private var mpSuccess: MediaPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +44,8 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.setCanceledOnTouchOutside(false)
         dialog?.setCancelable(false)
+        mpFail = MediaPlayer.create(context, R.raw.error)
+        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         setupView()
         setObserverable()
     }
@@ -125,6 +130,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
         viewModel.transferInputViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.TransferDetailInputViewState.ErrorGetData -> {
+                    mpFail?.start()
                     showDialog {
                         with(viewBinding) {
                             etTransferInputBarcode.text?.clear()
@@ -140,6 +146,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                         etTransferInputBarcode.text?.clear()
                         etTransferInputBarcode.requestFocus()
                         context?.showLongToast("Success Save Data")
+                        mpSuccess?.start()
                     }
                 }
             }
@@ -169,6 +176,18 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                 show()
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mpFail?.release()
+        mpSuccess?.release()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mpFail?.release()
+        mpSuccess?.release()
     }
 
 

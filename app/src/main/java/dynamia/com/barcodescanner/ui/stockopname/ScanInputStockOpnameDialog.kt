@@ -3,11 +3,11 @@ package dynamia.com.barcodescanner.ui.stockopname
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.AnimRes
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
@@ -16,11 +16,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.DialogPartNoNotFoundBinding
-import dynamia.com.barcodescanner.databinding.ItemInputHeaderBinding
 import dynamia.com.barcodescanner.databinding.ItemStockopnameInputBinding
-import dynamia.com.barcodescanner.databinding.RefreshWarningDialogBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
-import dynamia.com.barcodescanner.ui.transferstore.transferdetail.ScanInputTransferDialog
 import dynamia.com.barcodescanner.ui.transferstore.transferdetail.TransferDetailViewModel
 import dynamia.com.core.util.Constant
 import dynamia.com.core.util.gone
@@ -35,6 +32,8 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
 
     private lateinit var _viewBinding: ItemStockopnameInputBinding
     val viewBinding by lazy { _viewBinding }
+    private var mpFail: MediaPlayer? = null
+    private var mpSuccess: MediaPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +48,8 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.setCanceledOnTouchOutside(false)
         dialog?.setCancelable(false)
+        mpFail = MediaPlayer.create(context, R.raw.error)
+        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         setupView()
         setObserverable()
     }
@@ -103,6 +104,7 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
         viewModel.transferInputViewState.observe(viewLifecycleOwner, {
             when (it) {
                 is TransferDetailViewModel.TransferDetailInputViewState.ErrorGetData -> {
+                    mpFail?.start()
                     showDialog {
                         with(viewBinding) {
                             etTransferInputBarcode.text?.clear()
@@ -119,6 +121,7 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
                         etTransferInputBarcode.text?.clear()
                         etTransferInputBarcode.requestFocus()
                         context?.showLongToast("Success Save Data")
+                        mpSuccess?.start()
                     }
                 }
             }
@@ -148,6 +151,18 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
                 show()
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mpFail?.release()
+        mpSuccess?.release()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mpFail?.release()
+        mpSuccess?.release()
     }
 
 

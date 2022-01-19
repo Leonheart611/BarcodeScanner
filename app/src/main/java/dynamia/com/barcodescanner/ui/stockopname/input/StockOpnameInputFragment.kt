@@ -1,5 +1,6 @@
 package dynamia.com.barcodescanner.ui.stockopname.input
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -24,6 +25,8 @@ class StockOpnameInputFragment :
     BaseFragmentBinding<StockOpnameInputFragmentBinding>(StockOpnameInputFragmentBinding::inflate) {
     var activity: MainActivity? = null
     private val args: StockOpnameInputFragmentArgs by navArgs()
+    private var mpFail: MediaPlayer? = null
+    private var mpSuccess: MediaPlayer? = null
 
     companion object {
         fun newInstance() = StockOpnameInputFragment()
@@ -33,6 +36,8 @@ class StockOpnameInputFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mpFail = MediaPlayer.create(context, R.raw.error)
+        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         activity = requireActivity() as MainActivity
         setupView()
         setupListener()
@@ -86,6 +91,7 @@ class StockOpnameInputFragment :
             tilTransferinputName.editText?.setText(data.itemNo)
             etTransferinputBincode.setText(data.binCode)
         }
+        mpSuccess?.start()
     }
 
     private fun setupListener() {
@@ -126,6 +132,7 @@ class StockOpnameInputFragment :
                 when (it) {
                     is StockOpnameInputViewModel.StockOpnameViewState.Error -> {
                         context?.showLongToast(it.message)
+                        mpFail?.start()
                     }
                     is StockOpnameInputViewModel.StockOpnameViewState.Loading -> {
                         activity?.showLoading(it.boolean)
@@ -167,6 +174,18 @@ class StockOpnameInputFragment :
             etTranferinputQty.text?.clear()
             etTransferInputBarcode.requestFocus()
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mpFail?.release()
+        mpSuccess?.release()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mpFail?.release()
+        mpSuccess?.release()
     }
 
 

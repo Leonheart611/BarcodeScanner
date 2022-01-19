@@ -31,6 +31,9 @@ class TransferInputViewModel @Inject constructor(
     private val _inputValidaton = MutableLiveData<InputValidation>()
     val inputValidation: LiveData<InputValidation> by lazy { _inputValidaton }
 
+    private val _soundSuccess = MutableLiveData<Event<Boolean>>()
+    val soundSuccess: LiveData<Event<Boolean>> by lazy { _soundSuccess }
+
     private var transferLineData: TransferShipmentLine? = null
     private var transferHeaderData: TransferShipmentHeader? = null
     private var transferReceiptHeader: TransferReceiptHeader? = null
@@ -147,6 +150,7 @@ class TransferInputViewModel @Inject constructor(
                             ui {
                                 transferLineData = data
                                 id.value = data.id!!
+                                _soundSuccess.value = Event(true)
                                 _transferInputViewState.value =
                                     TransferInputViewState.LoadingSearchPickingList(false)
                             }
@@ -157,6 +161,7 @@ class TransferInputViewModel @Inject constructor(
                                 ui {
                                     transferLineData = data
                                     id.value = data.id!!
+                                    _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
                                         TransferInputViewState.LoadingSearchPickingList(false)
                                 }
@@ -187,6 +192,7 @@ class TransferInputViewModel @Inject constructor(
                             inventoryPickLine = it
                             ui {
                                 id.value = it.id!!
+                                _soundSuccess.value = Event(true)
                                 _transferInputViewState.value =
                                     TransferInputViewState.LoadingSearchPickingList(false)
                             }
@@ -197,6 +203,7 @@ class TransferInputViewModel @Inject constructor(
                                 inventoryPickLine = it
                                 ui {
                                     id.value = it.id!!
+                                    _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
                                         TransferInputViewState.LoadingSearchPickingList(false)
                                 }
@@ -228,6 +235,7 @@ class TransferInputViewModel @Inject constructor(
                                 ui {
                                     transferLineData = data
                                     id.value = data.id!!
+                                    _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
                                         TransferInputViewState.LoadingSearchPickingList(false)
                                 }
@@ -238,6 +246,7 @@ class TransferInputViewModel @Inject constructor(
                                 ui {
                                     transferLineData = data
                                     id.value = data.id!!
+                                    _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
                                         TransferInputViewState.LoadingSearchPickingList(false)
                                 }
@@ -269,6 +278,7 @@ class TransferInputViewModel @Inject constructor(
                                 ui {
                                     purchaseLineData = data
                                     id.value = data.id!!
+                                    _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
                                         TransferInputViewState.LoadingSearchPickingList(false)
                                 }
@@ -278,6 +288,7 @@ class TransferInputViewModel @Inject constructor(
                                 ui {
                                     purchaseLineData = data
                                     id.value = data.id!!
+                                    _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
                                         TransferInputViewState.LoadingSearchPickingList(false)
                                 }

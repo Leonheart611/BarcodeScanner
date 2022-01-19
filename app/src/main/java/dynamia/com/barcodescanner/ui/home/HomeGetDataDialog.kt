@@ -76,8 +76,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        //callAllApi()
-        getAllDataFromAssets()
+        callAllApi()
+        //getAllDataFromAssets()
         setOnClicklistener()
     }
 
