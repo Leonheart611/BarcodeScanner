@@ -76,8 +76,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        callAllApi()
-        //getAllDataFromAssets()
+        //callAllApi()
+        getAllDataFromAssets()
         setOnClicklistener()
     }
 
@@ -283,6 +283,9 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
 
     fun setOnClicklistener() {
         viewBinding.btnDialogClose.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
+        viewBinding.ivGetDataClose.setOnClickListener {
             dismissAllowingStateLoss()
         }
     }

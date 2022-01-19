@@ -47,12 +47,18 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.setCanceledOnTouchOutside(false)
+        dialog?.setCancelable(false)
         setupView()
         setObserverable()
     }
 
     fun setupView() {
         with(viewBinding) {
+            ivStockopnameClose.isVisible = true
+            ivStockopnameClose.setOnClickListener {
+                dialog?.dismiss()
+            }
             btnSave.isVisible = false
             btnReset.isVisible = false
             cvTransferInputDetail.isVisible = false

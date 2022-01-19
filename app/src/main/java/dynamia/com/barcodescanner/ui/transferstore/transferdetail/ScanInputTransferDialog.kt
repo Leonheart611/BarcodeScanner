@@ -39,12 +39,18 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.setCanceledOnTouchOutside(false)
+        dialog?.setCancelable(false)
         setupView()
         setObserverable()
     }
 
     fun setupView() {
         with(viewBinding) {
+            ivInputClose.isVisible = true
+            ivInputClose.setOnClickListener {
+                dialog?.dismiss()
+            }
             btnSave.isVisible = false
             btnReset.isVisible = false
             cvTransferInputDetail.isVisible = false
