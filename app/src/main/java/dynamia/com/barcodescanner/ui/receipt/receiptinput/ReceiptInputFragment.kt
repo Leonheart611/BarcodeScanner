@@ -99,18 +99,18 @@ class ReceiptInputFragment : Fragment(),
         when (args.source) {
             Constant.RECEIPT_IMPORT -> {
                 viewModel.receiptImportRepository.getReceiptImportScanEntries(args.documentNo, 5)
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         historyImportAdapter.update(it.toMutableList())
-                    })
+                    }
             }
             Constant.RECEIPT_LOCAL -> {
                 viewModel.receiptLocalRepository.getReceiptLocalScanEntries(args.documentNo, 5)
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         historyLocalAdapter.update(it.toMutableList())
-                    })
+                    }
             }
         }
-        viewModel.receiptInputViewState.observe(viewLifecycleOwner, {
+        viewModel.receiptInputViewState.observe(viewLifecycleOwner) {
             when (it) {
                 is ReceiptInputViewModel.ReceiptInputViewState.SuccessGetImportLine -> {
                     checkDBImport(dataImport = it.data)
@@ -180,7 +180,7 @@ class ReceiptInputFragment : Fragment(),
                     activity?.showLoading(it.loading)
                 }
             }
-        })
+        }
     }
 
 
@@ -441,7 +441,7 @@ class ReceiptInputFragment : Fragment(),
         et_sn_no.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (switch_receipt_input.isChecked) {
-                    if (p0.toString().length > 3)
+                    if (p0.toString().length >= 11)
                         saveData()
                 }
             }

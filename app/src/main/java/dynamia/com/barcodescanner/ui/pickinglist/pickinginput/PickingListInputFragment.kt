@@ -87,10 +87,10 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 		when (args.inputType) {
 			PICKING -> {
 				viewModel.pickingListRepository.getPickingListScanEntries(args.pickingListNo, 5)
-					.observe(viewLifecycleOwner, {
+					.observe(viewLifecycleOwner) {
 						inputHistoryAdapter.update(it.toMutableList())
-					})
-				viewModel.pickingInputViewState.observe(viewLifecycleOwner, {
+					}
+				viewModel.pickingInputViewState.observe(viewLifecycleOwner) {
 					when (it) {
 						is PickingListInputViewModel.PickingInputViewState.SuccessGetValue -> {
 							checkOnDB(it.data)
@@ -133,13 +133,13 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 							activity?.showLoading(it.status)
 						}
 					}
-				})
+				}
 			}
 			PEMINJAMAN -> {
-				viewModel.peminjamInsertHistory.observe(viewLifecycleOwner, {
+				viewModel.peminjamInsertHistory.observe(viewLifecycleOwner) {
 					peminjamanInsertAdapter.submitList(it)
-				})
-				viewModel.peminjamInputViewState.observe(viewLifecycleOwner, {
+				}
+				viewModel.peminjamInputViewState.observe(viewLifecycleOwner) {
 					when (it) {
 						is PickingListInputViewModel.PeminjamanInputViewState.CheckSNResult -> {
 							if (it.boolean) {
@@ -182,13 +182,13 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 							checkPeminjamDb(it.data)
 						}
 					}
-				})
+				}
 			}
 			DOR -> {
-				viewModel.dorInsertHistory.observe(viewLifecycleOwner, {
+				viewModel.dorInsertHistory.observe(viewLifecycleOwner) {
 					dorInsertAdapter.submitList(it)
-				})
-				viewModel.dorInputViewState.observe(viewLifecycleOwner, {
+				}
+				viewModel.dorInputViewState.observe(viewLifecycleOwner) {
 					when (it) {
 						is PickingListInputViewModel.DorInputViewState.CheckSNResult -> {
 							if (it.boolean) {
@@ -231,7 +231,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 							checkDorDb(it.data)
 						}
 					}
-				})
+				}
 			}
 		}
 		
@@ -313,7 +313,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 		et_sn_picking.addTextWatcher(object : TextWatcher {
 			override fun afterTextChanged(p0: Editable?) {
 				if (switch_manual_picking.isChecked) {
-					if (p0.toString().length > 3)
+					if (p0.toString().length > 11)
 						saveDataLocal()
 				}
 			}

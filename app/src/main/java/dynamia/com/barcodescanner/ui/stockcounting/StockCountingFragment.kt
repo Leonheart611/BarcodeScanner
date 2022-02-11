@@ -183,7 +183,7 @@ class StockCountingFragment : Fragment(), StockCountAdapter.OnStockClicklistener
     }
 
     private fun setObseverable() {
-        viewModel.stockCountViewState.observe(viewLifecycleOwner, {
+        viewModel.stockCountViewState.observe(viewLifecycleOwner) {
             when (it) {
                 is StockCountingViewModel.StockCountingViewState.CheckedSnNo -> {
                     if (it.isEmpty) {
@@ -204,7 +204,7 @@ class StockCountingFragment : Fragment(), StockCountAdapter.OnStockClicklistener
                         } else {
                             clearSnInput()
                         }
-
+                
                     } else {
                         showErroSnDialog(getString(R.string.sn_no_already_inputed))
                     }
@@ -213,7 +213,7 @@ class StockCountingFragment : Fragment(), StockCountAdapter.OnStockClicklistener
                     context?.showLongToast(it.message)
                 }
             }
-        })
+        }
     }
 
 
