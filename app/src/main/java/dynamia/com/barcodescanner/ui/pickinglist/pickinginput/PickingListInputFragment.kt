@@ -313,7 +313,7 @@ class PickingListInputFragment : Fragment(), PickingMultipleLineAdapter.OnMultip
 		et_sn_picking.addTextWatcher(object : TextWatcher {
 			override fun afterTextChanged(p0: Editable?) {
 				if (switch_manual_picking.isChecked) {
-					if (p0.toString().length > 11)
+					if (p0.toString().length >= 10)
 						saveDataLocal()
 				}
 			}

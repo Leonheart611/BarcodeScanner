@@ -31,7 +31,7 @@ class PostStockCountDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun setObservable() {
-        viewModel.stockCountPostViewState.observe(viewLifecycleOwner, {
+        viewModel.stockCountPostViewState.observe(viewLifecycleOwner) {
             when (it) {
                 is StockCountingViewModel.StockCountPostViewState.GetUnpostedData -> {
                     tv_stock_total_post.text = it.data.toString()
@@ -62,7 +62,7 @@ class PostStockCountDialogFragment : BottomSheetDialogFragment() {
                     btn_dismis_stock_count.isEnabled = true
                 }
             }
-        })
+        }
     }
 
     fun setOnClicklistener() {

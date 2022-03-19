@@ -441,7 +441,7 @@ class ReceiptInputFragment : Fragment(),
         et_sn_no.addTextWatcher(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (switch_receipt_input.isChecked) {
-                    if (p0.toString().length >= 11)
+                    if (p0.toString().length >= 10)
                         saveData()
                 }
             }
