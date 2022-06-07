@@ -22,8 +22,8 @@ class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel(), LifecycleObserver {
 
-    private var _modelState = MutableLiveData<LoginState>()
-    val modelState: LiveData<LoginState> by lazy { _modelState }
+    private var _modelState = MutableLiveData<Event<LoginState>>()
+    val modelState: LiveData<Event<LoginState>> by lazy { _modelState }
 
     fun saveSharedPreferences(
         baseUrl: String,
@@ -50,10 +50,10 @@ class LoginViewModel @Inject constructor(
                     val result = editor.commit()
                     userRepository.insertUserData(userData)
                     if (result)
-                        ui { _modelState.value = LoginState.Success("Success Save Data") }
+                        ui { _modelState.value = Event(LoginState.Success("Success Save Data")) }
                 }
             } catch (e: Exception) {
-                ui { _modelState.value = LoginState.Error(e.localizedMessage) }
+                ui { _modelState.value = Event(LoginState.Error(e.localizedMessage)) }
             }
 
         }
@@ -64,17 +64,20 @@ class LoginViewModel @Inject constructor(
     fun checkSharedPreferences() {
         val name = sharedPreferences.getString(Constant.USERNAME_KEY, "")
         if (name.isNullOrEmpty().not())
-            _modelState.value = LoginState.UserhasLogin(null)
+            _modelState.value = Event(LoginState.UserhasLogin(null))
 
         viewModelScope.launch {
             try {
                 io {
                     userRepository.getUserData().collect {
-                        ui { _modelState.value = it?.let { data -> LoginState.UserHaveData(data) } }
+                        ui {
+                            _modelState.value =
+                                it?.let { data -> Event(LoginState.UserHaveData(data)) }
+                        }
                     }
                 }
             } catch (e: Exception) {
-                _modelState.value = LoginState.UserhasLogin(null)
+                _modelState.value = Event(LoginState.UserhasLogin(null))
             }
         }
     }
@@ -84,7 +87,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun setSuccessCheckLogin() {
-        _modelState.postValue(LoginState.SuccessCheckLogin)
+        _modelState.postValue(Event(LoginState.SuccessCheckLogin))
     }
 
     sealed class LoginState {

@@ -10,6 +10,7 @@ import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.LoginFragmentBinding
 import dynamia.com.barcodescanner.ui.MainActivity
+import dynamia.com.barcodescanner.ui.MainActivityViewModel
 import dynamia.com.barcodescanner.ui.home.HomePostAllDialog
 import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
 import dynamia.com.core.base.BaseFragmentBinding
@@ -21,7 +22,8 @@ import dynamia.com.core.util.showLongToast
 class LoginFragment :
     BaseFragmentBinding<LoginFragmentBinding>(LoginFragmentBinding::inflate) {
 
-    private val viewModel: LoginViewModel by activityViewModels()
+    private val viewModel: LoginViewModel by viewModels()
+    private val activityViewModel: MainActivityViewModel by activityViewModels()
     var activity: MainActivity? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,15 +36,15 @@ class LoginFragment :
     }
 
     private fun initview() {
-        if (BuildConfig.BUILD_TYPE == "debug") {
-            with(viewBinding) {
-                etServerHost.setText(getString(R.string.server_host_name))
-                tiedUsername.setText(getString(R.string.user_name))
-                tiedPassword.setText(getString(R.string.password))
-                etDomainname.setText(getString(R.string.domain))
-                etCompanyName.setText(getString(R.string.company_name))
-            }
-        }
+        /* if (BuildConfig.BUILD_TYPE == "debug") {
+             with(viewBinding) {
+                 etServerHost.setText(getString(R.string.server_host_name))
+                 tiedUsername.setText(getString(R.string.user_name))
+                 tiedPassword.setText(getString(R.string.password))
+                 etDomainname.setText(getString(R.string.domain))
+                 etCompanyName.setText(getString(R.string.company_name))
+             }
+         }*/
     }
 
     private fun setupListener() {
@@ -99,7 +101,7 @@ class LoginFragment :
     }
 
     private fun setObservable() {
-        viewModel.modelState.observe(viewLifecycleOwner, {
+        viewModel.modelState.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 is Success -> {
                     val dialog = CheckLoginBottomSheet()
@@ -114,9 +116,14 @@ class LoginFragment :
                 }
                 is UserHaveData -> setView(it.userData)
                 SuccessCheckLogin -> {
-                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                    context?.showLongToast("Success Login")
+
                 }
+            }
+        })
+        activityViewModel.checkLoginUser.observe(viewLifecycleOwner, EventObserver {
+            if (it){
+                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                context?.showLongToast("Success Login")
             }
         })
     }

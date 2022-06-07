@@ -10,13 +10,14 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dynamia.com.barcodescanner.databinding.DialogSelectInputTypeBinding
+import dynamia.com.barcodescanner.ui.MainActivityViewModel
 import dynamia.com.core.util.EventObserver
 
 @AndroidEntryPoint
 class CheckLoginBottomSheet : BottomSheetDialogFragment() {
 
-    val viewModel: CheckLoginViewModel by activityViewModels()
-    private val loginViewModel: LoginViewModel by activityViewModels()
+    val viewModel: CheckLoginViewModel by viewModels()
+    private val activityViewModel: MainActivityViewModel by activityViewModels()
 
     private lateinit var _viewBinding: DialogSelectInputTypeBinding
     val viewBinding by lazy { _viewBinding }
@@ -47,7 +48,7 @@ class CheckLoginBottomSheet : BottomSheetDialogFragment() {
                     }
                 }
                 CheckLoginViewModel.LoginViewState.LoginSuccess -> {
-                    loginViewModel.setSuccessCheckLogin()
+                    activityViewModel.setCheckLoginUser(true)
                     dismiss()
 
                 }

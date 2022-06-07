@@ -49,9 +49,9 @@ class StockOpnameFragment :
     }
 
     private fun setupObseverable() {
-        viewModel.repository.getALlStockOpname().observe(viewLifecycleOwner, {
+        viewModel.repository.getALlStockOpname().observe(viewLifecycleOwner) {
             stockOpnameAdapter.submitList(it)
-        })
+        }
     }
 
     fun setupView() {

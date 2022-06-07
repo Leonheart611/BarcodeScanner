@@ -1,5 +1,6 @@
 package dynamia.com.barcodescanner.ui.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import dynamia.com.core.domain.ResultWrapper
 import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,9 +27,12 @@ class CheckLoginViewModel @Inject constructor(private val transferShipmentReposi
         viewModelScope.launch {
             try {
                 io {
-                    transferShipmentRepository.checkLoginCredential().collect { data ->
+                    transferShipmentRepository.checkLoginCredential().catch { e ->
+                        _loginViewState.postValue(Event(LoginViewState.LoginFailed("${e.message}")))
+                    }.collect { data ->
                         when (data) {
                             is ResultWrapper.Success -> {
+                                Log.e("Success Result", data.value.toString())
                                 _loginViewState.postValue(Event(LoginViewState.LoginSuccess))
                             }
                             is ResultWrapper.GenericError -> {
@@ -53,7 +58,12 @@ class CheckLoginViewModel @Inject constructor(private val transferShipmentReposi
     }
 
     fun getTransferDataDummy() {
-        _loginViewState.postValue(Event(LoginViewState.LoginSuccess))
+        viewModelScope.launch {
+            transferShipmentRepository.checkLoginDummy().collect {
+                if (it)
+                    _loginViewState.postValue(Event(LoginViewState.LoginFailed("Testing Error")))
+            }
+        }
     }
 
     sealed class LoginViewState {

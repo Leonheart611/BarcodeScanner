@@ -64,7 +64,7 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
     }
 
     private fun setObseverable() {
-        viewModel.homePostViewState.observe(viewLifecycleOwner, {
+        viewModel.homePostViewState.observe(viewLifecycleOwner) {
             when (it) {
                 /**
                  * Transfer Shipment View State
@@ -231,9 +231,9 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                     )
                 }
             }
-        })
+        }
 
-        viewModel.inventoryPostViewState.observe(viewLifecycleOwner, {
+        viewModel.inventoryPostViewState.observe(viewLifecycleOwner) {
             when (it) {
                 is HomeViewModel.InventoryPostViewState.ErrorPost -> {
                     with(viewBinding.includeInventory) {
@@ -265,7 +265,7 @@ class HomePostAllDialog : BottomSheetDialogFragment() {
                         it.data.toString()
                 }
             }
-        })
+        }
 
     }
 

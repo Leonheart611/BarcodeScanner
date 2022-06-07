@@ -10,6 +10,7 @@ import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.ResultWrapper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -48,6 +49,7 @@ interface TransferShipmentRepository {
     suspend fun getLineDetailFromBarcode(no: String, identifier: String): Flow<TransferShipmentLine>
     suspend fun getLineDetailFromId(id: Int): Flow<TransferShipmentLine>
 
+    suspend fun checkLoginDummy(): Flow<Boolean>
     /**
      * Local Transfer Insert
      */
@@ -59,7 +61,6 @@ interface TransferShipmentRepository {
     fun getAllUnsycnTransferInput(status: Boolean = false): List<TransferInputData>
     suspend fun getTransferInputHistory(no: Int): Flow<TransferInputData>
     fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferInputData>>
-
     suspend fun deleteAllTransferInput()
 
     /**
@@ -213,6 +214,10 @@ class TransferShipmentImpl @Inject constructor(
 
     override suspend fun getTransferInputHistory(no: Int): Flow<TransferInputData> = flow {
         emit(dao.getTransferInputHistory(no))
+    }
+
+    override suspend fun checkLoginDummy(): Flow<Boolean> = flow {
+        emit(true)
     }
 
     /**

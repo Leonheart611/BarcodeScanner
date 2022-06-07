@@ -13,6 +13,7 @@ import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.ResultWrapper.*
+import dynamia.com.core.util.Constant
 import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
@@ -50,6 +51,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 io {
+                    sharedPreferences.edit().remove(Constant.USERNAME_KEY).apply()
                     transferShipmentRepository.deleteAllTransferHeader()
                     transferShipmentRepository.deleteAllTransferLine()
                     transferShipmentRepository.deleteAllTransferInput()
@@ -59,7 +61,7 @@ class HomeViewModel @Inject constructor(
                     binreclassRepository.deleteAllRebinInput()
                     stockOpnameDataRepository.deleteAllInputStockOpname()
                     stockOpnameDataRepository.deleteAllStockOpname()
-                    sharedPreferences.edit().clear().apply()
+
                 }
             } catch (e: Exception) {
                 _homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
