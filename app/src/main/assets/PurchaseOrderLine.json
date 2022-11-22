@@ -11,7 +11,7 @@
       "Unit_of_Measure": "PCS",
       "Quantity": "100",
       "QtytoReceive": "100",
-      "Item_Ref_No": "0"
+      "Item_Ref_No": "Testing Data Bin COde1"
     },
     {
       "Document_Type": "Order",
@@ -24,7 +24,7 @@
       "Unit_of_Measure": "PCS",
       "Quantity": "100",
       "QtytoReceive": "100",
-      "Item_Ref_No": "0"
+      "Item_Ref_No": "Testing Data Bin COde2"
     },
     {
       "Document_Type": "Order",

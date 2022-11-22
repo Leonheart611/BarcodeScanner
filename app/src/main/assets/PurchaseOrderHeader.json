@@ -7,7 +7,8 @@
       "No": "104004",
       "Buy_from_Vendor_Name": "Lewis Home Furniture",
       "Document_Date": "2023-01-29",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O0RSWGU2bE5xelhEYnJjRGtTYmFXL09RVDdkbTlPVnBBTHV3eGpHeUZZRzQ9MTswMDsn\"",
@@ -15,7 +16,8 @@
       "No": "104005",
       "Buy_from_Vendor_Name": "Service Electronics Ltd.",
       "Document_Date": "2023-01-03",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O3h0K1JOTzNCRUFGN2dJVVhkcTcwU3kzeGtFMWoxWXpNTkxScUNwNjdiN009MTswMDsn\"",
@@ -23,7 +25,8 @@
       "No": "104006",
       "Buy_from_Vendor_Name": "CoolWood Technologies",
       "Document_Date": "2023-01-23",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O3BnQVdMUHNKdjJoaXJhNUFiOGxoSnBIaEdIVnJTVC9YeDJ2U3J3QWJUZXM9MTswMDsn\"",
@@ -31,7 +34,8 @@
       "No": "104007",
       "Buy_from_Vendor_Name": "Lewis Home Furniture",
       "Document_Date": "2023-01-26",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O0pTV0h1QnFTRjZ6Qjl6aHRrZTZuenJhUjlMN1VaUkU2alBYUi9OVWo5MlE9MTswMDsn\"",
@@ -47,7 +51,8 @@
       "No": "104009",
       "Buy_from_Vendor_Name": "Electronics Ltd.",
       "Document_Date": "2023-01-26",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O0liU0xrQ2N4OEYxMmdSeEdRWTQ3MW43WlQxL3BPSXowKzJDeGplZm5Lb3M9MTswMDsn\"",
@@ -55,7 +60,8 @@
       "No": "104010",
       "Buy_from_Vendor_Name": "WalkerHolland",
       "Document_Date": "2023-01-26",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0Oy9MTnVMMXJDUmVpVXYycEZwQ3liUDZ4VzErZWNuNW9UeU51ZDlZWDY3bGc9MTswMDsn\"",
@@ -63,7 +69,8 @@
       "No": "104011",
       "Buy_from_Vendor_Name": "Service Electronics Ltd.",
       "Document_Date": "2023-01-31",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O1ZyblNJK1g2dXNneWFCR20xYytpMXlvL0pFUXhwblhYa3NETHhQWHJVc1U9MTswMDsn\"",
@@ -71,7 +78,8 @@
       "No": "104012",
       "Buy_from_Vendor_Name": "WalkerHolland",
       "Document_Date": "2023-01-31",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O3l3a2czc0NHeVo0Q1ZHRnErM0Z3aHVXQWhPZEFUSzJzVnhSbDFhWTBmdm89MTswMDsn\"",
@@ -79,7 +87,8 @@
       "No": "6001",
       "Buy_from_Vendor_Name": "Busterby Stole og Borde A/S",
       "Document_Date": "2022-01-01",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0OzRyVlhOMkwwKzFBWVI4eFdJT1VhZWI2MUZMc1psRFBFRDkrUHRuNE5sRjQ9MTswMDsn\"",
@@ -87,7 +96,8 @@
       "No": "6002",
       "Buy_from_Vendor_Name": "Busterby Stole og Borde A/S",
       "Document_Date": "2023-01-26",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O1FxclI3cGpBRDdkWkI4bFd6ZlE0WFFOMWFHRFlNajgvYmV6am9XWFRXZVE9MTswMDsn\"",
@@ -95,7 +105,8 @@
       "No": "6003",
       "Buy_from_Vendor_Name": "Monabekken Barnesenger A/S",
       "Document_Date": "2023-01-28",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O25KODVnc21wbW91Zm5sVzVPVGMxWTIySHFqT1dUejB2U2xNeGNPTmcvSHc9MTswMDsn\"",
@@ -103,7 +114,8 @@
       "No": "PO/2021/00000005",
       "Buy_from_Vendor_Name": "Monabekken Barnesenger A/S",
       "Document_Date": "2023-01-29",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     },
     {
       "@odata.etag": "W/\"JzQ0O2FwK2NLcjFHVDFxUmVoSGwrNis2SlcrYXFGU1lnVWtkNmVyY2d6b0NMQ009MTswMDsn\"",
@@ -111,7 +123,8 @@
       "No": "6005",
       "Buy_from_Vendor_Name": "CoolWood Technologies",
       "Document_Date": "2023-01-03",
-      "Status": "Released"
+      "Status": "Released",
+      "Vendor_Invoice_No": "IDUA#21041F(E)"
     }
   ]
 }

@@ -10,7 +10,8 @@ data class PurchaseOrderHeader(
     @SerializedName("No") val no: String,
     @SerializedName("Buy_from_Vendor_Name") val buyFromVendorName: String,
     @SerializedName("Document_Date") val documentDate: String,
-    @SerializedName("Status") val status: String
+    @SerializedName("Status") val status: String,
+    @SerializedName("Vendor_Invoice_No") val vendorInvoiceNo: String?
 )
 
 data class PurchaseOrderHeaderAssets(

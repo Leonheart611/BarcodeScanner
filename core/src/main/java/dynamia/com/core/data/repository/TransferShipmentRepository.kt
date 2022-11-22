@@ -50,6 +50,7 @@ interface TransferShipmentRepository {
     suspend fun getLineDetailFromId(id: Int): Flow<TransferShipmentLine>
 
     suspend fun checkLoginDummy(): Flow<Boolean>
+
     /**
      * Local Transfer Insert
      */
@@ -272,7 +273,7 @@ class TransferShipmentImpl @Inject constructor(
     override suspend fun checkLoginCredential(): Flow<ResultWrapper<Boolean>> =
         flow {
             try {
-                val result = retrofitService.getTransferShipmentLine()
+                val result = retrofitService.getPurchaseOrderHeader()
                 when (result.code()) {
                     200 -> emit(ResultWrapper.Success(true))
                     400 -> emit(ResultWrapper.SuccessEmptyValue)

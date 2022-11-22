@@ -117,7 +117,6 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
                 }
                 TransferDetailViewModel.TransferDetailInputViewState.SuccessSaveData -> {
                     with(viewBinding) {
-                        etTransferinputBincode.text?.clear()
                         etTransferInputBarcode.text?.clear()
                         etTransferInputBarcode.requestFocus()
                         context?.showLongToast("Success Save Data")

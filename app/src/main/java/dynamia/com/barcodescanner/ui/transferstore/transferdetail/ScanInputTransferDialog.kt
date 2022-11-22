@@ -85,7 +85,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                         }
                     }
                 }
-                TransferType.INVENTORY -> {
+                TransferType.INVENTORY, TransferType.PURCHASE -> {
                     tilTransferBincode.isVisible = true
                     etBoxInput.doAfterTextChanged {
                         etTransferinputBincode.requestFocus()
@@ -127,7 +127,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
     }
 
     private fun setObserverable() {
-        viewModel.transferInputViewState.observe(viewLifecycleOwner, {
+        viewModel.transferInputViewState.observe(viewLifecycleOwner) {
             when (it) {
                 is TransferDetailViewModel.TransferDetailInputViewState.ErrorGetData -> {
                     mpFail?.start()
@@ -150,7 +150,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                     }
                 }
             }
-        })
+        }
     }
 
     private fun showDialog(

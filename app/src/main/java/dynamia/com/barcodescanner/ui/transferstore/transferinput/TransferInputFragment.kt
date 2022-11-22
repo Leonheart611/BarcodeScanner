@@ -43,7 +43,7 @@ class TransferInputFragment :
 
     private fun setupObserverable() {
         with(viewModel) {
-            transferInputViewState.observe(viewLifecycleOwner, {
+            transferInputViewState.observe(viewLifecycleOwner, EventObserver {
                 when (it) {
                     is TransferInputViewModel.TransferInputViewState.ErrorGetData -> {
                         context?.showLongToast(it.message)
@@ -57,13 +57,12 @@ class TransferInputFragment :
                     }
                     TransferInputViewModel.TransferInputViewState.SuccessSaveData -> {
                         context?.showLongToast("Success Save Data")
-                        /*args.barcodeNo?.let { viewBinding.includeTransferInput.etTranferinputQty.text?.clear() }
-                            ?: kotlin.run { clearData() }*/
                         viewBinding.includeTransferInput.etTranferinputQty.text?.clear()
                     }
                 }
             })
-            inputValidation.observe(viewLifecycleOwner, {
+
+            inputValidation.observe(viewLifecycleOwner) {
                 when (it) {
                     TransferInputViewModel.InputValidation.BarcodeEmpty -> {
                         viewBinding.includeTransferInput.tilTransferinputBarcode.error =
@@ -74,20 +73,16 @@ class TransferInputFragment :
                             "Must Fill this Field"
                     }
                 }
-            })
+            }
             when (args.transferType) {
-                SHIPMENT -> transferShipmentLine.observe(
-                    viewLifecycleOwner,
-                    { showSuccessfulData(it) })
-                RECEIPT -> transferShipmentLine.observe(
-                    viewLifecycleOwner,
-                    { showSuccessfulData(it) })
-                PURCHASE -> purchaserOrderLine.observe(
-                    viewLifecycleOwner,
-                    { showSuccessPurchaseData(it) })
-                INVENTORY -> inventoryLine.observe(
-                    viewLifecycleOwner,
-                    { showSuccessInventoryData(it) })
+                SHIPMENT -> transferShipmentLine.observe(viewLifecycleOwner) { showSuccessfulData(it) }
+                RECEIPT -> transferShipmentLine.observe(viewLifecycleOwner) { showSuccessfulData(it) }
+                PURCHASE -> purchaserOrderLine.observe(viewLifecycleOwner) {
+                    showSuccessPurchaseData(
+                        it
+                    )
+                }
+                INVENTORY -> inventoryLine.observe(viewLifecycleOwner) { showSuccessInventoryData(it) }
             }
 
             soundSuccess.observe(viewLifecycleOwner, EventObserver {
@@ -128,7 +123,7 @@ class TransferInputFragment :
         with(viewBinding) {
             toolbarPickingListInput.title = viewModel.getCompanyName()
             when (args.transferType) {
-                INVENTORY -> {
+                INVENTORY, PURCHASE -> {
                     includeTransferInput.etTransferinputBincode.requestFocus()
                 }
                 else -> {
@@ -140,6 +135,11 @@ class TransferInputFragment :
                 includeTransferInput.etTransferInputBarcode.isEnabled = false
                 getPickingListLineData(it, args.binCode)
                 includeTransferInput.etTranferinputQty.requestFocus()
+            }
+            if (args.stockId != 0) {
+                when (args.transferType) {
+                    PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, "", args.stockId)
+                }
             }
             includeTransferInput.etTransferInputBarcode.setOnEditorActionListener { _, keyCode, event ->
                 if (((event?.action ?: -1) == KeyEvent.ACTION_DOWN)
@@ -173,7 +173,7 @@ class TransferInputFragment :
                 INVENTORY -> getString(R.string.inventory_pick_title)
             }
             includeTransferInput.tilTransferBincode.isVisible =
-                (args.transferType == STOCKOPNAME || args.transferType == INVENTORY)
+                (args.transferType == STOCKOPNAME || args.transferType == INVENTORY || args.transferType == PURCHASE)
             includeTransferInput.tilInputBox.isVisible = when (args.transferType) {
                 INVENTORY -> true
                 STOCKOPNAME -> false

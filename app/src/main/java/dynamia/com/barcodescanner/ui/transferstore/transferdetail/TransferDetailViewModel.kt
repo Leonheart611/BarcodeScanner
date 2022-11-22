@@ -186,7 +186,7 @@ class TransferDetailViewModel @Inject constructor(
                                 .collect { data ->
                                     ui {
                                         purchaseLineData = data
-                                        insertPurchaseInput("1", box)
+                                        insertPurchaseInput("1", box, binCode)
                                     }
                                 }
                         }
@@ -461,7 +461,7 @@ class TransferDetailViewModel @Inject constructor(
         }
     }
 
-    private fun insertPurchaseInput(qty: String, box: String) {
+    private fun insertPurchaseInput(qty: String, box: String , binCode: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -476,7 +476,8 @@ class TransferDetailViewModel @Inject constructor(
                                 transferToBinCode = "",
                                 userName = sharedPreferences.getUserName(),
                                 insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
-                                box = box
+                                box = box,
+                                newBinCode = binCode
                             )
                         )
                         ui {

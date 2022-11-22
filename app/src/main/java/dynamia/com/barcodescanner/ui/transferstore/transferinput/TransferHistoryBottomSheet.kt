@@ -26,6 +26,7 @@ import dynamia.com.barcodescanner.ui.history.adapter.HistoryTransferInputAdapter
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
 import dynamia.com.core.data.entinty.TransferInputData
 import dynamia.com.core.util.Constant
+import dynamia.com.core.util.EventObserver
 import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
@@ -90,7 +91,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
     }
 
     private fun setObseverable() {
-        viewModel.transferInputViewState.observe(viewLifecycleOwner, {
+        viewModel.transferInputViewState.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 is TransferInputViewModel.TransferInputViewState.SuccessGetHistoryValue -> {
                     with(it.data) {

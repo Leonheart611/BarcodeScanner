@@ -90,5 +90,14 @@
             app:layout_constraintStart_toEndOf="@+id/tv_detail_total_scan_already"
             app:layout_constraintTop_toTopOf="@+id/tv_detail_total_scan_already"
             tools:text="300" />
+
+        <TextView
+            android:id="@+id/tv_detail_invoice_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Invoice no" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

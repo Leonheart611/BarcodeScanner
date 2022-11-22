@@ -4,12 +4,8 @@ import android.content.SharedPreferences
 import com.netcosports.ntlm.NTLMAuthenticator
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.FragmentScoped
 import dagger.hilt.android.scopes.ViewModelScoped
 import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.util.getBaseUrl

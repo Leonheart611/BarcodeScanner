@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import dynamia.com.barcodescanner.databinding.PurchaseOrderListBinding
 import dynamia.com.barcodescanner.databinding.TransferListItemBinding
 import dynamia.com.core.data.entinty.PurchaseOrderHeader
 
@@ -22,7 +23,7 @@ class PurchaseHeaderListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PurchaseHeaderHolder {
         return PurchaseHeaderHolder(
-            TransferListItemBinding.inflate(
+            PurchaseOrderListBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -36,13 +37,14 @@ class PurchaseHeaderListAdapter(
         }
     }
 
-    inner class PurchaseHeaderHolder(val binding: TransferListItemBinding) :
+    inner class PurchaseHeaderHolder(val binding: PurchaseOrderListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(value: PurchaseOrderHeader) {
             with(binding) {
-                tvTransferNo.text = value.no
-                tvTransferDate.text = value.documentDate
-                tvTransferFrom.text = "Status: ${value.status}"
+                tvPurchaseNo.text = value.no
+                tvPurchaseDate.text = value.documentDate
+                tvPurchaseFrom.text = "Status: ${value.status}"
+                tvVendorInvoice.text = value.vendorInvoiceNo
                 root.setOnClickListener {
                     listener.clickListener(value)
                 }

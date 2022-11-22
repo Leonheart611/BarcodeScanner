@@ -92,9 +92,9 @@ class TransferListFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = inventoryHeaderListAdapter
             }
-            viewModel.inventoryHeaderData.observe(viewLifecycleOwner, {
+            viewModel.inventoryHeaderData.observe(viewLifecycleOwner) {
                 inventoryHeaderListAdapter.submitList(it)
-            })
+            }
         }
     }
 
@@ -106,9 +106,9 @@ class TransferListFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = purchaseOrderAdapter
             }
-            viewModel.purchaseHeaderData.observe(viewLifecycleOwner, {
+            viewModel.purchaseHeaderData.observe(viewLifecycleOwner) {
                 purchaseOrderAdapter.submitList(it.toMutableList())
-            })
+            }
         }
     }
 
@@ -121,9 +121,9 @@ class TransferListFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = transferReceiptListAdapter
             }
-            viewModel.transferReceiptHeader.observe(viewLifecycleOwner, {
+            viewModel.transferReceiptHeader.observe(viewLifecycleOwner) {
                 transferReceiptListAdapter.submitList(it.toMutableList())
-            })
+            }
         }
     }
 
@@ -135,10 +135,10 @@ class TransferListFragment :
                     LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = transferListAdapter
             }
-            viewModel.transferShipmentHeader.observe(viewLifecycleOwner, {
+            viewModel.transferShipmentHeader.observe(viewLifecycleOwner) {
                 transferListAdapter.submitList(it.toMutableList())
-            })
-            viewModel.transferViewState.observe(viewLifecycleOwner, {
+            }
+            viewModel.transferViewState.observe(viewLifecycleOwner) {
                 when (it) {
                     is TransferListViewModel.TransferListViewState.Error -> {
                         context?.showLongToast(it.message)
@@ -150,7 +150,7 @@ class TransferListFragment :
                         context?.showLongToast(getString(R.string.qty_alreadyscan_qty_fromline_error_mssg))
                     }
                 }
-            })
+            }
         }
     }
 
@@ -164,7 +164,7 @@ class TransferListFragment :
         val action =
             TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(
                 data.no,
-                SHIPMENT
+                SHIPMENT, null
             )
         view?.findNavController()?.navigate(action)
     }
@@ -178,7 +178,7 @@ class TransferListFragment :
         val action =
             TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(
                 data.no,
-                RECEIPT
+                RECEIPT, null
             )
         view?.findNavController()?.navigate(action)
     }
@@ -187,7 +187,7 @@ class TransferListFragment :
         val action =
             TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(
                 data.no,
-                PURCHASE
+                PURCHASE, data.vendorInvoiceNo
             )
         view?.findNavController()?.navigate(action)
     }
@@ -196,7 +196,7 @@ class TransferListFragment :
         val action =
             TransferListFragmentDirections.actionTransferListFragmentToTransferDetailFragment(
                 data.no,
-                INVENTORY
+                INVENTORY, null
             )
         view?.findNavController()?.navigate(action)
     }

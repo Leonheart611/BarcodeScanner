@@ -26,8 +26,8 @@ class TransferInputViewModel @Inject constructor(
     val sharedPreferences: SharedPreferences,
 ) : ViewModelBase(sharedPreferences) {
 
-    private val _transferInputViewState = MutableLiveData<TransferInputViewState>()
-    val transferInputViewState: LiveData<TransferInputViewState> by lazy { _transferInputViewState }
+    private val _transferInputViewState = MutableLiveData<Event<TransferInputViewState>>()
+    val transferInputViewState: LiveData<Event<TransferInputViewState>> by lazy { _transferInputViewState }
     private val _inputValidaton = MutableLiveData<InputValidation>()
     val inputValidation: LiveData<InputValidation> by lazy { _inputValidaton }
 
@@ -65,7 +65,7 @@ class TransferInputViewModel @Inject constructor(
                 transferShipmentRepository.getTransferInputHistory(no).collect {
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessGetHistoryValue(it)
+                            Event(TransferInputViewState.SuccessGetHistoryValue(it))
                     }
                 }
             }
@@ -78,7 +78,7 @@ class TransferInputViewModel @Inject constructor(
                 purchaseOrderRepository.getPurchaseInputDetail(no).collect {
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessGetPurchaseHistory(it)
+                            Event(TransferInputViewState.SuccessGetPurchaseHistory(it))
                     }
                 }
             }
@@ -91,7 +91,7 @@ class TransferInputViewModel @Inject constructor(
                 transferReceiptRepository.getTransferInputDetail(no).collect {
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessGetReceiptHistoryValue(it)
+                            Event(TransferInputViewState.SuccessGetReceiptHistoryValue(it))
                     }
                 }
             }
@@ -102,7 +102,7 @@ class TransferInputViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(true)
+                    Event(TransferInputViewState.LoadingSearchPickingList(true))
                 io {
                     if (id == 0) {
                         stockOpnameRepository.getStockOpnameDetailByBarcode(identifier, bincode)
@@ -110,7 +110,7 @@ class TransferInputViewModel @Inject constructor(
                                 ui {
                                     stockOpnameData = data
                                     _transferInputViewState.value =
-                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                        Event(TransferInputViewState.LoadingSearchPickingList(false))
                                 }
                             }
                     } else {
@@ -119,7 +119,7 @@ class TransferInputViewModel @Inject constructor(
                                 ui {
                                     stockOpnameData = data
                                     _transferInputViewState.value =
-                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                        Event(TransferInputViewState.LoadingSearchPickingList(false))
                                 }
                             }
                     }
@@ -129,9 +129,9 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(false)
+                    Event(TransferInputViewState.LoadingSearchPickingList(false))
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -140,7 +140,7 @@ class TransferInputViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(true)
+                    Event(TransferInputViewState.LoadingSearchPickingList(true))
                 io {
                     transferShipmentRepository.getTransferHeaderDetail(no).collect {
                         transferHeaderData = it
@@ -152,7 +152,7 @@ class TransferInputViewModel @Inject constructor(
                                 id.value = data.id!!
                                 _soundSuccess.value = Event(true)
                                 _transferInputViewState.value =
-                                    TransferInputViewState.LoadingSearchPickingList(false)
+                                    Event(TransferInputViewState.LoadingSearchPickingList(false))
                             }
                         }
                     } else {
@@ -163,7 +163,7 @@ class TransferInputViewModel @Inject constructor(
                                     id.value = data.id!!
                                     _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
-                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                        Event(TransferInputViewState.LoadingSearchPickingList(false))
                                 }
                             }
                     }
@@ -171,9 +171,9 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(false)
+                    Event(TransferInputViewState.LoadingSearchPickingList(false))
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -182,7 +182,7 @@ class TransferInputViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(true)
+                    Event(TransferInputViewState.LoadingSearchPickingList(true))
                 io {
                     inventoryRepository.getInventoryHeaderDetail(no)
                         .collect { inventoryPickHeader = it }
@@ -194,7 +194,7 @@ class TransferInputViewModel @Inject constructor(
                                 id.value = it.id!!
                                 _soundSuccess.value = Event(true)
                                 _transferInputViewState.value =
-                                    TransferInputViewState.LoadingSearchPickingList(false)
+                                    Event(TransferInputViewState.LoadingSearchPickingList(false))
                             }
                         }
                     } else {
@@ -205,16 +205,16 @@ class TransferInputViewModel @Inject constructor(
                                     id.value = it.id!!
                                     _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
-                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                        Event(TransferInputViewState.LoadingSearchPickingList(false))
                                 }
                             }
                     }
                 }
             } catch (e: Exception) {
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(false)
+                    Event(TransferInputViewState.LoadingSearchPickingList(false))
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -224,7 +224,7 @@ class TransferInputViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(true)
+                    Event(TransferInputViewState.LoadingSearchPickingList(true))
                 io {
                     transferReceiptRepository.getTransferHeaderDetail(no).collect {
                         transferReceiptHeader = it
@@ -237,7 +237,7 @@ class TransferInputViewModel @Inject constructor(
                                     id.value = data.id!!
                                     _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
-                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                        Event(TransferInputViewState.LoadingSearchPickingList(false))
                                 }
                             }
                     } else {
@@ -248,7 +248,7 @@ class TransferInputViewModel @Inject constructor(
                                     id.value = data.id!!
                                     _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
-                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                        Event(TransferInputViewState.LoadingSearchPickingList(false))
                                 }
                             }
                     }
@@ -256,9 +256,9 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(false)
+                    Event(TransferInputViewState.LoadingSearchPickingList(false))
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -267,7 +267,7 @@ class TransferInputViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(true)
+                    Event(TransferInputViewState.LoadingSearchPickingList(true))
                 io {
                     with(purchaseOrderRepository) {
                         getPurchaseOrderDetail(no).collect {
@@ -280,7 +280,7 @@ class TransferInputViewModel @Inject constructor(
                                     id.value = data.id!!
                                     _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
-                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                        Event(TransferInputViewState.LoadingSearchPickingList(false))
                                 }
                             }
                         } else {
@@ -290,7 +290,7 @@ class TransferInputViewModel @Inject constructor(
                                     id.value = data.id!!
                                     _soundSuccess.value = Event(true)
                                     _transferInputViewState.value =
-                                        TransferInputViewState.LoadingSearchPickingList(false)
+                                        Event(TransferInputViewState.LoadingSearchPickingList(false))
                                 }
                             }
                         }
@@ -299,9 +299,9 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.LoadingSearchPickingList(false)
+                    Event(TransferInputViewState.LoadingSearchPickingList(false))
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -327,7 +327,7 @@ class TransferInputViewModel @Inject constructor(
                             ).collect {
                                 ui {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.SuccessSaveData
+                                        Event(TransferInputViewState.SuccessSaveData)
                                 }
                             }
                         }
@@ -335,7 +335,7 @@ class TransferInputViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -360,19 +360,20 @@ class TransferInputViewModel @Inject constructor(
                             )
                         )
                         ui {
-                            _transferInputViewState.value = TransferInputViewState.SuccessSaveData
+                            _transferInputViewState.value =
+                                Event(TransferInputViewState.SuccessSaveData)
                         }
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
 
-    private fun insertPurchaseInput(qty: String, box: String) {
+    private fun insertPurchaseInput(qty: String, box: String, binCode: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -386,16 +387,17 @@ class TransferInputViewModel @Inject constructor(
                                     itemNo = line.no,
                                     userName = sharedPreferences.getUserName(),
                                     insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
-                                    box = box
+                                    box = box,
+                                    newBinCode = binCode
                                 )
                             )
                             ui {
                                 if (value) {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.SuccessSaveData
+                                        Event(TransferInputViewState.SuccessSaveData)
                                 } else {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan")
+                                        Event(TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan"))
                                 }
                             }
                         }
@@ -404,7 +406,7 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -431,10 +433,10 @@ class TransferInputViewModel @Inject constructor(
                             ui {
                                 if (value) {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.SuccessSaveData
+                                        Event(TransferInputViewState.SuccessSaveData)
                                 } else {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan")
+                                        Event(TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan"))
                                 }
                             }
                         }
@@ -443,7 +445,7 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -470,10 +472,10 @@ class TransferInputViewModel @Inject constructor(
                             ui {
                                 if (value) {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.SuccessSaveData
+                                        Event(TransferInputViewState.SuccessSaveData)
                                 } else {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan")
+                                        Event(TransferInputViewState.ErrorSaveData("QTY data melebihi batas yang di perbolehkan"))
                                 }
                             }
                         }
@@ -482,7 +484,7 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorGetData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -504,7 +506,7 @@ class TransferInputViewModel @Inject constructor(
             when (typesInput) {
                 SHIPMENT -> insertTransferShipmentInput(qty, box)
                 RECEIPT -> insertTransferReceiptInput(qty, box)
-                PURCHASE -> insertPurchaseInput(qty, box)
+                PURCHASE -> insertPurchaseInput(qty, box = box, binCode = bin)
                 STOCKOPNAME -> insertStockOpnameData(qty, box)
                 INVENTORY -> insertInventoryInput(qty, bin = bin, box = box)
             }
@@ -518,13 +520,13 @@ class TransferInputViewModel @Inject constructor(
                     transferShipmentRepository.deleteTransferInput(id)
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessDeleteData
+                            Event(TransferInputViewState.SuccessDeleteData)
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorDeleteData(e.localizedMessage))
             }
         }
     }
@@ -535,13 +537,14 @@ class TransferInputViewModel @Inject constructor(
                 io {
                     purchaseOrderRepository.updatePurchaseInputDataQty(id, newQty)
                     ui {
-                        _transferInputViewState.value = TransferInputViewState.SuccessUpdateData
+                        _transferInputViewState.value =
+                            Event(TransferInputViewState.SuccessUpdateData)
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorUpdateData(e.localizedMessage))
             }
         }
     }
@@ -553,13 +556,13 @@ class TransferInputViewModel @Inject constructor(
                     purchaseOrderRepository.deletePurchaseInputData(id)
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessDeleteData
+                            Event(TransferInputViewState.SuccessDeleteData)
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorDeleteData(e.localizedMessage))
             }
         }
     }
@@ -571,13 +574,13 @@ class TransferInputViewModel @Inject constructor(
                     transferReceiptRepository.deleteTransferInput(id)
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessDeleteData
+                            Event(TransferInputViewState.SuccessDeleteData)
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorDeleteData(e.localizedMessage))
             }
         }
     }
@@ -591,10 +594,10 @@ class TransferInputViewModel @Inject constructor(
                             ui {
                                 if (result) {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.SuccessUpdateData
+                                        Event(TransferInputViewState.SuccessUpdateData)
                                 } else {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.ErrorUpdateData("Qty has Reach maximum allowed, please change")
+                                        Event(TransferInputViewState.ErrorUpdateData("Qty has Reach maximum allowed, please change"))
                                 }
                             }
                         }
@@ -602,7 +605,7 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorUpdateData(e.localizedMessage))
             }
         }
     }
@@ -616,10 +619,10 @@ class TransferInputViewModel @Inject constructor(
                             ui {
                                 if (result) {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.SuccessUpdateData
+                                        Event( TransferInputViewState.SuccessUpdateData)
                                 } else {
                                     _transferInputViewState.value =
-                                        TransferInputViewState.ErrorUpdateData("Qty has Reach maximum allowed, please change")
+                                        Event(TransferInputViewState.ErrorUpdateData("Qty has Reach maximum allowed, please change"))
                                 }
                             }
                         }
@@ -627,7 +630,7 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorUpdateData(e.localizedMessage))
             }
         }
     }
@@ -638,7 +641,7 @@ class TransferInputViewModel @Inject constructor(
                 stockOpnameRepository.getInputStockOpnameDetail(id).collect {
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessGetStockInputHistory(it)
+                            Event(TransferInputViewState.SuccessGetStockInputHistory(it))
                     }
                 }
             }
@@ -651,13 +654,13 @@ class TransferInputViewModel @Inject constructor(
                 io {
                     stockOpnameRepository.updateInputStockOpnameQty(no, newQty)
                     ui {
-                        _transferInputViewState.value = TransferInputViewState.SuccessUpdateData
+                        _transferInputViewState.value = Event(TransferInputViewState.SuccessUpdateData)
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorUpdateData(e.localizedMessage))
             }
         }
     }
@@ -669,13 +672,13 @@ class TransferInputViewModel @Inject constructor(
                     stockOpnameRepository.deleteInputStockOpname(no)
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessDeleteData
+                            Event(TransferInputViewState.SuccessDeleteData)
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorDeleteData(e.localizedMessage))
             }
         }
     }
@@ -688,7 +691,7 @@ class TransferInputViewModel @Inject constructor(
                         if (it) {
                             ui {
                                 _transferInputViewState.value =
-                                    TransferInputViewState.SuccessUpdateData
+                                    Event(TransferInputViewState.SuccessUpdateData)
                             }
                         }
                     }
@@ -696,7 +699,7 @@ class TransferInputViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorUpdateData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorUpdateData(e.localizedMessage))
             }
         }
     }
@@ -707,7 +710,7 @@ class TransferInputViewModel @Inject constructor(
                 inventoryRepository.getInventoryInputDetail(id).collect {
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessGetInventoryInput(it)
+                            Event(TransferInputViewState.SuccessGetInventoryInput(it))
                     }
                 }
             }
@@ -721,13 +724,13 @@ class TransferInputViewModel @Inject constructor(
                     inventoryRepository.deleteInventoryInput(id)
                     ui {
                         _transferInputViewState.value =
-                            TransferInputViewState.SuccessDeleteData
+                            Event(TransferInputViewState.SuccessDeleteData)
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferInputViewState.ErrorDeleteData(e.localizedMessage)
+                    Event(TransferInputViewState.ErrorDeleteData(e.localizedMessage))
             }
         }
 
