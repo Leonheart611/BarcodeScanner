@@ -99,18 +99,18 @@ class ReceiptInputFragment : Fragment(),
         when (args.source) {
             Constant.RECEIPT_IMPORT -> {
                 viewModel.receiptImportRepository.getReceiptImportScanEntries(args.documentNo, 5)
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         historyImportAdapter.update(it.toMutableList())
-                    })
+                    }
             }
             Constant.RECEIPT_LOCAL -> {
                 viewModel.receiptLocalRepository.getReceiptLocalScanEntries(args.documentNo, 5)
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         historyLocalAdapter.update(it.toMutableList())
-                    })
+                    }
             }
         }
-        viewModel.receiptInputViewState.observe(viewLifecycleOwner, {
+        viewModel.receiptInputViewState.observe(viewLifecycleOwner) {
             when (it) {
                 is ReceiptInputViewModel.ReceiptInputViewState.SuccessGetImportLine -> {
                     checkDBImport(dataImport = it.data)
@@ -180,12 +180,12 @@ class ReceiptInputFragment : Fragment(),
                     activity?.showLoading(it.loading)
                 }
             }
-        })
+        }
     }
 
 
     private fun setupView() {
-        et_packingid.requestFocus()
+        et_trackingid.requestFocus()
         tv_receipt_detail_po.text = args.poNo
         switch_sn_scan_receipt.setOnCheckedChangeListener { _, b ->
             if (b)
@@ -237,7 +237,7 @@ class ReceiptInputFragment : Fragment(),
                 clearSnAndFocus()
             } else {
                 clearSN()
-                et_trackingid.requestFocus()
+                et_mac_address_receipt_input.requestFocus()
             }
         }
 
@@ -252,7 +252,7 @@ class ReceiptInputFragment : Fragment(),
                 clearSnAndFocus()
             } else {
                 clearSN()
-                et_trackingid.requestFocus()
+                et_mac_address_receipt_input.requestFocus()
             }
         }
     }
@@ -369,7 +369,7 @@ class ReceiptInputFragment : Fragment(),
                                     object : TimerTask() {
                                         override fun run() {
                                             this@ReceiptInputFragment.activity?.runOnUiThread {
-                                                et_mac_address_receipt_input.requestFocus()
+                                                et_packingid.requestFocus()
                                             }
                                         }
                                     }, DELAY
@@ -382,7 +382,7 @@ class ReceiptInputFragment : Fragment(),
                         if (switch_receipt_input.isChecked) {
                             if (et_trackingid.getTextLength() > 3) {
                                 if (et_trackingid.getTextAsString() == args.shipmentNo) {
-                                    et_mac_address_receipt_input.requestFocus()
+                                    et_packingid.requestFocus()
                                 } else {
                                     showErrorShippingDialog()
                                 }
@@ -481,8 +481,7 @@ class ReceiptInputFragment : Fragment(),
             }
             false
         }
-
-        //TODO: CHECK PO NO
+        
         et_po_no.addSetOnEditorClickListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 if (checkPONo(et_po_no.getTextAsString().checkFirstCharacter("K")).not()) {

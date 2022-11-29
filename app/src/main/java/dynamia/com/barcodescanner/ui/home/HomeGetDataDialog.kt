@@ -44,7 +44,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     }
 
     private fun setObserverable() {
-        viewModel.homeGetApiViewState.observe(viewLifecycleOwner, {
+        viewModel.homeGetApiViewState.observe(viewLifecycleOwner) {
             when (it) {
                 SuccessGetPickingList -> {
                     iv_status_picking.crossFade(animateDuration.toLong(), pb_picking_list)
@@ -114,7 +114,7 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
                     )
                 }
             }
-        })
+        }
     }
 
     private fun callAllApi() {

@@ -54,7 +54,7 @@ fun String.removeSpecialChart(char: String): String {
 }
 
 fun String.checkFirstCharacter(char: String): String {
-    return if (this[0].equals('k', true)) {
+    return if (this.isNotEmpty() &&this[0].equals('k', true)) {
         this.replaceFirst(char, "", true)
     } else {
         this

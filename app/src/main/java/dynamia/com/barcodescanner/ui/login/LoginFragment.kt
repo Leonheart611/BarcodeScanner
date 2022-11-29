@@ -86,15 +86,15 @@ class LoginFragment : Fragment() {
 	}
 	
 	private fun setObservable() {
-		viewModel.userRepository.getUserData().observe(viewLifecycleOwner, {
+		viewModel.userRepository.getUserData().observe(viewLifecycleOwner) {
 			it?.let {
 				et_server_host.setText(it.hostName)
 				tied_username.setText(it.username)
 				tied_password.setText(it.password)
 				et_employee.setText(it.employeeCode)
 			}
-		})
-		viewModel.modelState.observe(viewLifecycleOwner, {
+		}
+		viewModel.modelState.observe(viewLifecycleOwner) {
 			when (it) {
 				is Success -> {
 					findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
@@ -110,6 +110,6 @@ class LoginFragment : Fragment() {
 					findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
 				}
 			}
-		})
+		}
 	}
 }

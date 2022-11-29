@@ -35,7 +35,7 @@ class ReceiptMultipleLocalLineAdapter(
             with(itemView) {
                 tv_line_no.text = data.lineNo.toString()
                 tv_description.text = data.description
-                tv_description_2.text = data.type
+                tv_description_2.text = data.partNo
                 tv_outstanding.text =
                     "${data.alredyScanned}/${data.quantity}/${data.outstandingQuantity}"
                 setOnClickListener {
