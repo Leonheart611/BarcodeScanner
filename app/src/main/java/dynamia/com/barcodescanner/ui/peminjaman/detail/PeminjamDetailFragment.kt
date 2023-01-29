@@ -76,6 +76,7 @@ class PeminjamDetailFragment : Fragment(), PeminjamanDetailListAdapter.PeminjamO
 				viewModel.dorDetailList.observe(viewLifecycleOwner,
 					{ dorAdapter.submitList(it) })
 			}
+			else -> {}
 		}
 	}
 	
@@ -154,6 +155,7 @@ class PeminjamDetailFragment : Fragment(), PeminjamanDetailListAdapter.PeminjamO
 							true -> {
 								cb_check_s_true.isChecked = false
 							}
+							else -> {}
 						}
 					}
 					
@@ -162,6 +164,7 @@ class PeminjamDetailFragment : Fragment(), PeminjamanDetailListAdapter.PeminjamO
 							true -> {
 								cb_check_s_false.isChecked = false
 							}
+							else -> {}
 						}
 					}
 					
@@ -170,14 +173,14 @@ class PeminjamDetailFragment : Fragment(), PeminjamanDetailListAdapter.PeminjamO
 						val action = if (cb_check_s_true.isChecked) {
 							PeminjamDetailFragmentDirections.actionPeminjamDetailFragmentToReceivingFragment(
 								args.documentNo,
-								true,
-								args.inputType
+								validateS = true,
+								inputType = args.inputType
 							)
 						} else {
 							PeminjamDetailFragmentDirections.actionPeminjamDetailFragmentToReceivingFragment(
 								args.documentNo,
-								false,
-								args.inputType
+								validateS = false,
+								inputType = args.inputType
 							)
 						}
 						view?.findNavController()?.navigate(action)

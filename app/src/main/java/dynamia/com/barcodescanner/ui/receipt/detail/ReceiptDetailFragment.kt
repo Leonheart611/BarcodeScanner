@@ -59,16 +59,16 @@ class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImpo
                 }
                 adapterReceiptLocal.setonClickListener(this)
                 viewModel.receiptLocalRepository.getReceiptLocalHeader(args.documentNo)
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         nil_vendor_name.setText(it.buyFromVendorName)
                         nil_expected_receipt_date.setText(it.expectedReceiptDate.toNormalDate())
                         nil_project_code.setText(it.buyFromVendorNo)
                         receiptLocalHeader = it
-                    })
+                    }
                 viewModel.receiptLocalRepository.getAllReceiptLocalLine(args.documentNo)
-                    .observe(viewLifecycleOwner, { receiptListLines ->
+                    .observe(viewLifecycleOwner) { receiptListLines ->
                         adapterReceiptLocal.update(receiptListLines.toMutableList())
-                    })
+                    }
             }
             Constant.RECEIPT_IMPORT -> {
                 with(rv_receipt_line) {
@@ -78,19 +78,19 @@ class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImpo
                 }
                 adapterReceiptImport.setonclicklistener(this)
                 viewModel.receiptImportRepository.getReceiptImportHeader(args.documentNo)
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         nil_vendor_name.setText(it.buyFromVendorName)
                         nil_expected_receipt_date.setText(it.postingDate.toNormalDate())
                         nil_project_code.setTitle(getString(R.string.po_no_title))
                         nil_project_code.setText(it.purchaseOrderNo)
                         receiptImportHeader = it
-                    })
+                    }
                 viewModel.receiptImportRepository.getAllReceiptImportLine(args.documentNo)
-                    .observe(viewLifecycleOwner,
-                        { receiptImportLines ->
-                            adapterReceiptImport.update(receiptImportLines.toMutableList())
-                        })
-
+                    .observe(viewLifecycleOwner
+                    ) { receiptImportLines ->
+                        adapterReceiptImport.update(receiptImportLines.toMutableList())
+                    }
+    
             }
         }
     }
@@ -160,6 +160,7 @@ class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImpo
                             true -> {
                                 cb_check_s_true.isChecked = false
                             }
+                            else -> {}
                         }
                     }
 
@@ -168,6 +169,7 @@ class ReceiptDetailFragment : Fragment(), ReceiptImportLineAdapter.OnReceiptImpo
                             true -> {
                                 cb_check_s_false.isChecked = false
                             }
+                            else -> {}
                         }
                     }
 

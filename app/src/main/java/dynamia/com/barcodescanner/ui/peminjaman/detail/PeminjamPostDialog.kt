@@ -41,13 +41,14 @@ class PeminjamPostDialog : BottomSheetDialogFragment() {
 				tv_picking_post_title.text = getString(R.string.dor_picking_post_title)
 				viewModel.postDorDataNew()
 			}
+			else -> {}
 		}
 		setObseverable()
 		setClicklistener()
 	}
 	
 	fun setObseverable() {
-		viewModel.pickingPostViewState.observe(viewLifecycleOwner, {
+		viewModel.pickingPostViewState.observe(viewLifecycleOwner) {
 			when (it) {
 				PeminjamDetailViewModel.PostViewState.AllDataPosted -> {
 					iv_status_post_picking.crossFade(
@@ -78,7 +79,7 @@ class PeminjamPostDialog : BottomSheetDialogFragment() {
 					tv_picking_total_post.text = it.data.toString()
 				}
 			}
-		})
+		}
 	}
 	
 	fun setClicklistener() {
