@@ -163,6 +163,7 @@ class TransferHistoryBottomSheet : BottomSheetDialogFragment(),
                         viewBinding.includeHistory.etTranferinputQty.setText(this.quantity.toString())
                     }
                 }
+                else -> {}
             }
         })
     }

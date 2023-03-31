@@ -9,6 +9,7 @@ import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.repository.BinreclassRepository
 import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
+import dynamia.com.core.util.sendError
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -42,7 +43,10 @@ class BinReclassViewModel @Inject constructor(
 
                 }
             } catch (e: Exception) {
-                _viewState.value = Event(BinReclassInputState.OnFailedSave(e.localizedMessage))
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _viewState.value = Event(BinReclassInputState.OnFailedSave(it))
+                }
             }
         }
     }

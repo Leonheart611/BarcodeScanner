@@ -1,10 +1,11 @@
 package dynamia.com.barcodescanner.ui.stockopname.delete
 
 import androidx.lifecycle.*
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.core.data.repository.StockOpnameRepository
 import dynamia.com.core.util.io
-import kotlinx.coroutines.flow.collect
+import dynamia.com.core.util.sendError
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,7 +36,10 @@ class StockOpnameDeleteViewModel @Inject constructor(val stockOpnameRepository: 
                     }
                 }
             } catch (e: Exception) {
-                _deleteViewState.postValue(DeleteViewState.Error(e.localizedMessage))
+                FirebaseCrashlytics.getInstance().sendError(e)
+                e.localizedMessage?.let {
+                    _deleteViewState.postValue(DeleteViewState.Error(it))
+                }
             }
         }
     }

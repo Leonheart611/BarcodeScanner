@@ -2,6 +2,7 @@ package dynamia.com.barcodescanner.di
 
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,8 @@ abstract class ViewModelBase(
     var gson: Gson = GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
             .create()
+
+    val crashlytics = FirebaseCrashlytics.getInstance()
 
     fun getCompanyName(): String {
         return userRepository.getString(Constant.USERNAME_KEY, "") ?: ""

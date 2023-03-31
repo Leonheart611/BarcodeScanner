@@ -13,7 +13,7 @@ import dynamia.com.core.data.repository.TransferReceiptRepository
 import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.domain.ResultWrapper
 import dynamia.com.core.util.io
-import kotlinx.coroutines.flow.collect
+import dynamia.com.core.util.sendError
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -74,13 +74,17 @@ class TransferListViewModel @Inject constructor(
                                 }
                                 _viewState.postValue(TransferListViewState.SuccessUpdateData)
                             }
+                            else -> {}
                         }
                     }
                 }
             }
         } catch (e: Exception) {
+            crashlytics.sendError(e)
             _viewState.postValue(TransferListViewState.ShowLoading(false))
-            _viewState.postValue(TransferListViewState.Error(e.localizedMessage))
+            e.localizedMessage?.let {
+                _viewState.postValue(TransferListViewState.Error(it))
+            }
         }
     }
 

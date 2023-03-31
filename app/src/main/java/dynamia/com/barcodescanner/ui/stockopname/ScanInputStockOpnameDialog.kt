@@ -33,7 +33,7 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
     private lateinit var _viewBinding: ItemStockopnameInputBinding
     val viewBinding by lazy { _viewBinding }
     private var mpFail: MediaPlayer? = null
-    private var mpSuccess: MediaPlayer? = null
+    //private var mpSuccess: MediaPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +49,7 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
         dialog?.setCanceledOnTouchOutside(false)
         dialog?.setCancelable(false)
         mpFail = MediaPlayer.create(context, R.raw.error)
-        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
+        //mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         setupView()
         setObserverable()
     }
@@ -101,7 +101,7 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
     }
 
     private fun setObserverable() {
-        viewModel.transferInputViewState.observe(viewLifecycleOwner, {
+        viewModel.transferInputViewState.observe(viewLifecycleOwner) {
             when (it) {
                 is TransferDetailViewModel.TransferDetailInputViewState.ErrorGetData -> {
                     mpFail?.start()
@@ -120,11 +120,11 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
                         etTransferInputBarcode.text?.clear()
                         etTransferInputBarcode.requestFocus()
                         context?.showLongToast("Success Save Data")
-                        mpSuccess?.start()
+                        //mpSuccess?.start()
                     }
                 }
             }
-        })
+        }
     }
 
     private fun showDialog(
@@ -155,13 +155,13 @@ class ScanInputStockOpnameDialog : BottomSheetDialogFragment() {
     override fun onStop() {
         super.onStop()
         mpFail?.release()
-        mpSuccess?.release()
+       // mpSuccess?.release()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mpFail?.release()
-        mpSuccess?.release()
+       // mpSuccess?.release()
     }
 
 

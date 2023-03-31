@@ -8,8 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.repository.StockOpnameRepository
 import dynamia.com.core.util.io
+import dynamia.com.core.util.sendError
 import dynamia.com.core.util.ui
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,7 +41,8 @@ class StockOpnameViewModel @Inject constructor(
                             ui {
                                 _stockOpnameViewState.value =
                                     StockOpnameViewState.GetSuccessfullyPostedData(
-                                        dataPosted)
+                                        dataPosted
+                                    )
                             }
                             data.postSuccess()
                             repository.updateInputStockOpname(data)
@@ -52,8 +53,10 @@ class StockOpnameViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _stockOpnameViewState.value =
-                    StockOpnameViewState.ErrorPostData(e.localizedMessage)
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _stockOpnameViewState.postValue(StockOpnameViewState.ErrorPostData(it))
+                }
             }
         }
     }

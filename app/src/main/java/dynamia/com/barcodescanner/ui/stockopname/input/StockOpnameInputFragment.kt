@@ -26,7 +26,7 @@ class StockOpnameInputFragment :
     var activity: MainActivity? = null
     private val args: StockOpnameInputFragmentArgs by navArgs()
     private var mpFail: MediaPlayer? = null
-    private var mpSuccess: MediaPlayer? = null
+    //private var mpSuccess: MediaPlayer? = null
 
     companion object {
         fun newInstance() = StockOpnameInputFragment()
@@ -37,7 +37,7 @@ class StockOpnameInputFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mpFail = MediaPlayer.create(context, R.raw.error)
-        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
+        //mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         activity = requireActivity() as MainActivity
         setupView()
         setupListener()
@@ -91,7 +91,7 @@ class StockOpnameInputFragment :
             tilTransferinputName.editText?.setText(data.itemNo)
             etTransferinputBincode.setText(data.binCode)
         }
-        mpSuccess?.start()
+        //mpSuccess?.start()
     }
 
     private fun setupListener() {
@@ -128,7 +128,7 @@ class StockOpnameInputFragment :
 
     private fun setupObserverable() {
         with(viewModel) {
-            viewState.observe(viewLifecycleOwner, {
+            viewState.observe(viewLifecycleOwner) {
                 when (it) {
                     is StockOpnameInputViewModel.StockOpnameViewState.Error -> {
                         context?.showLongToast(it.message)
@@ -144,8 +144,8 @@ class StockOpnameInputFragment :
                         context?.showLongToast("Success Save Data")
                     }
                 }
-            })
-            inputValidation.observe(viewLifecycleOwner, {
+            }
+            inputValidation.observe(viewLifecycleOwner) {
                 when (it) {
                     StockOpnameInputViewModel.InputValidation.BarcodeEmpty -> {
                         viewBinding.includeTransferInput.tilTransferinputBarcode.error =
@@ -156,10 +156,10 @@ class StockOpnameInputFragment :
                             "Must Fill this Field"
                     }
                 }
-            })
-            stockOpnameResultQty.observe(viewLifecycleOwner, {
+            }
+            stockOpnameResultQty.observe(viewLifecycleOwner) {
                 viewBinding.includeTransferInput.tvTransferQty.text = "$it"
-            })
+            }
         }
     }
 
@@ -179,13 +179,13 @@ class StockOpnameInputFragment :
     override fun onStop() {
         super.onStop()
         mpFail?.release()
-        mpSuccess?.release()
+        //mpSuccess?.release()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mpFail?.release()
-        mpSuccess?.release()
+        //mpSuccess?.release()
     }
 
 

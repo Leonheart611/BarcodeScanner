@@ -12,7 +12,6 @@ import dynamia.com.core.util.Event
 import dynamia.com.core.util.io
 import dynamia.com.core.util.ui
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,8 +50,9 @@ class CheckLoginViewModel @Inject constructor(private val transferShipmentReposi
                     }
                 }
             } catch (e: Exception) {
-                _loginViewState.postValue(Event(LoginViewState.LoginFailed(e.localizedMessage)))
-
+                e.localizedMessage?.let {
+                    _loginViewState.postValue(Event(LoginViewState.LoginFailed(it)))
+                }
             }
         }
     }

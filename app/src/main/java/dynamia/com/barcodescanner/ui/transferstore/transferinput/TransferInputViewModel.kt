@@ -450,7 +450,7 @@ class TransferInputViewModel @Inject constructor(
         }
     }
 
-    private fun insertTransferReceiptInput(qty: String, box: String) {
+    private fun insertTransferReceiptInput(qty: String, box: String, bin: String) {
         viewModelScope.launch {
             try {
                 io {
@@ -466,7 +466,8 @@ class TransferInputViewModel @Inject constructor(
                                     transferToBinCode = header.transferToCode,
                                     userName = sharedPreferences.getUserName(),
                                     insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
-                                    box = box
+                                    box = box,
+                                    newBinCode = bin
                                 )
                             )
                             ui {
@@ -505,7 +506,7 @@ class TransferInputViewModel @Inject constructor(
         if (barcode.isNotEmpty() && qty.isNotEmpty()) {
             when (typesInput) {
                 SHIPMENT -> insertTransferShipmentInput(qty, box)
-                RECEIPT -> insertTransferReceiptInput(qty, box)
+                RECEIPT -> insertTransferReceiptInput(qty, box, bin = bin)
                 PURCHASE -> insertPurchaseInput(qty, box = box, binCode = bin)
                 STOCKOPNAME -> insertStockOpnameData(qty, box)
                 INVENTORY -> insertInventoryInput(qty, bin = bin, box = box)

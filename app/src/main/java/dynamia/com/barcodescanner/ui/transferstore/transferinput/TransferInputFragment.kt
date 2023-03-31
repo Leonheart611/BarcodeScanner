@@ -19,8 +19,8 @@ import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.InventoryPickLine
 import dynamia.com.core.data.entinty.PurchaseOrderLine
 import dynamia.com.core.data.entinty.TransferShipmentLine
-import dynamia.com.core.util.*
-import java.util.*
+import dynamia.com.core.util.EventObserver
+import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
 class TransferInputFragment :
@@ -29,12 +29,12 @@ class TransferInputFragment :
     private val args: TransferInputFragmentArgs by navArgs()
     var activity: MainActivity? = null
     private var mpFail: MediaPlayer? = null
-    private var mpSuccess: MediaPlayer? = null
+    //private var mpSuccess: MediaPlayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mpFail = MediaPlayer.create(context, R.raw.error)
-        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
+        //mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         setupView()
         activity = requireActivity() as MainActivity
         setupListener()
@@ -59,6 +59,7 @@ class TransferInputFragment :
                         context?.showLongToast("Success Save Data")
                         viewBinding.includeTransferInput.etTranferinputQty.text?.clear()
                     }
+                    else -> {}
                 }
             })
 
@@ -83,10 +84,11 @@ class TransferInputFragment :
                     )
                 }
                 INVENTORY -> inventoryLine.observe(viewLifecycleOwner) { showSuccessInventoryData(it) }
+                else -> {}
             }
 
             soundSuccess.observe(viewLifecycleOwner, EventObserver {
-                if (it) mpSuccess?.start()
+                //if (it) mpSuccess?.start()
             })
         }
     }
@@ -107,6 +109,7 @@ class TransferInputFragment :
             when (args.transferType) {
                 SHIPMENT -> tvTransferQty.text = "${data.alredyScanned}/${data.quantity}"
                 RECEIPT -> tvTransferQty.text = "${data.alreadyScanedReceipt}/${data.qtyInTransit}"
+                else -> {}
             }
         }
     }
@@ -139,6 +142,7 @@ class TransferInputFragment :
             if (args.stockId != 0) {
                 when (args.transferType) {
                     PURCHASE -> viewModel.getPurchaseLineValue(args.transferNo, "", args.stockId)
+                    else -> {}
                 }
             }
             includeTransferInput.etTransferInputBarcode.setOnEditorActionListener { _, keyCode, event ->
@@ -173,7 +177,7 @@ class TransferInputFragment :
                 INVENTORY -> getString(R.string.inventory_pick_title)
             }
             includeTransferInput.tilTransferBincode.isVisible =
-                (args.transferType == STOCKOPNAME || args.transferType == INVENTORY || args.transferType == PURCHASE)
+                (args.transferType == STOCKOPNAME || args.transferType == INVENTORY || args.transferType == PURCHASE || args.transferType == RECEIPT)
             includeTransferInput.tilInputBox.isVisible = when (args.transferType) {
                 INVENTORY -> true
                 STOCKOPNAME -> false
@@ -249,12 +253,12 @@ class TransferInputFragment :
     override fun onStop() {
         super.onStop()
         mpFail?.release()
-        mpSuccess?.release()
+        //mpSuccess?.release()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mpFail?.release()
-        mpSuccess?.release()
+        //mpSuccess?.release()
     }
 }

@@ -66,6 +66,7 @@ class TransferListFragment :
             RECEIPT -> setReceiptView()
             PURCHASE -> setPurchaseView()
             INVENTORY -> setInventoryView()
+            else -> {}
         }
         viewBinding.rvPickinglist.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -171,7 +172,7 @@ class TransferListFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        viewBinding.rvPickinglist?.adapter = null
+        viewBinding.rvPickinglist.adapter = null
     }
 
     override fun clickListener(data: TransferReceiptHeader) {

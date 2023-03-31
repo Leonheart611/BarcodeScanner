@@ -2,17 +2,11 @@ package dynamia.com.barcodescanner.ui.login
 
 import android.content.SharedPreferences
 import androidx.lifecycle.*
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dynamia.com.barcodescanner.ui.home.HomeViewModel
 import dynamia.com.core.data.entinty.UserData
-import dynamia.com.core.data.repository.TransferShipmentRepository
 import dynamia.com.core.data.repository.UserRepository
-import dynamia.com.core.domain.ResultWrapper
-import dynamia.com.core.util.Constant
-import dynamia.com.core.util.Event
-import dynamia.com.core.util.io
-import dynamia.com.core.util.ui
-import kotlinx.coroutines.flow.collect
+import dynamia.com.core.util.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -53,7 +47,10 @@ class LoginViewModel @Inject constructor(
                         ui { _modelState.value = Event(LoginState.Success("Success Save Data")) }
                 }
             } catch (e: Exception) {
-                ui { _modelState.value = Event(LoginState.Error(e.localizedMessage)) }
+                FirebaseCrashlytics.getInstance().sendError(e)
+                e.localizedMessage?.let {
+                    _modelState.postValue(Event(LoginState.Error(it)))
+                }
             }
 
         }
@@ -77,6 +74,7 @@ class LoginViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().sendError(e)
                 _modelState.value = Event(LoginState.UserhasLogin(null))
             }
         }

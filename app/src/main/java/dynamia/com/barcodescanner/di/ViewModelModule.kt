@@ -1,7 +1,5 @@
 package dynamia.com.barcodescanner.di
 
-import android.content.SharedPreferences
-import com.netcosports.ntlm.NTLMAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,17 +7,6 @@ import dagger.hilt.android.components.ViewModelComponent
 import dynamia.com.core.data.dao.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.MasariAPI
-import dynamia.com.core.util.getBaseUrl
-import dynamia.com.core.util.getDomain
-import dynamia.com.core.util.getPassword
-import dynamia.com.core.util.getUserName
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 
 @Module

@@ -56,26 +56,26 @@ class BinReclassFragment :
             }
         })
         viewModel.binreclassRepository.getAllBinReclassHeader()
-            .observe(viewLifecycleOwner, {
+            .observe(viewLifecycleOwner) {
                 binReclassAdapter.updateData(it.toMutableList())
-            })
+            }
     }
 
     private val spinerFilterSelectListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             when (position) {
                 0 -> viewModel.binreclassRepository.getAllBinReclassHeader()
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         binReclassAdapter.updateData(it.toMutableList())
-                    })
+                    }
                 1 -> viewModel.binreclassRepository.getALlSycn(false)
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         binReclassAdapter.updateData(it.toMutableList())
-                    })
+                    }
                 2 -> viewModel.binreclassRepository.getALlSycn(true)
-                    .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner) {
                         binReclassAdapter.updateData(it.toMutableList())
-                    })
+                    }
             }
         }
 

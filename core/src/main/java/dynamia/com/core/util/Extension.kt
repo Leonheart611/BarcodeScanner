@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,7 +52,7 @@ fun getDocumentCode(): String {
     return "${date.format(Date())}${time.format(Date())}"
 }
 
-fun getNormalDate():String{
+fun getNormalDate(): String {
     val sdf = SimpleDateFormat("dd-MM-yyyy")
     return sdf.format(Date())
 }
@@ -118,4 +119,8 @@ fun SharedPreferences.getDomain(): String {
 
 fun SharedPreferences.getBaseUrl(): String {
     return this.getString(Constant.BASEURL_KEY, "") ?: ""
+}
+
+fun FirebaseCrashlytics.sendError(e: Exception) {
+    recordException(e)
 }

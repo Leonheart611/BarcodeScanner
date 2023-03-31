@@ -9,8 +9,8 @@ import dynamia.com.barcodescanner.di.ViewModelBase
 import dynamia.com.core.data.entinty.StockCheckingData
 import dynamia.com.core.data.repository.StockOpnameRepository
 import dynamia.com.core.domain.ResultWrapper
+import dynamia.com.core.util.sendError
 import dynamia.com.core.util.ui
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,11 +51,15 @@ class CheckStockViewModel @Inject constructor(
                                 )
 
                             }
+                            else -> {}
                         }
                     }
             } catch (e: Exception) {
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _checkStockVS.postValue(CheckStockViewState.Error(it))
+                }
                 _checkStockVS.value = CheckStockViewState.Loading(false)
-                _checkStockVS.postValue(CheckStockViewState.Error(e.localizedMessage))
             }
         }
     }

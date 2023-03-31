@@ -36,7 +36,7 @@ class LoginFragment :
     }
 
     private fun initview() {
-        /* if (BuildConfig.BUILD_TYPE == "debug") {
+         /*if (BuildConfig.BUILD_TYPE == "debug") {
              with(viewBinding) {
                  etServerHost.setText(getString(R.string.server_host_name))
                  tiedUsername.setText(getString(R.string.user_name))

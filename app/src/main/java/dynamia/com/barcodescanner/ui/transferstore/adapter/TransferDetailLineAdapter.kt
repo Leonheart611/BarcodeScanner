@@ -49,6 +49,7 @@ class TransferDetailLineAdapter() :
             when (transferType) {
                 SHIPMENT -> holder.bindShipment(it)
                 RECEIPT -> holder.bindReceipt(it)
+                else -> {}
             }
         }
     }

@@ -40,13 +40,14 @@ class PickingPostDialog : BottomSheetDialogFragment() {
             RECEIPT -> viewModel.postReceiptData()
             PURCHASE -> viewModel.postPurchaseData()
             INVENTORY -> viewModel.postInventoryData()
+            else -> {}
         }
         setObseverable()
         setClicklistener()
     }
 
     private fun setObseverable() {
-        viewModel.pickingPostViewState.observe(viewLifecycleOwner, {
+        viewModel.pickingPostViewState.observe(viewLifecycleOwner) {
             when (it) {
                 is TransferDetailViewModel.PickingDetailPostViewState.GetUnpostedData -> {
                     viewBinding.tvTransferTotalUnposted.text = it.data.toString()
@@ -79,7 +80,7 @@ class PickingPostDialog : BottomSheetDialogFragment() {
                     viewBinding.btnDismisPickingPost.isEnabled = true
                 }
             }
-        })
+        }
     }
 
     private fun setClicklistener() {

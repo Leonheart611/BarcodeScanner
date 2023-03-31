@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.di.ViewModelBase
@@ -338,9 +339,11 @@ class TransferDetailViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                e.stackTrace
-                _transferInputViewState.value =
-                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+
+                e.localizedMessage?.let {
+                    _transferInputViewState.postValue(TransferDetailInputViewState.ErrorGetData(it))
+                }
+
             }
         }
     }
@@ -455,13 +458,14 @@ class TransferDetailViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.stackTrace
-                _transferInputViewState.value =
-                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+                e.localizedMessage?.let {
+                    _transferInputViewState.postValue(TransferDetailInputViewState.ErrorGetData(it))
+                }
             }
         }
     }
 
-    private fun insertPurchaseInput(qty: String, box: String , binCode: String) {
+    private fun insertPurchaseInput(qty: String, box: String, binCode: String) {
         viewModelScope.launch {
             try {
                 io {

@@ -65,6 +65,7 @@ class TransferDetailFragment :
             RECEIPT -> setupReceiptView()
             PURCHASE -> setupPurchaseView()
             INVENTORY -> setInventoryView()
+            else -> {}
         }
         setupListener()
         setObseverable()
@@ -148,6 +149,7 @@ class TransferDetailFragment :
                     inventoryLineAdapter.submitList(it)
                 }
             }
+            else -> {}
         }
         viewModel.transferListViewState.observe(viewLifecycleOwner) {
             when (it) {

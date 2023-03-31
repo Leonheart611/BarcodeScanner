@@ -13,11 +13,7 @@ import dynamia.com.barcodescanner.ui.home.HomeViewModel.HomeGetApiViewState.*
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.ResultWrapper.*
-import dynamia.com.core.util.Constant
-import dynamia.com.core.util.Event
-import dynamia.com.core.util.io
-import dynamia.com.core.util.ui
-import kotlinx.coroutines.flow.collect
+import dynamia.com.core.util.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -64,8 +60,10 @@ class HomeViewModel @Inject constructor(
 
                 }
             } catch (e: Exception) {
-                _homeViewState.value = Event(HomeViewState.Error(e.localizedMessage))
-                Log.e("clearAllDb", e.localizedMessage)
+                e.localizedMessage?.let {
+                    _homeViewState.value = Event(HomeViewState.Error(it))
+                }
+                crashlytics.sendError(e)
             }
         }
 
@@ -110,6 +108,7 @@ class HomeViewModel @Inject constructor(
                                     _homeGetApiViewState.postValue(Event(FailedGetShippingData("Error Network")))
 
                                 }
+                                else -> {}
                             }
                         }
                     transferShipmentRepository.getTransferShipmentLineAsync().collect { data ->
@@ -128,14 +127,18 @@ class HomeViewModel @Inject constructor(
                             is NetworkError -> {
                                 _homeGetApiViewState.postValue(Event(FailedGetShippingData(data.error)))
                             }
+                            else -> {}
                         }
                     }
                 }
                 ui { _homeGetApiViewState.value = Event(SuccessGetShipingData) }
             } catch (e: Exception) {
+                crashlytics.sendError(e)
                 progress += 10
                 homeGetDataCount.postValue(Event(progress))
-                _homeGetApiViewState.value = Event(FailedGetShippingData(e.localizedMessage))
+                e.localizedMessage?.let {
+                    _homeGetApiViewState.postValue(Event(FailedGetShippingData(it)))
+                }
             }
         }
     }
@@ -185,6 +188,7 @@ class HomeViewModel @Inject constructor(
                                         insertPurchaseOrderHeader(it)
                                     }
                                 }
+                                else -> {}
                             }
                         }
                         getPurchaseOrderLineAsync().collect { value ->
@@ -211,13 +215,16 @@ class HomeViewModel @Inject constructor(
                                         _homeGetApiViewState.value = Event(SuccessGetPurchaseData)
                                     }
                                 }
+                                else -> {}
                             }
                         }
                     }
                 }
             } catch (e: Exception) {
-                _homeGetApiViewState.value =
-                    Event(FailedGetPurchase(e.localizedMessage))
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homeGetApiViewState.postValue(Event(FailedGetPurchase(it)))
+                }
             }
         }
     }
@@ -257,8 +264,11 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _homeGetApiViewState.value =
-                    Event(FailedGetReceipt(e.localizedMessage))
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homeGetApiViewState.value = Event(FailedGetReceipt(it))
+                }
+
             }
         }
     }
@@ -296,8 +306,10 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _homeGetApiViewState.value =
-                    Event(FailedGetStockOpname(e.localizedMessage))
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homeGetApiViewState.value = Event(FailedGetStockOpname(it))
+                }
             }
         }
     }
@@ -354,8 +366,10 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _homeGetApiViewState.value =
-                    Event(FailedGetInventory(e.localizedMessage))
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homeGetApiViewState.value = Event(FailedGetInventory(it))
+                }
             }
         }
     }
@@ -416,8 +430,10 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _homePostViewState.value =
-                    HomePostViewState.ErrorPostTransferShipment(e.localizedMessage)
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homePostViewState.value = HomePostViewState.ErrorPostTransferShipment(it)
+                }
             }
         }
     }
@@ -455,8 +471,11 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _homePostViewState.value =
-                    HomePostViewState.ErrorPostTransferReceipt(e.localizedMessage)
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homePostViewState.value =
+                        HomePostViewState.ErrorPostTransferReceipt(it)
+                }
             }
         }
     }
@@ -491,7 +510,10 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _homePostViewState.value = HomePostViewState.ErrorPostPurchase(e.localizedMessage)
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homePostViewState.value = HomePostViewState.ErrorPostPurchase(it)
+                }
             }
         }
     }
@@ -523,7 +545,10 @@ class HomeViewModel @Inject constructor(
                     ui { _homePostViewState.value = HomePostViewState.SuccessPostallStock }
                 }
             } catch (e: Exception) {
-                _homePostViewState.value = HomePostViewState.ErrorPostStock(e.localizedMessage)
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homePostViewState.value = HomePostViewState.ErrorPostStock(it)
+                }
             }
         }
     }
@@ -564,7 +589,10 @@ class HomeViewModel @Inject constructor(
                     ui { _homePostViewState.value = HomePostViewState.SuccessPostallBinReclass }
                 }
             } catch (e: Exception) {
-                _homePostViewState.value = HomePostViewState.ErrorPostBinReclass(e.localizedMessage)
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _homePostViewState.value = HomePostViewState.ErrorPostBinReclass(it)
+                }
             }
         }
     }
@@ -602,8 +630,10 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _inventoryPostViewState.value =
-                    InventoryPostViewState.ErrorPost(e.localizedMessage)
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _inventoryPostViewState.value = InventoryPostViewState.ErrorPost(it)
+                }
             }
         }
     }

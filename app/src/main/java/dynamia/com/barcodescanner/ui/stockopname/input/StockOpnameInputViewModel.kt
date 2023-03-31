@@ -12,7 +12,6 @@ import dynamia.com.core.data.entinty.StockOpnameData
 import dynamia.com.core.data.entinty.StockOpnameInputData
 import dynamia.com.core.data.repository.StockOpnameRepository
 import dynamia.com.core.util.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -78,13 +77,14 @@ class StockOpnameInputViewModel @Inject constructor(
                                 }
                             }
                     }
-
-
                 }
             } catch (e: Exception) {
-                e.stackTrace
+                crashlytics.sendError(e)
                 _viewState.value = StockOpnameViewState.Loading(false)
-                _viewState.value = StockOpnameViewState.Error(e.localizedMessage)
+                e.localizedMessage?.let {
+                    _viewState.value = StockOpnameViewState.Error(it)
+                }
+
             }
         }
     }
@@ -114,8 +114,10 @@ class StockOpnameInputViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                e.stackTrace
-                _viewState.postValue(StockOpnameViewState.Error(e.localizedMessage))
+                crashlytics.sendError(e)
+                e.localizedMessage?.let {
+                    _viewState.postValue(StockOpnameViewState.Error(it))
+                }
             }
         }
     }
