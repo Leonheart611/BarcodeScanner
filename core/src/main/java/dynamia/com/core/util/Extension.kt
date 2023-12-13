@@ -124,3 +124,23 @@ fun SharedPreferences.getBaseUrl(): String {
 fun FirebaseCrashlytics.sendError(e: Exception) {
     recordException(e)
 }
+
+fun Int?.ifCounterIsNull(): Int {
+    this?.let {
+        return if (this <= 0) 0
+        else this
+    } ?: kotlin.run { return 0 }
+}
+
+fun String?.addConcatQuery(): String {
+    return if (this.isNullOrBlank()) ""
+    else "$this%"
+}
+
+fun String.toReceiptHeaderFilter():String{
+    return "contains(Transfer_to_Code, '${this.split("-").last()}')"
+}
+
+fun String.toTransferShipmentFilter():String{
+    return "contains(Transfer_from_Code, '${this.split("-").last()}')"
+}

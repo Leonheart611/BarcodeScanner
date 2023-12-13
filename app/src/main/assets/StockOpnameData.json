@@ -70,6 +70,48 @@
       "ItemIdentifier": "SCM1700000004",
       "Location_Code": "",
       "Bin_Code": ""
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O0VHWUwzcy9aeUlyZ1htUTJZSGlKWW9zR05wOFY4dnFDUGpGVjd2RFdGc0k9MTswMDsn\"",
+      "Journal_Template_Name": "TRANSFER",
+      "Journal_Batch_Name": "DEFAULT",
+      "Line_No": 30000,
+      "Document_No": "23072021063020",
+      "Item_Ref_No": "123456789",
+      "Item_No": "1234567899",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Qty_Calculated": 0,
+      "ItemIdentifier": "SCM1700000004",
+      "Location_Code": "",
+      "Bin_Code": ""
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O0VHWUwzcy9aeUlyZ1htUTJZSGlKWW9zR05wOFY4dnFDUGpGVjd2RFdGc0k9MTswMDsn\"",
+      "Journal_Template_Name": "TRANSFER",
+      "Journal_Batch_Name": "DEFAULT",
+      "Line_No": 30000,
+      "Document_No": "23072021063020",
+      "Item_Ref_No": "1000001-001-LGREF",
+      "Item_No": "1234567889",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Qty_Calculated": 0,
+      "ItemIdentifier": "SCM1700000004",
+      "Location_Code": "",
+      "Bin_Code": ""
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O0VHWUwzcy9aeUlyZ1htUTJZSGlKWW9zR05wOFY4dnFDUGpGVjd2RFdGc0k9MTswMDsn\"",
+      "Journal_Template_Name": "TRANSFER",
+      "Journal_Batch_Name": "DEFAULT",
+      "Line_No": 30000,
+      "Document_No": "23072021063020",
+      "Item_Ref_No": "1000001-001-LGREF",
+      "Item_No": "1123456789",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Qty_Calculated": 0,
+      "ItemIdentifier": "SCM1700000004",
+      "Location_Code": "",
+      "Bin_Code": ""
     }
   ]
 }

@@ -3,7 +3,7 @@ package dynamia.com.barcodescanner.ui.stockopname.input
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.BuildConfig
@@ -29,9 +29,7 @@ class StockOpnameInputViewModel @Inject constructor(
 
     private val stockId = MutableLiveData<Int>()
 
-    val stockOpnameResultQty: LiveData<Int> = Transformations.switchMap(stockId) {
-        repository.getCountQtyInput(it)
-    }
+    val stockOpnameResultQty: LiveData<Int> = stockId.switchMap { repository.getCountQtyInput(it) }
 
 
     fun getStockOpnameValue(identifier: String, id: Int, bincode: String) {

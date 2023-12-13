@@ -69,9 +69,8 @@ class StockOpnameFragment :
                     R.id.stock_opname_history -> {
                         val action =
                             StockOpnameFragmentDirections.actionStockOpnameFragmentToHistoryInputFragment(
-                                showAll = true,
                                 historyType = HistoryType.STOCKOPNAME,
-                                documentNo = null, lineNo = 0
+                                documentNo = null
                             )
                         view?.findNavController()?.navigate(action)
                         true

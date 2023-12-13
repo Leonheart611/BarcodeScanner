@@ -50,7 +50,6 @@ class CheckLoginBottomSheet : BottomSheetDialogFragment() {
                 CheckLoginViewModel.LoginViewState.LoginSuccess -> {
                     activityViewModel.setCheckLoginUser(true)
                     dismiss()
-
                 }
             }
         })

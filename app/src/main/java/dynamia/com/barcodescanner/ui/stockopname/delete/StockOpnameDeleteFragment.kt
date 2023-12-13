@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,6 +32,9 @@ class StockOpnameDeleteFragment :
 
     fun setupView() {
         with(viewBinding) {
+            tbStockopnameDelete.setNavigationOnClickListener {
+                view?.findNavController()?.popBackStack()
+            }
             fabDeleteAllBox.hide()
             etBoxSearch.doOnTextChanged { text, _, _, count ->
                 if (count != 0) {
@@ -41,7 +45,7 @@ class StockOpnameDeleteFragment :
                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             rvStockopnameInput.adapter = stockOpnameAdapter
 
-            viewModel.stockOpnameInputValue.observe(viewLifecycleOwner, { data ->
+            viewModel.stockOpnameInputValue.observe(viewLifecycleOwner) { data ->
                 stockOpnameAdapter.submitList(data)
                 if (data.isNotEmpty()) {
                     tvBoxCount.text = getString(
@@ -57,17 +61,18 @@ class StockOpnameDeleteFragment :
                     fabDeleteAllBox.hide()
                 }
 
-            })
-            viewModel.deleteViewState.observe(viewLifecycleOwner, {
+            }
+            viewModel.deleteViewState.observe(viewLifecycleOwner) {
                 when (it) {
                     is StockOpnameDeleteViewModel.DeleteViewState.Error -> {
                         context?.showLongToast(it.message)
                     }
+
                     StockOpnameDeleteViewModel.DeleteViewState.Success -> {
                         context?.showLongToast("Success Delete All Data")
                     }
                 }
-            })
+            }
 
             fabDeleteAllBox.setOnClickListener {
                 showDialog(warningMessage = getString(R.string.stock_opname_box_delete_warning)) {

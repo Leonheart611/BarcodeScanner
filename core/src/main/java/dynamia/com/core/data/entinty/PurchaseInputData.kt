@@ -24,6 +24,8 @@ class PurchaseInputData(
     @SerializedName("User_Name") @Expose(serialize = true) val userName: String,
     @SerializedName("Insert_DateTime") @Expose(serialize = true) val insertDateTime: String,
     @SerializedName("Box") @Expose(serialize = true) val box: String = "",
+    @SerializedName("Accidental_Scanned") @Expose(serialize = true) var accidentalScanned: Boolean = false,
+    @SerializedName("Item_Identifier") @Expose(serialize = true) var itemIdentifier: String = "",
     @Expose(serialize = false, deserialize = false) var sync_status: Boolean = false,
 ) {
     fun postSuccess() {

@@ -45,6 +45,10 @@ interface StockOpnameRepository {
     suspend fun deleteAllInputStockOpname()
     fun getAllInputStockOpnameByBox(box: String): LiveData<List<StockOpnameInputData>>
     suspend fun deleteAllFromBox(box: String): Flow<Boolean>
+    fun getAllStockOpnameByItemNo(
+        itemNo: String,
+        documentNo: String?
+    ): LiveData<List<StockOpnameInputData>>
 
     /**
      * Stock Opname API Repository
@@ -194,6 +198,13 @@ class StockOpnameRepositoryImpl @Inject constructor(
     }
 
     override suspend fun countStockOpnameData(): Int = dao.getStockOpnameDataCount()
+
+    override fun getAllStockOpnameByItemNo(
+        itemNo: String,
+        documentNo: String?
+    ): LiveData<List<StockOpnameInputData>> =
+        documentNo?.let { dao.getAllStockOpnameByItemNoAndDocumentNo(itemNo, documentNo) }
+            ?: kotlin.run { dao.getAllStockOpnameByItemNo(itemNo) }
 
     /**
      * Stock Opname API Repository

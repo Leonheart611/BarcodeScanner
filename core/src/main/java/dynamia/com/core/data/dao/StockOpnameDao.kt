@@ -77,6 +77,15 @@ interface StockOpnameDao {
     @Query("SELECT * FROM StockOpnameInputData WHERE box = :box")
     fun getAllStockOpnameByBoxList(box: String): List<StockOpnameInputData>
 
+    @Query("SELECT * FROM StockOpnameInputData WHERE itemNo LIKE :itemNo")
+    fun getAllStockOpnameByItemNo(itemNo: String): LiveData<List<StockOpnameInputData>>
+
+    @Query("SELECT * FROM StockOpnameInputData WHERE itemNo LIKE :itemNo AND documentNo = :documentNo")
+    fun getAllStockOpnameByItemNoAndDocumentNo(
+        itemNo: String,
+        documentNo: String
+    ): LiveData<List<StockOpnameInputData>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = StockOpnameInputData::class)
     fun insertStockOpnameInput(data: StockOpnameInputData)
 

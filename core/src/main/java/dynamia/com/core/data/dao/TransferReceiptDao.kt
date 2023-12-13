@@ -47,8 +47,17 @@ interface TransferReceiptDao {
     @Query("SELECT * FROM TransferReceiptInput WHERE id = :id ORDER BY id DESC  ")
     fun getTransferReceiptInputHistory(id: Int): TransferReceiptInput
 
-    @Query("SELECT * FROM TransferReceiptInput WHERE documentNo = :no ORDER BY id DESC  ")
-    fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferReceiptInput>>
+    @Query("SELECT * FROM TransferReceiptInput WHERE documentNo = :no AND accidentalScanned = :accidentallyInput ORDER BY id DESC  ")
+    fun getTransferInputHistoryLiveData(
+        no: String,
+        accidentallyInput: Boolean
+    ): LiveData<List<TransferReceiptInput>>
+
+    @Query("SELECT SUM(quantity) FROM TransferReceiptInput WHERE documentNo=:no and accidentalScanned = :accidentallyInput")
+    fun getTransferReceiptAccidentInput(
+        no: String,
+        accidentallyInput: Boolean = true
+    ): LiveData<Int>
 
     @Query("SELECT * FROM TransferReceiptInput WHERE id = :id")
     fun getTransferInputDetail(id: Int): TransferReceiptInput

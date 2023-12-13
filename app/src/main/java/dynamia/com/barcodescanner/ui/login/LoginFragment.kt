@@ -6,13 +6,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.LoginFragmentBinding
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.MainActivityViewModel
-import dynamia.com.barcodescanner.ui.home.HomePostAllDialog
-import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.Error
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.Success
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.SuccessCheckLogin
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.UserHaveData
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.UserhasLogin
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.UserData
 import dynamia.com.core.util.EventObserver
@@ -32,11 +34,12 @@ class LoginFragment :
         activity = requireActivity() as MainActivity
         initview()
         setupListener()
+
         setObservable()
     }
 
     private fun initview() {
-         /*if (BuildConfig.BUILD_TYPE == "debug") {
+        /* if (BuildConfig.BUILD_TYPE == "debug") {
              with(viewBinding) {
                  etServerHost.setText(getString(R.string.server_host_name))
                  tiedUsername.setText(getString(R.string.user_name))
@@ -46,6 +49,7 @@ class LoginFragment :
              }
          }*/
     }
+
 
     private fun setupListener() {
         with(viewBinding) {

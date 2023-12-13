@@ -44,6 +44,17 @@
       "Source_Document": "Outbound Transfer",
       "Destination_No": "UA-WH2",
       "Transfer_to_Code": "UA-CP"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O28vZXYyT2R6aUJZWmJvWDcwMi9JbFVKL1ZEeHhXaWpzNVhGd0s2RnFZQU09MTswMDsn\"",
+      "Type": "Invt. Pick",
+      "No": "IP/HAP/2022/000002",
+      "Location_Code": "UA-WH2",
+      "Posting_Date": "2023-10-03",
+      "Source_No": "TEST",
+      "Source_Document": "Sales Order",
+      "Destination_No": "0000100000001",
+      "Transfer_to_Code": ""
     }
   ]
 }

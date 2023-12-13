@@ -1,3 +1,4 @@
+
 package dynamia.com.barcodescanner.ui.home
 
 import android.app.Dialog
@@ -76,8 +77,8 @@ class HomeGetDataDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setObserverable()
-        //callAllApi()
-        getAllDataFromAssets()
+        callAllApi()
+        //getAllDataFromAssets()
         setOnClicklistener()
     }
 

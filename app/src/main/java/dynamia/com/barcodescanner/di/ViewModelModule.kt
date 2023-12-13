@@ -7,6 +7,7 @@ import dagger.hilt.android.components.ViewModelComponent
 import dynamia.com.core.data.dao.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.domain.MasariAPI
+import javax.inject.Named
 
 
 @Module
@@ -36,13 +37,15 @@ class ViewModelModule {
         dao: TransferReceiptDao,
         api: MasariAPI,
         lineDao: TransferShipmentDao,
-    ): TransferReceiptRepository = TransferReceiptRepositoryImpl(dao, api, lineDao)
+        @Named("USERNAME") username: String
+    ): TransferReceiptRepository = TransferReceiptRepositoryImpl(dao, api, lineDao, username)
 
     @Provides
     fun provideShipmentRepository(
         dao: TransferShipmentDao,
         api: MasariAPI,
-    ): TransferShipmentRepository = TransferShipmentImpl(dao, api)
+        @Named("USERNAME") username: String
+    ): TransferShipmentRepository = TransferShipmentImpl(dao, api, username)
 
     @Provides
     fun provideInventoryRepository(

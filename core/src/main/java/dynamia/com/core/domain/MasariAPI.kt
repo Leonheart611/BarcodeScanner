@@ -2,7 +2,6 @@ package dynamia.com.core.domain
 
 import com.google.gson.annotations.SerializedName
 import dynamia.com.core.data.entinty.*
-import okhttp3.Interceptor
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -11,10 +10,10 @@ interface MasariAPI {
      * TransferShipment
      */
     @GET("Android_TransferShipmentHeader")
-    suspend fun getTransferShipmentHeader(): Response<BaseResponse<TransferShipmentHeader>>
+    suspend fun getTransferShipmentHeader(@Query("\$filter") filter: String): Response<BaseResponse<TransferShipmentHeader>>
 
     @GET("Android_TransferReceiptHeader")
-    suspend fun getTransferReceiptHeader(): Response<BaseResponse<TransferReceiptHeader>>
+    suspend fun getTransferReceiptHeader(@Query("\$filter") filter: String): Response<BaseResponse<TransferReceiptHeader>>
 
     @GET("Android_TransferLine")
     suspend fun getTransferShipmentLine(): Response<BaseResponse<TransferShipmentLine>>
@@ -68,20 +67,3 @@ interface MasariAPI {
 data class BaseResponse<T>(
     @SerializedName("value") val value: List<T>?,
 )
-
-class AuthInterceptor(val tokenStorage: Any): Interceptor {
-    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
-        val result = ""
-        return if (!result.isNullOrEmpty()) {
-            chain.proceed(
-                chain.request().newBuilder().header("Authorization", result).build()
-            )
-        }else{
-            chain.proceed(
-                chain.request().newBuilder().header("Authorization", result).build()
-            )
-        }
-    }
-
-
-}

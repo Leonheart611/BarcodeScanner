@@ -46,6 +46,9 @@ interface BinreclassDao {
     /**
      * Bin Reclass Input Dao
      */
+    @Query("SELECT SUM(quantity) FROM BinreclassInputData WHERE `documentNo` =:no")
+    fun getBinReclassTotalQtyScan(no: String): LiveData<Int>
+
     @Query("SELECT * FROM BinreclassInputData ORDER BY id DESC")
     fun getAllBinreclassInputData(): LiveData<List<BinreclassInputData>>
 

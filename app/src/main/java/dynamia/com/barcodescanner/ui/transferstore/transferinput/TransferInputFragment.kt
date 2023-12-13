@@ -43,10 +43,12 @@ class TransferInputFragment :
 
     private fun setupObserverable() {
         with(viewModel) {
+            getReceiptHeaderValue(args.transferNo, args.transferType)
             transferInputViewState.observe(viewLifecycleOwner, EventObserver {
                 when (it) {
                     is TransferInputViewModel.TransferInputViewState.ErrorGetData -> {
                         context?.showLongToast(it.message)
+                        activity?.showLoading(false)
                         mpFail?.start()
                     }
                     is TransferInputViewModel.TransferInputViewState.LoadingSearchPickingList -> {
@@ -59,6 +61,7 @@ class TransferInputFragment :
                         context?.showLongToast("Success Save Data")
                         viewBinding.includeTransferInput.etTranferinputQty.text?.clear()
                     }
+
                     else -> {}
                 }
             })
@@ -69,6 +72,7 @@ class TransferInputFragment :
                         viewBinding.includeTransferInput.tilTransferinputBarcode.error =
                             "Must Fill this Field"
                     }
+
                     TransferInputViewModel.InputValidation.QtyEmpty -> {
                         viewBinding.includeTransferInput.tilTransferinputQty.error =
                             "Must Fill this Field"
@@ -221,20 +225,37 @@ class TransferInputFragment :
             toolbarPickingListInput.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.history_data -> {
-                        val action =
-                            TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
+                        val action = when (args.transferType) {
+                            SHIPMENT -> TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
                                 documentNo = args.transferNo,
-                                historyType = when (args.transferType) {
-                                    SHIPMENT -> HistoryType.SHIPMENT
-                                    RECEIPT -> HistoryType.RECEIPT
-                                    PURCHASE -> HistoryType.PURCHASE
-                                    STOCKOPNAME -> HistoryType.STOCKOPNAME
-                                    INVENTORY -> HistoryType.INVENTORY
-                                }
+                                historyType = HistoryType.SHIPMENT
                             )
+
+                            RECEIPT -> TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
+                                documentNo = args.transferNo,
+                                historyType = HistoryType.RECEIPT
+                            )
+
+                            PURCHASE -> TransferInputFragmentDirections.actionReceivingFragmentToHistoryInputFragment(
+                                documentNo = args.transferNo,
+                                historyType = HistoryType.PURCHASE
+                            )
+
+                            STOCKOPNAME ->
+                                TransferInputFragmentDirections.actionTransferInputFragmentToHistoryInputFragment(
+                                    documentNo = args.transferNo,
+                                    historyType = HistoryType.STOCKOPNAME
+                                )
+
+                            INVENTORY -> TransferInputFragmentDirections.actionTransferInputFragmentToHistoryInputFragment(
+                                documentNo = args.transferNo,
+                                historyType = HistoryType.INVENTORY
+                            )
+                        }
                         view?.findNavController()?.navigate(action)
                         true
                     }
+
                     else -> false
                 }
             }
@@ -253,12 +274,10 @@ class TransferInputFragment :
     override fun onStop() {
         super.onStop()
         mpFail?.release()
-        //mpSuccess?.release()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mpFail?.release()
-        //mpSuccess?.release()
     }
 }

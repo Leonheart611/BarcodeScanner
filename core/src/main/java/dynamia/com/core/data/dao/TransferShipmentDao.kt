@@ -36,15 +36,15 @@ interface TransferShipmentDao {
     fun getAllTransferLine(): LiveData<List<TransferShipmentLine>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = TransferShipmentLine::class)
-    fun insertTransferLine(data: List<TransferShipmentLine>)
+    fun insertTransferLine(data: MutableList<TransferShipmentLine>)
 
     @Query("DELETE FROM TransferShipmentLine")
     fun deleteAllTransferLine()
 
-    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND quantity != 0 LIMIT :page")
+    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND quantity > 0 LIMIT :page")
     fun getLineListFromHeaderLiveData(no: String, page: Int): LiveData<List<TransferShipmentLine>>
 
-    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND qtyInTransit != 0 LIMIT :page")
+    @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND qtyInTransit > 0 LIMIT :page")
     fun getLineListFromHeaderReceipt(no: String, page: Int): LiveData<List<TransferShipmentLine>>
 
     @Query("SELECT * FROM TransferShipmentLine WHERE documentNo = :no AND lineNo = :lineNo")
@@ -96,8 +96,14 @@ interface TransferShipmentDao {
     @Query("SELECT * FROM TransferInputData WHERE id = :id ORDER BY id DESC  ")
     fun getTransferInputHistory(id: Int): TransferInputData
 
-    @Query("SELECT * FROM TransferInputData WHERE documentNo = :no ORDER BY id DESC  ")
-    fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferInputData>>
+    @Query("SELECT * FROM TransferInputData WHERE documentNo = :no AND accidentalScanned = :inputAccidental ORDER BY id DESC  ")
+    fun getTransferInputHistoryLiveData(no: String, inputAccidental:Boolean): LiveData<List<TransferInputData>>
+
+    @Query("SELECT SUM(quantity) FROM TransferInputData WHERE documentNo=:no and accidentalScanned = :accidentallyInput")
+    fun getTransferShipmentAccidentInput(
+        no: String,
+        accidentallyInput: Boolean = true
+    ): LiveData<Int?>
 
     @Query("SELECT * FROM TransferInputData WHERE id = :id")
     fun getTransferInputDetail(id: Int): TransferInputData

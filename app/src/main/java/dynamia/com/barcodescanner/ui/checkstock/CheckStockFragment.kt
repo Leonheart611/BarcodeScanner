@@ -54,19 +54,21 @@ class CheckStockFragment :
                 adapter = stockAdapter
             }
         }
-        viewModel.checkStockVs.observe(viewLifecycleOwner, {
+        viewModel.checkStockVs.observe(viewLifecycleOwner) {
             when (it) {
                 is CheckStockViewModel.CheckStockViewState.Error -> {
                     context?.showLongToast(it.message)
                 }
+
                 is CheckStockViewModel.CheckStockViewState.Success -> {
                     stockAdapter.addData(it.data)
                 }
+
                 is CheckStockViewModel.CheckStockViewState.Loading -> {
                     activity?.showLoading(it.loading)
                 }
             }
-        })
+        }
         showSearchDialog()
     }
 

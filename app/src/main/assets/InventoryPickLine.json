@@ -27,11 +27,11 @@
       "Unit_of_Measure_Code": "PCS",
       "Description": "UA TAC TECH T",
       "ItemIdentifier": "SCM1700000004",
-      "Quantity": 14,
+      "Quantity": 1,
       "Qty_Outstanding": 12,
       "Qty_to_Handle": 10,
       "Qty_Handled": 2,
-      "Bin_Code": "BIN1"
+      "Bin_Code": "BIN3"
     },
     {
       "@odata.etag": "W/\"JzQ0OzlOdFdjY2lyTmpSNXAyNnhsNFJkbHd6WmlDL2I4U0t6Rk5OQWtlYmhRaFE9MTswMDsn\"",
@@ -96,6 +96,57 @@
       "Qty_to_Handle": 10,
       "Qty_Handled": 2,
       "Bin_Code": "BIN1"
+    },
+    {
+      "@odata.etag": "W/\"JzQ0OzV0UGsxb0tYWU5CemdvOXduNE1kN0hEQWd1ekwzOUdmRi9ub0V2dDQ2Zms9MTswMDsn\"",
+      "Activity_Type": "Invt. Pick",
+      "No": "IP/HAP/2022/000002",
+      "Line_No": 10000,
+      "Item_No": "1000001-001-MD",
+      "Item_Ref_No": "1000001-001-MD",
+      "ItemIdentifier": "SCM1700000003",
+      "Unit_of_Measure_Code": "PCS",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Quantity": 0,
+      "Qty_Outstanding": 1,
+      "Qty_to_Handle": 1,
+      "Qty_Handled": 0,
+      "Bin_Code": "10004",
+      "Qty_Shpt_Scanned": 1
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O01NMmVSRFZIekVRdGYxYVBqUEQwVjE0UXgxY2ltZHBpbk4vVGJoaFZyQkU9MTswMDsn\"",
+      "Activity_Type": "Invt. Pick",
+      "No": "IP/HAP/2022/000002",
+      "Line_No": 20000,
+      "Item_No": "1000001-001-MD",
+      "Item_Ref_No": "1000001-001-MD",
+      "ItemIdentifier": "SCM1700000003",
+      "Unit_of_Measure_Code": "PCS",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Quantity": 3,
+      "Qty_Outstanding": 3,
+      "Qty_to_Handle": 3,
+      "Qty_Handled": 0,
+      "Bin_Code": "10002",
+      "Qty_Shpt_Scanned": 0
+    },
+    {
+      "@odata.etag": "W/\"JzQ0O0pWYi9Ib052d1VsWWFzNDFLZWtDbzFBL0padjh5aHJ0K2dpdWR3MGJ3TFk9MTswMDsn\"",
+      "Activity_Type": "Invt. Pick",
+      "No": "IP/HAP/2022/000002",
+      "Line_No": 30000,
+      "Item_No": "1000001-001-MD",
+      "Item_Ref_No": "1000001-001-MD",
+      "ItemIdentifier": "SCM1700000003",
+      "Unit_of_Measure_Code": "PCS",
+      "Description": "SCSM17 Graphic 1 - UA THREADBO",
+      "Quantity": 1,
+      "Qty_Outstanding": 1,
+      "Qty_to_Handle": 1,
+      "Qty_Handled": 0,
+      "Bin_Code": "10004",
+      "Qty_Shpt_Scanned": 0
     }
   ]
 }

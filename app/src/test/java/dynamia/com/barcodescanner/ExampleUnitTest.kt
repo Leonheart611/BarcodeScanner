@@ -75,4 +75,10 @@ class ExampleUnitTest {
         assertEquals(result, false)
     }
 
+    @Test
+    fun check_simple_logic() {
+        val qty = 0
+        val result = qty > 0
+    }
+
 }
