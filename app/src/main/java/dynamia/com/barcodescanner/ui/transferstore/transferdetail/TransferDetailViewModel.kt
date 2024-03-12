@@ -55,7 +55,7 @@ class TransferDetailViewModel @Inject constructor(
     /**
      * Transfer Shipment Data
      */
-    val transFerShipmentQty: LiveData<Int> = lineParam.switchMap{ param ->
+    val transFerShipmentQty: LiveData<Int> = lineParam.switchMap { param ->
         transferShipmentRepository.getQtyliveData(param.documentNo)
     }
 
@@ -220,8 +220,7 @@ class TransferDetailViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.stackTrace
-                _transferInputViewState.value =
-                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+                _transferInputViewState.postValue(TransferDetailInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -376,7 +375,7 @@ class TransferDetailViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage.orEmpty())
             }
 
         }
@@ -457,7 +456,7 @@ class TransferDetailViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.stackTrace
-                e.localizedMessage?.let {
+                e.message?.let {
                     _transferInputViewState.postValue(TransferDetailInputViewState.ErrorGetData(it))
                 }
             }

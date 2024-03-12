@@ -143,4 +143,6 @@
     <string name="stock_opname_total_scanned">Total Scan: %1$s</string>
     <string name="stock_opname_box_delete_warning">Semua data berdasarkan box yang dicari akan dihapus, Apakah anda yakin?</string>
     <string name="bin_reclass_total_scan">Total Scan: %d</string>
+    <string name="user_list_title">User List</string>
+    <string name="user_list_empty">User list empty, please login to save user</string>
 </resources>

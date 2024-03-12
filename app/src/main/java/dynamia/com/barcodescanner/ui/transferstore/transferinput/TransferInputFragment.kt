@@ -29,12 +29,12 @@ class TransferInputFragment :
     private val args: TransferInputFragmentArgs by navArgs()
     var activity: MainActivity? = null
     private var mpFail: MediaPlayer? = null
-    //private var mpSuccess: MediaPlayer? = null
+    private var mpSuccess: MediaPlayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mpFail = MediaPlayer.create(context, R.raw.error)
-        //mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
+        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         setupView()
         activity = requireActivity() as MainActivity
         setupListener()
@@ -274,10 +274,12 @@ class TransferInputFragment :
     override fun onStop() {
         super.onStop()
         mpFail?.release()
+        mpSuccess?.release()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mpFail?.release()
+        mpSuccess?.release()
     }
 }

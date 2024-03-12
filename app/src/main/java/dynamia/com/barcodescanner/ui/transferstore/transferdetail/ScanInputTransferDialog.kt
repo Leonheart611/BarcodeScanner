@@ -33,7 +33,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
     private lateinit var _viewBinding: ItemInputHeaderBinding
     val viewBinding by lazy { _viewBinding }
     private var mpFail: MediaPlayer? = null
-    //private var mpSuccess: MediaPlayer? = null
+    private var mpSuccess: MediaPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +49,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
         dialog?.setCanceledOnTouchOutside(false)
         dialog?.setCancelable(false)
         mpFail = MediaPlayer.create(context, R.raw.error)
-      //  mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
+        mpSuccess = MediaPlayer.create(context, R.raw.correct_sound)
         setupView()
         setObserverable()
     }
@@ -150,7 +150,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                         etTransferInputBarcode.text?.clear()
                         etTransferInputBarcode.requestFocus()
                         context?.showLongToast("Success Save Data")
-                     //   mpSuccess?.start()
+                        mpSuccess?.start()
                     }
                 }
             }
@@ -185,13 +185,13 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
     override fun onStop() {
         super.onStop()
         mpFail?.release()
-       // mpSuccess?.release()
+        mpSuccess?.release()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mpFail?.release()
-     //   mpSuccess?.release()
+        mpSuccess?.release()
     }
 
 

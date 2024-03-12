@@ -19,20 +19,24 @@ class LoginViewModel @Inject constructor(
     private var _modelState = MutableLiveData<Event<LoginState>>()
     val modelState: LiveData<Event<LoginState>> by lazy { _modelState }
 
+    var userData: UserData? = null
+
     fun saveSharedPreferences(
         baseUrl: String,
         username: String,
         password: String,
         domain: String,
         companyName: String,
+        id: Int?
     ) {
         viewModelScope.launch {
-            val userData = UserData(
+            userData = UserData(
                 hostName = baseUrl,
                 username = username,
                 password = password,
                 companyName = companyName,
-                domainName = domain
+                domainName = domain,
+                id = id
             )
             try {
                 io {
@@ -42,7 +46,7 @@ class LoginViewModel @Inject constructor(
                     editor.putString(Constant.BASEURL_KEY, baseUrl)
                     editor.putString(Constant.PASSWORD_KEY, password)
                     val result = editor.commit()
-                    userRepository.insertUserData(userData)
+                    userRepository.insertUserData(userData!!)
                     if (result)
                         ui { _modelState.value = Event(LoginState.Success("Success Save Data")) }
                 }
