@@ -9,8 +9,8 @@ import dynamia.com.core.data.entinty.TransferShipmentLine
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.ResultWrapper
+import dynamia.com.core.util.toTransferShipmentFilter
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -31,7 +31,7 @@ interface TransferShipmentRepository {
      * Local Transfer Line
      */
     suspend fun getAllTransferLine(): LiveData<List<TransferShipmentLine>>
-    suspend fun insertTransferLineAll(data: List<TransferShipmentLine>)
+    suspend fun insertTransferLineAll(data: MutableList<TransferShipmentLine>)
     suspend fun deleteAllTransferLine()
     fun getLineListFromHeaderLiveData(
         no: String,
@@ -61,7 +61,13 @@ interface TransferShipmentRepository {
     suspend fun deleteTransferInput(id: Int)
     fun getAllUnsycnTransferInput(status: Boolean = false): List<TransferInputData>
     suspend fun getTransferInputHistory(no: Int): Flow<TransferInputData>
-    fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferInputData>>
+    fun getTransferInputHistoryLiveData(
+        no: String,
+        accidentlyInput: Boolean
+    ): LiveData<List<TransferInputData>>
+
+    fun getTransferShipmentAccidentInput(no: String): LiveData<Int?>
+
     suspend fun deleteAllTransferInput()
 
     /**
@@ -77,6 +83,7 @@ interface TransferShipmentRepository {
 class TransferShipmentImpl @Inject constructor(
     val dao: TransferShipmentDao,
     private val retrofitService: MasariAPI,
+    private val username: String
 ) : TransferShipmentRepository {
 
     /**
@@ -100,7 +107,7 @@ class TransferShipmentImpl @Inject constructor(
     override suspend fun getAllTransferLine(): LiveData<List<TransferShipmentLine>> =
         dao.getAllTransferLine()
 
-    override suspend fun insertTransferLineAll(data: List<TransferShipmentLine>) =
+    override suspend fun insertTransferLineAll(data: MutableList<TransferShipmentLine>) =
         dao.insertTransferLine(data)
 
     override suspend fun deleteAllTransferLine() = dao.deleteAllTransferLine()
@@ -112,7 +119,8 @@ class TransferShipmentImpl @Inject constructor(
         dao.getLineListFromHeaderLiveData(no, page)
 
     override suspend fun getLineDetailFromId(id: Int): Flow<TransferShipmentLine> = flow {
-        emit(dao.getLineDetailFromId(id))
+        val value = dao.getLineDetailFromId(id)
+        emit(value)
     }
 
     override fun getLineListFromReceiptLiveData(
@@ -128,23 +136,27 @@ class TransferShipmentImpl @Inject constructor(
     override fun getAllTransferInput(): LiveData<List<TransferInputData>> =
         dao.getAllTransferInput()
 
-    override fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferInputData>> =
-        dao.getTransferInputHistoryLiveData(no)
+    override fun getTransferInputHistoryLiveData(
+        no: String,
+        accidentlyInput: Boolean
+    ): LiveData<List<TransferInputData>> =
+        dao.getTransferInputHistoryLiveData(no, accidentlyInput)
 
     override suspend fun insertTransferInput(data: TransferInputData): Boolean =
         runBlocking(Dispatchers.IO) {
             try {
-                val lineData = dao.getLineDetail(data.documentNo, data.lineNo)
-                if ((lineData.alredyScanned + data.quantity) <= lineData.quantity) {
+                if (data.lineNo == 0) {
+                    data.apply { accidentalScanned = true }
+                    dao.insertTransferInput(data)
+                } else {
+                    val lineData = dao.getLineDetail(data.documentNo, data.lineNo)
                     lineData.apply {
                         this.alredyScanned += data.quantity
                     }
                     dao.insertTransferInput(data)
                     dao.updateTransferLine(lineData)
-                    true
-                } else {
-                    false
                 }
+                true
             } catch (e: Exception) {
                 false
             }
@@ -163,8 +175,9 @@ class TransferShipmentImpl @Inject constructor(
         if (result != null) {
             emit(result)
         } else {
-            dao.getLineDetailFromRef(no, identifier)?.let { emit(it) }
-                ?: kotlin.run { error("Data Not Found") }
+            dao.getLineDetailFromRef(no, identifier)?.let { emit(it) } ?: run {
+                error("Item name not found")
+            }
         }
 
     }
@@ -228,7 +241,9 @@ class TransferShipmentImpl @Inject constructor(
     override suspend fun getTransferShipmentHeaderAsync(): Flow<ResultWrapper<MutableList<TransferShipmentHeader>>> =
         flow {
             try {
-                val result = retrofitService.getTransferShipmentHeader()
+                val result = retrofitService.getTransferShipmentHeader(
+                    filter = username.toTransferShipmentFilter()
+                )
                 when (result.code()) {
                     200 -> result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
                     400 -> emit(ResultWrapper.SuccessEmptyValue)
@@ -243,7 +258,7 @@ class TransferShipmentImpl @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                emit(ResultWrapper.NetworkError(e.localizedMessage))
+                emit(ResultWrapper.NetworkError(e.localizedMessage.orEmpty()))
             }
         }
 
@@ -265,7 +280,7 @@ class TransferShipmentImpl @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                emit(ResultWrapper.NetworkError(e.localizedMessage))
+                emit(ResultWrapper.NetworkError(e.localizedMessage.orEmpty()))
             }
         }
 
@@ -288,10 +303,12 @@ class TransferShipmentImpl @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                emit(ResultWrapper.NetworkError(e.localizedMessage))
+                emit(ResultWrapper.NetworkError(e.localizedMessage.orEmpty()))
             }
         }
 
+    override fun getTransferShipmentAccidentInput(no: String): LiveData<Int?> =
+        dao.getTransferShipmentAccidentInput(no)
 
     override suspend fun postTransferData(value: String): Flow<TransferInputData> = flow {
         emit(retrofitService.postTransferShipment(value))

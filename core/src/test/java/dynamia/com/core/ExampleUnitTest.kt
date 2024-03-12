@@ -1,5 +1,6 @@
 package dynamia.com.core
 
+import dynamia.com.core.util.addConcatQuery
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -13,5 +14,11 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+    }
+
+    @Test
+    fun testConcat() {
+        val searchText = "Search"
+        assertEquals("Search%", searchText.addConcatQuery())
     }
 }

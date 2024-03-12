@@ -25,7 +25,7 @@ interface InventoryRepository {
      * Inventory Line DAO
      */
 
-    fun insertInventoryLineAll(datas: List<InventoryPickLine>)
+    fun insertInventoryLineAll(datas: MutableList<InventoryPickLine>)
     fun getAllInventoryPickLine(no: String, page: Int = 20): LiveData<List<InventoryPickLine>>
     fun getDetailInventoryPickLine(
         no: String,
@@ -84,7 +84,10 @@ class InventoryRepositoryImpl @Inject constructor(
         dao.deleteAllInventoryHeader()
     }
 
-    override fun insertInventoryLineAll(datas: List<InventoryPickLine>) {
+    override fun insertInventoryLineAll(datas: MutableList<InventoryPickLine>) {
+        val  emptyQty = datas.filter { it.quantity == 0 }
+        if (emptyQty.isNotEmpty())
+            datas.removeAll(emptyQty)
         dao.insertInventoryLineAll(datas)
     }
 

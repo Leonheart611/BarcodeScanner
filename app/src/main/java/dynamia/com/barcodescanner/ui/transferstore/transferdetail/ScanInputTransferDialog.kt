@@ -17,6 +17,10 @@ import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.DialogPartNoNotFoundBinding
 import dynamia.com.barcodescanner.databinding.ItemInputHeaderBinding
 import dynamia.com.barcodescanner.ui.transferstore.TransferType
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.INVENTORY
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.PURCHASE
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.RECEIPT
+import dynamia.com.barcodescanner.ui.transferstore.TransferType.STOCKOPNAME
 import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
@@ -67,7 +71,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                 etTransferInputBarcode.requestFocus()
             }
             when (inputType) {
-                TransferType.STOCKOPNAME -> {
+                STOCKOPNAME -> {
                     tilTransferBincode.isVisible = true
                     etTransferInputBarcode.doAfterTextChanged {
                         etTransferinputBincode.requestFocus()
@@ -85,7 +89,7 @@ class ScanInputTransferDialog : BottomSheetDialogFragment() {
                         }
                     }
                 }
-                TransferType.INVENTORY, TransferType.PURCHASE -> {
+                RECEIPT,INVENTORY, PURCHASE -> {
                     tilTransferBincode.isVisible = true
                     etBoxInput.doAfterTextChanged {
                         etTransferinputBincode.requestFocus()

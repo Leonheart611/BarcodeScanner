@@ -37,7 +37,7 @@ interface PurchaseOrderRepository {
     fun getPurchaseOrderLineLiveData(id: Int): LiveData<PurchaseOrderLine>
     fun getPurchaseQtyTotal(no: String): LiveData<Int>
     fun getPurchaseAlreadyScan(no: String): LiveData<Int>
-    suspend fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>)
+    suspend fun insertPurchaseOrderLine(value: MutableList<PurchaseOrderLine>)
     fun getPurchaseOrderLineByNo(no: String, page: Int = 20): LiveData<List<PurchaseOrderLine>>
     fun getPurchaseOrderLineByBarcode(no: String, identifier: String): Flow<PurchaseOrderLine>
     fun getPurchaseOrderLineDetailById(id: Int): Flow<PurchaseOrderLine>
@@ -49,7 +49,11 @@ interface PurchaseOrderRepository {
      */
 
     fun getAllPurchaseInputData(): LiveData<List<PurchaseInputData>>
-    fun getAllPurchaseInputByNo(no: String): LiveData<List<PurchaseInputData>>
+    fun getAllPurchaseInputByNo(
+        no: String,
+        accidentallyScan: Boolean
+    ): LiveData<List<PurchaseInputData>>
+
     fun getAllUnSyncPurchaseInput(status: Boolean = false): List<PurchaseInputData>
     suspend fun getPurchaseInputDetail(id: Int): Flow<PurchaseInputData>
     suspend fun insertPurchaseOrderData(value: PurchaseInputData): Boolean
@@ -57,6 +61,7 @@ interface PurchaseOrderRepository {
     suspend fun updatePurchaseInputData(value: PurchaseInputData)
     suspend fun deletePurchaseInputData(id: Int)
     suspend fun deleteAllPurchaseInputData()
+    fun getPurchaseOrderAccidentInput(no: String): LiveData<Int>
 
     /**
      * Network Repository Purchase Order
@@ -110,7 +115,10 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
     /**
      * Purchase Order Line
      */
-    override suspend fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>) {
+    override suspend fun insertPurchaseOrderLine(value: MutableList<PurchaseOrderLine>) {
+        val emptyQty = value.filter { it.quantity <= 0 }
+        if (emptyQty.isNotEmpty())
+            value.removeAll(emptyQty)
         dao.insertPurchaseOrderLine(value)
     }
 
@@ -124,7 +132,11 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
         dao.getPurchaseOrderLineDetailByNo(no, page)
 
     override fun getPurchaseOrderLineDetailById(id: Int): Flow<PurchaseOrderLine> = flow {
-        emit(dao.getPurchaseOrderLineDetailById(id))
+        try {
+            emit(dao.getPurchaseOrderLineDetailById(id))
+        } catch (e: Exception) {
+            error("Item Name not found")
+        }
     }
 
 
@@ -142,8 +154,11 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
     override fun getAllPurchaseInputData(): LiveData<List<PurchaseInputData>> =
         dao.getAllPurchaseInputData()
 
-    override fun getAllPurchaseInputByNo(no: String): LiveData<List<PurchaseInputData>> =
-        dao.getAllPurchaseInputDataByNo(no)
+    override fun getAllPurchaseInputByNo(
+        no: String,
+        accidentallyScan: Boolean
+    ): LiveData<List<PurchaseInputData>> =
+        dao.getAllPurchaseInputDataByNo(no, accidentallyScan)
 
     override suspend fun getPurchaseInputDetail(id: Int): Flow<PurchaseInputData> = flow {
         emit(dao.getPurchaseInputDataDetail(id))
@@ -152,19 +167,19 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
     override suspend fun insertPurchaseOrderData(value: PurchaseInputData): Boolean =
         runBlocking(Dispatchers.IO) {
             try {
-                val lineData =
-                    dao.getPurchaseOrderLineByLineno(value.documentNo, value.lineNo)
-                if ((lineData.alredyScanned + value.quantity) <= lineData.quantity) {
-
+                if (value.lineNo == 0) {
+                    value.apply { accidentalScanned = true }
+                    dao.insertPurchaseOrderData(value)
+                } else {
+                    val lineData =
+                        dao.getPurchaseOrderLineByLineno(value.documentNo, value.lineNo)
                     lineData.apply {
                         this.alredyScanned += value.quantity
                     }
                     dao.insertPurchaseOrderData(value)
                     dao.updatePurchaseOrderLine(lineData)
-                    true
-                } else {
-                    false
                 }
+                true
             } catch (e: Exception) {
                 false
             }
@@ -218,6 +233,9 @@ class PurchaseOrderRepositoryImpl @Inject constructor(
     override suspend fun deleteAllPurchaseInputData() {
         dao.deleteAllPurchaseInputData()
     }
+
+    override fun getPurchaseOrderAccidentInput(no: String): LiveData<Int> =
+        dao.getPurchaseOrderAccidentInput(no)
 
     /**
      * Network Repository Purchase Order

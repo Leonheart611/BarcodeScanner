@@ -38,9 +38,9 @@ interface PurchaseOrderDao {
      */
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = PurchaseOrderLine::class)
-    fun insertPurchaseOrderLine(value: List<PurchaseOrderLine>)
+    fun insertPurchaseOrderLine(value: MutableList<PurchaseOrderLine>)
 
-    @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo =:no AND quantity != 0 LIMIT :page")
+    @Query("SELECT * FROM PurchaseOrderLine WHERE documentNo =:no AND quantity > 0 LIMIT :page")
     fun getPurchaseOrderLineDetailByNo(no: String, page: Int): LiveData<List<PurchaseOrderLine>>
 
     @Query("SELECT * FROM PurchaseOrderLine WHERE id=:id")
@@ -78,8 +78,8 @@ interface PurchaseOrderDao {
     @Query("SELECT * FROM PurchaseInputData ORDER BY id DESC")
     fun getAllPurchaseInputData(): LiveData<List<PurchaseInputData>>
 
-    @Query("SELECT * FROM PurchaseInputData WHERE documentNo=:no")
-    fun getAllPurchaseInputDataByNo(no: String): LiveData<List<PurchaseInputData>>
+    @Query("SELECT * FROM PurchaseInputData WHERE documentNo=:no AND accidentalScanned = :accidentallyInput")
+    fun getAllPurchaseInputDataByNo(no: String, accidentallyInput: Boolean): LiveData<List<PurchaseInputData>>
 
     @Query("SELECT * FROM PurchaseInputData WHERE id=:id")
     fun getPurchaseInputDataDetail(id: Int): PurchaseInputData
@@ -98,5 +98,11 @@ interface PurchaseOrderDao {
 
     @Query("DELETE FROM PurchaseInputData")
     fun deleteAllPurchaseInputData()
+
+    @Query("SELECT SUM(quantity) FROM PurchaseInputData WHERE documentNo=:no and accidentalScanned = :accidentallyInput")
+    fun getPurchaseOrderAccidentInput(
+        no: String,
+        accidentallyInput: Boolean = true
+    ): LiveData<Int>
 
 }

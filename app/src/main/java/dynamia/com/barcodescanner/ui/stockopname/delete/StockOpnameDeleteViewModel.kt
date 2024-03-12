@@ -17,9 +17,8 @@ class StockOpnameDeleteViewModel @Inject constructor(val stockOpnameRepository: 
     private val _deleteViewState = MutableLiveData<DeleteViewState>()
     val deleteViewState: LiveData<DeleteViewState> by lazy { _deleteViewState }
 
-    val stockOpnameInputValue = Transformations.switchMap(query) {
-        stockOpnameRepository.getAllInputStockOpnameByBox(it)
-    }
+    val stockOpnameInputValue =
+        query.switchMap { stockOpnameRepository.getAllInputStockOpnameByBox(it) }
 
     fun updateQuery(box: String) {
         query.value = box

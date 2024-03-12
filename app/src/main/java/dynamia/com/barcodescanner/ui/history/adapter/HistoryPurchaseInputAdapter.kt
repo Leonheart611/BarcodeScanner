@@ -42,7 +42,8 @@ class HistoryPurchaseInputAdapter(
                 tvTransferDocno.text = "Document No: ${value.documentNo}"
                 tvTransferhistoryQty.text = "Qty: ${value.quantity}"
                 tvTransferLineno.text = "Line No: ${value.lineNo}"
-                tvTransferItemno.text = "Item No: ${value.itemNo}"
+                tvTransferItemno.text =
+                    "Item No: ${value.itemNo.ifEmpty { value.itemIdentifier }}"
                 tvBoxNo.text = "Box No: ${value.box}"
                 value.id?.let { id ->
                     root.setOnClickListener {

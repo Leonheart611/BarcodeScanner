@@ -2,6 +2,8 @@ package dynamia.com.barcodescanner.ui.history
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isGone
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -27,18 +29,17 @@ class HistoryInputFragment :
 
     private val viewModel: HistoryInputViewModel by viewModels()
     private val args: HistoryInputFragmentArgs by navArgs()
-    private var scanEntriesAdapter = HistoryTransferInputAdapter(mutableListOf(), this)
-    private var scanTransferReceiptAdapter =
-        HistoryTransferReceiptInputAdapter(mutableListOf(), this)
+    private var scanEntriesAdapter = HistoryTransferInputAdapter(this)
+    private var scanTransferReceiptAdapter = HistoryTransferReceiptInputAdapter(this)
     private var scanInputPurchaseAdapter = HistoryPurchaseInputAdapter(this)
-    private var scanStockInputAdapter = HistoryStockOpnameInputAdapter(mutableListOf(), this)
+    private var scanStockInputAdapter = HistoryStockOpnameInputAdapter(this)
     private var scanInventoryInputAdapter = HistoryInventoryInputAdapter(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.updateViewModelVariable(args)
         setupRecylerView()
         setupView()
-        setupListener()
     }
 
     private fun setupRecylerView() {
@@ -52,105 +53,129 @@ class HistoryInputFragment :
                 INVENTORY -> scanInventoryInputAdapter
             }
         }
+        viewBinding.tbHistory.isGone = args.historyType != STOCKOPNAME
+        viewBinding.etSearch.isGone = args.historyType != STOCKOPNAME
+        viewBinding.etSearch.doOnTextChanged { text, _, _, _ ->
+            viewModel.updateQuery(text.toString())
+        }
     }
 
     private fun setupView() {
+        viewBinding.tbHistory.setNavigationOnClickListener {
+            view?.findNavController()?.popBackStack()
+        }
         when (args.historyType) {
             SHIPMENT -> {
                 viewBinding.tvTransferInput.text =
                     getString(R.string.transfer_shipment_history_title)
                 args.documentNo?.let { documentNo ->
-                    viewModel.transferShipmentRepository.getTransferInputHistoryLiveData(documentNo)
-                        .observe(viewLifecycleOwner, {
-                            scanEntriesAdapter.updateData(it.toMutableList())
-                        })
+                    viewModel.transferShipmentRepository.getTransferInputHistoryLiveData(
+                        documentNo,
+                        !args.inputValidate
+                    ).observe(viewLifecycleOwner) {
+                        scanEntriesAdapter.submitList(it.toMutableList())
+                    }
                 }
             }
+
             RECEIPT -> {
                 viewBinding.tvTransferInput.text =
                     getString(R.string.transfer_receipt_history_title)
                 args.documentNo?.let { documentNo ->
-                    viewModel.transferReceiptRepository.getTransferInputHistoryLiveData(documentNo)
-                        .observe(viewLifecycleOwner, {
-                            scanTransferReceiptAdapter.updateData(it.toMutableList())
-                        })
+                    viewModel.transferReceiptRepository.getTransferInputHistoryLiveData(
+                        documentNo,
+                        !args.inputValidate
+                    )
+                        .observe(viewLifecycleOwner) {
+                            scanTransferReceiptAdapter.submitList(it.toMutableList())
+                        }
                 }
             }
+
             PURCHASE -> {
                 viewBinding.tvTransferInput.text = getString(R.string.purchase_order_history_title)
                 args.documentNo?.let { documentNo ->
-                    viewModel.purchaseOrderRepository.getAllPurchaseInputByNo(documentNo)
-                        .observe(viewLifecycleOwner, {
+                    viewModel.purchaseOrderRepository.getAllPurchaseInputByNo(
+                        documentNo,
+                        !args.inputValidate
+                    )
+                        .observe(viewLifecycleOwner) {
                             scanInputPurchaseAdapter.submitList(it)
-                        })
+                        }
                 }
             }
+
             STOCKOPNAME -> {
                 viewBinding.tvTransferInput.text = getString(R.string.stock_opname_history_title)
-                args.documentNo?.let { documentNo ->
-                    viewModel.stockOpnameRepository.getAllInputStockOpnameByDocumentNo(documentNo)
-                        .observe(viewLifecycleOwner, {
-                            scanStockInputAdapter.updateData(it.toMutableList())
-                        })
-                } ?: kotlin.run {
-                    viewModel.stockOpnameRepository.getAllInputStockOpname()
-                        .observe(viewLifecycleOwner, {
-                            scanStockInputAdapter.updateData(it.toMutableList())
-                        })
+                viewModel.stockOpnameInputSearch.observe(viewLifecycleOwner) {
+                    scanStockInputAdapter.submitList(it.toMutableList())
                 }
             }
+
             INVENTORY -> {
                 viewBinding.tvTransferInput.text = getString(R.string.inventory_pick_history)
                 args.documentNo?.let { no ->
                     viewModel.inventoryRepository.getInventoryInputData(no)
-                        .observe(viewLifecycleOwner, {
+                        .observe(viewLifecycleOwner) {
                             scanInventoryInputAdapter.submitList(it)
-                        })
+                        }
                 }
             }
         }
     }
 
-    private fun setupListener() {
-        viewBinding.tbHistory.title = viewModel.getCompanyName()
-        viewBinding.tbHistory.setNavigationOnClickListener {
-            view?.findNavController()?.popBackStack()
-        }
-    }
-
     override fun onHistorySelectDelete(value: TransferInputData) {
-        value.id?.let {
-            val dialog = TransferHistoryBottomSheet.newInstance(it, SHIPMENT)
-            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
-        }
+        if (args.inputValidate)
+            value.id?.let {
+                val dialog = TransferHistoryBottomSheet.newInstance(it, SHIPMENT)
+                dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            }
     }
 
     override fun receiptHistoryCLicklistener(value: TransferReceiptInput) {
-        value.id?.let {
-            val dialog = TransferHistoryBottomSheet.newInstance(it, RECEIPT)
-            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
-        }
+        if (args.inputValidate)
+            value.id?.let {
+                val dialog = TransferHistoryBottomSheet.newInstance(it, RECEIPT)
+                dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            }
     }
 
     override fun historyCLicklistener(value: PurchaseInputData) {
-        value.id?.let {
-            val dialog = TransferHistoryBottomSheet.newInstance(it, PURCHASE)
-            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
-        }
+        if (args.inputValidate)
+            value.id?.let {
+                val dialog = TransferHistoryBottomSheet.newInstance(it, PURCHASE)
+                dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            }
     }
 
     override fun onStockOpnameCLicklistener(value: StockOpnameInputData) {
-        value.id?.let {
-            val dialog = TransferHistoryBottomSheet.newInstance(it, STOCKOPNAME)
-            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
-        }
+        if (args.inputValidate)
+            value.id?.let {
+                val dialog = TransferHistoryBottomSheet.newInstance(it, STOCKOPNAME)
+                dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            }
     }
 
     override fun onclicklistener(value: InventoryInputData) {
-        value.id?.let {
-            val dialog = TransferHistoryBottomSheet.newInstance(it, INVENTORY)
-            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
-        }
+        if (args.inputValidate)
+            value.id?.let {
+                val dialog = TransferHistoryBottomSheet.newInstance(it, INVENTORY)
+                dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            }
     }
 
+    companion object {
+        const val HISTORY_TYPE = "historyType"
+        const val DOCUMENT_NO = "documentNo"
+        const val INPUT_VALIDATE = "inputValidate"
+        fun newInstance(historyType: HistoryType, documentNo: String, inputValidation: Boolean) =
+            HistoryInputFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(HISTORY_TYPE, historyType)
+                    putString(DOCUMENT_NO, documentNo)
+                    putBoolean(INPUT_VALIDATE, inputValidation)
+                }
+            }
+
+    }
 }

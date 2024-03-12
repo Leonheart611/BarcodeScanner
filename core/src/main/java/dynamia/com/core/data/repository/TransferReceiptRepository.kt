@@ -9,6 +9,7 @@ import dynamia.com.core.data.entinty.TransferReceiptInput
 import dynamia.com.core.domain.ErrorResponse
 import dynamia.com.core.domain.MasariAPI
 import dynamia.com.core.domain.ResultWrapper
+import dynamia.com.core.util.toReceiptHeaderFilter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -32,7 +33,12 @@ interface TransferReceiptRepository {
     suspend fun updateTransferReceiptInputQty(id: Int, newQty: Int): Flow<Boolean>
     fun getAllUnsycnTransferReceiptInput(status: Boolean = false): List<TransferReceiptInput>
     fun getTransferReceiptInputHistory(id: Int): TransferReceiptInput
-    fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferReceiptInput>>
+    fun getTransferInputHistoryLiveData(
+        no: String,
+        accidentlyInput: Boolean
+    ): LiveData<List<TransferReceiptInput>>
+
+    fun getTransferReceiptAccidentInput(no: String): LiveData<Int>
     suspend fun getTransferInputDetail(id: Int): Flow<TransferReceiptInput>
     suspend fun deleteTransferInput(id: Int)
     suspend fun clearAllInputData()
@@ -51,6 +57,7 @@ class TransferReceiptRepositoryImpl @Inject constructor(
     val dao: TransferReceiptDao,
     private val retrofitService: MasariAPI,
     private val lineDao: TransferShipmentDao,
+    private val username: String,
 ) : TransferReceiptRepository {
 
     override fun getAllTransferReceiptHeader(page: Int): LiveData<List<TransferReceiptHeader>> =
@@ -75,17 +82,18 @@ class TransferReceiptRepositoryImpl @Inject constructor(
 
     override suspend fun insertTransferReceiptInput(data: TransferReceiptInput): Boolean {
         return try {
-            val lineData = lineDao.getLineDetail(data.documentNo, data.lineNo)
-            if ((lineData.alreadyScanedReceipt + data.quantity) <= lineData.qtyInTransit!!) {
+            if (data.lineNo == 0) {
+                data.apply { accidentalScanned = true }
+                dao.insertTransferReceiptInput(data)
+            } else {
+                val lineData = lineDao.getLineDetail(data.documentNo, data.lineNo)
                 lineData.apply {
                     this.alreadyScanedReceipt += data.quantity
                 }
                 dao.insertTransferReceiptInput(data)
                 lineDao.updateTransferLine(lineData)
-                true
-            } else {
-                false
             }
+            true
         } catch (e: Exception) {
             e.stackTrace
             false
@@ -121,8 +129,11 @@ class TransferReceiptRepositoryImpl @Inject constructor(
     override fun getTransferReceiptInputHistory(id: Int): TransferReceiptInput =
         dao.getTransferReceiptInputHistory(id)
 
-    override fun getTransferInputHistoryLiveData(no: String): LiveData<List<TransferReceiptInput>> =
-        dao.getTransferInputHistoryLiveData(no)
+    override fun getTransferInputHistoryLiveData(
+        no: String,
+        accidentlyInput: Boolean
+    ): LiveData<List<TransferReceiptInput>> =
+        dao.getTransferInputHistoryLiveData(no, accidentlyInput)
 
     override suspend fun getTransferInputDetail(id: Int): Flow<TransferReceiptInput> = flow {
         emit(dao.getTransferInputDetail(id))
@@ -150,6 +161,9 @@ class TransferReceiptRepositoryImpl @Inject constructor(
 
     override suspend fun getTransferReceiptCount(): Int = dao.getTransferReceiptCount()
 
+    override fun getTransferReceiptAccidentInput(no: String): LiveData<Int> =
+        dao.getTransferReceiptAccidentInput(no)
+
     /**
      * Remote Impl
      */
@@ -157,7 +171,9 @@ class TransferReceiptRepositoryImpl @Inject constructor(
     override suspend fun getTransferReceiptHeaderAsync(): Flow<ResultWrapper<MutableList<TransferReceiptHeader>>> =
         flow {
             try {
-                val result = retrofitService.getTransferReceiptHeader()
+                val result = retrofitService.getTransferReceiptHeader(
+                    filter = username.toReceiptHeaderFilter()
+                )
                 when (result.code()) {
                     200 -> result.body()?.value?.let { emit(ResultWrapper.Success(it.toMutableList())) }
                     400 -> emit(ResultWrapper.SuccessEmptyValue)
@@ -172,7 +188,7 @@ class TransferReceiptRepositoryImpl @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                emit(ResultWrapper.NetworkError(e.localizedMessage))
+                emit(ResultWrapper.NetworkError(e.localizedMessage.orEmpty()))
             }
         }
 

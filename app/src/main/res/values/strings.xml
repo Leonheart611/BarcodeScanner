@@ -33,6 +33,7 @@
     <string name="sn_title">SN</string>
     <string name="vendor_name_title">Vendor Name</string>
     <string name="detail_scan_already">%1$s/</string>
+    <string name="acidently_scan">Accidentally-Scan: %1$d</string>
     <string name="expect_receipt_date_title">Expected Receipt Date</string>
     <string name="project_code_title">Project Code</string>
     <string name="po_title_header">PO: %1$s</string>
@@ -45,7 +46,7 @@
     <string name="description_title">Description</string>
     <string name="view_title">View</string>
     <string name="server_host_name">http://192.168.1.13:7048/BC180/OdataV4/Company("\'CRONUS Australia Pty. Ltd.\'")/</string>
-    <string name="user_name">BC1</string>
+    <string name="user_name">HAP-ACC</string>
     <string name="password">qwerty</string>
     <string name="domain">DESKTOP-U57JOGD\</string>
     <string name="employee_name">STEVEN</string>
@@ -141,4 +142,7 @@
     <string name="stock_opname_qty_box_delete">Total QTY: %1$s</string>
     <string name="stock_opname_total_scanned">Total Scan: %1$s</string>
     <string name="stock_opname_box_delete_warning">Semua data berdasarkan box yang dicari akan dihapus, Apakah anda yakin?</string>
+    <string name="bin_reclass_total_scan">Total Scan: %d</string>
+    <string name="user_list_title">User List</string>
+    <string name="user_list_empty">User list empty, please login to save user</string>
 </resources>

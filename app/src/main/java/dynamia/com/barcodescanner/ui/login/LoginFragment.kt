@@ -6,13 +6,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.R
 import dynamia.com.barcodescanner.databinding.LoginFragmentBinding
 import dynamia.com.barcodescanner.ui.MainActivity
 import dynamia.com.barcodescanner.ui.MainActivityViewModel
-import dynamia.com.barcodescanner.ui.home.HomePostAllDialog
-import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.*
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.Error
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.Success
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.SuccessCheckLogin
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.UserHaveData
+import dynamia.com.barcodescanner.ui.login.LoginViewModel.LoginState.UserhasLogin
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.UserData
 import dynamia.com.core.util.EventObserver
@@ -32,20 +34,20 @@ class LoginFragment :
         activity = requireActivity() as MainActivity
         initview()
         setupListener()
+
         setObservable()
     }
 
     private fun initview() {
-         /*if (BuildConfig.BUILD_TYPE == "debug") {
-             with(viewBinding) {
-                 etServerHost.setText(getString(R.string.server_host_name))
-                 tiedUsername.setText(getString(R.string.user_name))
-                 tiedPassword.setText(getString(R.string.password))
-                 etDomainname.setText(getString(R.string.domain))
-                 etCompanyName.setText(getString(R.string.company_name))
-             }
-         }*/
+/*        with(viewBinding) {
+            etServerHost.setText(getString(R.string.server_host_name))
+            tiedUsername.setText(getString(R.string.user_name))
+            tiedPassword.setText(getString(R.string.password))
+            etDomainname.setText(getString(R.string.domain))
+            etCompanyName.setText(getString(R.string.company_name))
+        }*/
     }
+
 
     private fun setupListener() {
         with(viewBinding) {
@@ -57,7 +59,8 @@ class LoginFragment :
                             username = tiedUsername.text.toString(),
                             password = tiedPassword.text.toString(),
                             domain = etDomainname.text.toString(),
-                            companyName = etCompanyName.text.toString()
+                            companyName = etCompanyName.text.toString(),
+                            id = viewModel.userData?.id
                         )
                     } else {
                         context?.showLongToast("Host Name Must start with (HTTP://) and end with (/)")
@@ -65,6 +68,13 @@ class LoginFragment :
                 } else {
                     context?.showLongToast("Please fill all form")
                 }
+            }
+            btnCheckUser.setOnClickListener {
+                val dialog = UserListBottomSheet.newInstance {
+                    setView(it)
+                    viewModel.userData = it
+                }
+                dialog.show(requireActivity().supportFragmentManager, dialog.tag)
             }
         }
     }
@@ -108,12 +118,15 @@ class LoginFragment :
                     dialog.isCancelable = false
                     dialog.show(requireActivity().supportFragmentManager, dialog.tag)
                 }
+
                 is Error -> {
                     context?.showLongToast(it.message)
                 }
+
                 is UserhasLogin -> {
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 }
+
                 is UserHaveData -> setView(it.userData)
                 SuccessCheckLogin -> {
 
@@ -121,7 +134,7 @@ class LoginFragment :
             }
         })
         activityViewModel.checkLoginUser.observe(viewLifecycleOwner, EventObserver {
-            if (it){
+            if (it) {
                 findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 context?.showLongToast("Success Login")
             }

@@ -7,7 +7,10 @@
       "Status": "Released",
       "Posting_Date": "2022-01-01",
       "Transfer_from_Code": "BLUE",
-      "Transfer_to_Code": "YELLOW"
+      "Transfer_to_Code": "YELLOW",
+      "Total_Outstanding_Qty": 16,
+      "TotalQtyRcvScanned": 5,
+      "Quantity": 11
     },
     {
       "@odata.etag": "W/\"JzQ0O2xYVUtqL1N1Qnd3bUJ0YnlTOG9YNS81eW10NzVUejNSU2d5Q0kxUG51UlU9MTswMDsn\"",
@@ -15,7 +18,10 @@
       "Status": "Released",
       "Posting_Date": "2023-01-26",
       "Transfer_from_Code": "GREEN",
-      "Transfer_to_Code": "YELLOW"
+      "Transfer_to_Code": "YELLOW",
+      "Total_Outstanding_Qty": 16,
+      "TotalQtyRcvScanned": 5,
+      "Quantity": 11
     },
     {
       "@odata.etag": "W/\"JzQ0O3VEMlRYZjJCRkhIYS9hcTI1TEJySlJjOXYxR3NaNmlaUVBFalM3UU9kQWM9MTswMDsn\"",
@@ -23,23 +29,32 @@
       "Status": "Released",
       "Posting_Date": "2023-01-26",
       "Transfer_from_Code": "GREEN",
-      "Transfer_to_Code": "RED"
+      "Transfer_to_Code": "RED",
+      "Total_Outstanding_Qty": 16,
+      "TotalQtyRcvScanned": 5,
+      "Quantity": 11
     },
     {
       "@odata.etag": "W/\"JzQ0O0xjdkJuRHNnVWlyYmNOdk9oNHRCSW83VjhWMUtrQkVXdHFUR1NZVXZTbFk9MTswMDsn\"",
-      "No": "1010",
+      "No": "1010/ShouldHide2",
       "Status": "Released",
       "Posting_Date": "2023-01-26",
       "Transfer_from_Code": "RED",
-      "Transfer_to_Code": "BLUE"
+      "Transfer_to_Code": "BLUE",
+      "Total_Outstanding_Qty": 16,
+      "TotalQtyRcvScanned": 5,
+      "Quantity": -100
     },
     {
-      "@odata.etag": "W/\"JzQ0O1RpVlJGNFJDdjJwRnBuR3pEY0pSZ2VDbEtJeHZJRUJwNHJaT2UxRzY4dm89MTswMDsn\"",
-      "No": "1011",
+      "@odata.etag": "W/\"JzQ0Ozl2dmFHTXJwMWNxNXpUWUh3cmsyNXVnZUdGWGdkbTFzUW81M21jUFYxL1U9MTswMDsn\"",
+      "No": "TO/HAP/22/000027/ShouldHide1",
       "Status": "Released",
-      "Posting_Date": "2023-01-27",
-      "Transfer_from_Code": "BLUE",
-      "Transfer_to_Code": "RED"
+      "Posting_Date": "2023-11-21",
+      "Transfer_from_Code": "UA-MKG",
+      "Transfer_to_Code": "UA-SMS",
+      "Total_Outstanding_Qty": 16,
+      "TotalQtyRcvScanned": 5,
+      "Quantity": 0
     }
   ]
 }

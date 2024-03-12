@@ -1,7 +1,6 @@
 package dynamia.com.barcodescanner.ui.home
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -98,16 +97,19 @@ class HomeViewModel @Inject constructor(
                                     }
 
                                 }
+
                                 is GenericError -> {
                                     ui {
                                         _homeGetApiViewState.value =
                                             Event(FailedGetShippingData("${dataHeader.code} ${dataHeader.error}"))
                                     }
                                 }
+
                                 is NetworkError -> {
                                     _homeGetApiViewState.postValue(Event(FailedGetShippingData("Error Network")))
 
                                 }
+
                                 else -> {}
                             }
                         }
@@ -118,15 +120,18 @@ class HomeViewModel @Inject constructor(
                             is Success -> {
                                 transferShipmentRepository.insertTransferLineAll(data.value)
                             }
+
                             is GenericError -> {
                                 ui {
                                     _homeGetApiViewState.value =
                                         Event(FailedGetShippingData("${data.code} ${data.error}"))
                                 }
                             }
+
                             is NetworkError -> {
                                 _homeGetApiViewState.postValue(Event(FailedGetShippingData(data.error)))
                             }
+
                             else -> {}
                         }
                     }
@@ -180,14 +185,21 @@ class HomeViewModel @Inject constructor(
                                     _homeGetApiViewState.value =
                                         Event(FailedGetPurchase("${value.code} ${value.error}"))
                                 }
+
                                 is NetworkError -> _homeGetApiViewState.postValue(
                                     Event(FailedGetPurchase(value.error))
                                 )
+
                                 is Success -> {
                                     value.value.forEach {
                                         insertPurchaseOrderHeader(it)
                                     }
                                 }
+
+                                SuccessEmptyValue -> ui {
+                                    _homeGetApiViewState.value = Event(SuccessGetPurchaseData)
+                                }
+
                                 else -> {}
                             }
                         }
@@ -202,6 +214,7 @@ class HomeViewModel @Inject constructor(
                                         )
                                     )
                                 )
+
                                 is NetworkError -> _homeGetApiViewState.postValue(
                                     Event(
                                         FailedGetPurchase(
@@ -209,12 +222,20 @@ class HomeViewModel @Inject constructor(
                                         )
                                     )
                                 )
+
                                 is Success -> {
                                     insertPurchaseOrderLine(value.value)
                                     ui {
                                         _homeGetApiViewState.value = Event(SuccessGetPurchaseData)
                                     }
                                 }
+
+                                SuccessEmptyValue -> {
+                                    ui {
+                                        _homeGetApiViewState.value = Event(SuccessGetPurchaseData)
+                                    }
+                                }
+
                                 else -> {}
                             }
                         }
@@ -244,6 +265,7 @@ class HomeViewModel @Inject constructor(
                                 _homeGetApiViewState.value =
                                     Event(FailedGetReceipt("${value.code} ${value.error}"))
                             }
+
                             is NetworkError -> _homeGetApiViewState.postValue(
                                 Event(
                                     FailedGetReceipt(
@@ -251,12 +273,14 @@ class HomeViewModel @Inject constructor(
                                     )
                                 )
                             )
+
                             is Success -> {
                                 value.value.forEach {
                                     transferReceiptRepository.insertTransferReceiptHeader(it)
                                 }
                                 ui { _homeGetApiViewState.value = Event(SuccessGetReceipt) }
                             }
+
                             SuccessEmptyValue -> {
                                 ui { _homeGetApiViewState.value = Event(SuccessGetReceipt) }
                             }
@@ -289,15 +313,18 @@ class HomeViewModel @Inject constructor(
                                     _homeGetApiViewState.value =
                                         Event(FailedGetStockOpname("${value.code} ${value.error}"))
                                 }
+
                                 is NetworkError -> _homeGetApiViewState.postValue(
                                     Event(FailedGetStockOpname(value.error))
                                 )
+
                                 is Success -> {
                                     value.value.forEach {
                                         insertStockOpnameData(it)
                                     }
                                     ui { _homeGetApiViewState.value = Event(SuccessGetStockOpname) }
                                 }
+
                                 SuccessEmptyValue -> {
                                     ui { _homeGetApiViewState.value = Event(SuccessGetStockOpname) }
                                 }
@@ -331,13 +358,16 @@ class HomeViewModel @Inject constructor(
                                     _homeGetApiViewState.value =
                                         Event(FailedGetInventory("${value.code} ${value.error}"))
                                 }
+
                                 is NetworkError -> _homeGetApiViewState.postValue(
                                     Event(FailedGetInventory(value.error))
                                 )
+
                                 is Success -> {
                                     insertInventoryHeaderAll(value.value)
                                     ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
                                 }
+
                                 SuccessEmptyValue -> {
                                     ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
                                 }
@@ -351,13 +381,16 @@ class HomeViewModel @Inject constructor(
                                     _homeGetApiViewState.value =
                                         Event(FailedGetInventory("${value.code} ${value.error}"))
                                 }
+
                                 is NetworkError -> _homeGetApiViewState.postValue(
                                     Event(FailedGetInventory(value.error))
                                 )
+
                                 is Success -> {
-                                    insertInventoryLineAll(value.value)
+                                    insertInventoryLineAll(value.value.toMutableList())
                                     ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
                                 }
+
                                 SuccessEmptyValue -> {
                                     ui { _homeGetApiViewState.value = Event(SuccessGetInventory) }
                                 }
@@ -389,6 +422,7 @@ class HomeViewModel @Inject constructor(
                     when (param) {
                         REFRESH -> _homeViewState.value =
                             Event(HomeViewState.GetUnpostedDataRefresh(total.toString()))
+
                         LOGOUT -> _homeViewState.value =
                             Event(HomeViewState.GetUnpostedDataLogout(total.toString()))
                     }
@@ -779,7 +813,7 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     transferShipmentLine.value?.let {
-                        transferShipmentRepository.insertTransferLineAll(it)
+                        transferShipmentRepository.insertTransferLineAll(it.toMutableList())
                     }
                     purchaseOrderHeaderAssets.value?.let {
                         it.forEach { data ->
@@ -787,7 +821,7 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     purchaseOrderLineAsset.value?.let {
-                        purchaseOrderRepository.insertPurchaseOrderLine(it)
+                        purchaseOrderRepository.insertPurchaseOrderLine(it.toMutableList())
                     }
                     stockOpnameDataAssets.value.let {
                         it.forEach { data ->
@@ -796,9 +830,10 @@ class HomeViewModel @Inject constructor(
                     }
                     inventoryPickHeaderAssets.value?.let {
                         inventoryRepository.insertInventoryHeaderAll(it)
+
                     }
                     inventoryPickLineAsset.value?.let {
-                        inventoryRepository.insertInventoryLineAll(it)
+                        inventoryRepository.insertInventoryLineAll(it.toMutableList())
                     }
 
                     ui {

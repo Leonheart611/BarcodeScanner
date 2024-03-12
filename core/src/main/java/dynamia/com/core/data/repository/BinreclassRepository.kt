@@ -30,6 +30,7 @@ interface BinreclassRepository {
     /**
      * Bin Reclass Input Dao
      */
+    fun getBinReclassTotalQtyScan(no: String): LiveData<Int>
     fun getAllBinreclassInputData(): LiveData<List<BinreclassInputData>>
     fun getBinreclassInputData(headerId: Int): LiveData<List<BinreclassInputData>>
     fun getAllUnSyncBinreclassnput(status: Boolean = false): List<BinreclassInputData>
@@ -190,4 +191,7 @@ class BinreclassRepositoryImpl @Inject constructor(
     override fun deleteAllRebinInput() {
         dao.deleteAllRebinInput()
     }
+
+    override fun getBinReclassTotalQtyScan(no: String): LiveData<Int> =
+        dao.getBinReclassTotalQtyScan(no)
 }

@@ -3,9 +3,8 @@ package dynamia.com.barcodescanner.ui.transferstore.transferdetail
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dynamia.com.barcodescanner.BuildConfig
 import dynamia.com.barcodescanner.di.ViewModelBase
@@ -14,7 +13,7 @@ import dynamia.com.barcodescanner.ui.transferstore.TransferType.*
 import dynamia.com.core.data.entinty.*
 import dynamia.com.core.data.repository.*
 import dynamia.com.core.util.*
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,7 +48,6 @@ class TransferDetailViewModel @Inject constructor(
     private var inventoryPickHeader: InventoryPickHeader? = null
 
     private var purchaseLineData: PurchaseOrderLine? = null
-    private var stockOpnameData: StockOpnameData? = null
     private var inventoryPickLine: InventoryPickLine? = null
 
     private val lineParam = MutableLiveData<LineParam>()
@@ -57,50 +55,46 @@ class TransferDetailViewModel @Inject constructor(
     /**
      * Transfer Shipment Data
      */
-    val transFerShipmentQty: LiveData<Int> = Transformations.switchMap(
-        lineParam
-    ) { param ->
+    val transFerShipmentQty: LiveData<Int> = lineParam.switchMap { param ->
         transferShipmentRepository.getQtyliveData(param.documentNo)
     }
 
-    val transferShipmentAlreadyScan: LiveData<Int> = Transformations.switchMap(
-        lineParam
-    ) { param ->
+    val transferShipmentAlreadyScan: LiveData<Int> = lineParam.switchMap { param ->
         transferShipmentRepository.getQtyAlreadyScanLiveData(param.documentNo)
     }
 
-    val shipmentLineData: LiveData<List<TransferShipmentLine>> = Transformations.switchMap(
-        lineParam
-    ) { param ->
+    val shipmentLineData: LiveData<List<TransferShipmentLine>> = lineParam.switchMap { param ->
         transferShipmentRepository.getLineListFromHeaderLiveData(
             param.documentNo,
             param.page
         )
     }
 
+    val transferShipmentAccidentalyScan: LiveData<Int?> = lineParam.switchMap {
+        transferShipmentRepository.getTransferShipmentAccidentInput(it.documentNo)
+    }
+
     /**
      * Transfer Receipt Data
      */
 
-    val transferReceipt: LiveData<List<TransferShipmentLine>> = Transformations.switchMap(
-        lineParam
-    ) { param ->
+    val transferReceipt: LiveData<List<TransferShipmentLine>> = lineParam.switchMap { param ->
         transferShipmentRepository.getLineListFromReceiptLiveData(
             param.documentNo,
             param.page
         )
     }
 
-    val transferReceiptQty: LiveData<Int> = Transformations.switchMap(
-        lineParam
-    ) { param ->
+    val transferReceiptQty: LiveData<Int> = lineParam.switchMap { param ->
         transferReceiptRepository.getTransferReceiptQty(param.documentNo)
     }
 
-    val transferReceiptAlreadyScan: LiveData<Int> = Transformations.switchMap(
-        lineParam
-    ) {
+    val transferReceiptAlreadyScan: LiveData<Int> = lineParam.switchMap {
         transferReceiptRepository.getTransferReceiptAlreadyScan(it.documentNo)
+    }
+
+    val transferReceiptAccidentalyScan: LiveData<Int> = lineParam.switchMap {
+        transferReceiptRepository.getTransferReceiptAccidentInput(it.documentNo)
     }
 
     /**
@@ -108,16 +102,20 @@ class TransferDetailViewModel @Inject constructor(
      */
 
     val purchaseLineLiveData: LiveData<List<PurchaseOrderLine>> =
-        Transformations.switchMap(lineParam) { param ->
+        lineParam.switchMap { param ->
             purchaseOrderRepository.getPurchaseOrderLineByNo(param.documentNo, param.page)
         }
 
-    val purchaseQty: LiveData<Int> = Transformations.switchMap(lineParam) {
+    val purchaseQty: LiveData<Int> = lineParam.switchMap {
         purchaseOrderRepository.getPurchaseQtyTotal(it.documentNo)
     }
 
-    val purchaseAlreadyScan: LiveData<Int> = Transformations.switchMap(lineParam) {
+    val purchaseAlreadyScan: LiveData<Int> = lineParam.switchMap {
         purchaseOrderRepository.getPurchaseAlreadyScan(it.documentNo)
+    }
+
+    val purchaseOrderAccidentalyScan: LiveData<Int> = lineParam.switchMap {
+        purchaseOrderRepository.getPurchaseOrderAccidentInput(it.documentNo)
     }
 
     /**
@@ -126,15 +124,15 @@ class TransferDetailViewModel @Inject constructor(
 
 
     val inventoryLineLiveData: LiveData<List<InventoryPickLine>> =
-        Transformations.switchMap(lineParam) { param ->
+        lineParam.switchMap { param ->
             inventoryRepository.getAllInventoryPickLine(param.documentNo, param.page)
         }
 
-    val inventoryQty = Transformations.switchMap(lineParam) {
+    val inventoryQty = lineParam.switchMap {
         inventoryRepository.getInventoryQty(it.documentNo)
     }
 
-    val inventoryAlreadyScan = Transformations.switchMap(lineParam) {
+    val inventoryAlreadyScan = lineParam.switchMap {
         inventoryRepository.getInventoryAlreadyQty(it.documentNo)
     }
 
@@ -163,34 +161,29 @@ class TransferDetailViewModel @Inject constructor(
                                 transferHeaderData = it
                             }
                             transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
-                                .collect { data ->
-                                    ui {
-                                        transferLineData = data
-                                        insertTransferInput("1", box)
-                                    }
-                                }
+                                .catch { transferLineData = null }
+                                .collect { data -> ui { transferLineData = data } }
+                            insertTransferInput("1", box, identifier)
                         }
+
                         RECEIPT -> {
                             transferReceiptRepository.getTransferHeaderDetail(no).collect {
                                 transferReceiptHeader = it
                             }
                             transferShipmentRepository.getLineDetailFromBarcode(no, identifier)
+                                .catch { transferLineData = null }
                                 .collect { data ->
-                                    ui {
-                                        transferLineData = data
-                                        insertTransferReceiptInput("1", box)
-                                    }
+                                    ui { transferLineData = data }
                                 }
+                            insertTransferReceiptInput("1", box, identifier, binCode)
                         }
+
                         PURCHASE -> {
                             purchaseOrderRepository.getPurchaseOrderLineByBarcode(no, identifier)
-                                .collect { data ->
-                                    ui {
-                                        purchaseLineData = data
-                                        insertPurchaseInput("1", box, binCode)
-                                    }
-                                }
+                                .collect { data -> ui { purchaseLineData = data } }
+                            insertPurchaseInput("1", box, binCode, identifier, no)
                         }
+
                         STOCKOPNAME -> {
                             if (BuildConfig.FLAVOR == Constant.APP_WAREHOUSE) {
                                 stockOpnameRepository.getStockOpnameDetailByBarcode(
@@ -212,6 +205,7 @@ class TransferDetailViewModel @Inject constructor(
                             }
 
                         }
+
                         INVENTORY -> {
                             inventoryRepository.getInventoryHeaderDetail(no)
                                 .collect { inventoryPickHeader = it }
@@ -226,8 +220,7 @@ class TransferDetailViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.stackTrace
-                _transferInputViewState.value =
-                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+                _transferInputViewState.postValue(TransferDetailInputViewState.ErrorGetData(e.localizedMessage))
             }
         }
     }
@@ -348,41 +341,41 @@ class TransferDetailViewModel @Inject constructor(
         }
     }
 
-    private fun insertTransferInput(qty: String, box: String) {
+    private fun insertTransferInput(qty: String, box: String, identifier: String) {
         viewModelScope.launch {
             try {
                 io {
                     transferHeaderData?.let { header ->
-                        transferLineData?.let { line ->
-                            val value = transferShipmentRepository.insertTransferInput(
-                                TransferInputData(
-                                    documentNo = line.documentNo,
-                                    quantity = qty.toInt(),
-                                    lineNo = line.lineNo,
-                                    itemNo = line.itemNo,
-                                    transferFromBinCode = header.transferFromCode,
-                                    transferToBinCode = header.transferToCode,
-                                    userName = sharedPreferences.getUserName(),
-                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
-                                    box = box
-                                )
+                        val value = transferShipmentRepository.insertTransferInput(
+                            TransferInputData(
+                                documentNo = transferLineData?.documentNo ?: header.no,
+                                quantity = qty.toInt(),
+                                lineNo = transferLineData?.lineNo ?: 0,
+                                itemNo = transferLineData?.itemNo ?: "",
+                                transferFromBinCode = header.transferFromCode,
+                                transferToBinCode = header.transferToCode,
+                                userName = sharedPreferences.getUserName(),
+                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                box = box,
+                                itemIdentifier = identifier
                             )
-                            ui {
-                                if (value) {
-                                    _transferInputViewState.value =
-                                        TransferDetailInputViewState.SuccessSaveData
-                                } else {
-                                    _transferInputViewState.value =
-                                        TransferDetailInputViewState.ErrorSaveData
-                                }
+                        )
+                        ui {
+                            if (value) {
+                                _transferInputViewState.value =
+                                    TransferDetailInputViewState.SuccessSaveData
+                            } else {
+                                _transferInputViewState.value =
+                                    TransferDetailInputViewState.ErrorSaveData
                             }
+                            transferLineData = null
                         }
                     }
                 }
             } catch (e: Exception) {
                 e.stackTrace
                 _transferInputViewState.value =
-                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage)
+                    TransferDetailInputViewState.ErrorGetData(e.localizedMessage.orEmpty())
             }
 
         }
@@ -424,66 +417,32 @@ class TransferDetailViewModel @Inject constructor(
 
     }
 
-    private fun insertTransferReceiptInput(qty: String, box: String) {
+    private fun insertTransferReceiptInput(
+        qty: String,
+        box: String,
+        identifier: String,
+        binCode: String
+    ) {
         viewModelScope.launch {
             try {
                 io {
                     transferReceiptHeader?.let { header ->
-                        transferLineData?.let { line ->
-                            val value =
-                                transferReceiptRepository.insertTransferReceiptInput(
-                                    TransferReceiptInput(
-                                        documentNo = line.documentNo,
-                                        quantity = qty.toInt(),
-                                        lineNo = line.lineNo,
-                                        itemNo = line.itemNo,
-                                        transferFromBinCode = header.transferFromCode,
-                                        transferToBinCode = header.transferToCode,
-                                        userName = sharedPreferences.getUserName(),
-                                        insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
-                                        box = box
-                                    )
+                        val value =
+                            transferReceiptRepository.insertTransferReceiptInput(
+                                TransferReceiptInput(
+                                    documentNo = transferLineData?.documentNo ?: header.no,
+                                    quantity = qty.toInt(),
+                                    lineNo = transferLineData?.lineNo ?: 0,
+                                    itemNo = transferLineData?.itemNo ?: "",
+                                    transferFromBinCode = header.transferFromCode,
+                                    transferToBinCode = header.transferToCode,
+                                    userName = sharedPreferences.getUserName(),
+                                    insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                                    box = box,
+                                    newBinCode = binCode,
+                                    itemIdentifier = identifier
                                 )
-                            ui {
-                                if (value) {
-                                    _transferInputViewState.value =
-                                        TransferDetailInputViewState.SuccessSaveData
-                                } else {
-                                    _transferInputViewState.value =
-                                        TransferDetailInputViewState.ErrorSaveData
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                e.stackTrace
-                e.localizedMessage?.let {
-                    _transferInputViewState.postValue(TransferDetailInputViewState.ErrorGetData(it))
-                }
-            }
-        }
-    }
-
-    private fun insertPurchaseInput(qty: String, box: String, binCode: String) {
-        viewModelScope.launch {
-            try {
-                io {
-                    purchaseLineData?.let { line ->
-                        val value = purchaseOrderRepository.insertPurchaseOrderData(
-                            PurchaseInputData(
-                                documentNo = line.documentNo,
-                                quantity = qty.toInt(),
-                                lineNo = line.lineNo,
-                                itemNo = line.no,
-                                transferFromBinCode = "",
-                                transferToBinCode = "",
-                                userName = sharedPreferences.getUserName(),
-                                insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
-                                box = box,
-                                newBinCode = binCode
                             )
-                        )
                         ui {
                             if (value) {
                                 _transferInputViewState.value =
@@ -492,6 +451,50 @@ class TransferDetailViewModel @Inject constructor(
                                 _transferInputViewState.value =
                                     TransferDetailInputViewState.ErrorSaveData
                             }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.stackTrace
+                e.message?.let {
+                    _transferInputViewState.postValue(TransferDetailInputViewState.ErrorGetData(it))
+                }
+            }
+        }
+    }
+
+    private fun insertPurchaseInput(
+        qty: String,
+        box: String,
+        binCode: String,
+        identifier: String,
+        documentNo: String
+    ) {
+        viewModelScope.launch {
+            try {
+                io {
+                    val value = purchaseOrderRepository.insertPurchaseOrderData(
+                        PurchaseInputData(
+                            documentNo = purchaseLineData?.documentNo ?: documentNo,
+                            quantity = qty.toInt(),
+                            lineNo = purchaseLineData?.lineNo ?: 0,
+                            itemNo = purchaseLineData?.no ?: "",
+                            transferFromBinCode = "",
+                            transferToBinCode = "",
+                            userName = sharedPreferences.getUserName(),
+                            insertDateTime = "${getCurrentDate()}T${getCurrentTime()}",
+                            box = box,
+                            newBinCode = binCode,
+                            itemIdentifier = identifier
+                        )
+                    )
+                    ui {
+                        if (value) {
+                            _transferInputViewState.value =
+                                TransferDetailInputViewState.SuccessSaveData
+                        } else {
+                            _transferInputViewState.value =
+                                TransferDetailInputViewState.ErrorSaveData
                         }
                     }
                 }

@@ -15,7 +15,7 @@
             app:argType="string" />
         <action
             android:id="@+id/action_receivingFragment_to_historyInputFragment"
-            app:destination="@id/historyInputFragment"
+            app:destination="@id/historyLandingFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
         <argument
@@ -33,6 +33,9 @@
             android:name="binCode"
             app:argType="string"
             android:defaultValue='""' />
+        <action
+            android:id="@+id/action_transferInputFragment_to_historyInputFragment"
+            app:destination="@id/historyInputFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -115,17 +118,13 @@
         android:label="history_input_fragment"
         tools:layout="@layout/history_input_fragment">
         <argument
-            android:name="showAll"
-            android:defaultValue="false"
-            app:argType="boolean" />
-        <argument
             android:name="documentNo"
             app:argType="string"
             app:nullable="true" />
         <argument
-            android:name="lineNo"
-            android:defaultValue="0"
-            app:argType="integer" />
+            android:name="inputValidate"
+            android:defaultValue="true"
+            app:argType="boolean" />
         <argument
             android:name="historyType"
             app:argType="dynamia.com.barcodescanner.ui.history.HistoryType" />
@@ -192,4 +191,17 @@
         android:name="dynamia.com.barcodescanner.ui.stockopname.delete.StockOpnameDeleteFragment"
         android:label="stock_opname_delete_fragment"
         tools:layout="@layout/stock_opname_delete_fragment" />
+    <fragment
+        android:id="@+id/historyLandingFragment"
+        android:name="dynamia.com.barcodescanner.ui.history.HistoryLandingFragment"
+        android:label="HistoryLandingFragment"
+        tools:layout="@layout/history_landing_fragment">
+        <argument
+            android:name="historyType"
+            app:argType="dynamia.com.barcodescanner.ui.history.HistoryType" />
+        <argument
+            android:name="documentNo"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 </navigation>

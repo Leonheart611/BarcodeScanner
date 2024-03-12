@@ -19,6 +19,7 @@ import dynamia.com.barcodescanner.ui.binreclass.detail.BinreclassInputDialog.ADD
 import dynamia.com.core.base.BaseFragmentBinding
 import dynamia.com.core.data.entinty.BinreclassHeader
 import dynamia.com.core.data.entinty.BinreclassInputData
+import dynamia.com.core.util.ifCounterIsNull
 import dynamia.com.core.util.showLongToast
 
 @AndroidEntryPoint
@@ -43,14 +44,16 @@ class BinreclassDetailFragment :
     }
 
     private fun setObseverable() {
-        viewModel.viewState.observe(viewLifecycleOwner, {
+        viewModel.viewState.observe(viewLifecycleOwner) {
             when (it) {
                 is BinreclassDetailViewModel.BinReclassViewState.OnErrorGetLocalData -> {
                     context?.showLongToast(it.error)
                 }
+
                 is BinreclassDetailViewModel.BinReclassViewState.SuccessGetLocalData -> {
                     setupDetailView(it.data)
                 }
+
                 is BinreclassDetailViewModel.BinReclassViewState.SuccessUpdateHeaderData -> {
                     context?.showLongToast("Success Update Data")
                     binFrom = it.fromBin
@@ -58,7 +61,7 @@ class BinreclassDetailFragment :
                     viewModel.getLocalDataHeader(binFrom = it.fromBin, binTo = it.toBin)
                 }
             }
-        })
+        }
     }
 
     fun setupView() {
@@ -105,15 +108,21 @@ class BinreclassDetailFragment :
                 tvRebinToCode.text =
                     getString(R.string.bin_reclass_detail_to_code, transferToBinCode)
                 tvRebinDetailDate.text = getString(R.string.bin_reclass_detail_date, date)
+                viewModel.repository.getBinReclassTotalQtyScan(documentNo)
+                    .observe(viewLifecycleOwner) {
+                        tvRebinTotalQty.text =
+                            getString(R.string.bin_reclass_total_scan, it.ifCounterIsNull())
+                    }
             }
             tvRebinDetailUser.text =
                 getString(R.string.bin_reclass_detail_user, viewModel.getUserName())
             btnEdit.isVisible = !data.sync_status
+
         }
         viewModel.repository.getBinreclassInputData(data.id!!)
-            .observe(viewLifecycleOwner, {
+            .observe(viewLifecycleOwner) {
                 inputAdapter.addData(it.toMutableList())
-            })
+            }
     }
 
     override fun onclicklistener(value: BinreclassInputData) {
